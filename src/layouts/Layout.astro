@@ -1,4 +1,6 @@
 ---
+import { getDB, getUnreadInboxNotificationCount } from "../lib/marketplace";
+
 export interface Props {
   title?: string;
   description?: string;
@@ -15,12 +17,13 @@ const isBuyer = viewer?.role === "buyer";
 const isOwner = viewer?.role === "owner" || viewer?.role === "admin";
 const isAdmin = viewer?.role === "admin";
 const dashboardHref = isBuyer ? "/buyer/dashboard/" : "/owner/dashboard/";
+const unreadCount = viewer ? await getUnreadInboxNotificationCount(getDB(Astro.locals.runtime), viewer.id) : 0;
 
 const primaryNav = [
   { label: "Buy", href: "/listings/?intent=buy", active: pathname === "/listings/" || pathname.startsWith("/listings/") },
   { label: "Rent", href: "/listings/?intent=rent", active: pathname === "/listings/" || pathname.startsWith("/listings/") },
   ...(isOwner ? [{ label: "Post", href: "/submit-listing/", active: pathname === "/submit-listing/" }] : []),
-  ...(viewer ? [{ label: "Inbox", href: "/account/inbox", active: pathname.startsWith("/account/inbox") }] : []),
+  ...(viewer ? [{ label: "Inbox", href: "/account/inbox", active: pathname.startsWith("/account/inbox"), count: unreadCount }] : []),
 ];
 
 const utilityNav = [
@@ -49,17 +52,20 @@ const utilityNav = [
 
       :root {
         color-scheme: light;
-        --bg: #f4f5f8;
-        --bg-deep: #0f1627;
-        --panel: rgba(255, 255, 255, 0.76);
-        --panel-strong: rgba(255, 255, 255, 0.9);
-        --text: #111827;
-        --muted: #5d6980;
-        --accent: #0f766e;
-        --accent-strong: #0b4a46;
-        --warm: #e89d5b;
-        --line: rgba(17, 24, 39, 0.1);
-        --shadow: 0 24px 60px rgba(15, 22, 39, 0.12);
+        --bg: #f8fafc;
+        --bg-deep: #101828;
+        --panel: rgba(255, 255, 255, 0.88);
+        --panel-strong: rgba(255, 255, 255, 0.96);
+        --text: #101828;
+        --muted: #667085;
+        --accent: #7f56d9;
+        --accent-strong: #6941c6;
+        --warm: #f79009;
+        --success: #17b26a;
+        --line: #eaecf0;
+        --line-strong: #d0d5dd;
+        --shadow: 0 20px 40px rgba(16, 24, 40, 0.08);
+        --shadow-soft: 0 8px 24px rgba(16, 24, 40, 0.06);
         font-family: "Plus Jakarta Sans", sans-serif;
       }
 
@@ -76,9 +82,9 @@ const utilityNav = [
         min-height: 100vh;
         color: var(--text);
         background:
-          radial-gradient(circle at 10% 10%, rgba(15, 118, 110, 0.18), transparent 24%),
-          radial-gradient(circle at 80% 12%, rgba(232, 157, 91, 0.18), transparent 18%),
-          linear-gradient(180deg, #eef3f5 0%, var(--bg) 100%);
+          radial-gradient(circle at 10% 10%, rgba(127, 86, 217, 0.12), transparent 24%),
+          radial-gradient(circle at 80% 12%, rgba(23, 178, 106, 0.08), transparent 18%),
+          linear-gradient(180deg, #fcfcfd 0%, var(--bg) 100%);
       }
 
       main {
@@ -98,10 +104,13 @@ const utilityNav = [
         align-items: center;
         justify-content: space-between;
         gap: 1rem;
-        padding: 0.9rem 1rem;
+        padding: 0.9rem 1.05rem;
         position: sticky;
         top: 0.75rem;
         z-index: 20;
+        background: rgba(255, 255, 255, 0.82);
+        border-color: rgba(208, 213, 221, 0.7);
+        box-shadow: var(--shadow-soft);
       }
 
       .brand-link {
@@ -120,7 +129,7 @@ const utilityNav = [
         place-items: center;
         background: linear-gradient(135deg, var(--accent), var(--accent-strong));
         color: white;
-        box-shadow: 0 12px 30px rgba(15, 118, 110, 0.22);
+        box-shadow: 0 12px 30px rgba(127, 86, 217, 0.22);
       }
 
       .brand-copy {
@@ -153,23 +162,48 @@ const utilityNav = [
         padding: 0.8rem 1rem;
         border-radius: 999px;
         border: 1px solid var(--line);
-        background: rgba(255, 255, 255, 0.7);
+        background: rgba(255, 255, 255, 0.72);
         color: var(--text);
         font-weight: 700;
         text-decoration: none;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
       }
 
       .nav-link.active,
       .utility-link.active {
-        background: var(--bg-deep);
-        border-color: var(--bg-deep);
-        color: white;
+        background: rgba(127, 86, 217, 0.08);
+        border-color: rgba(127, 86, 217, 0.22);
+        color: var(--accent-strong);
       }
 
       .auth-link.primary {
         border: none;
         background: linear-gradient(135deg, var(--accent), var(--accent-strong));
         color: white;
+      }
+
+      .link-with-count {
+        gap: 0.55rem;
+      }
+
+      .count-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 1.35rem;
+        height: 1.35rem;
+        padding: 0 0.35rem;
+        border-radius: 999px;
+        background: rgba(127, 86, 217, 0.12);
+        color: var(--accent-strong);
+        font-size: 0.74rem;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .nav-link.active .count-badge,
+      .utility-link.active .count-badge {
+        background: rgba(127, 86, 217, 0.16);
       }
 
       .nav-button {
@@ -188,8 +222,8 @@ const utilityNav = [
       .card {
         background: var(--panel);
         backdrop-filter: blur(18px);
-        border: 1px solid var(--line);
-        border-radius: 28px;
+        border: 1px solid rgba(234, 236, 240, 0.92);
+        border-radius: 24px;
         box-shadow: var(--shadow);
       }
 
@@ -218,8 +252,8 @@ const utilityNav = [
         gap: 0.45rem;
         padding: 0.55rem 0.85rem;
         border-radius: 999px;
-        border: 1px solid rgba(15, 118, 110, 0.14);
-        background: rgba(15, 118, 110, 0.08);
+        border: 1px solid rgba(127, 86, 217, 0.14);
+        background: rgba(127, 86, 217, 0.08);
         color: var(--accent-strong);
         font-size: 0.82rem;
         font-weight: 700;
@@ -274,12 +308,12 @@ const utilityNav = [
           color: var(--text);
           font-weight: 700;
           font-size: 0.88rem;
-          background: rgba(15, 22, 39, 0.04);
+          background: rgba(16, 24, 40, 0.04);
         }
 
         .mobile-utility a.active {
-          background: var(--bg-deep);
-          color: white;
+          background: rgba(127, 86, 217, 0.08);
+          color: var(--accent-strong);
         }
 
         .mobile-spacer {
@@ -303,7 +337,10 @@ const utilityNav = [
         <div class="nav-cluster">
           <nav class="nav-links">
             {primaryNav.map((item) => (
-              <a class:list={["nav-link", item.active && "active"]} href={item.href}>{item.label}</a>
+              <a class:list={["nav-link", "link-with-count", item.active && "active"]} href={item.href}>
+                <span>{item.label}</span>
+                {item.count ? <span class="count-badge">{item.count > 9 ? "9+" : item.count}</span> : null}
+              </a>
             ))}
           </nav>
 
@@ -332,7 +369,9 @@ const utilityNav = [
     </main>
     <nav class="mobile-utility" aria-label="Mobile navigation">
       <a class:list-active={pathname.startsWith("/listings") || pathname === "/"} href="/listings/?intent=buy">Search</a>
-      <a class:list-active={pathname.startsWith("/account/inbox")} href={viewer ? "/account/inbox" : "/login"}>Inbox</a>
+      <a class:list-active={pathname.startsWith("/account/inbox")} href={viewer ? "/account/inbox" : "/login"}>
+        {viewer && unreadCount > 0 ? `Inbox (${unreadCount > 9 ? "9+" : unreadCount})` : "Inbox"}
+      </a>
       <a class:list-active={pathname.startsWith("/account/notifications")} href={viewer ? "/account/notifications" : "/login"}>Settings</a>
       <a class:list-active={pathname.startsWith("/buyer/") || pathname.startsWith("/owner/") || pathname.startsWith("/admin/")} href={viewer ? dashboardHref : "/login"}>{viewer ? "Account" : "Sign in"}</a>
     </nav>

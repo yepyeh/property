@@ -350,6 +350,22 @@ export async function getInboxNotifications(db: D1Like | undefined, userId: numb
   return result.results;
 }
 
+export async function getUnreadInboxNotificationCount(db: D1Like | undefined, userId: number | undefined) {
+  if (!db || !userId) return 0;
+
+  const row = await db
+    .prepare(
+      `SELECT COUNT(*) as count
+       FROM notification_inbox
+       WHERE user_id = ?
+         AND read_at IS NULL`
+    )
+    .bind(userId)
+    .first<{ count: number }>();
+
+  return Number(row?.count || 0);
+}
+
 export async function markInboxNotificationRead(db: D1Like, userId: number, id: number) {
   await db
     .prepare(
