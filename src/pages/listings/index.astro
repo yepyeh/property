@@ -75,6 +75,7 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
   description="Search properties to buy or rent with real filterable results and a cleaner, portal-style search experience."
 >
   <section class="results-hero card">
+    <div class="results-aura"></div>
     <div class="hero-copy">
       <span class="section-kicker">Search results</span>
       <h1>Search property with less noise and stronger buyer signals.</h1>
@@ -481,6 +482,21 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
       box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
     }
 
+    .results-hero {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.88));
+    }
+
+    .results-aura {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 14% 18%, rgba(15, 118, 110, 0.12), transparent 24%),
+        radial-gradient(circle at 86% 18%, rgba(15, 23, 42, 0.08), transparent 22%);
+      pointer-events: none;
+    }
+
     .results-hero,
     .hero-actions,
     .utility-row,
@@ -510,8 +526,8 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
     .market-panel h2,
     .empty-state h2 {
       margin: 0.8rem 0 0;
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      letter-spacing: -0.06em;
+      font-size: clamp(2.2rem, 4.3vw, 3.5rem);
+      letter-spacing: -0.08em;
       line-height: 1;
     }
 
@@ -529,6 +545,12 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
       color: var(--muted);
       line-height: 1.7;
       margin: 0.8rem 0 0;
+    }
+
+    .hero-copy,
+    .hero-actions {
+      position: relative;
+      z-index: 1;
     }
 
     .section-kicker {
@@ -636,9 +658,9 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
     .field select {
       width: 100%;
       min-height: 3.1rem;
-      border-radius: 16px;
-      border: 1px solid var(--line);
-      background: white;
+      border-radius: 18px;
+      border: 1px solid rgba(208, 213, 221, 0.82);
+      background: linear-gradient(180deg, #ffffff, #fbfcfe);
       padding: 0.92rem 1rem;
       color: var(--text);
       font: inherit;
@@ -668,13 +690,13 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
       min-height: 2.3rem;
       padding: 0.56rem 0.85rem;
       font-size: 0.84rem;
-      background: #f8fafc;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
     }
 
     .results-summary strong {
       display: block;
-      font-size: 2rem;
-      letter-spacing: -0.04em;
+      font-size: 2.2rem;
+      letter-spacing: -0.05em;
     }
 
     .summary-links {
@@ -691,6 +713,7 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
       grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
       gap: 1rem;
       align-items: center;
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.9));
     }
 
     .mobile-view-toggle {
@@ -732,15 +755,17 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
     .market-panel {
       position: sticky;
       top: 6rem;
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.92));
     }
 
     .results-map {
       min-height: 22rem;
       margin-top: 1rem;
-      border-radius: 22px;
+      border-radius: 24px;
       overflow: hidden;
-      border: 1px solid var(--line);
+      border: 1px solid rgba(208, 213, 221, 0.78);
       background: linear-gradient(180deg, #f8fafc, #e5edf6);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
     }
 
     .map-empty {
@@ -748,9 +773,9 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
       gap: 0.45rem;
       margin-top: 1rem;
       padding: 1rem;
-      border-radius: 22px;
-      background: #f8fafc;
-      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+      border: 1px solid rgba(208, 213, 221, 0.74);
     }
 
     .map-empty strong {
@@ -766,9 +791,9 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
     .district-list b {
       display: block;
       padding: 0.9rem 1rem;
-      border-radius: 18px;
-      background: #f8fafc;
-      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+      border: 1px solid rgba(208, 213, 221, 0.74);
       font-size: 0.95rem;
     }
 
@@ -802,7 +827,7 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
 
     .listing-card-shell.is-active {
       transform: translateY(-2px);
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+      box-shadow: 0 20px 42px rgba(15, 23, 42, 0.12);
     }
 
     .listing-card-shell.is-active :global(.listing-card) {
