@@ -1,0 +1,66 @@
+---
+export interface Props {
+  title?: string;
+}
+
+const { title = "Astro on Cloudflare" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f3ec;
+        --panel: rgba(255, 255, 255, 0.78);
+        --text: #1f2430;
+        --muted: #596273;
+        --accent: #d95d39;
+        --accent-2: #205375;
+        --border: rgba(31, 36, 48, 0.12);
+        font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(217, 93, 57, 0.18), transparent 28%),
+          radial-gradient(circle at top right, rgba(32, 83, 117, 0.18), transparent 24%),
+          linear-gradient(180deg, #f3eee5 0%, var(--bg) 100%);
+      }
+
+      main {
+        max-width: 72rem;
+        margin: 0 auto;
+        padding: 4rem 1.5rem 5rem;
+      }
+
+      .card {
+        background: var(--panel);
+        backdrop-filter: blur(18px);
+        border: 1px solid var(--border);
+        border-radius: 28px;
+        box-shadow: 0 24px 60px rgba(31, 36, 48, 0.08);
+      }
+
+      a {
+        color: inherit;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>
