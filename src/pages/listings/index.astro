@@ -215,7 +215,20 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
     )}
   </section>
 
-  <section class="results-layout">
+  <div class="mobile-view-toggle" data-default-view="list">
+    <button type="button" class="toggle-chip is-active" data-results-view-trigger="list">List</button>
+    <button
+      type="button"
+      class="toggle-chip"
+      data-results-view-trigger="map"
+      disabled={mappableListings.length === 0}
+      aria-disabled={mappableListings.length === 0 ? "true" : "false"}
+    >
+      Map
+    </button>
+  </div>
+
+  <section class="results-layout" data-results-view="list">
     <aside class="market-panel card">
       <span class="section-kicker">Map view</span>
       <h2>See the filtered listings on a live map</h2>
@@ -263,7 +276,20 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
   </section>
 
   <script is:inline>
+    const layoutNode = document.querySelector("[data-results-view]");
+    const viewTriggerNodes = Array.from(document.querySelectorAll("[data-results-view-trigger]"));
     const mapNode = document.getElementById("results-map");
+
+    function setResultsView(nextView) {
+      if (!layoutNode) return;
+      layoutNode.setAttribute("data-results-view", nextView);
+
+      viewTriggerNodes.forEach((node) => {
+        const active = node.getAttribute("data-results-view-trigger") === nextView;
+        node.classList.toggle("is-active", active);
+        node.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+    }
 
     async function loadLeaflet() {
       if (window.L) return window.L;
@@ -347,6 +373,15 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
       }
     }
 
+    viewTriggerNodes.forEach((node) => {
+      node.addEventListener("click", () => {
+        if (node.hasAttribute("disabled")) return;
+        setResultsView(node.getAttribute("data-results-view-trigger") || "list");
+      });
+    });
+
+    setResultsView("list");
+
     initResultsMap().catch((error) => {
       console.error("Failed to initialize listings map", error);
     });
@@ -383,6 +418,7 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
     .search-frame,
     .results-summary,
     .save-search,
+    .mobile-view-toggle,
     .flash-banner,
     .results-layout {
       margin-bottom: 1rem;
@@ -430,6 +466,7 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
 
     .button-dark,
     .button-secondary,
+    .toggle-chip,
     .summary-links a,
     .utility-links a,
     .filter-chips span,
@@ -454,6 +491,7 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
     }
 
     .button-secondary,
+    .toggle-chip,
     .summary-links a,
     .utility-links a,
     .filter-chips span,
@@ -574,6 +612,35 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
       align-items: center;
     }
 
+    .mobile-view-toggle {
+      display: none;
+      gap: 0.75rem;
+      padding: 0.35rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .toggle-chip {
+      flex: 1 1 0;
+      min-height: 2.9rem;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .toggle-chip.is-active {
+      background: var(--brand);
+      color: white;
+      border-color: var(--brand);
+    }
+
+    .toggle-chip[disabled] {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
     .results-layout {
       display: grid;
       grid-template-columns: minmax(20rem, 0.42fr) minmax(0, 1fr);
@@ -662,6 +729,10 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
     }
 
     @media (max-width: 760px) {
+      .mobile-view-toggle {
+        display: flex;
+      }
+
       .results-hero,
       .hero-actions,
       .utility-row,
@@ -679,6 +750,14 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
       .button-dark,
       .button-secondary {
         width: 100%;
+      }
+
+      .results-layout[data-results-view="list"] .market-panel {
+        display: none;
+      }
+
+      .results-layout[data-results-view="map"] .results-list {
+        display: none;
       }
     }
   </style>
