@@ -1,0 +1,24 @@
+{
+  "name": "Property App 2026",
+  "short_name": "Property App",
+  "description": "Modern property listings, owner workflows, and enquiry management built for mobile and desktop.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0e1628",
+  "theme_color": "#0e1628",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

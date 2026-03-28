@@ -1,120 +1,861 @@
 ---
 import Layout from "../layouts/Layout.astro";
+
+const quickFilters = ["Buy", "Rent", "Ho Chi Minh City", "Under 5B VND", "3+ bedrooms", "New listings"];
+
+const featuredListings = [
+  {
+    title: "Riverside family villa",
+    meta: "Thu Duc City · Villa · 4 beds · 380 m2",
+    price: "15.8B VND",
+    status: "Verified owner",
+    tone: "sea",
+  },
+  {
+    title: "District 1 skyline apartment",
+    meta: "Ben Nghe · Condo · 2 beds · 96 m2",
+    price: "8.2B VND",
+    status: "High demand",
+    tone: "sun",
+  },
+  {
+    title: "Remote-work townhouse",
+    meta: "Da Nang · Townhouse · 3 beds · 210 m2",
+    price: "6.7B VND",
+    status: "New this week",
+    tone: "forest",
+  },
+];
+
+const workflows = [
+  {
+    title: "Post your own listing",
+    body: "Owners publish from mobile or desktop, add photos, set pricing, and mark availability without waiting for an agency handoff.",
+  },
+  {
+    title: "Track enquiries",
+    body: "Applicants flow into one inbox with contact details, intent, and status so owners can reply fast and avoid losing deals.",
+  },
+  {
+    title: "Install like an app",
+    body: "The product is designed as a PWA, so visitors can save it to their home screen and return to a fast app-style experience.",
+  },
+];
+
+const platformFeatures = [
+  "Smart search by location, budget, property type, and move-in intent",
+  "Seller dashboard for drafts, live listings, messages, and applicant status",
+  "Trust signals such as verified owners, lead response times, and saved searches",
+  "Responsive experience tuned for mobile-first browsing and PWA installation",
+];
 ---
 
-<Layout title="Astro on Cloudflare">
-  <section class="hero card">
-    <p class="eyebrow">Astro + Cloudflare Workers</p>
-    <h1>Ship the project from this repo to your Cloudflare account.</h1>
-    <p class="lede">
-      The app is configured for Astro server output, Wrangler deployment, and Cloudflare's Workers runtime.
-      Log in with Wrangler, then deploy from this workspace.
-    </p>
+<Layout
+  title="Property App 2026"
+  description="A modern property marketplace for browsing listings, posting homes, and managing enquiries on mobile and desktop."
+>
+  <header class="topbar">
+    <a class="brand" href="#top">
+      <span class="brand-mark">P</span>
+      <span>
+        <strong>Property App</strong>
+        <small>Vietnam property marketplace</small>
+      </span>
+    </a>
+    <nav class="nav">
+      <a href="#listings">Listings</a>
+      <a href="#owners">Owners</a>
+      <a href="#app">PWA</a>
+    </nav>
+    <a class="cta" href="#owners">Post a listing</a>
+  </header>
 
-    <div class="actions">
-      <a href="https://developers.cloudflare.com/workers/frameworks/framework-guides/astro/">Cloudflare guide</a>
-      <a href="https://docs.astro.build/en/guides/deploy/cloudflare/">Astro guide</a>
+  <section class="hero card" id="top">
+    <div class="hero-copy">
+      <span class="pill">Built for buy, rent, and enquiries</span>
+      <h1>Clean property search for buyers. Clear lead flow for owners.</h1>
+      <p class="intro">
+        This product is positioned against broad portals like Dot Property, but with a sharper focus on trust,
+        speed, and an app-like experience. Search on mobile, save homes fast, then let owners manage enquiries
+        in one clean dashboard.
+      </p>
+
+      <div class="hero-actions">
+        <a class="primary" href="#listings">Explore featured homes</a>
+        <a class="secondary" href="#owners">See owner workflow</a>
+      </div>
+
+      <div class="stats">
+        <div>
+          <strong>2 min</strong>
+          <span>target owner response window</span>
+        </div>
+        <div>
+          <strong>1 tap</strong>
+          <span>PWA install from mobile</span>
+        </div>
+        <div>
+          <strong>3 views</strong>
+          <span>browse, post, and manage enquiries</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="search-panel">
+      <div class="search-top">
+        <button class="mode active">Buy</button>
+        <button class="mode">Rent</button>
+        <button class="mode">New homes</button>
+      </div>
+
+      <div class="search-box">
+        <label>
+          Search area
+          <input type="text" value="Thu Duc City, Ho Chi Minh City" />
+        </label>
+        <div class="search-grid">
+          <label>
+            Property type
+            <select>
+              <option>Villa</option>
+              <option>Condo</option>
+              <option>Townhouse</option>
+            </select>
+          </label>
+          <label>
+            Budget
+            <select>
+              <option>Up to 10B VND</option>
+              <option>Up to 5B VND</option>
+              <option>Custom</option>
+            </select>
+          </label>
+        </div>
+        <button class="search-button">Search 128 listings</button>
+      </div>
+
+      <div class="chip-row">
+        {quickFilters.map((filter) => <span>{filter}</span>)}
+      </div>
     </div>
   </section>
 
-  <section class="grid">
-    <article class="card panel">
-      <h2>Local development</h2>
-      <p>Run <code>npm run dev</code> to iterate locally.</p>
-    </article>
-    <article class="card panel">
-      <h2>Preview Worker build</h2>
-      <p>Run <code>npm run preview</code> to build and serve via Wrangler.</p>
-    </article>
-    <article class="card panel">
-      <h2>Deploy to Cloudflare</h2>
-      <p>Run <code>npm run deploy</code> after <code>wrangler login</code>.</p>
+  <section class="overview" id="listings">
+    <div class="section-head">
+      <span class="pill">Featured</span>
+      <h2 class="section-title">Listings that feel premium without feeling busy.</h2>
+      <p class="section-copy">
+        The home experience should feel lighter than the incumbent portals: fewer distractions, stronger trust
+        cues, and faster search-to-enquiry conversion on smaller screens.
+      </p>
+    </div>
+
+    <div class="listing-grid">
+      {featuredListings.map((listing) => (
+        <article class={`listing card ${listing.tone}`}>
+          <div class="photo">
+            <span>{listing.status}</span>
+          </div>
+          <div class="listing-body">
+            <p class="price">{listing.price}</p>
+            <h3>{listing.title}</h3>
+            <p>{listing.meta}</p>
+            <div class="listing-actions">
+              <a href="#owners">Enquire now</a>
+              <button>Save</button>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="owners" id="owners">
+    <div class="section-head narrow">
+      <span class="pill">Seller experience</span>
+      <h2 class="section-title">Owners need more than a form. They need a workflow.</h2>
+      <p class="section-copy">
+        Listing creation, applicant intake, and follow-up should live in one system. That is the core product
+        advantage over directory-style portals.
+      </p>
+    </div>
+
+    <div class="workflow-grid">
+      {workflows.map((item, index) => (
+        <article class="workflow card">
+          <span class="step">0{index + 1}</span>
+          <h3>{item.title}</h3>
+          <p>{item.body}</p>
+        </article>
+      ))}
+    </div>
+
+    <div class="split-grid">
+      <article class="dashboard card">
+        <div class="window-bar">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="dashboard-body">
+          <div class="dashboard-column">
+            <p class="label">Owner dashboard</p>
+            <h3>One view for active listings and open enquiries.</h3>
+            <ul>
+              <li>Draft and publish listings</li>
+              <li>View applicant messages and status</li>
+              <li>Pause, renew, or promote listings</li>
+            </ul>
+          </div>
+          <div class="pipeline">
+            <div class="pipeline-card">
+              <strong>New enquiry</strong>
+              <span>Pham Linh · Wants a Saturday viewing</span>
+            </div>
+            <div class="pipeline-card">
+              <strong>Qualified lead</strong>
+              <span>Nguyen An · Budget approved</span>
+            </div>
+            <div class="pipeline-card">
+              <strong>Follow-up due</strong>
+              <span>Tran Minh · Awaiting floor plan</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="notes card">
+        <span class="pill">Product direction</span>
+        <ul>
+          {platformFeatures.map((feature) => <li>{feature}</li>)}
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="app" id="app">
+    <article class="app-shell card">
+      <div class="section-head compact">
+        <span class="pill">Mobile app path</span>
+        <h2 class="section-title">Start as a PWA. Earn the right to become a native app later.</h2>
+        <p class="section-copy">
+          That is the pragmatic route. You get installability, offline shell caching, and home-screen presence
+          now, without splitting effort across iOS, Android, and web before the marketplace mechanics are proven.
+        </p>
+      </div>
+
+      <div class="phone-grid">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <p class="mini-label">Saved search</p>
+            <strong>Modern 2BR under 9B VND</strong>
+            <span>Thu Duc · District 2 · District 7</span>
+            <div class="mini-feed">
+              <div>
+                <b>12</b>
+                <span>new matches</span>
+              </div>
+              <div>
+                <b>4</b>
+                <span>owner replies</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="install-card">
+          <h3>PWA checklist now in place</h3>
+          <ul>
+            <li>Install prompt metadata and manifest</li>
+            <li>Service worker registration for offline shell caching</li>
+            <li>Mobile-first layout and touch-friendly controls</li>
+          </ul>
+          <p>
+            Next product step is not “make an app store build.” It is “validate listing submission, enquiry
+            handling, and retention.”
+          </p>
+        </div>
+      </div>
     </article>
   </section>
 
+  <section class="footer-bar">
+    <div>
+      <p class="footer-title">What this version proves</p>
+      <p>Brand direction, responsive experience, and PWA shape for the property platform.</p>
+    </div>
+    <a href="https://www.dotproperty.com.vn/en" target="_blank" rel="noreferrer">Competitor reference</a>
+  </section>
+
   <style>
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding: 0.6rem 0.4rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--accent), var(--bg-deep));
+      color: white;
+      font-family: "Fraunces", serif;
+      font-size: 1.25rem;
+    }
+
+    .brand strong,
+    .brand small {
+      display: block;
+    }
+
+    .brand small {
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .nav {
+      display: flex;
+      gap: 1.2rem;
+      color: var(--muted);
+    }
+
+    .nav a,
+    .cta,
+    .primary,
+    .secondary,
+    .listing-actions a,
+    .listing-actions button,
+    .footer-bar a {
+      text-decoration: none;
+      transition: transform 160ms ease, opacity 160ms ease, background 160ms ease;
+    }
+
+    .cta,
+    .primary,
+    .search-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.95rem 1.2rem;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 14px 30px rgba(15, 118, 110, 0.2);
+    }
+
     .hero {
-      padding: 2.5rem;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 1.2rem;
+      padding: 1.1rem;
+      overflow: hidden;
+      position: relative;
     }
 
-    .eyebrow {
-      margin: 0 0 0.75rem;
-      color: var(--accent-2);
-      font-size: 0.9rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -6rem -8rem auto;
+      width: 18rem;
+      height: 18rem;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232, 157, 91, 0.32), transparent 70%);
+      pointer-events: none;
     }
 
-    h1 {
-      margin: 0;
-      max-width: 12ch;
-      font-size: clamp(2.8rem, 7vw, 5.8rem);
-      line-height: 0.96;
+    .hero-copy,
+    .search-panel {
+      position: relative;
+      z-index: 1;
+      border-radius: 24px;
     }
 
-    .lede {
-      max-width: 56rem;
+    .hero-copy {
+      padding: 2.4rem;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.52));
+    }
+
+    .hero-copy h1 {
+      margin: 1rem 0 0;
+      max-width: 11ch;
+      font-family: "Fraunces", serif;
+      font-size: clamp(3.1rem, 7vw, 6.2rem);
+      line-height: 0.9;
+      letter-spacing: -0.04em;
+    }
+
+    .intro {
+      max-width: 48rem;
       margin: 1.25rem 0 0;
       color: var(--muted);
-      font-size: 1.15rem;
-      line-height: 1.65;
+      font-size: 1.08rem;
+      line-height: 1.75;
     }
 
-    .actions {
+    .hero-actions {
       display: flex;
       flex-wrap: wrap;
       gap: 0.9rem;
-      margin-top: 1.75rem;
+      margin-top: 1.8rem;
     }
 
-    .actions a {
-      padding: 0.9rem 1.2rem;
-      border: 1px solid var(--border);
+    .secondary,
+    .listing-actions button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.95rem 1.2rem;
       border-radius: 999px;
-      text-decoration: none;
-      transition: transform 180ms ease, border-color 180ms ease;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--text);
+      font-weight: 700;
     }
 
-    .actions a:hover {
-      transform: translateY(-1px);
-      border-color: rgba(31, 36, 48, 0.3);
-    }
-
-    .grid {
+    .stats {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9rem;
+      margin-top: 2rem;
+    }
+
+    .stats div {
+      padding: 1rem;
+      border-radius: 22px;
+      background: rgba(14, 22, 40, 0.06);
+      border: 1px solid rgba(14, 22, 40, 0.06);
+    }
+
+    .stats strong,
+    .price {
+      display: block;
+      font-size: 1.3rem;
+      font-weight: 800;
+    }
+
+    .stats span {
+      display: block;
+      margin-top: 0.35rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .search-panel {
+      align-self: end;
+      padding: 1.4rem;
+      background: linear-gradient(180deg, rgba(14, 22, 40, 0.96), rgba(14, 22, 40, 0.88));
+      color: #f8fafc;
+    }
+
+    .search-top {
+      display: flex;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .mode {
+      padding: 0.65rem 0.95rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: inherit;
+    }
+
+    .mode.active {
+      background: white;
+      color: var(--bg-deep);
+      border-color: white;
+    }
+
+    .search-box {
+      padding: 1rem;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .search-box label {
+      display: block;
+      margin-bottom: 0.9rem;
+      color: rgba(248, 250, 252, 0.72);
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .search-box input,
+    .search-box select {
+      width: 100%;
+      margin-top: 0.45rem;
+      padding: 0.9rem 1rem;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font: inherit;
+    }
+
+    .search-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.8rem;
+    }
+
+    .search-button {
+      width: 100%;
+      margin-top: 0.3rem;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-top: 0.95rem;
+    }
+
+    .chip-row span {
+      padding: 0.55rem 0.8rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(248, 250, 252, 0.82);
+      font-size: 0.84rem;
+    }
+
+    .overview,
+    .owners,
+    .app {
+      margin-top: 1.1rem;
+    }
+
+    .section-head {
+      padding: 1.2rem 0.4rem 1rem;
+      max-width: 48rem;
+    }
+
+    .section-head.narrow,
+    .section-head.compact {
+      max-width: 42rem;
+    }
+
+    .listing-grid,
+    .workflow-grid,
+    .split-grid,
+    .phone-grid {
+      display: grid;
       gap: 1rem;
+    }
+
+    .listing-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .listing {
+      overflow: hidden;
+    }
+
+    .photo {
+      height: 14rem;
+      padding: 1rem;
+      display: flex;
+      align-items: flex-start;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .sea .photo {
+      background-image:
+        linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)),
+        linear-gradient(135deg, #86cfd0, #245a73);
+    }
+
+    .sun .photo {
+      background-image:
+        linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)),
+        linear-gradient(135deg, #eebf8a, #c96f47);
+    }
+
+    .forest .photo {
+      background-image:
+        linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)),
+        linear-gradient(135deg, #98c8a2, #245646);
+    }
+
+    .photo span {
+      padding: 0.5rem 0.8rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--bg-deep);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .listing-body {
+      padding: 1.2rem;
+    }
+
+    .listing-body h3,
+    .workflow h3,
+    .dashboard h3,
+    .install-card h3 {
+      margin: 0.3rem 0 0.55rem;
+      font-size: 1.25rem;
+      line-height: 1.2;
+    }
+
+    .listing-body p,
+    .workflow p,
+    .notes li,
+    .install-card p,
+    .install-card li,
+    .dashboard li {
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .listing-actions {
+      display: flex;
+      gap: 0.65rem;
       margin-top: 1rem;
     }
 
-    .panel {
+    .listing-actions a {
+      padding: 0.85rem 1rem;
+      border-radius: 999px;
+      background: var(--bg-deep);
+      color: white;
+      font-weight: 700;
+    }
+
+    .workflow-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .workflow,
+    .notes,
+    .dashboard,
+    .app-shell {
       padding: 1.4rem;
     }
 
-    .panel h2 {
-      margin-top: 0;
-      margin-bottom: 0.5rem;
-      font-size: 1.1rem;
+    .step,
+    .label,
+    .mini-label,
+    .footer-title {
+      display: inline-block;
+      color: var(--accent-strong);
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
-    .panel p {
-      margin: 0;
+    .split-grid {
+      grid-template-columns: 1.3fr 0.7fr;
+      margin-top: 1rem;
+    }
+
+    .window-bar {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .window-bar span {
+      width: 0.75rem;
+      height: 0.75rem;
+      border-radius: 50%;
+      background: rgba(17, 24, 39, 0.16);
+    }
+
+    .dashboard-body {
+      display: grid;
+      grid-template-columns: 1fr 0.78fr;
+      gap: 1rem;
+      margin-top: 1.1rem;
+    }
+
+    .dashboard ul,
+    .notes ul,
+    .install-card ul {
+      margin: 0.8rem 0 0;
+      padding-left: 1.1rem;
+    }
+
+    .pipeline {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .pipeline-card {
+      padding: 1rem;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(15, 118, 110, 0.08), rgba(15, 22, 40, 0.03));
+      border: 1px solid rgba(15, 118, 110, 0.1);
+    }
+
+    .pipeline-card strong,
+    .pipeline-card span,
+    .phone-screen strong,
+    .phone-screen span {
+      display: block;
+    }
+
+    .pipeline-card span,
+    .phone-screen span {
+      margin-top: 0.35rem;
       color: var(--muted);
-      line-height: 1.6;
     }
 
-    code {
-      font-family: "SF Mono", "Monaco", "Cascadia Code", Consolas, monospace;
-      font-size: 0.95em;
+    .notes {
+      background: linear-gradient(180deg, rgba(232, 157, 91, 0.2), rgba(255, 255, 255, 0.8));
+    }
+
+    .app-shell {
+      background: linear-gradient(180deg, rgba(14, 22, 40, 0.96), rgba(18, 34, 61, 0.9));
+      color: #f8fafc;
+    }
+
+    .app-shell .section-copy,
+    .app-shell .pill,
+    .app-shell li,
+    .app-shell p {
+      color: rgba(248, 250, 252, 0.84);
+    }
+
+    .phone-grid {
+      grid-template-columns: 0.6fr 1fr;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .phone-frame {
+      width: min(18rem, 100%);
+      padding: 0.75rem;
+      border-radius: 36px;
+      background: linear-gradient(180deg, #0b1220, #243349);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.24);
+    }
+
+    .phone-screen {
+      padding: 1rem;
+      min-height: 20rem;
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at top, rgba(255, 255, 255, 0.16), transparent 25%),
+        linear-gradient(180deg, #17434a 0%, #0d1627 100%);
+    }
+
+    .mini-feed {
+      display: grid;
+      gap: 0.8rem;
+      margin-top: 1.2rem;
+    }
+
+    .mini-feed div {
+      padding: 0.9rem;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .mini-feed b {
+      display: block;
+      font-size: 1.4rem;
+    }
+
+    .install-card {
+      padding: 1rem 0;
+    }
+
+    .footer-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 1.2rem;
+      padding: 1.2rem 0.5rem 0;
+      color: var(--muted);
+    }
+
+    .footer-bar a {
+      padding: 0.9rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+    }
+
+    @media (max-width: 960px) {
+      .hero,
+      .split-grid,
+      .phone-grid,
+      .listing-grid,
+      .workflow-grid,
+      .dashboard-body {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-copy h1 {
+        max-width: 100%;
+      }
     }
 
     @media (max-width: 760px) {
-      .hero {
-        padding: 1.5rem;
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        padding: 0.85rem;
+        border-radius: 24px;
+        background: rgba(244, 245, 248, 0.84);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(17, 24, 39, 0.06);
       }
 
-      .grid {
+      .nav {
+        display: none;
+      }
+
+      .cta {
+        display: none;
+      }
+
+      .hero {
+        padding: 0.75rem;
+      }
+
+      .hero-copy,
+      .search-panel {
+        padding: 1.2rem;
+      }
+
+      .hero-copy h1 {
+        font-size: clamp(2.6rem, 14vw, 4.2rem);
+      }
+
+      .stats,
+      .search-grid {
         grid-template-columns: 1fr;
+      }
+
+      .listing-actions {
+        flex-direction: column;
+      }
+
+      .footer-bar {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>

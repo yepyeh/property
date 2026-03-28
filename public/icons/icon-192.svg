@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-label="Property App icon">
+  <rect width="192" height="192" rx="42" fill="#0f1627"/>
+  <path d="M39 138V66l57-36 57 36v72h-45v-36H84v36H39Z" fill="#f6f8fb"/>
+  <path d="M123 54 96 37 69 54v12l27-17 27 17V54Z" fill="#e89d5b"/>
+  <circle cx="143" cy="52" r="20" fill="#0f766e"/>
+  <path d="M143 42v20M133 52h20" stroke="#f6f8fb" stroke-width="6" stroke-linecap="round"/>
+</svg>

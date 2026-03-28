@@ -1,9 +1,13 @@
 ---
 export interface Props {
   title?: string;
+  description?: string;
 }
 
-const { title = "Astro on Cloudflare" } = Astro.props;
+const {
+  title = "Property App 2026",
+  description = "A clean property marketplace for searching homes, posting listings, and handling enquiries across mobile and desktop.",
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -11,22 +15,40 @@ const { title = "Astro on Cloudflare" } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0e1628" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Property App" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.svg" />
     <title>{title}</title>
     <style>
+      @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap");
+
       :root {
         color-scheme: light;
-        --bg: #f7f3ec;
-        --panel: rgba(255, 255, 255, 0.78);
-        --text: #1f2430;
-        --muted: #596273;
-        --accent: #d95d39;
-        --accent-2: #205375;
-        --border: rgba(31, 36, 48, 0.12);
-        font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, serif;
+        --bg: #f4f5f8;
+        --bg-deep: #0f1627;
+        --panel: rgba(255, 255, 255, 0.76);
+        --panel-strong: rgba(255, 255, 255, 0.9);
+        --text: #111827;
+        --muted: #5d6980;
+        --accent: #0f766e;
+        --accent-strong: #0b4a46;
+        --warm: #e89d5b;
+        --line: rgba(17, 24, 39, 0.1);
+        --shadow: 0 24px 60px rgba(15, 22, 39, 0.12);
+        font-family: "Plus Jakarta Sans", sans-serif;
       }
 
       * {
         box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
       }
 
       body {
@@ -34,27 +56,63 @@ const { title = "Astro on Cloudflare" } = Astro.props;
         min-height: 100vh;
         color: var(--text);
         background:
-          radial-gradient(circle at top left, rgba(217, 93, 57, 0.18), transparent 28%),
-          radial-gradient(circle at top right, rgba(32, 83, 117, 0.18), transparent 24%),
-          linear-gradient(180deg, #f3eee5 0%, var(--bg) 100%);
+          radial-gradient(circle at 10% 10%, rgba(15, 118, 110, 0.18), transparent 24%),
+          radial-gradient(circle at 80% 12%, rgba(232, 157, 91, 0.18), transparent 18%),
+          linear-gradient(180deg, #eef3f5 0%, var(--bg) 100%);
       }
 
       main {
-        max-width: 72rem;
+        max-width: 80rem;
         margin: 0 auto;
-        padding: 4rem 1.5rem 5rem;
+        padding: 1.25rem 1.25rem 5rem;
       }
 
       .card {
         background: var(--panel);
         backdrop-filter: blur(18px);
-        border: 1px solid var(--border);
+        border: 1px solid var(--line);
         border-radius: 28px;
-        box-shadow: 0 24px 60px rgba(31, 36, 48, 0.08);
+        box-shadow: var(--shadow);
       }
 
       a {
         color: inherit;
+      }
+
+      .section-title {
+        margin: 0 0 0.75rem;
+        font-family: "Fraunces", serif;
+        font-size: clamp(2rem, 4vw, 3.4rem);
+        line-height: 0.95;
+        letter-spacing: -0.03em;
+      }
+
+      .section-copy {
+        margin: 0;
+        color: var(--muted);
+        font-size: 1.02rem;
+        line-height: 1.7;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.55rem 0.85rem;
+        border-radius: 999px;
+        border: 1px solid rgba(15, 118, 110, 0.14);
+        background: rgba(15, 118, 110, 0.08);
+        color: var(--accent-strong);
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      @media (max-width: 760px) {
+        main {
+          padding: 0.9rem 0.9rem 4rem;
+        }
       }
     </style>
   </head>
@@ -62,5 +120,12 @@ const { title = "Astro on Cloudflare" } = Astro.props;
     <main>
       <slot />
     </main>
+    <script is:inline>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").catch(() => {});
+        });
+      }
+    </script>
   </body>
 </html>
