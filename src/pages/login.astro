@@ -1,0 +1,74 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const error = Astro.url.searchParams.get("error");
+const redirectTo = Astro.url.searchParams.get("redirect") ?? "/owner/dashboard/";
+---
+
+<Layout title="Owner Login | Property App 2026" description="Secure login for owners and administrators managing property listings and enquiries.">
+  <section class="login-shell card">
+    <div>
+      <span class="pill">Protected access</span>
+      <h1 class="section-title">Owner login</h1>
+      <p class="section-copy">
+        Listing submission and the owner dashboard are now protected. Use the admin credentials configured in Cloudflare.
+      </p>
+    </div>
+
+    {error && <p class="error">Login failed. Check the email and password and try again.</p>}
+
+    <form class="login-form" method="POST" action="/api/auth/login">
+      <input type="hidden" name="redirect" value={redirectTo} />
+      <label>Email<input type="email" name="email" required placeholder="admin@example.com" /></label>
+      <label>Password<input type="password" name="password" required placeholder="Enter password" /></label>
+      <button type="submit">Sign in</button>
+    </form>
+  </section>
+
+  <style>
+    .login-shell {
+      max-width: 34rem;
+      margin: 4rem auto 0;
+      padding: 1.5rem;
+    }
+    .error {
+      padding: 0.9rem 1rem;
+      border-radius: 18px;
+      background: rgba(185, 28, 28, 0.08);
+      color: #991b1b;
+      font-weight: 600;
+    }
+    .login-form {
+      display: grid;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+    input {
+      width: 100%;
+      margin-top: 0.4rem;
+      padding: 0.95rem 1rem;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.8);
+      font: inherit;
+    }
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.95rem 1.2rem;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</Layout>

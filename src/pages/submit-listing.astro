@@ -13,7 +13,12 @@ const created = Astro.url.searchParams.get("created");
         This is the first real supply-side workflow. Owners can now submit a listing into Cloudflare D1, which means the marketplace is no longer purely static.
       </p>
     </div>
-    <a class="ghost" href="/owner/dashboard/">Owner dashboard</a>
+    <div class="actions">
+      <a class="ghost" href="/owner/dashboard/">Owner dashboard</a>
+      <form method="POST" action="/api/auth/logout">
+        <button class="ghost" type="submit">Log out</button>
+      </form>
+    </div>
   </section>
 
   {created && (
@@ -71,6 +76,11 @@ const created = Astro.url.searchParams.get("created");
       justify-content: space-between;
       gap: 1rem;
       align-items: flex-start;
+    }
+    .actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
     }
     .ghost,
     button {

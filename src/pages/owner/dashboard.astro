@@ -12,7 +12,12 @@ const { listings, enquiries } = await getDashboardData(getDB(Astro.locals.runtim
       <h1 class="section-title">Listings and enquiries</h1>
       <p class="section-copy">This is the first operational backend surface: what got submitted, and who enquired about it.</p>
     </div>
-    <a class="primary" href="/submit-listing/">Post a listing</a>
+    <div class="actions">
+      <a class="primary" href="/submit-listing/">Post a listing</a>
+      <form method="POST" action="/api/auth/logout">
+        <button class="ghost" type="submit">Log out</button>
+      </form>
+    </div>
   </section>
 
   <section class="stats-grid">
@@ -71,6 +76,23 @@ const { listings, enquiries } = await getDashboardData(getDB(Astro.locals.runtim
       color: white;
       font-weight: 700;
       text-decoration: none;
+    }
+    .ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.95rem 1.2rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.72);
+      color: var(--text);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
     }
     .stats-grid, .panel-grid {
       display: grid;
