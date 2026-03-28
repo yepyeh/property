@@ -12,11 +12,7 @@ const quickFilters = [
   { label: "New listings", href: "/listings/?sort=newest" },
 ];
 const featuredListings = (await getAllListings(getDB(Astro.locals.runtime))).slice(0, 3);
-const topNav = ["Buy", "Rent", "New Projects", "Find Agent", "Guides"];
 const utilityLinks = ["Saved searches", "Saved homes", "Enquiry tracking", "Owner dashboard"];
-const viewer = Astro.locals.owner;
-const accountHref = viewer?.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashboard/";
-const accountLabel = viewer?.role === "buyer" ? "Buyer dashboard" : "My Property App";
 const browseCities = [
   { name: "Ho Chi Minh City", note: "Apartments, villas, and launch inventory", href: "/listings/?intent=buy&city=Ho%20Chi%20Minh%20City" },
   { name: "Hanoi", note: "Family homes, West Lake, and long-term rentals", href: "/listings/?intent=buy&city=Hanoi" },
@@ -50,25 +46,6 @@ const platformFeatures = [
   title="Property App 2026"
   description="A modern property marketplace for browsing listings, posting homes, and managing enquiries on mobile and desktop."
 >
-  <header class="topbar">
-    <a class="brand" href="#top">
-      <span class="brand-mark">P</span>
-      <span>
-        <strong>Property App</strong>
-        <small>Vietnam property marketplace</small>
-      </span>
-    </a>
-    <nav class="nav">
-      {topNav.map((item) => (
-        <a href={item === "Buy" ? "/listings/?intent=buy" : item === "Rent" ? "/listings/?intent=rent" : "#owners"}>{item}</a>
-      ))}
-    </nav>
-    <div class="header-actions">
-      <a class="account-link" href={accountHref}>{accountLabel}</a>
-      <a class="cta" href="/listings/?intent=buy">Browse listings</a>
-    </div>
-  </header>
-
   <section class="hero card" id="top">
     <div class="hero-copy">
       <span class="pill">Search first, then organise</span>
@@ -320,53 +297,7 @@ const platformFeatures = [
   </section>
 
   <style>
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 1rem;
-      padding: 0.7rem 0.4rem;
-    }
-
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.85rem;
-      text-decoration: none;
-    }
-
-    .brand-mark {
-      display: grid;
-      place-items: center;
-      width: 2.75rem;
-      height: 2.75rem;
-      border-radius: 18px;
-      background: linear-gradient(135deg, var(--accent), var(--bg-deep));
-      color: white;
-      font-family: "Fraunces", serif;
-      font-size: 1.25rem;
-    }
-
-    .brand strong,
-    .brand small {
-      display: block;
-    }
-
-    .brand small {
-      color: var(--muted);
-      font-size: 0.78rem;
-    }
-
-    .nav {
-      display: flex;
-      gap: 1.2rem;
-      color: var(--muted);
-    }
-
     .nav a,
-    .account-link,
-    .cta,
     .primary,
     .secondary,
     .footer-bar a,
@@ -375,18 +306,6 @@ const platformFeatures = [
       transition: transform 160ms ease, opacity 160ms ease, background 160ms ease;
     }
 
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-    }
-
-    .account-link {
-      color: var(--muted);
-      font-weight: 600;
-    }
-
-    .cta,
     .primary,
     .search-button {
       display: inline-flex;
@@ -873,23 +792,6 @@ const platformFeatures = [
     }
 
     @media (max-width: 760px) {
-      .topbar {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        padding: 0.85rem;
-        border-radius: 24px;
-        background: rgba(244, 245, 248, 0.84);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(17, 24, 39, 0.06);
-      }
-
-      .nav,
-      .account-link,
-      .cta {
-        display: none;
-      }
-
       .hero {
         padding: 0.75rem;
       }
