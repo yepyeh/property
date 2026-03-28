@@ -36,6 +36,35 @@ const ownerSteps = [
     body: "Free trials, paid extensions, and promoted placement already exist in the product and can scale with demand.",
   },
 ];
+const entryPaths = [
+  {
+    kicker: "For buyers",
+    title: "Search, save, and enquire without noise",
+    body: "Start with listings, filters, map context, and saved searches if you are here to find a place.",
+    primaryHref: "/for-buyers",
+    primaryLabel: "Explore buyer flow",
+    secondaryHref: "/listings/?intent=buy",
+    secondaryLabel: "Browse listings",
+  },
+  {
+    kicker: "For owners",
+    title: "Post, manage leads, and renew visibility",
+    body: "Use the owner flow if you want to create listings, manage enquiries, upload images, and control promotion.",
+    primaryHref: "/for-owners",
+    primaryLabel: "Explore owner flow",
+    secondaryHref: "/submit-listing/",
+    secondaryLabel: "Post a listing",
+  },
+  {
+    kicker: "Pricing",
+    title: "Understand how the monetization model works",
+    body: "See the 7-day free listing, paid visibility, and promoted placement without digging through the app.",
+    primaryHref: "/pricing",
+    primaryLabel: "View pricing",
+    secondaryHref: "/for-owners",
+    secondaryLabel: "Owner plans",
+  },
+];
 ---
 
 <Layout
@@ -63,8 +92,8 @@ const ownerSteps = [
         </div>
 
         <div class="hero-actions">
-          <a class="button-primary" href="/listings/?intent=buy">Search homes</a>
-          <a class="button-secondary" href="/for-owners">Post your listing</a>
+          <a class="button-primary" href="/for-buyers">I’m looking for property</a>
+          <a class="button-secondary" href="/for-owners">I want to post a listing</a>
         </div>
       </div>
 
@@ -145,6 +174,31 @@ const ownerSteps = [
         <strong>Mobile app behavior</strong>
         <span>Mobile-first shell that can install and behave like a lightweight app</span>
       </article>
+    </div>
+  </section>
+
+  <section class="path-section">
+    <div class="section-heading narrow">
+      <span class="section-kicker">Choose your path</span>
+      <h2>This homepage should route users, not make them interpret the product structure themselves.</h2>
+      <p>
+        Most users arrive with one clear job. The public site should acknowledge that immediately instead of pushing
+        everyone through the same generic surface.
+      </p>
+    </div>
+
+    <div class="path-grid">
+      {entryPaths.map((path) => (
+        <article class="path-card card">
+          <span class="section-kicker">{path.kicker}</span>
+          <h3>{path.title}</h3>
+          <p>{path.body}</p>
+          <div class="path-actions">
+            <a class="button-primary" href={path.primaryHref}>{path.primaryLabel}</a>
+            <a class="button-secondary" href={path.secondaryHref}>{path.secondaryLabel}</a>
+          </div>
+        </article>
+      ))}
     </div>
   </section>
 
@@ -360,7 +414,8 @@ const ownerSteps = [
 
     .hero-actions,
     .quick-filter-row,
-    .section-actions {
+    .section-actions,
+    .path-actions {
       display: flex;
       gap: 0.75rem;
       flex-wrap: wrap;
@@ -541,7 +596,8 @@ const ownerSteps = [
     .city-section,
     .feature-section,
     .owners-section,
-    .product-band {
+    .product-band,
+    .path-section {
       margin-top: 1.15rem;
     }
 
@@ -563,8 +619,15 @@ const ownerSteps = [
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
+    .path-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
     .city-card,
-    .owner-card {
+    .owner-card,
+    .path-card {
       padding: 1.25rem;
       border: 1px solid var(--line);
       text-decoration: none;
@@ -576,9 +639,16 @@ const ownerSteps = [
     }
 
     .city-card:hover,
-    .owner-card:hover {
+    .owner-card:hover,
+    .path-card:hover {
       transform: translateY(-2px);
       box-shadow: 0 18px 40px rgba(15, 23, 42, 0.1);
+    }
+
+    .path-card h3 {
+      margin: 0.6rem 0 0.5rem;
+      font-size: 1.28rem;
+      letter-spacing: -0.03em;
     }
 
     .step-index,
@@ -637,7 +707,8 @@ const ownerSteps = [
       .city-grid,
       .listing-grid,
       .owner-grid,
-      .hero-metrics {
+      .hero-metrics,
+      .path-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -668,7 +739,8 @@ const ownerSteps = [
 
       .hero-actions,
       .quick-filter-row,
-      .section-actions {
+      .section-actions,
+      .path-actions {
         display: grid;
       }
     }
