@@ -8,7 +8,7 @@ if (!owner || owner.role !== "admin") {
   return Astro.redirect("/owner/dashboard/");
 }
 
-const { listings } = await getAdminBillingData(getDB(Astro.locals.runtime));
+const { listings, payments } = await getAdminBillingData(getDB(Astro.locals.runtime));
 const updated = Astro.url.searchParams.get("updated");
 ---
 
@@ -83,8 +83,27 @@ const updated = Astro.url.searchParams.get("updated");
     )}
   </section>
 
+  <section class="card panel payment-panel">
+    <h2>Payment ledger</h2>
+    {payments.length === 0 ? <p>No payments recorded yet.</p> : (
+      <ul class="listing-grid">
+        {payments.map((payment) => (
+          <li>
+            <strong>{payment.plan_type} · {payment.amount} {String(payment.currency).toUpperCase()}</strong>
+            <span>{payment.owner_email ?? "Unknown owner"}</span>
+            <span>{payment.listing_slug}</span>
+            <span>Status: {payment.status}</span>
+            <span>{payment.paid_at ? `Paid at: ${payment.paid_at}` : `Created: ${payment.created_at}`}</span>
+            <span>Stripe session: {payment.stripe_session_id}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+
   <style>
     .page-head, .panel { padding: 1.4rem; }
+    .payment-panel { margin-top: 1rem; }
     .page-head {
       display: flex;
       justify-content: space-between;

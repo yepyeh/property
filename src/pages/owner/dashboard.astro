@@ -4,9 +4,9 @@ import { isBillingEnabled } from "../../lib/billing";
 import { getDashboardData, getDB } from "../../lib/marketplace";
 
 const owner = Astro.locals.owner;
-const { listings, enquiries } = owner
+const { listings, enquiries, payments } = owner
   ? await getDashboardData(owner.id, getDB(Astro.locals.runtime))
-  : { listings: [], enquiries: [] };
+  : { listings: [], enquiries: [], payments: [] };
 const uploaded = Astro.url.searchParams.get("uploaded");
 const updated = Astro.url.searchParams.get("updated");
 const billingEnabled = isBillingEnabled(Astro.locals.runtime);
@@ -127,8 +127,25 @@ function getImageCount(value: unknown) {
     </article>
   </section>
 
+  <section class="card panel payment-panel">
+    <h2>Payment history</h2>
+    {payments.length === 0 ? <p>No payments recorded yet. New completed Stripe checkouts will appear here.</p> : (
+      <ul>
+        {payments.map((payment) => (
+          <li>
+            <strong>{payment.plan_type} · {payment.amount} {String(payment.currency).toUpperCase()}</strong>
+            <span>{payment.listing_slug}</span>
+            <span>Status: {payment.status}</span>
+            <span>{payment.paid_at ? `Paid at: ${payment.paid_at}` : `Created: ${payment.created_at}`}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+
   <style>
     .page-head, .panel { padding: 1.4rem; }
+    .payment-panel { margin-top: 1rem; }
     .owner-card {
       display: grid;
       gap: 0.35rem;

@@ -68,6 +68,10 @@ export async function createCheckoutSession(
   body.set("metadata[ownerUserId]", String(input.ownerUserId));
   body.set("metadata[planType]", input.planType);
   body.set("metadata[days]", String(product.days));
+  body.set("payment_intent_data[metadata][listingSlug]", input.listingSlug);
+  body.set("payment_intent_data[metadata][ownerUserId]", String(input.ownerUserId));
+  body.set("payment_intent_data[metadata][planType]", input.planType);
+  body.set("payment_intent_data[metadata][days]", String(product.days));
   body.set("line_items[0][quantity]", "1");
   body.set("line_items[0][price_data][currency]", product.currency);
   body.set("line_items[0][price_data][unit_amount]", String(product.amount));

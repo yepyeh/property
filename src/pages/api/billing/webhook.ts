@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { getWebhookSecret, verifyStripeSignature } from "../../../lib/billing";
-import { getDB, updateListingPlan } from "../../../lib/marketplace";
+import { getDB, recordPayment, updateListingPlan } from "../../../lib/marketplace";
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const db = getDB(locals.runtime);
@@ -21,18 +21,40 @@ export const POST: APIRoute = async ({ request, locals }) => {
     type?: string;
     data?: {
       object?: {
+        id?: string;
+        payment_intent?: string | null;
+        customer_details?: {
+          email?: string | null;
+        };
         metadata?: Record<string, string>;
+        amount_total?: number;
+        currency?: string;
+        payment_status?: string;
       };
     };
   };
 
   if (event.type === "checkout.session.completed") {
-    const metadata = event.data?.object?.metadata ?? {};
+    const session = event.data?.object;
+    const metadata = session?.metadata ?? {};
     const listingSlug = metadata.listingSlug || "";
     const planType = metadata.planType === "promoted" ? "promoted" : metadata.planType === "paid" ? "paid" : null;
     const days = Number(metadata.days || 0);
 
     if (listingSlug && planType) {
+      await recordPayment(db, {
+        stripeSessionId: session?.id || crypto.randomUUID(),
+        stripePaymentIntentId: session?.payment_intent ?? null,
+        listingSlug,
+        ownerUserId: Number(metadata.ownerUserId || 0) || null,
+        ownerEmail: session?.customer_details?.email ?? null,
+        planType,
+        amount: session?.amount_total ?? 0,
+        currency: session?.currency ?? "vnd",
+        status: session?.payment_status ?? "paid",
+        paidAt: new Date().toISOString(),
+      });
+
       await updateListingPlan(db, null, true, {
         listingSlug,
         planType,

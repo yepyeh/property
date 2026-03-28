@@ -103,6 +103,19 @@ export interface ListingPlanUpdateInput {
   promotedDays?: number;
 }
 
+export interface PaymentRecordInput {
+  stripeSessionId: string;
+  stripePaymentIntentId?: string | null;
+  listingSlug: string;
+  ownerUserId?: number | null;
+  ownerEmail?: string | null;
+  planType: "paid" | "promoted";
+  amount: number;
+  currency: string;
+  status: string;
+  paidAt?: string | null;
+}
+
 export function getDB(runtime?: RuntimeLike | null) {
   return runtime?.env?.DB;
 }
@@ -391,7 +404,7 @@ export async function createEnquiry(db: D1Like, input: EnquiryInput) {
 
 export async function getDashboardData(ownerUserId: number, db?: D1Like) {
   if (!db) {
-    return { listings: [], enquiries: [] };
+    return { listings: [], enquiries: [], payments: [] };
   }
 
   const listingsResult = await db
@@ -416,14 +429,26 @@ export async function getDashboardData(ownerUserId: number, db?: D1Like) {
     .bind(ownerUserId)
     .all();
 
+  const paymentsResult = await db
+    .prepare(
+      `SELECT stripe_session_id, stripe_payment_intent_id, listing_slug, owner_email,
+              plan_type, amount, currency, status, created_at, paid_at
+       FROM payments
+       WHERE owner_user_id = ?
+       ORDER BY created_at DESC`
+    )
+    .bind(ownerUserId)
+    .all();
+
   return {
     listings: listingsResult.results,
     enquiries: enquiriesResult.results,
+    payments: paymentsResult.results,
   };
 }
 
 export async function getAdminBillingData(db?: D1Like) {
-  if (!db) return { listings: [] };
+  if (!db) return { listings: [], payments: [] };
 
   const listingsResult = await db
     .prepare(
@@ -436,8 +461,19 @@ export async function getAdminBillingData(db?: D1Like) {
     .bind()
     .all();
 
+  const paymentsResult = await db
+    .prepare(
+      `SELECT stripe_session_id, stripe_payment_intent_id, listing_slug, owner_email,
+              plan_type, amount, currency, status, created_at, paid_at
+       FROM payments
+       ORDER BY created_at DESC`
+    )
+    .bind()
+    .all();
+
   return {
     listings: listingsResult.results,
+    payments: paymentsResult.results,
   };
 }
 
@@ -506,4 +542,31 @@ export async function updateListingPlan(
     .run();
 
   return { ok: true as const };
+}
+
+export async function recordPayment(db: D1Like, input: PaymentRecordInput) {
+  await db
+    .prepare(
+      `INSERT INTO payments (
+        stripe_session_id, stripe_payment_intent_id, listing_slug, owner_user_id, owner_email,
+        plan_type, amount, currency, status, paid_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(stripe_session_id) DO UPDATE SET
+        stripe_payment_intent_id = excluded.stripe_payment_intent_id,
+        status = excluded.status,
+        paid_at = excluded.paid_at`
+    )
+    .bind(
+      input.stripeSessionId,
+      input.stripePaymentIntentId ?? null,
+      input.listingSlug,
+      input.ownerUserId ?? null,
+      input.ownerEmail ?? null,
+      input.planType,
+      input.amount,
+      input.currency,
+      input.status,
+      input.paidAt ?? null
+    )
+    .run();
 }
