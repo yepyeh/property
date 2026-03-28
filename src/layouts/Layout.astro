@@ -33,6 +33,9 @@ const viewerInitials = getInitials(viewer?.full_name || viewer?.email);
 const primaryNav = [
   { label: "Buy", href: "/listings/?intent=buy", active: pathname === "/listings/" || pathname.startsWith("/listings/") },
   { label: "Rent", href: "/listings/?intent=rent", active: pathname === "/listings/" || pathname.startsWith("/listings/") },
+  { label: "For buyers", href: "/for-buyers", active: pathname === "/for-buyers" },
+  { label: "For owners", href: "/for-owners", active: pathname === "/for-owners" },
+  { label: "Pricing", href: "/pricing", active: pathname === "/pricing" },
   ...(isOwner ? [{ label: "Post", href: "/submit-listing/", active: pathname === "/submit-listing/" }] : []),
   ...(viewer ? [{ label: "Inbox", href: "/account/inbox", active: pathname.startsWith("/account/inbox"), count: unreadCount }] : []),
 ];

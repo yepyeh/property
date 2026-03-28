@@ -1,0 +1,142 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const plans = [
+  {
+    name: "Free Trial",
+    price: "7 days free",
+    body: "Good for first-time owners who want to test buyer response before paying for longer visibility.",
+    bullets: ["Listing goes live immediately", "Structured enquiries", "Upgrade later if demand is real"],
+  },
+  {
+    name: "Standard Paid",
+    price: "499,000 VND",
+    body: "Keep the listing live beyond the trial window and avoid disappearing as soon as the free period ends.",
+    bullets: ["30-day visibility", "Works for serious inventory", "Best default paid option"],
+  },
+  {
+    name: "Promoted Add-on",
+    price: "199,000 VND",
+    body: "Push a listing above normal inventory for a shorter burst when the listing quality justifies more exposure.",
+    bullets: ["7-day boost", "Prioritized placement", "Best used on stronger listings"],
+  },
+];
+---
+
+<Layout
+  title="Pricing | Property App 2026"
+  description="Simple listing pricing for owners: free trial, standard paid visibility, and promoted placement."
+>
+  <section class="pricing-hero card">
+    <span class="section-kicker">Pricing</span>
+    <h1>Keep pricing simple enough that owners understand it in one pass.</h1>
+    <p>
+      The model is intentionally straightforward: free to test demand, paid to stay live, promoted to rank higher. That
+      is enough to monetize without bloating the product.
+    </p>
+  </section>
+
+  <section class="pricing-grid">
+    {plans.map((plan) => (
+      <article class="pricing-card card">
+        <span class="section-kicker">Plan</span>
+        <h2>{plan.name}</h2>
+        <strong>{plan.price}</strong>
+        <p>{plan.body}</p>
+        <ul>
+          {plan.bullets.map((bullet) => <li>{bullet}</li>)}
+        </ul>
+      </article>
+    ))}
+  </section>
+
+  <section class="pricing-note card">
+    <div>
+      <span class="section-kicker">Why this model</span>
+      <h2>Permanent listings are usually the wrong idea.</h2>
+      <p>
+        Time-bounded visibility keeps the marketplace fresher, protects trust, and gives owners a cleaner renewal decision.
+      </p>
+    </div>
+    <a class="button-primary" href="/for-owners">See owner workflow</a>
+  </section>
+
+  <style>
+    .pricing-hero,
+    .pricing-card,
+    .pricing-note {
+      padding: 1.4rem;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
+    }
+
+    .pricing-hero h1,
+    .pricing-card h2,
+    .pricing-note h2 {
+      margin: 0.8rem 0 0;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      letter-spacing: -0.08em;
+      line-height: 0.96;
+    }
+
+    .pricing-card h2,
+    .pricing-note h2 {
+      font-size: clamp(1.45rem, 2.5vw, 2rem);
+    }
+
+    .pricing-hero p,
+    .pricing-card p,
+    .pricing-note p,
+    .pricing-card li {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .pricing-card strong {
+      display: block;
+      margin-top: 0.9rem;
+      font-size: 1.8rem;
+      letter-spacing: -0.05em;
+    }
+
+    .pricing-card ul {
+      margin: 1rem 0 0;
+      padding-left: 1.1rem;
+    }
+
+    .pricing-note {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 1rem;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .button-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 2.9rem;
+      padding: 0.88rem 1.1rem;
+      border-radius: 999px;
+      font-weight: 700;
+      text-decoration: none;
+      background: linear-gradient(135deg, var(--brand), #23314d);
+      color: white;
+    }
+
+    @media (max-width: 980px) {
+      .pricing-grid,
+      .pricing-note {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</Layout>
