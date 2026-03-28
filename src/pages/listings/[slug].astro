@@ -1,11 +1,16 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getDB, getListingBySlug } from "../../lib/marketplace";
+import { getDB, getListingBySlug, isListingSavedByUser } from "../../lib/marketplace";
 
 const { slug } = Astro.params;
-const listing = await getListingBySlug(slug ?? "", getDB(Astro.locals.runtime));
+const db = getDB(Astro.locals.runtime);
+const viewer = Astro.locals.owner;
+const listing = await getListingBySlug(slug ?? "", db);
 const enquirySent = Astro.url.searchParams.get("enquiry") === "sent";
+const savedListing = Astro.url.searchParams.get("savedListing") === "1";
 const heroImage = listing?.imageUrls?.[0];
+const isBuyer = viewer?.role === "buyer" || viewer?.role === "admin";
+const isSaved = listing ? await isListingSavedByUser(db, viewer?.id, listing.slug) : false;
 
 if (!listing) {
   throw new Error(`Listing not found: ${slug}`);
@@ -26,6 +31,18 @@ if (!listing) {
       <h1>{listing.title}</h1>
       <p class="price">{listing.priceLabel}</p>
       <p class="summary">{listing.summary}</p>
+      <div class="hero-actions">
+        {isBuyer ? (
+          <form method="POST" action={isSaved ? "/api/saved-listings/delete" : "/api/saved-listings"}>
+            <input type="hidden" name="listingSlug" value={listing.slug} />
+            <input type="hidden" name="redirectTo" value={`/listings/${listing.slug}/`} />
+            <button type="submit" class="save-button">{isSaved ? "Saved to favorites" : "Save listing"}</button>
+          </form>
+        ) : (
+          <a class="save-link" href={`/login?redirect=${encodeURIComponent(`/listings/${listing.slug}/`)}`}>Sign in to save</a>
+        )}
+        {savedListing && <span class="save-status">Listing saved to your buyer dashboard.</span>}
+      </div>
       <div class="metrics">
         <div><strong>{listing.beds}</strong><span>beds</span></div>
         <div><strong>{listing.baths}</strong><span>baths</span></div>
@@ -213,6 +230,34 @@ if (!listing) {
       color: var(--muted);
       line-height: 1.75;
       max-width: 48rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .save-button,
+    .save-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.9rem 1.1rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--text);
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .save-status {
+      color: var(--accent-strong);
+      font-weight: 700;
     }
 
     .metrics,

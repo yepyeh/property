@@ -151,6 +151,13 @@ export interface SavedSearchRecord {
   filters?: ListingFilters;
 }
 
+export interface SavedListingRecord {
+  id: number;
+  listing_slug: string;
+  created_at: string;
+  listing?: Listing | null;
+}
+
 export interface ExpiryEmailDeliveryRecord {
   event_key: string;
   owner_email: string;
@@ -780,7 +787,7 @@ export async function createEnquiry(db: D1Like, input: EnquiryInput) {
 
 export async function getDashboardData(ownerUserId: number, db?: D1Like) {
   if (!db) {
-    return { listings: [], enquiries: [], payments: [], notifications: [], savedSearches: [] };
+    return { listings: [], enquiries: [], payments: [], notifications: [], savedSearches: [], savedListings: [] };
   }
   await normalizeExpiredListingPlans(db);
 
@@ -827,6 +834,16 @@ export async function getDashboardData(ownerUserId: number, db?: D1Like) {
     .bind(ownerUserId)
     .all<SavedSearchRecord>();
 
+  const savedListingsResult = await db
+    .prepare(
+      `SELECT id, listing_slug, created_at
+       FROM saved_listings
+       WHERE user_id = ?
+       ORDER BY created_at DESC`
+    )
+    .bind(ownerUserId)
+    .all<SavedListingRecord>();
+
   const listingRows = listingsResult.results as Array<{
     slug: string;
     title: string;
@@ -846,6 +863,12 @@ export async function getDashboardData(ownerUserId: number, db?: D1Like) {
       ...search,
       filters: parseSavedSearchFilters(search.filters_json),
     })),
+    savedListings: await Promise.all(
+      savedListingsResult.results.map(async (savedListing) => ({
+        ...savedListing,
+        listing: await getListingBySlug(savedListing.listing_slug, db),
+      }))
+    ),
   };
 }
 
@@ -942,6 +965,81 @@ export async function deleteSavedSearch(db: D1Like, userId: number, id: number) 
     .run();
 
   return { ok: true as const };
+}
+
+export async function saveListingForBuyer(db: D1Like, userId: number, listingSlug: string) {
+  const existing = await db
+    .prepare(
+      `SELECT id
+       FROM saved_listings
+       WHERE user_id = ?
+         AND listing_slug = ?
+       LIMIT 1`
+    )
+    .bind(userId, listingSlug)
+    .first<{ id: number }>();
+
+  if (existing) {
+    return { ok: true as const, duplicate: true };
+  }
+
+  await db
+    .prepare(`INSERT INTO saved_listings (user_id, listing_slug) VALUES (?, ?)`)
+    .bind(userId, listingSlug)
+    .run();
+
+  await db
+    .prepare(`UPDATE listings SET saves = saves + 1 WHERE slug = ?`)
+    .bind(listingSlug)
+    .run();
+
+  return { ok: true as const, duplicate: false };
+}
+
+export async function removeSavedListingForBuyer(db: D1Like, userId: number, listingSlug: string) {
+  const existing = await db
+    .prepare(
+      `SELECT id
+       FROM saved_listings
+       WHERE user_id = ?
+         AND listing_slug = ?
+       LIMIT 1`
+    )
+    .bind(userId, listingSlug)
+    .first<{ id: number }>();
+
+  if (!existing) {
+    return { ok: true as const, removed: false };
+  }
+
+  await db
+    .prepare(`DELETE FROM saved_listings WHERE id = ?`)
+    .bind(existing.id)
+    .run();
+
+  await db
+    .prepare(`UPDATE listings SET saves = CASE WHEN saves > 0 THEN saves - 1 ELSE 0 END WHERE slug = ?`)
+    .bind(listingSlug)
+    .run();
+
+  return { ok: true as const, removed: true };
+}
+
+export async function isListingSavedByUser(db: D1Like | undefined, userId: number | undefined, listingSlug: string) {
+  if (!db || !userId || !listingSlug) return false;
+
+  const existing = await db
+    .prepare(
+      `SELECT id
+       FROM saved_listings
+       WHERE user_id = ?
+         AND listing_slug = ?
+       LIMIT 1`
+    )
+    .bind(userId, listingSlug)
+    .first<{ id: number }>();
+
+  return Boolean(existing);
 }
 
 export async function updateListingPlan(
