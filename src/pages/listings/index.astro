@@ -36,6 +36,18 @@ const resultSummary = {
   cities: Array.from(new Set(listings.map((listing) => listing.city))).length,
   forRent: listings.filter((listing) => listing.intent === "rent").length,
 };
+const mappableListings = listings
+  .filter((listing) => listing.location)
+  .map((listing) => ({
+    slug: listing.slug,
+    title: listing.title,
+    priceLabel: listing.priceLabel,
+    ward: listing.ward,
+    district: listing.district,
+    city: listing.city,
+    lat: listing.location?.lat ?? 0,
+    lng: listing.location?.lng ?? 0,
+  }));
 const topNeighborhoods = Array.from(
   new Set(
     listings
@@ -205,9 +217,21 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
 
   <section class="results-layout">
     <aside class="market-panel card">
-      <span class="section-kicker">Market context</span>
-      <h2>Where current matches are clustered</h2>
-      <p>Map comes later. The useful part right now is giving a buyer quick district-level context tied to live results.</p>
+      <span class="section-kicker">Map view</span>
+      <h2>See the filtered listings on a live map</h2>
+      <p>Search by filters first, then use the map to validate coverage and cluster patterns instead of guessing where the inventory sits.</p>
+      {mappableListings.length > 0 ? (
+        <div
+          id="results-map"
+          class="results-map"
+          data-listings={JSON.stringify(mappableListings)}
+        ></div>
+      ) : (
+        <div class="map-empty">
+          <strong>No map coordinates for this result set yet.</strong>
+          <span>Try a broader filter set or add owner coordinates when posting listings.</span>
+        </div>
+      )}
       <div class="district-list">
         {(allDistricts.length > 0 ? allDistricts : ["No matching districts"]).slice(0, 5).map((district) => <b>{district}</b>)}
       </div>
@@ -237,6 +261,96 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
       )}
     </div>
   </section>
+
+  <script is:inline>
+    const mapNode = document.getElementById("results-map");
+
+    async function loadLeaflet() {
+      if (window.L) return window.L;
+
+      if (!document.querySelector('link[data-leaflet="true"]')) {
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+        link.dataset.leaflet = "true";
+        document.head.appendChild(link);
+      }
+
+      await new Promise((resolve, reject) => {
+        const existing = document.querySelector('script[data-leaflet="true"]');
+        if (existing && window.L) {
+          resolve(window.L);
+          return;
+        }
+
+        if (existing) {
+          existing.addEventListener("load", () => resolve(window.L), { once: true });
+          existing.addEventListener("error", reject, { once: true });
+          return;
+        }
+
+        const script = document.createElement("script");
+        script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+        script.dataset.leaflet = "true";
+        script.onload = () => resolve(window.L);
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+
+      return window.L;
+    }
+
+    async function initResultsMap() {
+      if (!mapNode) return;
+
+      const payload = mapNode.getAttribute("data-listings");
+      const listings = payload ? JSON.parse(payload) : [];
+      if (!Array.isArray(listings) || listings.length === 0) return;
+
+      const L = await loadLeaflet();
+      const map = L.map(mapNode, {
+        scrollWheelZoom: false,
+        zoomControl: true,
+      });
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+
+      const bounds = [];
+
+      listings.forEach((listing) => {
+        const marker = L.circleMarker([listing.lat, listing.lng], {
+          radius: 9,
+          color: "#0f172a",
+          weight: 2,
+          fillColor: "#0f766e",
+          fillOpacity: 0.88,
+        }).addTo(map);
+
+        marker.bindPopup(`
+          <div style="min-width: 180px; font-family: 'Plus Jakarta Sans', sans-serif;">
+            <strong style="display:block; margin-bottom:6px;">${listing.title}</strong>
+            <span style="display:block; margin-bottom:6px; color:#475467;">${listing.priceLabel}</span>
+            <span style="display:block; margin-bottom:10px; color:#667085;">${listing.ward}, ${listing.district}</span>
+            <a href="/listings/${listing.slug}/" style="color:#0f766e; font-weight:700; text-decoration:none;">Open listing</a>
+          </div>
+        `);
+
+        bounds.push([listing.lat, listing.lng]);
+      });
+
+      if (bounds.length === 1) {
+        map.setView(bounds[0], 13);
+      } else {
+        map.fitBounds(bounds, { padding: [24, 24] });
+      }
+    }
+
+    initResultsMap().catch((error) => {
+      console.error("Failed to initialize listings map", error);
+    });
+  </script>
 
   <style>
     .results-hero,
@@ -462,9 +576,43 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
 
     .results-layout {
       display: grid;
-      grid-template-columns: minmax(17rem, 0.34fr) minmax(0, 1fr);
+      grid-template-columns: minmax(20rem, 0.42fr) minmax(0, 1fr);
       gap: 1rem;
       align-items: start;
+    }
+
+    .market-panel {
+      position: sticky;
+      top: 6rem;
+    }
+
+    .results-map {
+      min-height: 22rem;
+      margin-top: 1rem;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #f8fafc, #e5edf6);
+    }
+
+    .map-empty {
+      display: grid;
+      gap: 0.45rem;
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 22px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+    }
+
+    .map-empty strong {
+      font-size: 0.98rem;
+      letter-spacing: -0.02em;
+    }
+
+    .map-empty span {
+      color: var(--muted);
+      line-height: 1.6;
     }
 
     .district-list b {
@@ -506,6 +654,10 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
       .results-layout,
       .save-search {
         grid-template-columns: 1fr;
+      }
+
+      .market-panel {
+        position: static;
       }
     }
 
