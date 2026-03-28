@@ -66,6 +66,25 @@ const owner = Astro.locals.owner;
     <label>Short summary<textarea name="summary" rows="3" required placeholder="High-floor condo with strong owner response and easy metro access."></textarea></label>
     <label>Full description<textarea name="description" rows="6" required placeholder="Describe the home, location, condition, and why it stands out."></textarea></label>
 
+    <div class="location-context card-inset">
+      <strong>Location context</strong>
+      <p>
+        This matters more than generic marketing copy. Add the commute, landmarks, and neighborhood cues a buyer would
+        actually use to decide whether to enquire.
+      </p>
+      <label>Neighborhood headline<textarea name="neighborhoodHeadline" rows="3" placeholder="A calmer family pocket in Thu Duc with strong access to international schools and riverfront services."></textarea></label>
+      <label>Commute and access<textarea name="commuteNotes" rows="3" placeholder="About 15 to 20 minutes to Thu Thiem, 25 minutes to District 1 outside peak traffic."></textarea></label>
+      <div class="grid two">
+        <label>Nearby landmarks or amenities<input name="nearbyPlaces" placeholder="International school, Metro stop, Retail podium" /></label>
+        <label>Trust signals<input name="trustSignals" placeholder="Low-rise pocket, Verified owner, Strong rental fallback" /></label>
+      </div>
+      <div class="grid three">
+        <label>Latitude<input name="lat" type="number" step="0.000001" placeholder="10.7826" /></label>
+        <label>Longitude<input name="lng" type="number" step="0.000001" placeholder="106.7297" /></label>
+        <label>Map precision label<input name="locationPrecisionLabel" placeholder="Approximate area in Thu Thiem" /></label>
+      </div>
+    </div>
+
     <div class="grid three">
       <label>Owner name<input name="ownerName" required placeholder="Nguyen Anh" value={owner?.full_name ?? ""} /></label>
       <label>Owner email<input name="ownerEmail" type="email" required placeholder="owner@example.com" value={owner?.email ?? ""} /></label>
@@ -121,6 +140,23 @@ const owner = Astro.locals.owner;
     .grid {
       display: grid;
       gap: 0.9rem;
+    }
+    .card-inset {
+      display: grid;
+      gap: 0.9rem;
+      padding: 1.1rem;
+      border-radius: 24px;
+      background: rgba(248, 250, 252, 0.88);
+      border: 1px solid var(--line);
+    }
+    .card-inset strong {
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+    }
+    .card-inset p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
     }
     .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }

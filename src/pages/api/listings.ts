@@ -1,6 +1,13 @@
 import type { APIRoute } from "astro";
 import { createListing, getDB } from "../../lib/marketplace";
 
+function parseCommaSeparatedList(value: FormDataEntryValue | null) {
+  return String(value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 export const POST: APIRoute = async ({ request, locals }) => {
   const db = getDB(locals.runtime);
   if (!db) {
@@ -26,6 +33,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
     area: Number(form.get("area") || 0),
     summary: String(form.get("summary") || ""),
     description: String(form.get("description") || ""),
+    neighborhoodHeadline: String(form.get("neighborhoodHeadline") || ""),
+    commuteNotes: String(form.get("commuteNotes") || ""),
+    nearbyPlaces: parseCommaSeparatedList(form.get("nearbyPlaces")),
+    trustSignals: parseCommaSeparatedList(form.get("trustSignals")),
+    lat: Number(form.get("lat") || "") || null,
+    lng: Number(form.get("lng") || "") || null,
+    locationPrecisionLabel: String(form.get("locationPrecisionLabel") || ""),
     ownerName: String(form.get("ownerName") || ""),
     ownerEmail: String(form.get("ownerEmail") || ""),
     ownerPhone: String(form.get("ownerPhone") || ""),

@@ -45,6 +45,11 @@ const neighborhood = listing.neighborhood;
           <span>{neighborhood.commute}</span>
           <span>{neighborhood.nearby[0]}</span>
         </div>
+        {neighborhood.nearby.length > 1 && (
+          <div class="nearby-row">
+            {neighborhood.nearby.slice(0, 2).map((item) => <span>{item}</span>)}
+          </div>
+        )}
       </div>
     )}
 
@@ -188,6 +193,25 @@ const neighborhood = listing.neighborhood;
   .signal-row,
   .context-row {
     font-size: 0.92rem;
+  }
+
+  .nearby-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .nearby-row span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.8rem;
+    padding: 0.18rem 0.6rem;
+    border-radius: 999px;
+    background: white;
+    border: 1px solid var(--line);
+    color: var(--text);
+    font-size: 0.78rem;
+    font-weight: 700;
   }
 
   .context-panel {

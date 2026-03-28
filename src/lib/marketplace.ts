@@ -79,6 +79,13 @@ interface ListingRow {
   saves: number;
   enquiries: number;
   image_keys: string;
+  neighborhood_headline: string | null;
+  commute_notes: string | null;
+  nearby_places: string;
+  trust_signals: string;
+  lat: number | null;
+  lng: number | null;
+  location_precision_label: string | null;
   created_at: string;
 }
 
@@ -97,6 +104,13 @@ export interface ListingInput {
   area: number;
   summary: string;
   description: string;
+  neighborhoodHeadline?: string;
+  commuteNotes?: string;
+  nearbyPlaces?: string[];
+  trustSignals?: string[];
+  lat?: number | null;
+  lng?: number | null;
+  locationPrecisionLabel?: string;
   ownerName: string;
   ownerEmail: string;
   ownerPhone: string;
@@ -751,6 +765,23 @@ function mapRowToListing(row: ListingRow): Listing {
       saves: row.saves,
       enquiries: row.enquiries,
     },
+    location:
+      typeof row.lat === "number" && typeof row.lng === "number"
+        ? {
+            lat: row.lat,
+            lng: row.lng,
+            precisionLabel: row.location_precision_label || "Approximate neighborhood view",
+          }
+        : undefined,
+    neighborhood:
+      row.neighborhood_headline || row.commute_notes || row.nearby_places !== "[]" || row.trust_signals !== "[]"
+        ? {
+            headline: row.neighborhood_headline || "",
+            commute: row.commute_notes || "",
+            nearby: row.nearby_places ? JSON.parse(row.nearby_places) : [],
+            trustSignals: row.trust_signals ? JSON.parse(row.trust_signals) : [],
+          }
+        : undefined,
     imageKeys,
     imageUrls: imageKeys.map((key: string) => `/media/${key}`),
     commerce: {
@@ -941,10 +972,13 @@ export async function createListing(db: D1Like, input: ListingInput) {
         slug, title, city, district, ward, property_type, intent,
         price_label, numeric_price, price_unit, beds, baths, area,
         status, tone, summary, description,
-        tags, features, image_keys, owner_user_id, plan_type, trial_ends_at,
+        tags, features, image_keys,
+        neighborhood_headline, commute_notes, nearby_places, trust_signals,
+        lat, lng, location_precision_label,
+        owner_user_id, plan_type, trial_ends_at,
         owner_name, owner_email, owner_phone, owner_role, owner_response_time, owner_verified,
         views_24h, saves, enquiries, published
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now', '+7 days'), ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now', '+7 days'), ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`
     )
     .bind(
       slug,
@@ -967,6 +1001,13 @@ export async function createListing(db: D1Like, input: ListingInput) {
       JSON.stringify(["Owner submitted", input.intent === "rent" ? "Rent" : "For sale"]),
       JSON.stringify(["Photos pending", "Direct owner contact", "Dashboard managed", "7-day free trial"]),
       JSON.stringify([]),
+      input.neighborhoodHeadline?.trim() || null,
+      input.commuteNotes?.trim() || null,
+      JSON.stringify(input.nearbyPlaces ?? []),
+      JSON.stringify(input.trustSignals ?? []),
+      typeof input.lat === "number" && Number.isFinite(input.lat) ? input.lat : null,
+      typeof input.lng === "number" && Number.isFinite(input.lng) ? input.lng : null,
+      input.locationPrecisionLabel?.trim() || null,
       input.ownerUserId ?? null,
       "free_trial",
       input.ownerName,
