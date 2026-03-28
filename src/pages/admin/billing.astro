@@ -10,6 +10,22 @@ if (!owner || owner.role !== "admin") {
 
 const { listings, payments } = await getAdminBillingData(getDB(Astro.locals.runtime));
 const updated = Astro.url.searchParams.get("updated");
+
+const analytics = {
+  totalListings: listings.length,
+  activePromoted: listings.filter((listing) => listing.plan_type === "promoted" && listing.promoted_until).length,
+  activePaid: listings.filter((listing) => listing.plan_type === "paid" || listing.paid_until).length,
+  activeFreeTrial: listings.filter((listing) => listing.plan_type === "free_trial" && listing.status !== "Expired listing").length,
+  expiredListings: listings.filter((listing) => listing.status === "Expired listing").length,
+  paymentCount: payments.length,
+  revenueVnd: payments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
+  promotedSales: payments.filter((payment) => payment.plan_type === "promoted").length,
+  paidSales: payments.filter((payment) => payment.plan_type === "paid").length,
+};
+
+const conversionRate = analytics.totalListings > 0
+  ? Math.round(((analytics.paidSales + analytics.promotedSales) / analytics.totalListings) * 100)
+  : 0;
 ---
 
 <Layout title="Admin Billing | Property App 2026" description="Review listing plans and manually manage billing states before payment automation is added.">
@@ -35,6 +51,37 @@ const updated = Astro.url.searchParams.get("updated");
       Updated billing state for <code>{updated}</code>.
     </div>
   )}
+
+  <section class="analytics-grid">
+    <article class="card stat"><strong>{analytics.totalListings}</strong><span>tracked listings</span></article>
+    <article class="card stat"><strong>{analytics.activePaid}</strong><span>paid listings</span></article>
+    <article class="card stat"><strong>{analytics.activePromoted}</strong><span>promoted listings</span></article>
+    <article class="card stat"><strong>{analytics.activeFreeTrial}</strong><span>free-trial listings</span></article>
+    <article class="card stat"><strong>{analytics.expiredListings}</strong><span>expired listings</span></article>
+    <article class="card stat"><strong>{analytics.paymentCount}</strong><span>recorded payments</span></article>
+  </section>
+
+  <section class="card panel summary-panel">
+    <h2>Revenue summary</h2>
+    <div class="summary-grid">
+      <div>
+        <strong>{analytics.revenueVnd.toLocaleString("en-US")} VND</strong>
+        <span>recorded Stripe revenue</span>
+      </div>
+      <div>
+        <strong>{conversionRate}%</strong>
+        <span>listing-to-payment conversion</span>
+      </div>
+      <div>
+        <strong>{analytics.paidSales}</strong>
+        <span>standard listing sales</span>
+      </div>
+      <div>
+        <strong>{analytics.promotedSales}</strong>
+        <span>promotion sales</span>
+      </div>
+    </div>
+  </section>
 
   <section class="card panel">
     <h2>All listing plans</h2>
@@ -102,8 +149,9 @@ const updated = Astro.url.searchParams.get("updated");
   </section>
 
   <style>
-    .page-head, .panel { padding: 1.4rem; }
+    .page-head, .panel, .stat { padding: 1.4rem; }
     .payment-panel { margin-top: 1rem; }
+    .summary-panel { margin-top: 1rem; }
     .page-head {
       display: flex;
       justify-content: space-between;
@@ -116,6 +164,28 @@ const updated = Astro.url.searchParams.get("updated");
       display: flex;
       gap: 0.75rem;
       flex-wrap: wrap;
+    }
+    .analytics-grid,
+    .summary-grid {
+      display: grid;
+      gap: 1rem;
+    }
+    .analytics-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-bottom: 1rem;
+    }
+    .summary-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: 1rem;
+    }
+    .stat strong,
+    .summary-grid strong {
+      display: block;
+      font-size: 1.7rem;
+    }
+    .stat span,
+    .summary-grid span {
+      color: var(--muted);
     }
     .flash {
       padding: 1rem 1.2rem;
@@ -197,6 +267,10 @@ const updated = Astro.url.searchParams.get("updated");
     @media (max-width: 960px) {
       .page-head {
         display: grid;
+      }
+      .analytics-grid,
+      .summary-grid {
+        grid-template-columns: 1fr;
       }
       .inline-form {
         align-items: stretch;

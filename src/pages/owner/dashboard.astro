@@ -11,6 +11,30 @@ const uploaded = Astro.url.searchParams.get("uploaded");
 const updated = Astro.url.searchParams.get("updated");
 const billingEnabled = isBillingEnabled(Astro.locals.runtime);
 
+function isFutureDate(value?: string | null) {
+  return Boolean(value) && new Date(value as string).getTime() > Date.now();
+}
+
+function getStandardActionLabel(listing: {
+  status?: string;
+  paid_until?: string | null;
+  promoted_until?: string | null;
+}) {
+  if (listing.status === "Expired listing") return "Republish with 30-day standard";
+  if (isFutureDate(listing.promoted_until)) return "Extend paid period by 30 days";
+  if (isFutureDate(listing.paid_until)) return "Extend paid period by 30 days";
+  return "Pay for 30-day standard";
+}
+
+function getPromotionActionLabel(listing: {
+  status?: string;
+  promoted_until?: string | null;
+}) {
+  if (listing.status === "Expired listing") return "Republish and promote for 7 days";
+  if (isFutureDate(listing.promoted_until)) return "Extend promotion by 7 days";
+  return "Pay for 7-day promotion";
+}
+
 function getImageCount(value: unknown) {
   if (typeof value !== "string" || !value) return 0;
 
@@ -87,12 +111,12 @@ function getImageCount(value: unknown) {
                     <form method="POST" action="/api/billing/checkout">
                       <input type="hidden" name="listingSlug" value={listing.slug} />
                       <input type="hidden" name="planType" value="paid" />
-                      <button type="submit" class="billing-button">Pay for 30-day standard</button>
+                      <button type="submit" class="billing-button">{getStandardActionLabel(listing)}</button>
                     </form>
                     <form method="POST" action="/api/billing/checkout">
                       <input type="hidden" name="listingSlug" value={listing.slug} />
                       <input type="hidden" name="planType" value="promoted" />
-                      <button type="submit" class="billing-button secondary-button">Pay for 7-day promotion</button>
+                      <button type="submit" class="billing-button secondary-button">{getPromotionActionLabel(listing)}</button>
                     </form>
                   </>
                 ) : (
