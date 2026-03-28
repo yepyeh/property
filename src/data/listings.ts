@@ -2,6 +2,13 @@ export type ListingIntent = "buy" | "rent";
 export type ListingType = "Villa" | "Condo" | "Townhouse" | "Apartment" | "Land" | "House";
 export type ListingTone = "sea" | "sun" | "forest" | "night" | "clay" | "sky";
 
+export interface ListingNeighborhood {
+  headline: string;
+  commute: string;
+  nearby: string[];
+  trustSignals: string[];
+}
+
 export interface Listing {
   slug: string;
   title: string;
@@ -33,6 +40,7 @@ export interface Listing {
     saves: number;
     enquiries: number;
   };
+  neighborhood?: ListingNeighborhood;
   imageKeys?: string[];
   imageUrls?: string[];
   commerce?: {
@@ -76,6 +84,12 @@ export const listings: Listing[] = [
       saves: 38,
       enquiries: 11,
     },
+    neighborhood: {
+      headline: "Thao Dien is still one of the strongest family districts for buyers who want international schools, lower-friction daily services, and a softer residential feel than the city core.",
+      commute: "Typically 15 to 20 minutes to Thu Thiem and around 25 minutes to central District 1 outside peak traffic.",
+      nearby: ["International schools", "Riverfront cafes", "Grocery and wellness services"],
+      trustSignals: ["Low-rise family pocket", "Strong expat demand", "Direct school-run convenience"],
+    },
   },
   {
     slug: "district-1-skyline-apartment",
@@ -108,6 +122,12 @@ export const listings: Listing[] = [
       views24h: 301,
       saves: 54,
       enquiries: 18,
+    },
+    neighborhood: {
+      headline: "Ben Nghe works for buyers who want a prestige central address with walkable dining, offices, and hotel-grade amenities close by.",
+      commute: "Core District 1 access is immediate, with most business and leisure destinations reachable on foot or within a short ride.",
+      nearby: ["Office core", "Premium retail", "Dining and hospitality"],
+      trustSignals: ["Prime central zone", "Investor-friendly demand", "Strong rental fallback"],
     },
   },
   {
@@ -142,6 +162,12 @@ export const listings: Listing[] = [
       saves: 19,
       enquiries: 7,
     },
+    neighborhood: {
+      headline: "Hai Chau remains one of the better urban districts for owner-occupiers who want a balanced work-home setup instead of purely tourist-led inventory.",
+      commute: "Central Da Nang errands and office trips are generally short, with airport access usually within 15 minutes.",
+      nearby: ["Cafes and coworking", "City administration services", "Daily retail and schools"],
+      trustSignals: ["Central Da Nang utility", "Hybrid-work friendly", "Lower friction daily living"],
+    },
   },
   {
     slug: "minimalist-rental-flat-district-7",
@@ -174,6 +200,12 @@ export const listings: Listing[] = [
       views24h: 192,
       saves: 24,
       enquiries: 13,
+    },
+    neighborhood: {
+      headline: "Tan Phu in District 7 suits renters who want cleaner building operations, broad retail access, and a more predictable expat-friendly lifestyle base.",
+      commute: "Trips into District 1 are manageable, while most daily needs are covered within the district itself.",
+      nearby: ["International retail", "Parks and family services", "F&B clusters"],
+      trustSignals: ["Popular with expats", "Managed residential stock", "Stable renter demand"],
     },
   },
   {
@@ -208,6 +240,12 @@ export const listings: Listing[] = [
       saves: 31,
       enquiries: 8,
     },
+    neighborhood: {
+      headline: "Quang An remains one of Tay Ho’s stronger family pockets for buyers who want a calmer residential lane while staying close to West Lake’s social and school network.",
+      commute: "Typical trips toward Ba Dinh and inner Hanoi are straightforward, while West Lake amenities stay close to home.",
+      nearby: ["West Lake dining", "International school access", "Embassy and expat services"],
+      trustSignals: ["Quiet residential lanes", "Consistent premium demand", "Family-oriented micro-location"],
+    },
   },
   {
     slug: "new-build-condo-thu-thiem",
@@ -241,6 +279,12 @@ export const listings: Listing[] = [
       saves: 61,
       enquiries: 22,
     },
+    neighborhood: {
+      headline: "Thu Thiem is positioned for buyers who want future-facing inventory, newer infrastructure, and a cleaner bridge into the core than older high-density districts.",
+      commute: "District 1 and the broader business core are typically within a short bridge crossing outside traffic peaks.",
+      nearby: ["Riverfront public realm", "New retail clusters", "Future office and lifestyle stock"],
+      trustSignals: ["New infrastructure", "Developer-led precinct", "High buyer attention"],
+    },
   },
 ];
 
@@ -250,4 +294,35 @@ export function getListingBySlug(slug: string) {
 
 export function getFeaturedListings() {
   return listings.slice(0, 3);
+}
+
+export function buildListingNeighborhoodContext(listing: Pick<Listing, "city" | "district" | "ward" | "intent" | "owner" | "stats"> & { neighborhood?: ListingNeighborhood }): ListingNeighborhood {
+  if (listing.neighborhood) {
+    return listing.neighborhood;
+  }
+
+  const locationLabel = [listing.ward, listing.district, listing.city].filter(Boolean).join(", ");
+  const buyerLead = listing.intent === "rent"
+    ? "built around daily convenience and move-in confidence"
+    : "positioned for longer-term location confidence";
+
+  return {
+    headline: `${locationLabel} is ${buyerLead}, with local services and district access doing most of the trust work for this listing.`,
+    commute:
+      listing.city === "Ho Chi Minh City"
+        ? "Expect district-to-core travel rather than true walkability, with timing depending heavily on traffic peaks."
+        : listing.city === "Hanoi"
+          ? "The location is better read as a neighborhood base with practical city access rather than a one-stop core address."
+          : "The location supports practical day-to-day movement to the main commercial parts of the city.",
+    nearby: [
+      `${listing.ward} local services`,
+      `${listing.district} dining and daily retail`,
+      `${listing.city} commuter access`,
+    ],
+    trustSignals: [
+      listing.owner.verified ? "Verified owner or operator" : "Direct owner listing",
+      `${listing.stats.saves} recent saves`,
+      `${listing.stats.enquiries} active buyer enquiries`,
+    ],
+  };
 }

@@ -36,6 +36,13 @@ const resultSummary = {
   cities: Array.from(new Set(listings.map((listing) => listing.city))).length,
   forRent: listings.filter((listing) => listing.intent === "rent").length,
 };
+const topNeighborhoods = Array.from(
+  new Set(
+    listings
+      .flatMap((listing) => [listing.ward ? `${listing.ward}, ${listing.district}` : "", listing.district])
+      .filter(Boolean)
+  )
+).slice(0, 5);
 
 const selectedIntent = filters.intent === "rent" ? "rent" : "buy";
 const selectedSort = filters.sort || "newest";
@@ -204,6 +211,11 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
       <div class="district-list">
         {(allDistricts.length > 0 ? allDistricts : ["No matching districts"]).slice(0, 5).map((district) => <b>{district}</b>)}
       </div>
+      {topNeighborhoods.length > 0 && (
+        <div class="neighborhood-list">
+          {topNeighborhoods.map((place) => <span>{place}</span>)}
+        </div>
+      )}
     </aside>
 
     <div class="results-list">
@@ -402,7 +414,8 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
     .filter-actions,
     .utility-links,
     .filter-chips,
-    .save-actions {
+    .save-actions,
+    .neighborhood-list {
       display: flex;
       gap: 0.75rem;
       flex-wrap: wrap;
@@ -461,6 +474,22 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
       background: #f8fafc;
       border: 1px solid var(--line);
       font-size: 0.95rem;
+    }
+
+    .neighborhood-list {
+      margin-top: 1rem;
+    }
+
+    .neighborhood-list span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2rem;
+      padding: 0.22rem 0.75rem;
+      border-radius: 999px;
+      background: var(--brand-soft);
+      color: var(--brand);
+      font-size: 0.82rem;
+      font-weight: 700;
     }
 
     .results-list {

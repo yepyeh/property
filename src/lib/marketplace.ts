@@ -1,4 +1,9 @@
-import { getListingBySlug as getSeededListingBySlug, listings as seededListings, type Listing } from "../data/listings";
+import {
+  buildListingNeighborhoodContext,
+  getListingBySlug as getSeededListingBySlug,
+  listings as seededListings,
+  type Listing,
+} from "../data/listings";
 
 interface D1Like {
   prepare(query: string): {
@@ -714,7 +719,7 @@ function parseSavedSearchFilters(value: string): ListingFilters {
 function mapRowToListing(row: ListingRow): Listing {
   const imageKeys = row.image_keys ? JSON.parse(row.image_keys) : [];
 
-  return {
+  const listing: Listing = {
     slug: row.slug,
     title: row.title,
     city: row.city,
@@ -753,6 +758,11 @@ function mapRowToListing(row: ListingRow): Listing {
       paidUntil: row.paid_until,
       promotedUntil: row.promoted_until,
     },
+  };
+
+  return {
+    ...listing,
+    neighborhood: buildListingNeighborhoodContext(listing),
   };
 }
 

@@ -8,6 +8,7 @@ export interface Props {
 const { listing } = Astro.props;
 const heroImage = listing.imageUrls?.[0];
 const intentLabel = listing.intent === "rent" ? "To rent" : "For sale";
+const neighborhood = listing.neighborhood;
 ---
 
 <article class={`listing-card card ${listing.tone}`}>
@@ -29,7 +30,7 @@ const intentLabel = listing.intent === "rent" ? "To rent" : "For sale";
       <span class="save-count">{listing.stats.saves} saves</span>
     </div>
 
-    <p class="meta">{listing.district}, {listing.city}</p>
+    <p class="meta">{listing.ward}, {listing.district}, {listing.city}</p>
     <div class="fact-row">
       <span>{listing.type}</span>
       <span>{listing.beds} beds</span>
@@ -37,6 +38,15 @@ const intentLabel = listing.intent === "rent" ? "To rent" : "For sale";
       <span>{listing.area} m2</span>
     </div>
     <p class="summary">{listing.summary}</p>
+    {neighborhood && (
+      <div class="context-panel">
+        <p class="context-headline">{neighborhood.headline}</p>
+        <div class="context-row">
+          <span>{neighborhood.commute}</span>
+          <span>{neighborhood.nearby[0]}</span>
+        </div>
+      </div>
+    )}
 
     <div class="listing-footer">
       <div class="signal-row">
@@ -162,7 +172,9 @@ const intentLabel = listing.intent === "rent" ? "To rent" : "For sale";
   .meta,
   .summary,
   .fact-row,
-  .signal-row {
+  .signal-row,
+  .context-row,
+  .context-headline {
     color: var(--muted);
   }
 
@@ -173,8 +185,24 @@ const intentLabel = listing.intent === "rent" ? "To rent" : "For sale";
   }
 
   .fact-row,
-  .signal-row {
+  .signal-row,
+  .context-row {
     font-size: 0.92rem;
+  }
+
+  .context-panel {
+    display: grid;
+    gap: 0.55rem;
+    padding: 0.95rem 1rem;
+    border-radius: 18px;
+    background: #f8fafc;
+    border: 1px solid var(--line);
+  }
+
+  .context-headline {
+    margin: 0;
+    font-size: 0.94rem;
+    line-height: 1.55;
   }
 
   .details-link {

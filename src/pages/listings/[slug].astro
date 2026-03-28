@@ -29,6 +29,7 @@ const similarListings = allListings
 
 const intentLabel = listing.intent === "buy" ? "For sale" : "For rent";
 const ownerTrustLabel = listing.owner.verified ? "Verified owner" : "Owner listed";
+const neighborhood = listing.neighborhood;
 ---
 
 <Layout
@@ -122,6 +123,32 @@ const ownerTrustLabel = listing.owner.verified ? "Verified owner" : "Owner liste
           ))}
         </div>
       </div>
+
+      {neighborhood && (
+        <div class="panel-section">
+          <span class="section-kicker">Neighborhood context</span>
+          <h2>What this location adds beyond the unit itself</h2>
+          <p>{neighborhood.headline}</p>
+          <div class="context-grid">
+            <article>
+              <strong>Commute and access</strong>
+              <p>{neighborhood.commute}</p>
+            </article>
+            <article>
+              <strong>Nearby anchors</strong>
+              <ul>
+                {neighborhood.nearby.map((item) => <li>{item}</li>)}
+              </ul>
+            </article>
+            <article>
+              <strong>Trust signals</strong>
+              <ul>
+                {neighborhood.trustSignals.map((item) => <li>{item}</li>)}
+              </ul>
+            </article>
+          </div>
+        </div>
+      )}
 
       {listing.imageUrls && listing.imageUrls.length > 0 && (
         <div class="panel-section">
@@ -365,7 +392,8 @@ const ownerTrustLabel = listing.owner.verified ? "Verified owner" : "Owner liste
     }
 
     .fact-grid article,
-    .stats-grid article {
+    .stats-grid article,
+    .context-grid article {
       padding: 1rem;
       border-radius: 20px;
       background: #f8fafc;
@@ -442,6 +470,31 @@ const ownerTrustLabel = listing.owner.verified ? "Verified owner" : "Owner liste
     .feature-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       margin-top: 1rem;
+    }
+
+    .context-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .context-grid strong {
+      display: block;
+      margin-bottom: 0.55rem;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .context-grid p,
+    .context-grid ul {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .context-grid ul {
+      padding-left: 1.1rem;
     }
 
     .feature-item {
@@ -568,7 +621,8 @@ const ownerTrustLabel = listing.owner.verified ? "Verified owner" : "Owner liste
     @media (max-width: 1100px) {
       .detail-hero,
       .detail-grid,
-      .similar-grid {
+      .similar-grid,
+      .context-grid {
         grid-template-columns: 1fr;
       }
 
