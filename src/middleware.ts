@@ -1,7 +1,7 @@
 import { defineMiddleware } from "astro:middleware";
 import { AUTH_COOKIE, getOwnerFromSession } from "./lib/auth";
 
-const protectedPrefixes = ["/owner", "/buyer", "/admin", "/submit-listing", "/api/admin", "/api/listings", "/api/upload-image", "/api/billing/checkout", "/api/saved-searches", "/api/saved-listings"];
+const protectedPrefixes = ["/owner", "/buyer", "/admin", "/account", "/submit-listing", "/api/admin", "/api/account", "/api/listings", "/api/upload-image", "/api/billing/checkout", "/api/saved-searches", "/api/saved-listings"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const { pathname, search } = context.url;

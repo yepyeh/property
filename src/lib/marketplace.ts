@@ -23,6 +23,20 @@ interface ExpiryEmailRuntimeLike extends RuntimeLike {
   };
 }
 
+export interface NotificationPreferences {
+  user_id: number;
+  email_enabled: number;
+  in_app_enabled: number;
+  cadence: "daily" | "weekly";
+  listing_expiry: number;
+  enquiry_activity: number;
+  billing_events: number;
+  saved_search_matches: number;
+  saved_listing_updates: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
 interface ListingRow {
   id: number;
   slug: string;
@@ -185,6 +199,82 @@ export function getDB(runtime?: RuntimeLike | null) {
 
 export function isExpiryEmailEnabled(runtime?: ExpiryEmailRuntimeLike | null) {
   return Boolean(runtime?.env?.RESEND_API_KEY && runtime?.env?.NOTIFICATION_FROM_EMAIL);
+}
+
+export async function ensureNotificationPreferences(db: D1Like, userId: number) {
+  await db
+    .prepare(
+      `INSERT INTO notification_preferences (
+        user_id, email_enabled, in_app_enabled, cadence,
+        listing_expiry, enquiry_activity, billing_events, saved_search_matches, saved_listing_updates
+      ) VALUES (?, 1, 1, 'daily', 1, 1, 1, 1, 1)
+      ON CONFLICT(user_id) DO NOTHING`
+    )
+    .bind(userId)
+    .run();
+}
+
+export async function getNotificationPreferences(db: D1Like | undefined, userId: number | undefined) {
+  if (!db || !userId) return null;
+  await ensureNotificationPreferences(db, userId);
+
+  return db
+    .prepare(
+      `SELECT user_id, email_enabled, in_app_enabled, cadence, listing_expiry,
+              enquiry_activity, billing_events, saved_search_matches, saved_listing_updates,
+              created_at, updated_at
+       FROM notification_preferences
+       WHERE user_id = ?
+       LIMIT 1`
+    )
+    .bind(userId)
+    .first<NotificationPreferences>();
+}
+
+export async function updateNotificationPreferences(
+  db: D1Like,
+  userId: number,
+  input: {
+    emailEnabled: boolean;
+    inAppEnabled: boolean;
+    cadence: "daily" | "weekly";
+    listingExpiry: boolean;
+    enquiryActivity: boolean;
+    billingEvents: boolean;
+    savedSearchMatches: boolean;
+    savedListingUpdates: boolean;
+  }
+) {
+  await ensureNotificationPreferences(db, userId);
+
+  await db
+    .prepare(
+      `UPDATE notification_preferences
+       SET email_enabled = ?,
+           in_app_enabled = ?,
+           cadence = ?,
+           listing_expiry = ?,
+           enquiry_activity = ?,
+           billing_events = ?,
+           saved_search_matches = ?,
+           saved_listing_updates = ?,
+           updated_at = CURRENT_TIMESTAMP
+       WHERE user_id = ?`
+    )
+    .bind(
+      input.emailEnabled ? 1 : 0,
+      input.inAppEnabled ? 1 : 0,
+      input.cadence,
+      input.listingExpiry ? 1 : 0,
+      input.enquiryActivity ? 1 : 0,
+      input.billingEvents ? 1 : 0,
+      input.savedSearchMatches ? 1 : 0,
+      input.savedListingUpdates ? 1 : 0,
+      userId
+    )
+    .run();
+
+  return { ok: true as const };
 }
 
 function buildExpiryEmailEventKey(notification: ExpiryNotification) {
@@ -787,9 +877,10 @@ export async function createEnquiry(db: D1Like, input: EnquiryInput) {
 
 export async function getDashboardData(ownerUserId: number, db?: D1Like) {
   if (!db) {
-    return { listings: [], enquiries: [], payments: [], notifications: [], savedSearches: [], savedListings: [] };
+    return { listings: [], enquiries: [], payments: [], notifications: [], savedSearches: [], savedListings: [], notificationPreferences: null };
   }
   await normalizeExpiredListingPlans(db);
+  const notificationPreferences = await getNotificationPreferences(db, ownerUserId);
 
   const listingsResult = await db
     .prepare(
@@ -858,7 +949,9 @@ export async function getDashboardData(ownerUserId: number, db?: D1Like) {
     listings: listingsResult.results,
     enquiries: enquiriesResult.results,
     payments: paymentsResult.results,
-    notifications: buildExpiryNotifications(listingRows),
+    notifications: notificationPreferences?.in_app_enabled && notificationPreferences?.listing_expiry
+      ? buildExpiryNotifications(listingRows)
+      : [],
     savedSearches: savedSearchesResult.results.map((search) => ({
       ...search,
       filters: parseSavedSearchFilters(search.filters_json),
@@ -869,6 +962,7 @@ export async function getDashboardData(ownerUserId: number, db?: D1Like) {
         listing: await getListingBySlug(savedListing.listing_slug, db),
       }))
     ),
+    notificationPreferences,
   };
 }
 
@@ -1267,6 +1361,12 @@ export async function sendPendingExpiryNotificationEmails(
   let failed = 0;
 
   for (const candidate of candidates) {
+    const preferences = await getNotificationPreferences(db, candidate.ownerUserId ?? undefined);
+    if (!preferences?.email_enabled || !preferences.listing_expiry) {
+      skipped += 1;
+      continue;
+    }
+
     const eventKey = buildExpiryEmailEventKey(candidate);
     if (await hasSentExpiryEmail(db, eventKey)) {
       skipped += 1;

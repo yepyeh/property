@@ -25,6 +25,7 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
     </div>
     <div class="actions">
       <a class="primary" href="/listings/">Browse listings</a>
+      <a class="ghost" href="/account/notifications">Notifications</a>
       <form method="POST" action="/api/auth/logout">
         <button class="ghost" type="submit">Log out</button>
       </form>
