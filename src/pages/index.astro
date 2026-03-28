@@ -263,7 +263,7 @@ const ownerSteps = [
       min-height: 2rem;
       padding: 0.22rem 0.75rem;
       border-radius: 999px;
-      background: rgba(127, 86, 217, 0.08);
+      background: var(--brand-soft);
       color: var(--accent-strong);
       font-size: 0.78rem;
       font-weight: 800;
@@ -316,7 +316,7 @@ const ownerSteps = [
       height: 0.7rem;
       margin-top: 0.45rem;
       border-radius: 999px;
-      background: linear-gradient(135deg, #12b76a, #079455);
+      background: linear-gradient(135deg, var(--brand), #23314d);
       flex: none;
     }
 
@@ -350,7 +350,7 @@ const ownerSteps = [
 
     .button-primary {
       border: none;
-      background: linear-gradient(135deg, #12b76a, #079455);
+      background: linear-gradient(135deg, var(--brand), #23314d);
       color: white;
       box-shadow: 0 14px 30px rgba(18, 183, 106, 0.2);
     }
@@ -365,7 +365,7 @@ const ownerSteps = [
     .button-dark {
       width: 100%;
       border: none;
-      background: #101828;
+      background: var(--brand);
       color: white;
       box-shadow: 0 12px 24px rgba(16, 24, 40, 0.16);
     }
@@ -417,8 +417,8 @@ const ownerSteps = [
 
     .intent-chip.active span,
     .intent-chip:has(input:checked) span {
-      background: #101828;
-      border-color: #101828;
+      background: var(--brand);
+      border-color: var(--brand);
       color: white;
     }
 
