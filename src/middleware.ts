@@ -34,5 +34,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return context.redirect("/owner/dashboard/");
   }
 
-  return next();
+  const response = await next();
+  response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0");
+  response.headers.set("Pragma", "no-cache");
+  response.headers.set("Expires", "0");
+  response.headers.set("Surrogate-Control", "no-store");
+  return response;
 });
