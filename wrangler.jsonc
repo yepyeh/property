@@ -15,6 +15,12 @@
       "preview_database_id": "dbaaabb0-bfcb-456e-995e-e7ebbefd5c8c"
     }
   ],
+  "r2_buckets": [
+    {
+      "binding": "LISTING_IMAGES",
+      "bucket_name": "property-app-2026-images"
+    }
+  ],
   "observability": {
     "enabled": true
   }

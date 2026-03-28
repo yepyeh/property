@@ -1,7 +1,7 @@
 import { defineMiddleware } from "astro:middleware";
 import { AUTH_COOKIE, isAuthenticated } from "./lib/auth";
 
-const protectedPrefixes = ["/owner", "/submit-listing", "/api/listings"];
+const protectedPrefixes = ["/owner", "/submit-listing", "/api/listings", "/api/upload-image"];
 
 export const onRequest = defineMiddleware((context, next) => {
   const { pathname, search } = context.url;

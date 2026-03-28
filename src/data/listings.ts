@@ -33,6 +33,8 @@ export interface Listing {
     saves: number;
     enquiries: number;
   };
+  imageKeys?: string[];
+  imageUrls?: string[];
 }
 
 export const listings: Listing[] = [

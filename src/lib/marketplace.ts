@@ -46,6 +46,7 @@ interface ListingRow {
   views_24h: number;
   saves: number;
   enquiries: number;
+  image_keys: string;
   created_at: string;
 }
 
@@ -83,6 +84,8 @@ export function getDB(runtime?: RuntimeLike | null) {
 }
 
 function mapRowToListing(row: ListingRow): Listing {
+  const imageKeys = row.image_keys ? JSON.parse(row.image_keys) : [];
+
   return {
     slug: row.slug,
     title: row.title,
@@ -114,6 +117,8 @@ function mapRowToListing(row: ListingRow): Listing {
       saves: row.saves,
       enquiries: row.enquiries,
     },
+    imageKeys,
+    imageUrls: imageKeys.map((key: string) => `/media/${key}`),
   };
 }
 
@@ -176,10 +181,10 @@ export async function createListing(db: D1Like, input: ListingInput) {
         slug, title, city, district, ward, property_type, intent,
         price_label, numeric_price, price_unit, beds, baths, area,
         status, tone, summary, description,
-        tags, features,
+        tags, features, image_keys,
         owner_name, owner_email, owner_phone, owner_role, owner_response_time, owner_verified,
         views_24h, saves, enquiries, published
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`
     )
     .bind(
       slug,
@@ -201,6 +206,7 @@ export async function createListing(db: D1Like, input: ListingInput) {
       input.description,
       JSON.stringify(["Owner submitted", input.intent === "rent" ? "Rent" : "For sale"]),
       JSON.stringify(["Photos pending", "Direct owner contact", "Dashboard managed"]),
+      JSON.stringify([]),
       input.ownerName,
       input.ownerEmail,
       input.ownerPhone,
@@ -240,6 +246,7 @@ export async function getDashboardData(db?: D1Like) {
   const listingsResult = await db
     .prepare(
       `SELECT slug, title, city, district, intent, status, created_at, enquiries
+             , image_keys
        FROM listings
        ORDER BY created_at DESC`
     )
