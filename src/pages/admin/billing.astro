@@ -1,6 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getAdminBillingData, getDB } from "../../lib/marketplace";
+import { getAdminBillingData, getDB, isExpiryEmailEnabled } from "../../lib/marketplace";
 
 const owner = Astro.locals.owner;
 
@@ -8,8 +8,13 @@ if (!owner || owner.role !== "admin") {
   return Astro.redirect("/owner/dashboard/");
 }
 
-const { listings, payments } = await getAdminBillingData(getDB(Astro.locals.runtime));
+const { listings, payments, emailDeliveries } = await getAdminBillingData(getDB(Astro.locals.runtime));
 const updated = Astro.url.searchParams.get("updated");
+const emailed = Number(Astro.url.searchParams.get("emailed") || 0);
+const skipped = Number(Astro.url.searchParams.get("skipped") || 0);
+const failed = Number(Astro.url.searchParams.get("failed") || 0);
+const emailError = Astro.url.searchParams.get("emailError");
+const expiryEmailEnabled = isExpiryEmailEnabled(Astro.locals.runtime);
 
 const analytics = {
   totalListings: listings.length,
@@ -25,6 +30,8 @@ const analytics = {
     return paid <= threshold || promoted <= threshold || trial <= threshold;
   }).length,
   paymentCount: payments.length,
+  emailSentCount: emailDeliveries.filter((delivery) => delivery.status === "sent").length,
+  emailFailedCount: emailDeliveries.filter((delivery) => delivery.status === "failed").length,
   revenueVnd: payments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
   promotedSales: payments.filter((payment) => payment.plan_type === "promoted").length,
   paidSales: payments.filter((payment) => payment.plan_type === "paid").length,
@@ -59,6 +66,18 @@ const conversionRate = analytics.totalListings > 0
     </div>
   )}
 
+  {(emailed || skipped || failed) ? (
+    <div class="card flash">
+      Expiry email dispatch finished. Sent <strong>{emailed}</strong>, skipped <strong>{skipped}</strong>, failed <strong>{failed}</strong>.
+    </div>
+  ) : null}
+
+  {emailError && (
+    <div class="card flash error-flash">
+      Expiry emails were not sent: <code>{emailError}</code>. Set <code>RESEND_API_KEY</code> and <code>NOTIFICATION_FROM_EMAIL</code>.
+    </div>
+  )}
+
   <section class="analytics-grid">
     <article class="card stat"><strong>{analytics.totalListings}</strong><span>tracked listings</span></article>
     <article class="card stat"><strong>{analytics.activePaid}</strong><span>paid listings</span></article>
@@ -67,6 +86,8 @@ const conversionRate = analytics.totalListings > 0
     <article class="card stat"><strong>{analytics.expiredListings}</strong><span>expired listings</span></article>
     <article class="card stat"><strong>{analytics.expiringSoon}</strong><span>expiring within 3 days</span></article>
     <article class="card stat"><strong>{analytics.paymentCount}</strong><span>recorded payments</span></article>
+    <article class="card stat"><strong>{analytics.emailSentCount}</strong><span>expiry emails sent</span></article>
+    <article class="card stat"><strong>{analytics.emailFailedCount}</strong><span>expiry email failures</span></article>
   </section>
 
   <section class="card panel summary-panel">
@@ -88,6 +109,20 @@ const conversionRate = analytics.totalListings > 0
         <strong>{analytics.promotedSales}</strong>
         <span>promotion sales</span>
       </div>
+    </div>
+  </section>
+
+  <section class="card panel summary-panel">
+    <h2>Expiry email delivery</h2>
+    <p>
+      Send renewal and expiry emails for listings that are already inside the warning window or have already expired.
+      Delivery is deduped per listing event so repeated sends do not spam the same reminder.
+    </p>
+    <div class="actions">
+      <form method="POST" action="/api/admin/notifications/send-expiry">
+        <button type="submit" class="primary" disabled={!expiryEmailEnabled}>Send pending expiry emails</button>
+      </form>
+      <span>{expiryEmailEnabled ? "Resend delivery is configured." : "Email delivery is not configured yet."}</span>
     </div>
   </section>
 
@@ -156,6 +191,25 @@ const conversionRate = analytics.totalListings > 0
     )}
   </section>
 
+  <section class="card panel payment-panel">
+    <h2>Expiry email ledger</h2>
+    {emailDeliveries.length === 0 ? <p>No expiry emails recorded yet.</p> : (
+      <ul class="listing-grid">
+        {emailDeliveries.map((delivery) => (
+          <li>
+            <strong>{delivery.status} · {delivery.category} · {delivery.level}</strong>
+            <span>{delivery.owner_email}</span>
+            <span>{delivery.listing_title}</span>
+            <span>Due at: {delivery.due_at}</span>
+            <span>{delivery.sent_at ? `Sent at: ${delivery.sent_at}` : `Created: ${delivery.created_at}`}</span>
+            {delivery.error_message && <span>Error: {delivery.error_message}</span>}
+            {delivery.provider_message_id && <span>Provider message: {delivery.provider_message_id}</span>}
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+
   <style>
     .page-head, .panel, .stat { padding: 1.4rem; }
     .payment-panel { margin-top: 1rem; }
@@ -172,6 +226,7 @@ const conversionRate = analytics.totalListings > 0
       display: flex;
       gap: 0.75rem;
       flex-wrap: wrap;
+      align-items: center;
     }
     .analytics-grid,
     .summary-grid {
@@ -200,6 +255,9 @@ const conversionRate = analytics.totalListings > 0
       margin-bottom: 1rem;
       color: var(--accent-strong);
       font-weight: 700;
+    }
+    .error-flash {
+      color: #991b1b;
     }
     .ghost,
     .primary,

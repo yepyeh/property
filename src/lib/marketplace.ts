@@ -16,6 +16,13 @@ interface RuntimeLike {
   };
 }
 
+interface ExpiryEmailRuntimeLike extends RuntimeLike {
+  env?: RuntimeLike["env"] & {
+    RESEND_API_KEY?: string;
+    NOTIFICATION_FROM_EMAIL?: string;
+  };
+}
+
 interface ListingRow {
   id: number;
   slug: string;
@@ -127,8 +134,115 @@ export interface ExpiryNotification {
   dueAt: string;
 }
 
+export interface ExpiryEmailDeliveryRecord {
+  event_key: string;
+  owner_email: string;
+  listing_slug: string;
+  listing_title: string;
+  category: string;
+  level: string;
+  due_at: string;
+  status: string;
+  provider: string | null;
+  provider_message_id: string | null;
+  error_message: string | null;
+  sent_at: string | null;
+  created_at: string;
+}
+
+interface ExpiryEmailCandidate extends ExpiryNotification {
+  ownerUserId: number | null;
+  ownerEmail: string;
+}
+
 export function getDB(runtime?: RuntimeLike | null) {
   return runtime?.env?.DB;
+}
+
+export function isExpiryEmailEnabled(runtime?: ExpiryEmailRuntimeLike | null) {
+  return Boolean(runtime?.env?.RESEND_API_KEY && runtime?.env?.NOTIFICATION_FROM_EMAIL);
+}
+
+function buildExpiryEmailEventKey(notification: ExpiryNotification) {
+  return `${notification.listingSlug}:${notification.category}:${notification.level}:${notification.dueAt}`;
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll("\"", "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+async function sendExpiryEmail(
+  runtime: ExpiryEmailRuntimeLike | null | undefined,
+  input: { to: string; subject: string; html: string }
+) {
+  const apiKey = runtime?.env?.RESEND_API_KEY;
+  const from = runtime?.env?.NOTIFICATION_FROM_EMAIL;
+
+  if (!apiKey || !from) {
+    return { ok: false as const, error: "missing_config" };
+  }
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from,
+      to: [input.to],
+      subject: input.subject,
+      html: input.html,
+    }),
+  });
+
+  if (!response.ok) {
+    return {
+      ok: false as const,
+      error: "provider_error",
+      detail: await response.text(),
+    };
+  }
+
+  const payload = await response.json<{ id?: string }>();
+  return {
+    ok: true as const,
+    provider: "resend",
+    providerMessageId: payload.id ?? null,
+  };
+}
+
+function buildExpiryEmailContent(notification: ExpiryEmailCandidate, appUrl: string) {
+  const dashboardUrl = `${appUrl}/owner/dashboard/`;
+  const listingUrl = `${appUrl}/listings/${notification.listingSlug}/`;
+  const categoryLabel = notification.category === "trial"
+    ? "free trial"
+    : notification.category === "paid"
+      ? "paid listing"
+      : "promotion";
+
+  const subject = `${notification.listingTitle}: ${notification.ctaLabel}`;
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#111827;line-height:1.6">
+      <p style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#0f766e;margin-bottom:8px">Property App 2026</p>
+      <h1 style="font-size:28px;margin:0 0 12px">${escapeHtml(notification.listingTitle)}</h1>
+      <p style="margin:0 0 16px">Your ${escapeHtml(categoryLabel)} notification is ready.</p>
+      <p style="margin:0 0 16px">${escapeHtml(notification.message)}</p>
+      <p style="margin:0 0 16px"><strong>Due:</strong> ${escapeHtml(notification.dueAt)}</p>
+      <p style="margin:0 0 24px">
+        <a href="${dashboardUrl}" style="display:inline-block;padding:12px 18px;border-radius:999px;background:#0f766e;color:#fff;text-decoration:none;font-weight:700;margin-right:12px">${escapeHtml(notification.ctaLabel)}</a>
+        <a href="${listingUrl}" style="color:#0f766e;text-decoration:none;font-weight:700">Review listing</a>
+      </p>
+      <p style="font-size:14px;color:#6b7280;margin:0">This email was sent because your listing has a time-based visibility or promotion window.</p>
+    </div>
+  `;
+
+  return { subject, html };
 }
 
 function getDaysUntil(dateValue?: string | null) {
@@ -653,7 +767,7 @@ export async function getDashboardData(ownerUserId: number, db?: D1Like) {
 }
 
 export async function getAdminBillingData(db?: D1Like) {
-  if (!db) return { listings: [], payments: [] };
+  if (!db) return { listings: [], payments: [], emailDeliveries: [] };
   await normalizeExpiredListingPlans(db);
 
   const listingsResult = await db
@@ -677,9 +791,21 @@ export async function getAdminBillingData(db?: D1Like) {
     .bind()
     .all();
 
+  const emailDeliveriesResult = await db
+    .prepare(
+      `SELECT event_key, owner_email, listing_slug, listing_title, category, level,
+              due_at, status, provider, provider_message_id, error_message, sent_at, created_at
+       FROM expiry_email_deliveries
+       ORDER BY created_at DESC
+       LIMIT 100`
+    )
+    .bind()
+    .all<ExpiryEmailDeliveryRecord>();
+
   return {
     listings: listingsResult.results,
     payments: paymentsResult.results,
+    emailDeliveries: emailDeliveriesResult.results,
   };
 }
 
@@ -777,4 +903,188 @@ export async function recordPayment(db: D1Like, input: PaymentRecordInput) {
       input.paidAt ?? null
     )
     .run();
+}
+
+async function getPendingExpiryEmailCandidates(db: D1Like) {
+  await normalizeExpiredListingPlans(db);
+
+  const listingsResult = await db
+    .prepare(
+      `SELECT slug, title, owner_user_id, owner_email, status, plan_type, trial_ends_at, paid_until, promoted_until
+       FROM listings
+       WHERE owner_email IS NOT NULL
+         AND owner_email != ''
+       ORDER BY created_at DESC`
+    )
+    .bind()
+    .all<{
+      slug: string;
+      title: string;
+      owner_user_id: number | null;
+      owner_email: string;
+      status: string;
+      plan_type: string;
+      trial_ends_at?: string | null;
+      paid_until?: string | null;
+      promoted_until?: string | null;
+    }>();
+
+  const candidates: ExpiryEmailCandidate[] = [];
+  const rows = listingsResult.results as Array<{
+    slug: string;
+    title: string;
+    owner_user_id: number | null;
+    owner_email: string;
+    status: string;
+    plan_type: string;
+    trial_ends_at?: string | null;
+    paid_until?: string | null;
+    promoted_until?: string | null;
+  }>;
+
+  for (const row of rows) {
+    const notifications = buildExpiryNotifications([row]);
+    for (const notification of notifications) {
+      candidates.push({
+        ...notification,
+        ownerUserId: row.owner_user_id,
+        ownerEmail: row.owner_email,
+      });
+    }
+  }
+
+  return candidates;
+}
+
+async function hasSentExpiryEmail(db: D1Like, eventKey: string) {
+  const row = await db
+    .prepare(
+      `SELECT status
+       FROM expiry_email_deliveries
+       WHERE event_key = ?
+       LIMIT 1`
+    )
+    .bind(eventKey)
+    .first<{ status: string }>();
+
+  return row?.status === "sent";
+}
+
+async function upsertExpiryEmailDelivery(
+  db: D1Like,
+  input: {
+    eventKey: string;
+    ownerUserId: number | null;
+    ownerEmail: string;
+    listingSlug: string;
+    listingTitle: string;
+    category: string;
+    level: string;
+    dueAt: string;
+    status: string;
+    provider?: string | null;
+    providerMessageId?: string | null;
+    errorMessage?: string | null;
+    sentAt?: string | null;
+  }
+) {
+  await db
+    .prepare(
+      `INSERT INTO expiry_email_deliveries (
+        event_key, owner_user_id, owner_email, listing_slug, listing_title,
+        category, level, due_at, status, provider, provider_message_id, error_message, sent_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(event_key) DO UPDATE SET
+        status = excluded.status,
+        provider = excluded.provider,
+        provider_message_id = excluded.provider_message_id,
+        error_message = excluded.error_message,
+        sent_at = excluded.sent_at`
+    )
+    .bind(
+      input.eventKey,
+      input.ownerUserId,
+      input.ownerEmail,
+      input.listingSlug,
+      input.listingTitle,
+      input.category,
+      input.level,
+      input.dueAt,
+      input.status,
+      input.provider ?? null,
+      input.providerMessageId ?? null,
+      input.errorMessage ?? null,
+      input.sentAt ?? null
+    )
+    .run();
+}
+
+export async function sendPendingExpiryNotificationEmails(
+  runtime?: ExpiryEmailRuntimeLike | null,
+  options?: { appUrl?: string }
+) {
+  const db = getDB(runtime);
+  if (!db) return { ok: false as const, error: "missing_db" };
+  if (!isExpiryEmailEnabled(runtime)) return { ok: false as const, error: "missing_config" };
+
+  const appUrl = options?.appUrl || "https://property-app-2026.steven-896.workers.dev";
+  const candidates = await getPendingExpiryEmailCandidates(db);
+  let sent = 0;
+  let skipped = 0;
+  let failed = 0;
+
+  for (const candidate of candidates) {
+    const eventKey = buildExpiryEmailEventKey(candidate);
+    if (await hasSentExpiryEmail(db, eventKey)) {
+      skipped += 1;
+      continue;
+    }
+
+    const emailContent = buildExpiryEmailContent(candidate, appUrl);
+    const result = await sendExpiryEmail(runtime, {
+      to: candidate.ownerEmail,
+      subject: emailContent.subject,
+      html: emailContent.html,
+    });
+
+    if (!result.ok) {
+      failed += 1;
+      await upsertExpiryEmailDelivery(db, {
+        eventKey,
+        ownerUserId: candidate.ownerUserId,
+        ownerEmail: candidate.ownerEmail,
+        listingSlug: candidate.listingSlug,
+        listingTitle: candidate.listingTitle,
+        category: candidate.category,
+        level: candidate.level,
+        dueAt: candidate.dueAt,
+        status: "failed",
+        errorMessage: result.error === "provider_error" ? result.detail ?? "Provider request failed" : "Email delivery is not configured",
+      });
+      continue;
+    }
+
+    sent += 1;
+    await upsertExpiryEmailDelivery(db, {
+      eventKey,
+      ownerUserId: candidate.ownerUserId,
+      ownerEmail: candidate.ownerEmail,
+      listingSlug: candidate.listingSlug,
+      listingTitle: candidate.listingTitle,
+      category: candidate.category,
+      level: candidate.level,
+      dueAt: candidate.dueAt,
+      status: "sent",
+      provider: result.provider,
+      providerMessageId: result.providerMessageId,
+      sentAt: new Date().toISOString(),
+    });
+  }
+
+  return {
+    ok: true as const,
+    sent,
+    skipped,
+    failed,
+  };
 }
