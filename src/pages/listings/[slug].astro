@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getDB, getListingBySlug, isListingSavedByUser } from "../../lib/marketplace";
+import ListingCard from "../../components/ListingCard.astro";
+import { getAllListings, getDB, getListingBySlug, isListingSavedByUser } from "../../lib/marketplace";
 
 const { slug } = Astro.params;
 const db = getDB(Astro.locals.runtime);
@@ -15,422 +16,585 @@ const isSaved = listing ? await isListingSavedByUser(db, viewer?.id, listing.slu
 if (!listing) {
   throw new Error(`Listing not found: ${slug}`);
 }
+
+const allListings = await getAllListings(db);
+const similarListings = allListings
+  .filter((candidate) => candidate.slug !== listing.slug)
+  .sort((a, b) => {
+    const aScore = Number(a.city === listing.city) + Number(a.intent === listing.intent) + Number(a.type === listing.type);
+    const bScore = Number(b.city === listing.city) + Number(b.intent === listing.intent) + Number(b.type === listing.type);
+    return bScore - aScore;
+  })
+  .slice(0, 3);
+
+const intentLabel = listing.intent === "buy" ? "For sale" : "For rent";
+const ownerTrustLabel = listing.owner.verified ? "Verified owner" : "Owner listed";
 ---
 
 <Layout
   title={`${listing.title} | Property App 2026`}
   description={listing.summary}
 >
-  <section class={`hero card ${listing.tone}`}>
-    <div class="hero-photo" style={heroImage ? `background-image: linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)), url(${heroImage})` : undefined}>
-      <span>{listing.status}</span>
+  <section class="detail-hero card">
+    <div class="hero-media">
+      <div class={`hero-image ${listing.tone}`} style={heroImage ? `background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.42)), url(${heroImage})` : undefined}>
+        <div class="hero-badges">
+          <span class="badge-primary">{intentLabel}</span>
+          <span class="badge-secondary">{listing.status}</span>
+        </div>
+      </div>
+      {listing.imageUrls && listing.imageUrls.length > 1 && (
+        <div class="gallery-strip">
+          {listing.imageUrls.slice(0, 4).map((imageUrl) => (
+            <img src={imageUrl} alt={listing.title} loading="lazy" />
+          ))}
+        </div>
+      )}
     </div>
-    <div class="hero-copy">
-      <a class="back" href="/listings/">All listings</a>
-      <p class="eyebrow">{listing.intent === "buy" ? "For sale" : "For rent"} · {listing.type}</p>
+
+    <div class="hero-panel">
+      <a class="back-link" href="/listings/">All listings</a>
+      <p class="eyebrow">{listing.type} · {listing.district}, {listing.city}</p>
       <h1>{listing.title}</h1>
       <p class="price">{listing.priceLabel}</p>
       <p class="summary">{listing.summary}</p>
+
+      <div class="fact-grid">
+        <article>
+          <strong>{listing.beds}</strong>
+          <span>Bedrooms</span>
+        </article>
+        <article>
+          <strong>{listing.baths}</strong>
+          <span>Bathrooms</span>
+        </article>
+        <article>
+          <strong>{listing.area}</strong>
+          <span>Square meters</span>
+        </article>
+      </div>
+
+      <div class="trust-bar">
+        <span>{ownerTrustLabel}</span>
+        <span>{listing.owner.role}</span>
+        <span>Replies in {listing.owner.responseTime}</span>
+      </div>
+
       <div class="hero-actions">
         {isBuyer ? (
           <form method="POST" action={isSaved ? "/api/saved-listings/delete" : "/api/saved-listings"}>
             <input type="hidden" name="listingSlug" value={listing.slug} />
             <input type="hidden" name="redirectTo" value={`/listings/${listing.slug}/`} />
-            <button type="submit" class="save-button">{isSaved ? "Saved to favorites" : "Save listing"}</button>
+            <button type="submit" class="button-secondary">{isSaved ? "Saved to favorites" : "Save listing"}</button>
           </form>
         ) : (
-          <a class="save-link" href={`/login?redirect=${encodeURIComponent(`/listings/${listing.slug}/`)}`}>Sign in to save</a>
+          <a class="button-secondary" href={`/login?redirect=${encodeURIComponent(`/listings/${listing.slug}/`)}`}>Sign in to save</a>
         )}
-        {savedListing && <span class="save-status">Listing saved to your buyer dashboard.</span>}
+        <a class="button-dark" href="#enquiry-panel">Enquire now</a>
       </div>
-      <div class="metrics">
-        <div><strong>{listing.beds}</strong><span>beds</span></div>
-        <div><strong>{listing.baths}</strong><span>baths</span></div>
-        <div><strong>{listing.area}</strong><span>m2</span></div>
-      </div>
+      {savedListing && <p class="flash-inline">Listing saved to your buyer dashboard.</p>}
     </div>
   </section>
 
-  <section class="body-grid">
-    <article class="story card">
-      <span class="pill">Listing story</span>
-      <h2>{listing.district}, {listing.city}</h2>
-      <p>{listing.description}</p>
-
-      <div class="tags">
-        {listing.tags.map((tag) => <span>{tag}</span>)}
+  <section class="detail-grid">
+    <article class="content-panel card">
+      <div class="panel-section">
+        <span class="section-kicker">Overview</span>
+        <h2>Property overview</h2>
+        <p>{listing.description}</p>
       </div>
 
-      <h3>Included features</h3>
-      <ul class="feature-list">
-        {listing.features.map((feature) => <li>{feature}</li>)}
-      </ul>
+      <div class="panel-section">
+        <span class="section-kicker">Highlights</span>
+        <div class="tag-row">
+          {listing.tags.map((tag) => <span>{tag}</span>)}
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <span class="section-kicker">Included features</span>
+        <div class="feature-grid">
+          {listing.features.map((feature) => (
+            <div class="feature-item">
+              <span class="feature-dot"></span>
+              <span>{feature}</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {listing.imageUrls && listing.imageUrls.length > 0 && (
-        <>
-          <h3>Listing photos</h3>
-          <div class="gallery">
+        <div class="panel-section">
+          <span class="section-kicker">Photo gallery</span>
+          <div class="gallery-grid">
             {listing.imageUrls.map((imageUrl) => (
               <img src={imageUrl} alt={listing.title} loading="lazy" />
             ))}
           </div>
-        </>
+        </div>
       )}
     </article>
 
-    <aside class="enquiry card">
-      <span class="pill">Enquiry panel</span>
-      <h2>Contact the owner</h2>
-      {enquirySent && <p class="success">Enquiry sent successfully. The owner can now see it in the dashboard.</p>}
-      <p>
-        This is the next critical product surface: a structured enquiry flow that captures applicant intent,
-        preferred viewing time, and urgency.
-      </p>
+    <aside class="sidebar-stack">
+      <section class="enquiry-panel card" id="enquiry-panel">
+        <span class="section-kicker">Enquiry panel</span>
+        <h2>Contact the owner</h2>
+        <p class="enquiry-copy">
+          Structured enquiries are the conversion layer. Buyers should know who they are contacting and owners should
+          receive clean intent data, not vague messages.
+        </p>
+        {enquirySent && <p class="success-banner">Enquiry sent successfully. The owner can now see it in the dashboard.</p>}
 
-      <div class="owner">
-        <strong>{listing.owner.name}</strong>
-        <span>{listing.owner.role}</span>
-        <span>{listing.owner.verified ? "Verified" : "Unverified"} · Replies in {listing.owner.responseTime}</span>
-      </div>
+        <div class="owner-card">
+          <strong>{listing.owner.name}</strong>
+          <span>{listing.owner.role}</span>
+          <span>{ownerTrustLabel} · Replies in {listing.owner.responseTime}</span>
+        </div>
 
-      <form class="form" method="POST" action="/api/enquiries">
-        <input type="hidden" name="listingSlug" value={listing.slug} />
-        <input type="hidden" name="listingTitle" value={listing.title} />
-        <label>
-          Your name
-          <input type="text" name="applicantName" required placeholder="Enter your name" />
-        </label>
-        <label>
-          Contact
-          <input type="text" name="contact" required placeholder="Email or phone number" />
-        </label>
-        <label>
-          Preferred viewing time
-          <input type="text" name="preferredTime" placeholder="Saturday morning" />
-        </label>
-        <label>
-          Message
-          <textarea name="message" rows="5" required placeholder={`Hi, I'm interested in ${listing.title}. Is it still available?`}></textarea>
-        </label>
-        <button type="submit">Send enquiry</button>
-      </form>
+        <form class="enquiry-form" method="POST" action="/api/enquiries">
+          <input type="hidden" name="listingSlug" value={listing.slug} />
+          <input type="hidden" name="listingTitle" value={listing.title} />
+          <label>
+            <span>Your name</span>
+            <input type="text" name="applicantName" required placeholder="Enter your name" />
+          </label>
+          <label>
+            <span>Contact</span>
+            <input type="text" name="contact" required placeholder="Email or phone number" />
+          </label>
+          <label>
+            <span>Preferred viewing time</span>
+            <input type="text" name="preferredTime" placeholder="Saturday morning" />
+          </label>
+          <label>
+            <span>Message</span>
+            <textarea name="message" rows="5" required placeholder={`Hi, I'm interested in ${listing.title}. Is it still available?`}></textarea>
+          </label>
+          <button type="submit" class="button-dark full-width">Send enquiry</button>
+        </form>
+      </section>
+
+      <section class="stats-panel card">
+        <span class="section-kicker">Demand signals</span>
+        <div class="stats-grid">
+          <article>
+            <strong>{listing.stats.views24h}</strong>
+            <span>Views in the last 24 hours</span>
+          </article>
+          <article>
+            <strong>{listing.stats.saves}</strong>
+            <span>Buyers saved this listing</span>
+          </article>
+          <article>
+            <strong>{listing.stats.enquiries}</strong>
+            <span>Open conversations</span>
+          </article>
+        </div>
+      </section>
     </aside>
   </section>
 
-  <section class="insights">
-    <article class="card stat-card">
-      <span class="pill">Demand</span>
-      <strong>{listing.stats.views24h}</strong>
-      <p>views in the last 24 hours</p>
-    </article>
-    <article class="card stat-card">
-      <span class="pill">Saved</span>
-      <strong>{listing.stats.saves}</strong>
-      <p>buyers saved this listing</p>
-    </article>
-    <article class="card stat-card">
-      <span class="pill">Enquiries</span>
-      <strong>{listing.stats.enquiries}</strong>
-      <p>open conversations in the pipeline</p>
-    </article>
-  </section>
+  {similarListings.length > 0 && (
+    <section class="similar-section">
+      <div class="section-head">
+        <span class="section-kicker">Similar listings</span>
+        <h2>Nearby alternatives worth comparing</h2>
+        <p>Good detail pages should recover the browse journey instead of trapping the user on one listing.</p>
+      </div>
+      <div class="similar-grid">
+        {similarListings.map((similarListing) => <ListingCard listing={similarListing} />)}
+      </div>
+    </section>
+  )}
 
   <style>
-    .hero {
+    .detail-hero,
+    .content-panel,
+    .enquiry-panel,
+    .stats-panel {
+      padding: 1.1rem;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 18px 40px rgba(16, 24, 40, 0.06);
+    }
+
+    .detail-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(20rem, 0.95fr);
+      gap: 1rem;
       overflow: hidden;
     }
 
-    .hero-photo {
-      min-height: 19rem;
-      padding: 1.2rem;
+    .hero-media,
+    .sidebar-stack,
+    .gallery-strip,
+    .gallery-grid,
+    .stats-grid,
+    .similar-grid,
+    .feature-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .hero-image {
+      min-height: 25rem;
+      padding: 1rem;
+      border-radius: 22px;
+      background-size: cover;
+      background-position: center;
       display: flex;
       align-items: flex-start;
-      background-size: cover;
+      justify-content: flex-start;
+    }
+
+    .sea:not([style]),
+    .sun:not([style]),
+    .forest:not([style]),
+    .night:not([style]),
+    .clay:not([style]),
+    .sky:not([style]) {
       background-position: center;
     }
 
-    .sea .hero-photo:not([style]) {
-      background-image:
-        linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)),
-        linear-gradient(135deg, #86cfd0, #245a73);
-    }
+    .sea:not([style]) { background-image: linear-gradient(180deg, rgba(15,23,42,0.08), rgba(15,23,42,0.42)), linear-gradient(135deg, #98d4d5, #2f6f89); }
+    .sun:not([style]) { background-image: linear-gradient(180deg, rgba(15,23,42,0.08), rgba(15,23,42,0.42)), linear-gradient(135deg, #f4c78d, #cf6f46); }
+    .forest:not([style]) { background-image: linear-gradient(180deg, rgba(15,23,42,0.08), rgba(15,23,42,0.42)), linear-gradient(135deg, #a7d4b0, #255a4a); }
+    .night:not([style]) { background-image: linear-gradient(180deg, rgba(15,23,42,0.08), rgba(15,23,42,0.45)), linear-gradient(135deg, #9ca8e6, #212c58); }
+    .clay:not([style]) { background-image: linear-gradient(180deg, rgba(15,23,42,0.08), rgba(15,23,42,0.45)), linear-gradient(135deg, #deb28d, #996347); }
+    .sky:not([style]) { background-image: linear-gradient(180deg, rgba(15,23,42,0.08), rgba(15,23,42,0.45)), linear-gradient(135deg, #c2dff6, #4f7cab); }
 
-    .sun .hero-photo:not([style]) {
-      background-image:
-        linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)),
-        linear-gradient(135deg, #eebf8a, #c96f47);
-    }
-
-    .forest .hero-photo:not([style]) {
-      background-image:
-        linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)),
-        linear-gradient(135deg, #98c8a2, #245646);
-    }
-
-    .night .hero-photo:not([style]) {
-      background-image:
-        linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.42)),
-        linear-gradient(135deg, #8291d6, #212950);
-    }
-
-    .clay .hero-photo:not([style]) {
-      background-image:
-        linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.42)),
-        linear-gradient(135deg, #d2a07d, #8d5e44);
-    }
-
-    .sky .hero-photo:not([style]) {
-      background-image:
-        linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.42)),
-        linear-gradient(135deg, #b1d7ee, #4976a6);
-    }
-
-    .hero-photo span {
-      padding: 0.55rem 0.85rem;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.9);
-      color: var(--bg-deep);
-      font-size: 0.82rem;
-      font-weight: 700;
-    }
-
-    .hero-copy {
-      padding: 1.4rem;
-    }
-
-    .back {
-      color: var(--muted);
-      text-decoration: none;
-    }
-
-    .eyebrow {
-      margin: 0.9rem 0 0;
-      color: var(--accent-strong);
-      font-size: 0.85rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      margin: 0.5rem 0 0;
-      font-family: "Fraunces", serif;
-      font-size: clamp(2.5rem, 6vw, 4.8rem);
-      line-height: 0.95;
-    }
-
-    .price {
-      margin: 0.9rem 0 0;
-      font-size: 1.5rem;
-      font-weight: 800;
-    }
-
-    .summary {
-      margin: 0.75rem 0 0;
-      color: var(--muted);
-      line-height: 1.75;
-      max-width: 48rem;
-    }
-
-    .hero-actions {
+    .hero-badges,
+    .hero-actions,
+    .trust-bar,
+    .tag-row,
+    .section-head {
       display: flex;
-      gap: 0.8rem;
+      gap: 0.75rem;
       flex-wrap: wrap;
       align-items: center;
-      margin-top: 1rem;
     }
 
-    .save-button,
-    .save-link {
+    .badge-primary,
+    .badge-secondary,
+    .section-kicker,
+    .tag-row span,
+    .trust-bar span {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.9rem 1.1rem;
+      min-height: 2rem;
+      padding: 0.22rem 0.75rem;
       border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-primary,
+    .badge-secondary {
+      background: rgba(255,255,255,0.92);
+      color: #101828;
+    }
+
+    .hero-panel {
+      display: grid;
+      gap: 1rem;
+      padding: 0.25rem 0.2rem 0.2rem;
+      align-content: start;
+    }
+
+    .back-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .eyebrow,
+    .section-kicker {
+      color: var(--accent-strong);
+      text-transform: uppercase;
+    }
+
+    .eyebrow {
+      margin: 0;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+
+    h1,
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(2.2rem, 4.5vw, 4rem);
+      letter-spacing: -0.06em;
+      line-height: 0.96;
+    }
+
+    .section-head h2 {
+      margin-top: 0.75rem;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+    }
+
+    .price {
+      margin: 0;
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .summary,
+    .panel-section p,
+    .enquiry-copy,
+    .section-head p,
+    .feature-item,
+    .owner-card span,
+    .stats-grid span,
+    .flash-inline {
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .fact-grid,
+    .detail-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .fact-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .fact-grid article,
+    .stats-grid article {
+      padding: 1rem;
+      border-radius: 20px;
+      background: #f8fafc;
       border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .fact-grid strong,
+    .stats-grid strong {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 1.4rem;
+      letter-spacing: -0.04em;
+    }
+
+    .trust-bar span,
+    .tag-row span {
+      background: #f8fafc;
+      border: 1px solid var(--line);
       color: var(--text);
+      font-weight: 700;
+    }
+
+    .button-dark,
+    .button-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 2.8rem;
+      padding: 0.85rem 1rem;
+      border-radius: 999px;
+      font: inherit;
       font-weight: 700;
       text-decoration: none;
       cursor: pointer;
     }
 
-    .save-status {
-      color: var(--accent-strong);
+    .button-dark {
+      border: none;
+      background: #101828;
+      color: white;
+      box-shadow: 0 12px 24px rgba(16, 24, 40, 0.16);
+    }
+
+    .button-secondary {
+      border: 1px solid var(--line-strong);
+      background: white;
+      color: var(--text);
+    }
+
+    .flash-inline {
+      color: #067647;
       font-weight: 700;
     }
 
-    .metrics,
-    .insights {
-      display: grid;
-      gap: 1rem;
+    .detail-grid {
+      grid-template-columns: minmax(0, 1.1fr) minmax(20rem, 0.9fr);
+      margin-top: 1rem;
+      align-items: start;
     }
 
-    .metrics {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+    .panel-section + .panel-section {
       margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--line);
     }
 
-    .metrics div,
-    .stat-card {
-      padding: 1rem;
-      border-radius: 22px;
-      background: rgba(14, 22, 40, 0.05);
-      border: 1px solid rgba(14, 22, 40, 0.06);
+    .panel-section h2,
+    .enquiry-panel h2 {
+      margin: 0.7rem 0 0;
+      font-size: 1.55rem;
+      letter-spacing: -0.03em;
     }
 
-    .metrics strong,
-    .stat-card strong {
-      display: block;
-      font-size: 1.45rem;
-      font-weight: 800;
-    }
-
-    .metrics span,
-    .stat-card p {
-      color: var(--muted);
-    }
-
-    .body-grid {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 1rem;
+    .feature-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       margin-top: 1rem;
     }
 
-    .story,
-    .enquiry {
-      padding: 1.4rem;
-    }
-
-    .story h2,
-    .enquiry h2 {
-      margin: 1rem 0 0.75rem;
-      font-size: 1.6rem;
-    }
-
-    .story p,
-    .enquiry p {
-      color: var(--muted);
-      line-height: 1.75;
-    }
-
-    .success {
+    .feature-item {
+      display: flex;
+      gap: 0.7rem;
+      align-items: center;
       padding: 0.9rem 1rem;
       border-radius: 18px;
-      background: rgba(15, 118, 110, 0.08);
-      color: var(--accent-strong);
-      font-weight: 600;
+      background: #f8fafc;
+      border: 1px solid var(--line);
     }
 
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-      margin-top: 1rem;
-    }
-
-    .tags span {
-      padding: 0.65rem 0.85rem;
+    .feature-dot {
+      width: 0.65rem;
+      height: 0.65rem;
       border-radius: 999px;
-      background: rgba(15, 118, 110, 0.08);
-      color: var(--accent-strong);
-      font-weight: 700;
+      background: linear-gradient(135deg, #12b76a, #079455);
+      flex: none;
     }
 
-    .feature-list {
-      margin: 0.9rem 0 0;
-      padding-left: 1.2rem;
-      color: var(--muted);
-      line-height: 1.7;
+    .gallery-strip {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.8rem;
-      margin-top: 1rem;
-    }
-    .gallery img {
+
+    .gallery-strip img,
+    .gallery-grid img {
       width: 100%;
-      height: 13rem;
+      border-radius: 18px;
       object-fit: cover;
-      border-radius: 20px;
       background: rgba(14, 22, 40, 0.08);
     }
 
-    .owner {
+    .gallery-strip img {
+      height: 7rem;
+    }
+
+    .gallery-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 1rem;
+    }
+
+    .gallery-grid img {
+      height: 15rem;
+    }
+
+    .sidebar-stack {
+      display: grid;
+      gap: 1rem;
+      position: sticky;
+      top: 6rem;
+    }
+
+    .success-banner {
+      padding: 0.9rem 1rem;
+      border-radius: 18px;
+      background: rgba(18, 183, 106, 0.08);
+      color: #067647;
+      font-weight: 700;
+    }
+
+    .owner-card {
       display: grid;
       gap: 0.2rem;
       padding: 1rem;
       border-radius: 20px;
-      background: rgba(15, 118, 110, 0.08);
-      margin-top: 1rem;
-    }
-
-    .owner strong {
-      font-size: 1.05rem;
-    }
-
-    .owner span {
-      color: var(--muted);
-    }
-
-    .form {
-      display: grid;
-      gap: 0.9rem;
-      margin-top: 1rem;
-    }
-
-    .form label {
-      display: block;
-      color: var(--muted);
-      font-size: 0.92rem;
-      font-weight: 600;
-    }
-
-    .form input,
-    .form textarea {
-      width: 100%;
-      margin-top: 0.4rem;
-      padding: 0.95rem 1rem;
-      border-radius: 18px;
+      background: #f8fafc;
       border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .owner-card strong {
+      display: block;
+      font-size: 1.05rem;
+      margin-bottom: 0.15rem;
+    }
+
+    .enquiry-form {
+      display: grid;
+      gap: 0.85rem;
+      margin-top: 1rem;
+    }
+
+    .enquiry-form label {
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    .enquiry-form label span {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .enquiry-form input,
+    .enquiry-form textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+      padding: 0.95rem 1rem;
+      color: var(--text);
       font: inherit;
     }
 
-    .form button {
-      padding: 0.95rem 1.2rem;
-      border: none;
-      border-radius: 999px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      color: white;
-      font-weight: 700;
-      cursor: pointer;
+    .full-width {
+      width: 100%;
     }
 
-    .insights {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .similar-section {
+      margin-top: 1.15rem;
+    }
+
+    .section-head {
+      margin-bottom: 1rem;
+    }
+
+    .similar-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      margin-top: 1rem;
     }
 
-    .stat-card {
-      background: var(--panel);
-    }
-
-    @media (max-width: 960px) {
-      .body-grid,
-      .insights {
+    @media (max-width: 1100px) {
+      .detail-hero,
+      .detail-grid,
+      .similar-grid {
         grid-template-columns: 1fr;
       }
-      .gallery {
-        grid-template-columns: 1fr;
+
+      .sidebar-stack {
+        position: static;
       }
     }
 
     @media (max-width: 760px) {
-      .metrics {
+      .fact-grid,
+      .feature-grid,
+      .gallery-strip,
+      .gallery-grid {
         grid-template-columns: 1fr;
+      }
+
+      .button-dark,
+      .button-secondary {
+        width: 100%;
+      }
+
+      .hero-actions,
+      .trust-bar,
+      .tag-row,
+      .section-head {
+        display: grid;
       }
     }
   </style>
