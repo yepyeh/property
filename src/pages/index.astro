@@ -1,16 +1,23 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import ListingCard from "../components/ListingCard.astro";
-import { getFeaturedListings } from "../data/listings";
+import { getAllListings, getDB } from "../lib/marketplace";
 
-const quickFilters = ["Buy", "Rent", "Ho Chi Minh City", "Under 5B VND", "3+ bedrooms", "New listings"];
-const featuredListings = getFeaturedListings();
+const quickFilters = [
+  { label: "Buy", href: "/listings/?intent=buy" },
+  { label: "Rent", href: "/listings/?intent=rent" },
+  { label: "Ho Chi Minh City", href: "/listings/?intent=buy&city=Ho%20Chi%20Minh%20City" },
+  { label: "Under 5B VND", href: "/listings/?intent=buy&maxPrice=5" },
+  { label: "3+ bedrooms", href: "/listings/?intent=buy&minBeds=3" },
+  { label: "New listings", href: "/listings/?sort=newest" },
+];
+const featuredListings = (await getAllListings(getDB(Astro.locals.runtime))).slice(0, 3);
 const topNav = ["Buy", "Rent", "New Projects", "Find Agent", "Guides"];
 const utilityLinks = ["Saved searches", "Saved homes", "Enquiry tracking", "Owner dashboard"];
 const browseCities = [
-  { name: "Ho Chi Minh City", note: "Apartments, villas, and launch inventory" },
-  { name: "Hanoi", note: "Family homes, West Lake, and long-term rentals" },
-  { name: "Da Nang", note: "Coastal living, townhouses, and relocation demand" },
+  { name: "Ho Chi Minh City", note: "Apartments, villas, and launch inventory", href: "/listings/?intent=buy&city=Ho%20Chi%20Minh%20City" },
+  { name: "Hanoi", note: "Family homes, West Lake, and long-term rentals", href: "/listings/?intent=buy&city=Hanoi" },
+  { name: "Da Nang", note: "Coastal living, townhouses, and relocation demand", href: "/listings/?intent=buy&city=Da%20Nang" },
 ];
 
 const workflows = [
@@ -49,11 +56,13 @@ const platformFeatures = [
       </span>
     </a>
     <nav class="nav">
-      {topNav.map((item) => <a href={item === "Buy" || item === "Rent" ? "/listings/" : "#owners"}>{item}</a>)}
+      {topNav.map((item) => (
+        <a href={item === "Buy" ? "/listings/?intent=buy" : item === "Rent" ? "/listings/?intent=rent" : "#owners"}>{item}</a>
+      ))}
     </nav>
     <div class="header-actions">
       <a class="account-link" href="/owner/dashboard/">My Property App</a>
-      <a class="cta" href="/listings/">Browse listings</a>
+      <a class="cta" href="/listings/?intent=buy">Browse listings</a>
     </div>
   </header>
 
@@ -68,7 +77,7 @@ const platformFeatures = [
       </p>
 
       <div class="hero-actions">
-        <a class="primary" href="/listings/">Search properties</a>
+        <a class="primary" href="/listings/?intent=buy">Search properties</a>
         <a class="secondary" href="/submit-listing/">Post your listing</a>
       </div>
 
@@ -92,44 +101,68 @@ const platformFeatures = [
       </div>
     </div>
 
-    <div class="search-panel">
+    <form class="search-panel" method="GET" action="/listings/">
       <div class="search-top">
-        <button class="mode active">Buy</button>
-        <button class="mode">Rent</button>
-        <button class="mode">New homes</button>
+        <label class="mode active">
+          <input type="radio" name="intent" value="buy" checked />
+          <span>Buy</span>
+        </label>
+        <label class="mode">
+          <input type="radio" name="intent" value="rent" />
+          <span>Rent</span>
+        </label>
       </div>
 
       <div class="search-box">
         <label>
-          Search area
-          <input type="text" value="Ho Chi Minh City" />
+          Search city
+          <input type="text" name="city" value="Ho Chi Minh City" />
         </label>
         <div class="search-grid">
           <label>
             Property type
-            <select>
-              <option>Any property</option>
-              <option>Condo</option>
-              <option>Villa</option>
-              <option>Townhouse</option>
+            <select name="propertyType">
+              <option value="">Any property</option>
+              <option value="Condo">Condo</option>
+              <option value="Villa">Villa</option>
+              <option value="Townhouse">Townhouse</option>
+              <option value="Apartment">Apartment</option>
+              <option value="House">House</option>
+              <option value="Land">Land</option>
             </select>
           </label>
           <label>
-            Budget
-            <select>
-              <option>Any budget</option>
-              <option>Up to 5B VND</option>
-              <option>Up to 10B VND</option>
+            Maximum price
+            <select name="maxPrice">
+              <option value="">Any budget</option>
+              <option value="5">Up to 5B VND</option>
+              <option value="10">Up to 10B VND</option>
+              <option value="20">Up to 20B VND</option>
             </select>
           </label>
         </div>
-        <a class="search-button" href="/listings/">Search live inventory</a>
+        <div class="search-grid compact">
+          <label>
+            Beds
+            <select name="minBeds">
+              <option value="">Any beds</option>
+              <option value="1">1+</option>
+              <option value="2">2+</option>
+              <option value="3">3+</option>
+              <option value="4">4+</option>
+            </select>
+          </label>
+          <div class="search-actions">
+            <button class="search-button" type="submit">Search live inventory</button>
+            <a class="secondary clear-link" href="/listings/">Clear</a>
+          </div>
+        </div>
       </div>
 
       <div class="chip-row">
-        {quickFilters.map((filter) => <span>{filter}</span>)}
+        {quickFilters.map((filter) => <a href={filter.href}>{filter.label}</a>)}
       </div>
-    </div>
+    </form>
   </section>
 
   <section class="city-browser card">
@@ -143,7 +176,7 @@ const platformFeatures = [
     </div>
     <div class="city-grid">
       {browseCities.map((city) => (
-        <a class="city-card" href="/listings/">
+        <a class="city-card" href={city.href}>
           <strong>{city.name}</strong>
           <span>{city.note}</span>
         </a>
@@ -165,7 +198,7 @@ const platformFeatures = [
       {featuredListings.map((listing) => <ListingCard listing={listing} />)}
     </div>
     <div class="browse-row">
-      <a class="secondary" href="/listings/">Browse all listings</a>
+      <a class="secondary" href="/listings/?intent=buy">Browse all listings</a>
     </div>
   </section>
 
@@ -494,6 +527,20 @@ const platformFeatures = [
     }
 
     .mode {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .mode input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .mode span {
       padding: 0.65rem 0.95rem;
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -501,7 +548,8 @@ const platformFeatures = [
       color: inherit;
     }
 
-    .mode.active {
+    .mode.active span,
+    .mode:has(input:checked) span {
       background: white;
       color: var(--bg-deep);
       border-color: white;
@@ -540,9 +588,27 @@ const platformFeatures = [
       gap: 0.8rem;
     }
 
+    .search-grid.compact {
+      margin-top: 0.8rem;
+      align-items: end;
+    }
+
+    .search-actions {
+      display: grid;
+      gap: 0.7rem;
+    }
+
     .search-button {
       width: 100%;
       margin-top: 0.3rem;
+    }
+
+    .clear-link {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.14);
+      color: white;
+      text-align: center;
     }
 
     .chip-row {
@@ -552,7 +618,8 @@ const platformFeatures = [
       margin-top: 0.95rem;
     }
 
-    .chip-row span {
+    .chip-row a {
+      text-decoration: none;
       padding: 0.55rem 0.8rem;
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.08);
