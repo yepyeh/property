@@ -1,11 +1,13 @@
 import type { APIRoute } from "astro";
-import { authenticateOwner, buildSessionCookie, createSession, getDefaultRedirectForRole } from "../../../lib/auth";
+import { authenticateOwner, buildSessionCookie, createSession, ensureBootstrapAdmin, getDefaultRedirectForRole } from "../../../lib/auth";
+import { sanitizeInternalRedirect } from "../../../lib/http";
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const form = await request.formData();
   const email = String(form.get("email") || "").trim();
   const password = String(form.get("password") || "");
-  const redirectTo = String(form.get("redirect") || "");
+  const redirectTo = sanitizeInternalRedirect(String(form.get("redirect") || ""), "");
+  await ensureBootstrapAdmin(locals.runtime);
   const owner = await authenticateOwner(locals.runtime, email, password);
 
   if (!owner) {
@@ -22,7 +24,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   return new Response(null, {
     status: 303,
     headers: {
-      Location: redirectTo || getDefaultRedirectForRole(owner.role),
+      Location: sanitizeInternalRedirect(redirectTo, getDefaultRedirectForRole(owner.role)),
       "Set-Cookie": buildSessionCookie(token),
     },
   });

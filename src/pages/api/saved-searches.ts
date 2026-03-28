@@ -1,16 +1,17 @@
 import type { APIRoute } from "astro";
 import { deleteSavedSearch, getDB, saveSearch } from "../../lib/marketplace";
+import { ValidationError, readEnum, readNumber, readOptionalText } from "../../lib/validation";
 
 function parseFilters(form: FormData) {
   return {
-    intent: String(form.get("intent") || "buy"),
-    city: String(form.get("city") || ""),
-    district: String(form.get("district") || ""),
-    propertyType: String(form.get("propertyType") || ""),
-    minPrice: Number(form.get("minPrice") || "") || undefined,
-    maxPrice: Number(form.get("maxPrice") || "") || undefined,
-    minBeds: Number(form.get("minBeds") || "") || undefined,
-    sort: String(form.get("sort") || "newest"),
+    intent: readEnum(form, "intent", ["buy", "rent"], "buy"),
+    city: readOptionalText(form, "city", { maxLength: 120 }),
+    district: readOptionalText(form, "district", { maxLength: 120 }),
+    propertyType: readOptionalText(form, "propertyType", { maxLength: 40 }),
+    minPrice: readNumber(form, "minPrice", { min: 0 }),
+    maxPrice: readNumber(form, "maxPrice", { min: 0 }),
+    minBeds: readNumber(form, "minBeds", { min: 0, max: 99 }),
+    sort: readEnum(form, "sort", ["newest", "price-asc", "price-desc", "beds-desc"], "newest"),
   };
 }
 
@@ -21,23 +22,31 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (!db) return new Response("D1 database binding missing", { status: 500 });
   if (!owner) return new Response("Owner account required", { status: 403 });
 
-  const form = await request.formData();
-  const result = await saveSearch(db, {
-    userId: owner.id,
-    name: String(form.get("name") || ""),
-    filters: parseFilters(form),
-  });
+  try {
+    const form = await request.formData();
+    const result = await saveSearch(db, {
+      userId: owner.id,
+      name: readOptionalText(form, "name", { maxLength: 160 }),
+      filters: parseFilters(form),
+    });
 
-  if (!result.ok) {
-    return new Response("Unable to save search", { status: 400 });
+    if (!result.ok) {
+      return new Response("Unable to save search", { status: 400 });
+    }
+
+    return new Response(null, {
+      status: 303,
+      headers: {
+        Location: `/listings/?${result.routeQuery}&saved=1`,
+      },
+    });
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      return new Response(error.message, { status: 400 });
+    }
+
+    throw error;
   }
-
-  return new Response(null, {
-    status: 303,
-    headers: {
-      Location: `/listings/?${result.routeQuery}&saved=1`,
-    },
-  });
 };
 
 export const DELETE: APIRoute = async ({ request, locals }) => {

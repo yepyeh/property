@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { getDB, getDashboardData } from "../../../../lib/marketplace";
+import { getDB, getOwnerDashboardData } from "../../../../lib/marketplace";
 
 export const GET: APIRoute = async ({ locals }) => {
   const owner = locals.owner;
@@ -9,7 +9,7 @@ export const GET: APIRoute = async ({ locals }) => {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  const dashboard = await getDashboardData(owner.id, db);
+  const dashboard = await getOwnerDashboardData(owner.id, db);
 
   return Response.json({
     owner,

@@ -10,31 +10,31 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const owner = await getOwnerFromSession(context.locals.runtime, session);
 
   context.locals.owner = owner;
+  let response: Response;
 
-  if (!isProtected) return next();
+  if (isProtected) {
+    if (!owner) {
+      const redirectTarget = encodeURIComponent(`${pathname}${search}`);
+      response = context.redirect(`/login?redirect=${redirectTarget}`);
+    } else {
+      const isOwnerOnly = pathname.startsWith("/owner") || pathname.startsWith("/submit-listing") || pathname.startsWith("/api/listings") || pathname.startsWith("/api/upload-image") || pathname.startsWith("/api/billing/checkout");
+      const isBuyerOnly = pathname.startsWith("/buyer");
+      const isAdminOnly = pathname.startsWith("/admin") || pathname.startsWith("/api/admin");
 
-  if (!owner) {
-    const redirectTarget = encodeURIComponent(`${pathname}${search}`);
-    return context.redirect(`/login?redirect=${redirectTarget}`);
+      if (isAdminOnly && owner.role !== "admin") {
+        response = context.redirect(owner.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashboard/");
+      } else if (isOwnerOnly && !["owner", "admin"].includes(owner.role)) {
+        response = context.redirect("/buyer/dashboard/");
+      } else if (isBuyerOnly && !["buyer", "admin"].includes(owner.role)) {
+        response = context.redirect("/owner/dashboard/");
+      } else {
+        response = await next();
+      }
+    }
+  } else {
+    response = await next();
   }
 
-  const isOwnerOnly = pathname.startsWith("/owner") || pathname.startsWith("/submit-listing") || pathname.startsWith("/api/listings") || pathname.startsWith("/api/upload-image") || pathname.startsWith("/api/billing/checkout");
-  const isBuyerOnly = pathname.startsWith("/buyer");
-  const isAdminOnly = pathname.startsWith("/admin") || pathname.startsWith("/api/admin");
-
-  if (isAdminOnly && owner.role !== "admin") {
-    return context.redirect(owner.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashboard/");
-  }
-
-  if (isOwnerOnly && !["owner", "admin"].includes(owner.role)) {
-    return context.redirect("/buyer/dashboard/");
-  }
-
-  if (isBuyerOnly && !["buyer", "admin"].includes(owner.role)) {
-    return context.redirect("/owner/dashboard/");
-  }
-
-  const response = await next();
   response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0");
   response.headers.set("Pragma", "no-cache");
   response.headers.set("Expires", "0");

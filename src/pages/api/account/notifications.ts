@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { getDB, updateNotificationPreferences } from "../../../lib/marketplace";
+import { readBoolean, readEnum } from "../../../lib/validation";
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const db = getDB(locals.runtime);
@@ -9,17 +10,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (!owner) return new Response("Account required", { status: 403 });
 
   const form = await request.formData();
-  const cadence = String(form.get("cadence") || "daily") === "weekly" ? "weekly" : "daily";
+  const cadence = readEnum(form, "cadence", ["daily", "weekly"], "daily");
 
   await updateNotificationPreferences(db, owner.id, {
-    emailEnabled: form.has("emailEnabled"),
-    inAppEnabled: form.has("inAppEnabled"),
+    emailEnabled: readBoolean(form, "emailEnabled"),
+    inAppEnabled: readBoolean(form, "inAppEnabled"),
     cadence,
-    listingExpiry: form.has("listingExpiry"),
-    enquiryActivity: form.has("enquiryActivity"),
-    billingEvents: form.has("billingEvents"),
-    savedSearchMatches: form.has("savedSearchMatches"),
-    savedListingUpdates: form.has("savedListingUpdates"),
+    listingExpiry: readBoolean(form, "listingExpiry"),
+    enquiryActivity: readBoolean(form, "enquiryActivity"),
+    billingEvents: readBoolean(form, "billingEvents"),
+    savedSearchMatches: readBoolean(form, "savedSearchMatches"),
+    savedListingUpdates: readBoolean(form, "savedListingUpdates"),
   });
 
   return new Response(null, {

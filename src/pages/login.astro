@@ -1,8 +1,9 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { sanitizeInternalRedirect } from "../lib/http";
 
 const error = Astro.url.searchParams.get("error");
-const redirectTo = Astro.url.searchParams.get("redirect") ?? "";
+const redirectTo = sanitizeInternalRedirect(Astro.url.searchParams.get("redirect"), "");
 ---
 
 <Layout title="Account Login | Property App 2026" description="Secure login for buyer, owner, and administrator accounts.">

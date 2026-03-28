@@ -32,18 +32,87 @@ interface SessionRow extends OwnerAccount {
 }
 
 export const AUTH_COOKIE = "property_owner_session";
+const PASSWORD_SCHEME = "pbkdf2_sha256";
+const PASSWORD_ITERATIONS = 310000;
 
 function getDB(runtime?: RuntimeLike | null) {
   return runtime?.env?.DB;
 }
 
-async function hashPassword(value: string) {
-  const bytes = new TextEncoder().encode(value);
-  const digest = await crypto.subtle.digest("SHA-256", bytes);
-  return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
+function toHex(bytes: Uint8Array) {
+  return Array.from(bytes).map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-async function ensureBootstrapAdmin(runtime?: RuntimeLike | null) {
+function toBase64(bytes: Uint8Array) {
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary);
+}
+
+function fromBase64(value: string) {
+  const binary = atob(value);
+  return new Uint8Array(Array.from(binary, (char) => char.charCodeAt(0)));
+}
+
+async function hashLegacyPassword(value: string) {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return toHex(new Uint8Array(digest));
+}
+
+async function derivePasswordHash(value: string, salt: Uint8Array, iterations = PASSWORD_ITERATIONS) {
+  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(value), "PBKDF2", false, ["deriveBits"]);
+  const bits = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      hash: "SHA-256",
+      salt,
+      iterations,
+    },
+    key,
+    256
+  );
+
+  return new Uint8Array(bits);
+}
+
+async function hashPassword(value: string) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const digest = await derivePasswordHash(value, salt);
+  return `${PASSWORD_SCHEME}$${PASSWORD_ITERATIONS}$${toBase64(salt)}$${toBase64(digest)}`;
+}
+
+async function verifyPassword(storedHash: string, candidate: string) {
+  if (!storedHash) return { ok: false as const, needsUpgrade: false };
+
+  const [scheme, iterationValue, saltValue, digestValue] = storedHash.split("$");
+  if (scheme === PASSWORD_SCHEME && iterationValue && saltValue && digestValue) {
+    const iterations = Number(iterationValue);
+    if (!Number.isFinite(iterations) || iterations <= 0) {
+      return { ok: false as const, needsUpgrade: false };
+    }
+
+    const salt = fromBase64(saltValue);
+    const expected = fromBase64(digestValue);
+    const actual = await derivePasswordHash(candidate, salt, iterations);
+
+    if (actual.length !== expected.length) {
+      return { ok: false as const, needsUpgrade: false };
+    }
+
+    let mismatch = 0;
+    for (let index = 0; index < actual.length; index += 1) {
+      mismatch |= actual[index] ^ expected[index];
+    }
+
+    return { ok: mismatch === 0, needsUpgrade: false as const };
+  }
+
+  const legacyHash = await hashLegacyPassword(candidate);
+  return { ok: legacyHash === storedHash, needsUpgrade: legacyHash === storedHash };
+}
+
+export async function ensureBootstrapAdmin(runtime?: RuntimeLike | null) {
   const db = getDB(runtime);
   const email = runtime?.env?.ADMIN_EMAIL?.trim().toLowerCase();
   const password = runtime?.env?.ADMIN_PASSWORD ?? "";
@@ -73,8 +142,6 @@ export async function createOwnerAccount(
   const db = getDB(runtime);
   if (!db) throw new Error("D1 database binding missing");
 
-  await ensureBootstrapAdmin(runtime);
-
   const email = input.email.trim().toLowerCase();
   const existing = await db
     .prepare(`SELECT id FROM users WHERE email = ? LIMIT 1`)
@@ -101,8 +168,6 @@ export async function authenticateOwner(runtime: RuntimeLike | null | undefined,
   const db = getDB(runtime);
   if (!db) return null;
 
-  await ensureBootstrapAdmin(runtime);
-
   const user = await db
     .prepare(
       `SELECT id, email, full_name, phone, role, plan_tier, password_hash
@@ -114,7 +179,15 @@ export async function authenticateOwner(runtime: RuntimeLike | null | undefined,
     .first<OwnerAccount & { password_hash: string }>();
 
   if (!user) return null;
-  if (user.password_hash !== await hashPassword(password)) return null;
+  const passwordCheck = await verifyPassword(user.password_hash, password);
+  if (!passwordCheck.ok) return null;
+
+  if (passwordCheck.needsUpgrade) {
+    await db
+      .prepare(`UPDATE users SET password_hash = ? WHERE id = ?`)
+      .bind(await hashPassword(password), user.id)
+      .run();
+  }
 
   const { password_hash: _ignored, ...owner } = user;
   return owner;
@@ -140,8 +213,6 @@ export async function getOwnerFromSession(runtime: RuntimeLike | null | undefine
 
   const db = getDB(runtime);
   if (!db) return null;
-
-  await ensureBootstrapAdmin(runtime);
 
   const row = await db
     .prepare(

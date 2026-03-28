@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { authenticateOwner, buildSessionCookie, createOwnerAccount, createSession, getDefaultRedirectForRole } from "../../../lib/auth";
+import { authenticateOwner, buildSessionCookie, createOwnerAccount, createSession, ensureBootstrapAdmin, getDefaultRedirectForRole } from "../../../lib/auth";
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const form = await request.formData();
@@ -19,6 +19,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     });
   }
 
+  await ensureBootstrapAdmin(locals.runtime);
   const result = await createOwnerAccount(locals.runtime, { fullName, email, phone, password, role });
 
   if (!result.ok) {

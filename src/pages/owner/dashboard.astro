@@ -1,11 +1,11 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { isBillingEnabled } from "../../lib/billing";
-import { getDashboardData, getDB } from "../../lib/marketplace";
+import { getDB, getOwnerDashboardData } from "../../lib/marketplace";
 
 const owner = Astro.locals.owner;
 const { listings, enquiries, payments, notifications, savedSearches, inboxNotifications, unreadNotificationCount } = owner
-  ? await getDashboardData(owner.id, getDB(Astro.locals.runtime))
+  ? await getOwnerDashboardData(owner.id, getDB(Astro.locals.runtime))
   : { listings: [], enquiries: [], payments: [], notifications: [], savedSearches: [], inboxNotifications: [], unreadNotificationCount: 0 };
 const uploaded = Astro.url.searchParams.get("uploaded");
 const updated = Astro.url.searchParams.get("updated");

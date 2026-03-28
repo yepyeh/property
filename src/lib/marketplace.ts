@@ -5,6 +5,7 @@ import {
   listings as seededListings,
   type Listing,
 } from "../data/listings";
+import { buildInitialListingPresentation } from "./listing-defaults";
 
 interface D1Like {
   prepare(query: string): {
@@ -808,6 +809,19 @@ export function slugify(value: string) {
     .slice(0, 80);
 }
 
+async function ensureUniqueListingSlug(db: D1Like, baseSlug: string) {
+  let candidate = baseSlug || `listing-${Date.now()}`;
+  let suffix = 1;
+
+  // D1 does not offer generated slugs here, so keep the uniqueness check explicit.
+  while (await db.prepare(`SELECT id FROM listings WHERE slug = ? LIMIT 1`).bind(candidate).first<{ id: number }>()) {
+    candidate = `${baseSlug}-${suffix}`;
+    suffix += 1;
+  }
+
+  return candidate;
+}
+
 export async function getDynamicListings(db?: D1Like) {
   if (!db) return [] as Listing[];
   await normalizeExpiredListingPlans(db);
@@ -964,7 +978,8 @@ export async function getListingBySlug(slug: string, db?: D1Like) {
 
 export async function createListing(db: D1Like, input: ListingInput) {
   const baseSlug = slugify(`${input.title}-${input.city}-${input.district}`);
-  const slug = baseSlug || `listing-${Date.now()}`;
+  const slug = await ensureUniqueListingSlug(db, baseSlug || `listing-${Date.now()}`);
+  const presentation = buildInitialListingPresentation(input.intent);
 
   await db
     .prepare(
@@ -994,12 +1009,12 @@ export async function createListing(db: D1Like, input: ListingInput) {
       input.beds,
       input.baths,
       input.area,
-      "Owner submitted",
-      "sea",
+      presentation.status,
+      presentation.tone,
       input.summary,
       input.description,
-      JSON.stringify(["Owner submitted", input.intent === "rent" ? "Rent" : "For sale"]),
-      JSON.stringify(["Photos pending", "Direct owner contact", "Dashboard managed", "7-day free trial"]),
+      JSON.stringify(presentation.tags),
+      JSON.stringify(presentation.features),
       JSON.stringify([]),
       input.neighborhoodHeadline?.trim() || null,
       input.commuteNotes?.trim() || null,
@@ -1013,9 +1028,9 @@ export async function createListing(db: D1Like, input: ListingInput) {
       input.ownerName,
       input.ownerEmail,
       input.ownerPhone,
-      "Owner",
-      "~30 minutes",
-      0,
+      presentation.ownerRole,
+      presentation.ownerResponseTime,
+      presentation.ownerVerified,
       0,
       0,
       0
@@ -1058,7 +1073,80 @@ export async function createEnquiry(db: D1Like, input: EnquiryInput) {
   }
 }
 
-export async function getDashboardData(ownerUserId: number, db?: D1Like) {
+async function getSavedSearchRecords(db: D1Like, userId: number) {
+  const savedSearchesResult = await db
+    .prepare(
+      `SELECT id, name, route_query, filters_json, last_result_count, created_at, updated_at
+       FROM saved_searches
+       WHERE user_id = ?
+       ORDER BY updated_at DESC, created_at DESC`
+    )
+    .bind(userId)
+    .all<SavedSearchRecord>();
+
+  return savedSearchesResult.results.map((search) => ({
+    ...search,
+    filters: parseSavedSearchFilters(search.filters_json),
+  }));
+}
+
+async function getSavedListingRecords(db: D1Like, userId: number) {
+  const savedListingsResult = await db
+    .prepare(
+      `SELECT id, listing_slug, created_at
+       FROM saved_listings
+       WHERE user_id = ?
+       ORDER BY created_at DESC`
+    )
+    .bind(userId)
+    .all<SavedListingRecord>();
+
+  return Promise.all(
+    savedListingsResult.results.map(async (savedListing) => ({
+      ...savedListing,
+      listing: await getListingBySlug(savedListing.listing_slug, db),
+    }))
+  );
+}
+
+async function getInboxState(db: D1Like, userId: number, enabled: boolean) {
+  const inboxNotifications = enabled ? await getInboxNotifications(db, userId, 8) : [];
+  const unreadNotificationCount = enabled
+    ? await getUnreadInboxNotificationCount(db, userId)
+    : 0;
+
+  return { inboxNotifications, unreadNotificationCount };
+}
+
+async function syncOwnerExpiryInboxNotifications(db: D1Like, ownerUserId: number, notificationPreferences: NotificationPreferences | null, listingRows: Array<{
+  slug: string;
+  title: string;
+  status: string;
+  plan_type: string;
+  trial_ends_at?: string | null;
+  paid_until?: string | null;
+  promoted_until?: string | null;
+}>) {
+  const expiryNotifications = notificationPreferences?.in_app_enabled && notificationPreferences?.listing_expiry
+    ? buildExpiryNotifications(listingRows)
+    : [];
+
+  for (const notification of expiryNotifications) {
+    await upsertInboxNotification(db, {
+      eventKey: buildInboxEventKey(["expiry", ownerUserId, notification.listingSlug, notification.category, notification.dueAt]),
+      userId: ownerUserId,
+      category: "listing_expiry",
+      title: notification.listingTitle,
+      message: notification.message,
+      href: `/listings/${notification.listingSlug}/`,
+      level: notification.level,
+    });
+  }
+
+  return expiryNotifications;
+}
+
+export async function getOwnerDashboardData(ownerUserId: number, db?: D1Like) {
   if (!db) {
     return {
       listings: [],
@@ -1108,26 +1196,6 @@ export async function getDashboardData(ownerUserId: number, db?: D1Like) {
     .bind(ownerUserId)
     .all();
 
-  const savedSearchesResult = await db
-    .prepare(
-      `SELECT id, name, route_query, filters_json, last_result_count, created_at, updated_at
-       FROM saved_searches
-       WHERE user_id = ?
-       ORDER BY updated_at DESC, created_at DESC`
-    )
-    .bind(ownerUserId)
-    .all<SavedSearchRecord>();
-
-  const savedListingsResult = await db
-    .prepare(
-      `SELECT id, listing_slug, created_at
-       FROM saved_listings
-       WHERE user_id = ?
-       ORDER BY created_at DESC`
-    )
-    .bind(ownerUserId)
-    .all<SavedListingRecord>();
-
   const listingRows = listingsResult.results as Array<{
     slug: string;
     title: string;
@@ -1137,44 +1205,54 @@ export async function getDashboardData(ownerUserId: number, db?: D1Like) {
     paid_until?: string | null;
     promoted_until?: string | null;
   }>;
-  const expiryNotifications = notificationPreferences?.in_app_enabled && notificationPreferences?.listing_expiry
-    ? buildExpiryNotifications(listingRows)
-    : [];
-
-  for (const notification of expiryNotifications) {
-    await upsertInboxNotification(db, {
-      eventKey: buildInboxEventKey(["expiry", ownerUserId, notification.listingSlug, notification.category, notification.dueAt]),
-      userId: ownerUserId,
-      category: "listing_expiry",
-      title: notification.listingTitle,
-      message: notification.message,
-      href: `/listings/${notification.listingSlug}/`,
-      level: notification.level,
-    });
-  }
-
-  const inboxNotifications = notificationPreferences?.in_app_enabled
-    ? await getInboxNotifications(db, ownerUserId, 8)
-    : [];
+  const expiryNotifications = await syncOwnerExpiryInboxNotifications(db, ownerUserId, notificationPreferences, listingRows);
+  const { inboxNotifications, unreadNotificationCount } = await getInboxState(
+    db,
+    ownerUserId,
+    Boolean(notificationPreferences?.in_app_enabled)
+  );
+  const savedSearches = await getSavedSearchRecords(db, ownerUserId);
+  const savedListings = await getSavedListingRecords(db, ownerUserId);
 
   return {
     listings: listingsResult.results,
     enquiries: enquiriesResult.results,
     payments: paymentsResult.results,
     notifications: expiryNotifications,
-    savedSearches: savedSearchesResult.results.map((search) => ({
-      ...search,
-      filters: parseSavedSearchFilters(search.filters_json),
-    })),
-    savedListings: await Promise.all(
-      savedListingsResult.results.map(async (savedListing) => ({
-        ...savedListing,
-        listing: await getListingBySlug(savedListing.listing_slug, db),
-      }))
-    ),
+    savedSearches,
+    savedListings,
     notificationPreferences,
     inboxNotifications,
-    unreadNotificationCount: inboxNotifications.filter((notification) => !notification.read_at).length,
+    unreadNotificationCount,
+  };
+}
+
+export async function getBuyerDashboardData(userId: number, db?: D1Like) {
+  if (!db) {
+    return {
+      savedSearches: [],
+      savedListings: [],
+      notificationPreferences: null,
+      inboxNotifications: [],
+      unreadNotificationCount: 0,
+    };
+  }
+
+  const notificationPreferences = await getNotificationPreferences(db, userId);
+  const savedSearches = await getSavedSearchRecords(db, userId);
+  const savedListings = await getSavedListingRecords(db, userId);
+  const { inboxNotifications, unreadNotificationCount } = await getInboxState(
+    db,
+    userId,
+    Boolean(notificationPreferences?.in_app_enabled)
+  );
+
+  return {
+    savedSearches,
+    savedListings,
+    notificationPreferences,
+    inboxNotifications,
+    unreadNotificationCount,
   };
 }
 

@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { getDB, saveListingForBuyer } from "../../lib/marketplace";
+import { appendQueryFlag, sanitizeInternalRedirect } from "../../lib/http";
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const db = getDB(locals.runtime);
@@ -11,7 +12,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   const form = await request.formData();
   const listingSlug = String(form.get("listingSlug") || "");
-  const redirectTo = String(form.get("redirectTo") || `/listings/${listingSlug}/`);
+  const redirectTo = sanitizeInternalRedirect(String(form.get("redirectTo") || ""), `/listings/${listingSlug}/`);
 
   if (!listingSlug) return new Response("Listing slug required", { status: 400 });
 
@@ -20,7 +21,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   return new Response(null, {
     status: 303,
     headers: {
-      Location: `${redirectTo}${redirectTo.includes("?") ? "&" : "?"}savedListing=1`,
+      Location: appendQueryFlag(redirectTo, "savedListing"),
     },
   });
 };

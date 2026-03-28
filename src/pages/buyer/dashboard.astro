@@ -1,6 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getDashboardData, getDB } from "../../lib/marketplace";
+import { getBuyerDashboardData, getDB } from "../../lib/marketplace";
 
 const owner = Astro.locals.owner;
 
@@ -8,7 +8,7 @@ if (!owner || (owner.role !== "buyer" && owner.role !== "admin")) {
   return Astro.redirect("/login");
 }
 
-const { savedSearches, savedListings, inboxNotifications, unreadNotificationCount } = await getDashboardData(owner.id, getDB(Astro.locals.runtime));
+const { savedSearches, savedListings, inboxNotifications, unreadNotificationCount } = await getBuyerDashboardData(owner.id, getDB(Astro.locals.runtime));
 const savedSearchDeleted = Astro.url.searchParams.get("savedSearchDeleted");
 const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
 ---
