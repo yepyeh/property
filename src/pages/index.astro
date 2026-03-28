@@ -1,31 +1,10 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import ListingCard from "../components/ListingCard.astro";
+import { getFeaturedListings } from "../data/listings";
 
 const quickFilters = ["Buy", "Rent", "Ho Chi Minh City", "Under 5B VND", "3+ bedrooms", "New listings"];
-
-const featuredListings = [
-  {
-    title: "Riverside family villa",
-    meta: "Thu Duc City · Villa · 4 beds · 380 m2",
-    price: "15.8B VND",
-    status: "Verified owner",
-    tone: "sea",
-  },
-  {
-    title: "District 1 skyline apartment",
-    meta: "Ben Nghe · Condo · 2 beds · 96 m2",
-    price: "8.2B VND",
-    status: "High demand",
-    tone: "sun",
-  },
-  {
-    title: "Remote-work townhouse",
-    meta: "Da Nang · Townhouse · 3 beds · 210 m2",
-    price: "6.7B VND",
-    status: "New this week",
-    tone: "forest",
-  },
-];
+const featuredListings = getFeaturedListings();
 
 const workflows = [
   {
@@ -67,7 +46,7 @@ const platformFeatures = [
       <a href="#owners">Owners</a>
       <a href="#app">PWA</a>
     </nav>
-    <a class="cta" href="#owners">Post a listing</a>
+    <a class="cta" href="/listings/">Browse listings</a>
   </header>
 
   <section class="hero card" id="top">
@@ -81,7 +60,7 @@ const platformFeatures = [
       </p>
 
       <div class="hero-actions">
-        <a class="primary" href="#listings">Explore featured homes</a>
+        <a class="primary" href="/listings/">Explore listings</a>
         <a class="secondary" href="#owners">See owner workflow</a>
       </div>
 
@@ -131,7 +110,7 @@ const platformFeatures = [
             </select>
           </label>
         </div>
-        <button class="search-button">Search 128 listings</button>
+        <a class="search-button" href="/listings/">Search live inventory</a>
       </div>
 
       <div class="chip-row">
@@ -151,22 +130,10 @@ const platformFeatures = [
     </div>
 
     <div class="listing-grid">
-      {featuredListings.map((listing) => (
-        <article class={`listing card ${listing.tone}`}>
-          <div class="photo">
-            <span>{listing.status}</span>
-          </div>
-          <div class="listing-body">
-            <p class="price">{listing.price}</p>
-            <h3>{listing.title}</h3>
-            <p>{listing.meta}</p>
-            <div class="listing-actions">
-              <a href="#owners">Enquire now</a>
-              <button>Save</button>
-            </div>
-          </div>
-        </article>
-      ))}
+      {featuredListings.map((listing) => <ListingCard listing={listing} />)}
+    </div>
+    <div class="browse-row">
+      <a class="secondary" href="/listings/">Browse all listings</a>
     </div>
   </section>
 
@@ -334,8 +301,6 @@ const platformFeatures = [
     .cta,
     .primary,
     .secondary,
-    .listing-actions a,
-    .listing-actions button,
     .footer-bar a {
       text-decoration: none;
       transition: transform 160ms ease, opacity 160ms ease, background 160ms ease;
@@ -355,6 +320,7 @@ const platformFeatures = [
       font-weight: 700;
       cursor: pointer;
       box-shadow: 0 14px 30px rgba(15, 118, 110, 0.2);
+      text-decoration: none;
     }
 
     .hero {
@@ -413,8 +379,7 @@ const platformFeatures = [
       margin-top: 1.8rem;
     }
 
-    .secondary,
-    .listing-actions button {
+    .secondary {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -440,8 +405,7 @@ const platformFeatures = [
       border: 1px solid rgba(14, 22, 40, 0.06);
     }
 
-    .stats strong,
-    .price {
+    .stats strong {
       display: block;
       font-size: 1.3rem;
       font-weight: 800;
@@ -560,87 +524,7 @@ const platformFeatures = [
       gap: 1rem;
     }
 
-    .listing-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .listing {
-      overflow: hidden;
-    }
-
-    .photo {
-      height: 14rem;
-      padding: 1rem;
-      display: flex;
-      align-items: flex-start;
-      background-size: cover;
-      background-position: center;
-    }
-
-    .sea .photo {
-      background-image:
-        linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)),
-        linear-gradient(135deg, #86cfd0, #245a73);
-    }
-
-    .sun .photo {
-      background-image:
-        linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)),
-        linear-gradient(135deg, #eebf8a, #c96f47);
-    }
-
-    .forest .photo {
-      background-image:
-        linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)),
-        linear-gradient(135deg, #98c8a2, #245646);
-    }
-
-    .photo span {
-      padding: 0.5rem 0.8rem;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.9);
-      color: var(--bg-deep);
-      font-size: 0.82rem;
-      font-weight: 700;
-    }
-
-    .listing-body {
-      padding: 1.2rem;
-    }
-
-    .listing-body h3,
-    .workflow h3,
-    .dashboard h3,
-    .install-card h3 {
-      margin: 0.3rem 0 0.55rem;
-      font-size: 1.25rem;
-      line-height: 1.2;
-    }
-
-    .listing-body p,
-    .workflow p,
-    .notes li,
-    .install-card p,
-    .install-card li,
-    .dashboard li {
-      color: var(--muted);
-      line-height: 1.65;
-    }
-
-    .listing-actions {
-      display: flex;
-      gap: 0.65rem;
-      margin-top: 1rem;
-    }
-
-    .listing-actions a {
-      padding: 0.85rem 1rem;
-      border-radius: 999px;
-      background: var(--bg-deep);
-      color: white;
-      font-weight: 700;
-    }
-
+    .listing-grid,
     .workflow-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
@@ -650,6 +534,23 @@ const platformFeatures = [
     .dashboard,
     .app-shell {
       padding: 1.4rem;
+    }
+
+    .workflow h3,
+    .dashboard h3,
+    .install-card h3 {
+      margin: 0.3rem 0 0.55rem;
+      font-size: 1.25rem;
+      line-height: 1.2;
+    }
+
+    .workflow p,
+    .notes li,
+    .install-card p,
+    .install-card li,
+    .dashboard li {
+      color: var(--muted);
+      line-height: 1.65;
     }
 
     .step,
@@ -780,6 +681,10 @@ const platformFeatures = [
       padding: 1rem 0;
     }
 
+    .browse-row {
+      margin-top: 1rem;
+    }
+
     .footer-bar {
       display: flex;
       align-items: center;
@@ -823,10 +728,7 @@ const platformFeatures = [
         border: 1px solid rgba(17, 24, 39, 0.06);
       }
 
-      .nav {
-        display: none;
-      }
-
+      .nav,
       .cta {
         display: none;
       }
@@ -847,10 +749,6 @@ const platformFeatures = [
       .stats,
       .search-grid {
         grid-template-columns: 1fr;
-      }
-
-      .listing-actions {
-        flex-direction: column;
       }
 
       .footer-bar {

@@ -1,0 +1,149 @@
+---
+import type { Listing } from "../data/listings";
+
+export interface Props {
+  listing: Listing;
+}
+
+const { listing } = Astro.props;
+---
+
+<article class={`listing card ${listing.tone}`}>
+  <div class="photo">
+    <span>{listing.status}</span>
+  </div>
+  <div class="listing-body">
+    <p class="price">{listing.priceLabel}</p>
+    <h3><a href={`/listings/${listing.slug}/`}>{listing.title}</a></h3>
+    <p class="meta">{listing.district} · {listing.type} · {listing.beds} beds · {listing.area} m2</p>
+    <p class="summary">{listing.summary}</p>
+    <div class="listing-actions">
+      <a href={`/listings/${listing.slug}/`}>View details</a>
+      <span>{listing.stats.enquiries} enquiries</span>
+    </div>
+  </div>
+</article>
+
+<style>
+  .listing {
+    overflow: hidden;
+  }
+
+  .photo {
+    height: 14rem;
+    padding: 1rem;
+    display: flex;
+    align-items: flex-start;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .sea .photo {
+    background-image:
+      linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)),
+      linear-gradient(135deg, #86cfd0, #245a73);
+  }
+
+  .sun .photo {
+    background-image:
+      linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)),
+      linear-gradient(135deg, #eebf8a, #c96f47);
+  }
+
+  .forest .photo {
+    background-image:
+      linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)),
+      linear-gradient(135deg, #98c8a2, #245646);
+  }
+
+  .night .photo {
+    background-image:
+      linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.42)),
+      linear-gradient(135deg, #8291d6, #212950);
+  }
+
+  .clay .photo {
+    background-image:
+      linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.42)),
+      linear-gradient(135deg, #d2a07d, #8d5e44);
+  }
+
+  .sky .photo {
+    background-image:
+      linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.42)),
+      linear-gradient(135deg, #b1d7ee, #4976a6);
+  }
+
+  .photo span {
+    padding: 0.5rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--bg-deep);
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  .listing-body {
+    padding: 1.2rem;
+  }
+
+  .price {
+    display: block;
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 800;
+  }
+
+  h3 {
+    margin: 0.35rem 0 0.55rem;
+    font-size: 1.25rem;
+    line-height: 1.2;
+  }
+
+  h3 a {
+    text-decoration: none;
+  }
+
+  .meta,
+  .summary {
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .meta {
+    margin: 0;
+  }
+
+  .summary {
+    margin: 0.55rem 0 0;
+  }
+
+  .listing-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+    margin-top: 1rem;
+  }
+
+  .listing-actions a {
+    padding: 0.85rem 1rem;
+    border-radius: 999px;
+    background: var(--bg-deep);
+    color: white;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .listing-actions span {
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  @media (max-width: 760px) {
+    .listing-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>

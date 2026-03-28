@@ -1,0 +1,348 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getListingBySlug } from "../../data/listings";
+
+const { slug } = Astro.params;
+const listing = getListingBySlug(slug ?? "");
+
+if (!listing) {
+  throw new Error(`Listing not found: ${slug}`);
+}
+---
+
+<Layout
+  title={`${listing.title} | Property App 2026`}
+  description={listing.summary}
+>
+  <section class={`hero card ${listing.tone}`}>
+    <div class="hero-photo">
+      <span>{listing.status}</span>
+    </div>
+    <div class="hero-copy">
+      <a class="back" href="/listings/">All listings</a>
+      <p class="eyebrow">{listing.intent === "buy" ? "For sale" : "For rent"} · {listing.type}</p>
+      <h1>{listing.title}</h1>
+      <p class="price">{listing.priceLabel}</p>
+      <p class="summary">{listing.summary}</p>
+      <div class="metrics">
+        <div><strong>{listing.beds}</strong><span>beds</span></div>
+        <div><strong>{listing.baths}</strong><span>baths</span></div>
+        <div><strong>{listing.area}</strong><span>m2</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="body-grid">
+    <article class="story card">
+      <span class="pill">Listing story</span>
+      <h2>{listing.district}, {listing.city}</h2>
+      <p>{listing.description}</p>
+
+      <div class="tags">
+        {listing.tags.map((tag) => <span>{tag}</span>)}
+      </div>
+
+      <h3>Included features</h3>
+      <ul class="feature-list">
+        {listing.features.map((feature) => <li>{feature}</li>)}
+      </ul>
+    </article>
+
+    <aside class="enquiry card">
+      <span class="pill">Enquiry panel</span>
+      <h2>Contact the owner</h2>
+      <p>
+        This is the next critical product surface: a structured enquiry flow that captures applicant intent,
+        preferred viewing time, and urgency.
+      </p>
+
+      <div class="owner">
+        <strong>{listing.owner.name}</strong>
+        <span>{listing.owner.role}</span>
+        <span>{listing.owner.verified ? "Verified" : "Unverified"} · Replies in {listing.owner.responseTime}</span>
+      </div>
+
+      <form class="form">
+        <label>
+          Your name
+          <input type="text" placeholder="Enter your name" />
+        </label>
+        <label>
+          Contact
+          <input type="text" placeholder="Email or phone number" />
+        </label>
+        <label>
+          Message
+          <textarea rows="5" placeholder={`Hi, I'm interested in ${listing.title}. Is it still available?`}></textarea>
+        </label>
+        <button type="button">Send enquiry</button>
+      </form>
+    </aside>
+  </section>
+
+  <section class="insights">
+    <article class="card stat-card">
+      <span class="pill">Demand</span>
+      <strong>{listing.stats.views24h}</strong>
+      <p>views in the last 24 hours</p>
+    </article>
+    <article class="card stat-card">
+      <span class="pill">Saved</span>
+      <strong>{listing.stats.saves}</strong>
+      <p>buyers saved this listing</p>
+    </article>
+    <article class="card stat-card">
+      <span class="pill">Enquiries</span>
+      <strong>{listing.stats.enquiries}</strong>
+      <p>open conversations in the pipeline</p>
+    </article>
+  </section>
+
+  <style>
+    .hero {
+      overflow: hidden;
+    }
+
+    .hero-photo {
+      min-height: 19rem;
+      padding: 1.2rem;
+      display: flex;
+      align-items: flex-start;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .sea .hero-photo {
+      background-image:
+        linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)),
+        linear-gradient(135deg, #86cfd0, #245a73);
+    }
+
+    .sun .hero-photo {
+      background-image:
+        linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)),
+        linear-gradient(135deg, #eebf8a, #c96f47);
+    }
+
+    .forest .hero-photo {
+      background-image:
+        linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)),
+        linear-gradient(135deg, #98c8a2, #245646);
+    }
+
+    .night .hero-photo {
+      background-image:
+        linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.42)),
+        linear-gradient(135deg, #8291d6, #212950);
+    }
+
+    .clay .hero-photo {
+      background-image:
+        linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.42)),
+        linear-gradient(135deg, #d2a07d, #8d5e44);
+    }
+
+    .sky .hero-photo {
+      background-image:
+        linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.42)),
+        linear-gradient(135deg, #b1d7ee, #4976a6);
+    }
+
+    .hero-photo span {
+      padding: 0.55rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--bg-deep);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .hero-copy {
+      padding: 1.4rem;
+    }
+
+    .back {
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .eyebrow {
+      margin: 0.9rem 0 0;
+      color: var(--accent-strong);
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0.5rem 0 0;
+      font-family: "Fraunces", serif;
+      font-size: clamp(2.5rem, 6vw, 4.8rem);
+      line-height: 0.95;
+    }
+
+    .price {
+      margin: 0.9rem 0 0;
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    .summary {
+      margin: 0.75rem 0 0;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 48rem;
+    }
+
+    .metrics,
+    .insights {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .metrics {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 1.25rem;
+    }
+
+    .metrics div,
+    .stat-card {
+      padding: 1rem;
+      border-radius: 22px;
+      background: rgba(14, 22, 40, 0.05);
+      border: 1px solid rgba(14, 22, 40, 0.06);
+    }
+
+    .metrics strong,
+    .stat-card strong {
+      display: block;
+      font-size: 1.45rem;
+      font-weight: 800;
+    }
+
+    .metrics span,
+    .stat-card p {
+      color: var(--muted);
+    }
+
+    .body-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .story,
+    .enquiry {
+      padding: 1.4rem;
+    }
+
+    .story h2,
+    .enquiry h2 {
+      margin: 1rem 0 0.75rem;
+      font-size: 1.6rem;
+    }
+
+    .story p,
+    .enquiry p {
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+
+    .tags span {
+      padding: 0.65rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(15, 118, 110, 0.08);
+      color: var(--accent-strong);
+      font-weight: 700;
+    }
+
+    .feature-list {
+      margin: 0.9rem 0 0;
+      padding-left: 1.2rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .owner {
+      display: grid;
+      gap: 0.2rem;
+      padding: 1rem;
+      border-radius: 20px;
+      background: rgba(15, 118, 110, 0.08);
+      margin-top: 1rem;
+    }
+
+    .owner strong {
+      font-size: 1.05rem;
+    }
+
+    .owner span {
+      color: var(--muted);
+    }
+
+    .form {
+      display: grid;
+      gap: 0.9rem;
+      margin-top: 1rem;
+    }
+
+    .form label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .form input,
+    .form textarea {
+      width: 100%;
+      margin-top: 0.4rem;
+      padding: 0.95rem 1rem;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.72);
+      font: inherit;
+    }
+
+    .form button {
+      padding: 0.95rem 1.2rem;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .insights {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 1rem;
+    }
+
+    .stat-card {
+      background: var(--panel);
+    }
+
+    @media (max-width: 960px) {
+      .body-grid,
+      .insights {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</Layout>

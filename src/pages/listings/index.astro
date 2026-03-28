@@ -1,0 +1,139 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ListingCard from "../../components/ListingCard.astro";
+import { listings } from "../../data/listings";
+
+const buyListings = listings.filter((listing) => listing.intent === "buy");
+const rentListings = listings.filter((listing) => listing.intent === "rent");
+---
+
+<Layout
+  title="Browse Listings | Property App 2026"
+  description="Browse structured property listings across Vietnam with enquiry-ready detail pages and owner-focused workflows."
+>
+  <section class="page-head card">
+    <div>
+      <span class="pill">Browse listings</span>
+      <h1 class="section-title">The inventory layer starts here.</h1>
+      <p class="section-copy">
+        This is the first real marketplace surface: structured listing data, reusable cards, and detail pages
+        ready for search, saved filters, and enquiry submission.
+      </p>
+    </div>
+    <a class="cta" href="/">Back home</a>
+  </section>
+
+  <section class="filters card">
+    <div class="filter-row">
+      <span>Buy</span>
+      <span>Rent</span>
+      <span>Condo</span>
+      <span>Villa</span>
+      <span>Ho Chi Minh City</span>
+      <span>Hanoi</span>
+      <span>Da Nang</span>
+    </div>
+  </section>
+
+  <section class="group">
+    <div class="group-head">
+      <h2>Buy</h2>
+      <p>{buyListings.length} listings in the current mock inventory.</p>
+    </div>
+    <div class="listing-grid">
+      {buyListings.map((listing) => <ListingCard listing={listing} />)}
+    </div>
+  </section>
+
+  <section class="group">
+    <div class="group-head">
+      <h2>Rent</h2>
+      <p>{rentListings.length} rental listings in the current mock inventory.</p>
+    </div>
+    <div class="listing-grid">
+      {rentListings.map((listing) => <ListingCard listing={listing} />)}
+    </div>
+  </section>
+
+  <style>
+    .page-head,
+    .filters {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.4rem;
+      margin-bottom: 1rem;
+    }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.95rem 1.2rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: white;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+    }
+
+    .filter-row span {
+      padding: 0.7rem 0.95rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.65);
+      font-weight: 600;
+    }
+
+    .group {
+      margin-top: 1.35rem;
+    }
+
+    .group-head {
+      margin-bottom: 1rem;
+    }
+
+    .group-head h2 {
+      margin: 0;
+      font-family: "Fraunces", serif;
+      font-size: 2rem;
+    }
+
+    .group-head p {
+      margin: 0.4rem 0 0;
+      color: var(--muted);
+    }
+
+    .listing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    @media (max-width: 960px) {
+      .listing-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .page-head,
+      .filters {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .listing-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</Layout>
