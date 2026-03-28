@@ -4,9 +4,9 @@ import { isBillingEnabled } from "../../lib/billing";
 import { getDashboardData, getDB } from "../../lib/marketplace";
 
 const owner = Astro.locals.owner;
-const { listings, enquiries, payments, notifications, savedSearches } = owner
+const { listings, enquiries, payments, notifications, savedSearches, inboxNotifications, unreadNotificationCount } = owner
   ? await getDashboardData(owner.id, getDB(Astro.locals.runtime))
-  : { listings: [], enquiries: [], payments: [], notifications: [], savedSearches: [] };
+  : { listings: [], enquiries: [], payments: [], notifications: [], savedSearches: [], inboxNotifications: [], unreadNotificationCount: 0 };
 const uploaded = Astro.url.searchParams.get("uploaded");
 const updated = Astro.url.searchParams.get("updated");
 const savedSearchDeleted = Astro.url.searchParams.get("savedSearchDeleted");
@@ -70,6 +70,7 @@ function getImageCount(value: unknown) {
   <section class="stats-grid">
     <article class="card stat"><strong>{listings.length}</strong><span>database listings</span></article>
     <article class="card stat"><strong>{enquiries.length}</strong><span>enquiries received</span></article>
+    <article class="card stat"><strong>{unreadNotificationCount}</strong><span>unread notifications</span></article>
   </section>
 
   <section class="owner-card card">
@@ -111,6 +112,25 @@ function getImageCount(value: unknown) {
         ))}
       </ul>
     )}
+  </section>
+
+  <section class="card panel payment-panel">
+    <h2>Notification inbox</h2>
+    {inboxNotifications.length === 0 ? <p>No inbox notifications yet.</p> : (
+      <ul>
+        {inboxNotifications.map((notification) => (
+          <li>
+            <strong>{notification.title}</strong>
+            <span>{notification.message}</span>
+            <span>{notification.category} · {notification.created_at}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+    <div class="billing-actions">
+      <a class="billing-button" href="/account/inbox">Open inbox</a>
+      <a class="billing-button secondary-button" href="/account/notifications">Manage notification settings</a>
+    </div>
   </section>
 
   <section class="card panel payment-panel">

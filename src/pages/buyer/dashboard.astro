@@ -8,7 +8,7 @@ if (!owner || (owner.role !== "buyer" && owner.role !== "admin")) {
   return Astro.redirect("/login");
 }
 
-const { savedSearches, savedListings } = await getDashboardData(owner.id, getDB(Astro.locals.runtime));
+const { savedSearches, savedListings, inboxNotifications, unreadNotificationCount } = await getDashboardData(owner.id, getDB(Astro.locals.runtime));
 const savedSearchDeleted = Astro.url.searchParams.get("savedSearchDeleted");
 const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
 ---
@@ -47,6 +47,7 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
   <section class="stats-grid">
     <article class="card stat"><strong>{savedSearches.length}</strong><span>saved searches</span></article>
     <article class="card stat"><strong>{savedListings.length}</strong><span>saved listings</span></article>
+    <article class="card stat"><strong>{unreadNotificationCount}</strong><span>unread notifications</span></article>
   </section>
 
   <section class="owner-card card">
@@ -54,6 +55,25 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
     <span>{owner.email}</span>
     <span>Account role: {owner.role}</span>
     <span>Buyer flow: browse, save, and return to active searches</span>
+  </section>
+
+  <section class="card panel">
+    <h2>Notification inbox</h2>
+    {inboxNotifications.length === 0 ? <p>No inbox notifications yet.</p> : (
+      <ul>
+        {inboxNotifications.map((notification) => (
+          <li>
+            <strong>{notification.title}</strong>
+            <span>{notification.message}</span>
+            <span>{notification.category} · {notification.created_at}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+    <div class="actions-row">
+      <a class="primary small" href="/account/inbox">Open inbox</a>
+      <a class="ghost small" href="/account/notifications">Manage notification settings</a>
+    </div>
   </section>
 
   <section class="card panel">

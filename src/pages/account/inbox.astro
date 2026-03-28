@@ -1,0 +1,152 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getDB, getInboxNotifications } from "../../lib/marketplace";
+
+const viewer = Astro.locals.owner;
+
+if (!viewer) {
+  return Astro.redirect("/login");
+}
+
+const notifications = await getInboxNotifications(getDB(Astro.locals.runtime), viewer.id, 100);
+const read = Astro.url.searchParams.get("read");
+const allRead = Astro.url.searchParams.get("allRead");
+const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashboard/";
+---
+
+<Layout title="Notification Inbox | Property App 2026" description="Review and manage in-app notifications across buyer and owner workflows.">
+  <section class="page-head card">
+    <div>
+      <span class="pill">Notification inbox</span>
+      <h1 class="section-title">All in-app notifications</h1>
+      <p class="section-copy">
+        This is the single feed for account activity across expiry reminders, enquiries, billing events, and buyer-side saved activity.
+      </p>
+    </div>
+    <div class="actions">
+      <a class="ghost" href={returnHref}>Back to dashboard</a>
+      <a class="ghost" href="/account/notifications">Settings</a>
+      <form method="POST" action="/api/account/inbox/read-all">
+        <button class="primary" type="submit">Mark all read</button>
+      </form>
+    </div>
+  </section>
+
+  {(read || allRead) && (
+    <div class="card flash">
+      {allRead ? "All notifications marked as read." : "Notification marked as read."}
+    </div>
+  )}
+
+  <section class="card panel">
+    {notifications.length === 0 ? <p>No in-app notifications yet.</p> : (
+      <ul class="inbox-list">
+        {notifications.map((notification) => (
+          <li class:list-unread={!notification.read_at}>
+            <div class="row-top">
+              <strong>{notification.title}</strong>
+              <span>{notification.category}</span>
+            </div>
+            <p>{notification.message}</p>
+            <div class="row-actions">
+              <span>{notification.created_at}</span>
+              <div class="actions">
+                {notification.href && <a class="ghost small" href={notification.href}>Open</a>}
+                {!notification.read_at && (
+                  <form method="POST" action="/api/account/inbox/read">
+                    <input type="hidden" name="id" value={notification.id} />
+                    <button class="ghost small" type="submit">Mark read</button>
+                  </form>
+                )}
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+
+  <style>
+    .page-head, .panel { padding: 1.4rem; }
+    .page-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    .actions,
+    .row-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .inbox-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 0.9rem;
+    }
+    .inbox-list li {
+      display: grid;
+      gap: 0.45rem;
+      padding: 1rem;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.55);
+    }
+    .inbox-list li.list-unread {
+      border: 1px solid rgba(15, 118, 110, 0.35);
+      background: rgba(15, 118, 110, 0.08);
+    }
+    .row-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: center;
+    }
+    .row-top span,
+    .row-actions span,
+    .panel p {
+      color: var(--muted);
+    }
+    .ghost,
+    .primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.95rem 1.2rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .small {
+      padding: 0.75rem 0.95rem;
+    }
+    .ghost {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.72);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .primary {
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: white;
+      cursor: pointer;
+    }
+    .flash {
+      padding: 1rem 1.2rem;
+      margin-bottom: 1rem;
+      color: var(--accent-strong);
+      font-weight: 700;
+    }
+    @media (max-width: 760px) {
+      .page-head,
+      .row-top {
+        display: grid;
+      }
+    }
+  </style>
+</Layout>

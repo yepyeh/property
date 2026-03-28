@@ -188,6 +188,19 @@ export interface ExpiryEmailDeliveryRecord {
   created_at: string;
 }
 
+export interface InboxNotificationRecord {
+  id: number;
+  event_key: string;
+  user_id: number;
+  category: string;
+  title: string;
+  message: string;
+  href: string | null;
+  level: "info" | "warning" | "critical";
+  read_at: string | null;
+  created_at: string;
+}
+
 interface ExpiryEmailCandidate extends ExpiryNotification {
   ownerUserId: number | null;
   ownerEmail: string;
@@ -279,6 +292,90 @@ export async function updateNotificationPreferences(
 
 function buildExpiryEmailEventKey(notification: ExpiryNotification) {
   return `${notification.listingSlug}:${notification.category}:${notification.level}:${notification.dueAt}`;
+}
+
+function buildInboxEventKey(parts: Array<string | number | null | undefined>) {
+  return parts.filter(Boolean).join(":");
+}
+
+export async function upsertInboxNotification(
+  db: D1Like,
+  input: {
+    eventKey: string;
+    userId: number;
+    category: string;
+    title: string;
+    message: string;
+    href?: string | null;
+    level?: "info" | "warning" | "critical";
+  }
+) {
+  await db
+    .prepare(
+      `INSERT INTO notification_inbox (
+        event_key, user_id, category, title, message, href, level
+      ) VALUES (?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(event_key) DO UPDATE SET
+        title = excluded.title,
+        message = excluded.message,
+        href = excluded.href,
+        level = excluded.level`
+    )
+    .bind(
+      input.eventKey,
+      input.userId,
+      input.category,
+      input.title,
+      input.message,
+      input.href ?? null,
+      input.level ?? "info"
+    )
+    .run();
+}
+
+export async function getInboxNotifications(db: D1Like | undefined, userId: number | undefined, limit = 50) {
+  if (!db || !userId) return [] as InboxNotificationRecord[];
+
+  const result = await db
+    .prepare(
+      `SELECT id, event_key, user_id, category, title, message, href, level, read_at, created_at
+       FROM notification_inbox
+       WHERE user_id = ?
+       ORDER BY created_at DESC
+       LIMIT ?`
+    )
+    .bind(userId, limit)
+    .all<InboxNotificationRecord>();
+
+  return result.results;
+}
+
+export async function markInboxNotificationRead(db: D1Like, userId: number, id: number) {
+  await db
+    .prepare(
+      `UPDATE notification_inbox
+       SET read_at = COALESCE(read_at, CURRENT_TIMESTAMP)
+       WHERE id = ?
+         AND user_id = ?`
+    )
+    .bind(id, userId)
+    .run();
+
+  return { ok: true as const };
+}
+
+export async function markAllInboxNotificationsRead(db: D1Like, userId: number) {
+  await db
+    .prepare(
+      `UPDATE notification_inbox
+       SET read_at = COALESCE(read_at, CURRENT_TIMESTAMP)
+       WHERE user_id = ?
+         AND read_at IS NULL`
+    )
+    .bind(userId)
+    .run();
+
+  return { ok: true as const };
 }
 
 function escapeHtml(value: string) {
@@ -873,11 +970,38 @@ export async function createEnquiry(db: D1Like, input: EnquiryInput) {
     .prepare(`UPDATE listings SET enquiries = enquiries + 1 WHERE slug = ?`)
     .bind(input.listingSlug)
     .run();
+
+  const listing = await db
+    .prepare(`SELECT owner_user_id FROM listings WHERE slug = ? LIMIT 1`)
+    .bind(input.listingSlug)
+    .first<{ owner_user_id: number | null }>();
+
+  if (listing?.owner_user_id) {
+    await upsertInboxNotification(db, {
+      eventKey: buildInboxEventKey(["enquiry", listing.owner_user_id, input.listingSlug, input.applicantName, input.contact]),
+      userId: listing.owner_user_id,
+      category: "enquiry_activity",
+      title: `New enquiry for ${input.listingTitle}`,
+      message: `${input.applicantName} sent an enquiry. Contact: ${input.contact}.`,
+      href: "/owner/dashboard/",
+      level: "info",
+    });
+  }
 }
 
 export async function getDashboardData(ownerUserId: number, db?: D1Like) {
   if (!db) {
-    return { listings: [], enquiries: [], payments: [], notifications: [], savedSearches: [], savedListings: [], notificationPreferences: null };
+    return {
+      listings: [],
+      enquiries: [],
+      payments: [],
+      notifications: [],
+      savedSearches: [],
+      savedListings: [],
+      notificationPreferences: null,
+      inboxNotifications: [],
+      unreadNotificationCount: 0,
+    };
   }
   await normalizeExpiredListingPlans(db);
   const notificationPreferences = await getNotificationPreferences(db, ownerUserId);
@@ -944,14 +1068,31 @@ export async function getDashboardData(ownerUserId: number, db?: D1Like) {
     paid_until?: string | null;
     promoted_until?: string | null;
   }>;
+  const expiryNotifications = notificationPreferences?.in_app_enabled && notificationPreferences?.listing_expiry
+    ? buildExpiryNotifications(listingRows)
+    : [];
+
+  for (const notification of expiryNotifications) {
+    await upsertInboxNotification(db, {
+      eventKey: buildInboxEventKey(["expiry", ownerUserId, notification.listingSlug, notification.category, notification.dueAt]),
+      userId: ownerUserId,
+      category: "listing_expiry",
+      title: notification.listingTitle,
+      message: notification.message,
+      href: `/listings/${notification.listingSlug}/`,
+      level: notification.level,
+    });
+  }
+
+  const inboxNotifications = notificationPreferences?.in_app_enabled
+    ? await getInboxNotifications(db, ownerUserId, 8)
+    : [];
 
   return {
     listings: listingsResult.results,
     enquiries: enquiriesResult.results,
     payments: paymentsResult.results,
-    notifications: notificationPreferences?.in_app_enabled && notificationPreferences?.listing_expiry
-      ? buildExpiryNotifications(listingRows)
-      : [],
+    notifications: expiryNotifications,
     savedSearches: savedSearchesResult.results.map((search) => ({
       ...search,
       filters: parseSavedSearchFilters(search.filters_json),
@@ -963,6 +1104,8 @@ export async function getDashboardData(ownerUserId: number, db?: D1Like) {
       }))
     ),
     notificationPreferences,
+    inboxNotifications,
+    unreadNotificationCount: inboxNotifications.filter((notification) => !notification.read_at).length,
   };
 }
 
@@ -1037,6 +1180,16 @@ export async function saveSearch(db: D1Like, input: SavedSearchInput) {
       .bind(name, filtersJson, resultCount, existing.id)
       .run();
 
+    await upsertInboxNotification(db, {
+      eventKey: buildInboxEventKey(["saved-search", input.userId, existing.id, routeQuery]),
+      userId: input.userId,
+      category: "saved_search_matches",
+      title: "Saved search updated",
+      message: `${name} is saved and currently has ${resultCount} matching listings.`,
+      href: routeQuery ? `/listings/?${routeQuery}` : "/listings/",
+      level: "info",
+    });
+
     return { ok: true as const, id: existing.id, routeQuery };
   }
 
@@ -1048,6 +1201,29 @@ export async function saveSearch(db: D1Like, input: SavedSearchInput) {
     )
     .bind(input.userId, name, routeQuery, filtersJson, resultCount)
     .run();
+
+  const created = await db
+    .prepare(
+      `SELECT id
+       FROM saved_searches
+       WHERE user_id = ?
+         AND route_query = ?
+       LIMIT 1`
+    )
+    .bind(input.userId, routeQuery)
+    .first<{ id: number }>();
+
+  if (created?.id) {
+    await upsertInboxNotification(db, {
+      eventKey: buildInboxEventKey(["saved-search", input.userId, created.id, routeQuery]),
+      userId: input.userId,
+      category: "saved_search_matches",
+      title: "Saved search created",
+      message: `${name} is saved and currently has ${resultCount} matching listings.`,
+      href: routeQuery ? `/listings/?${routeQuery}` : "/listings/",
+      level: "info",
+    });
+  }
 
   return { ok: true as const, routeQuery };
 }
@@ -1086,6 +1262,19 @@ export async function saveListingForBuyer(db: D1Like, userId: number, listingSlu
     .prepare(`UPDATE listings SET saves = saves + 1 WHERE slug = ?`)
     .bind(listingSlug)
     .run();
+
+  const listing = await getListingBySlug(listingSlug, db);
+  if (listing) {
+    await upsertInboxNotification(db, {
+      eventKey: buildInboxEventKey(["saved-listing", userId, listingSlug]),
+      userId,
+      category: "saved_listing_updates",
+      title: "Listing saved",
+      message: `${listing.title} was added to your saved listings.`,
+      href: `/listings/${listingSlug}/`,
+      level: "info",
+    });
+  }
 
   return { ok: true as const, duplicate: false };
 }
@@ -1230,6 +1419,18 @@ export async function recordPayment(db: D1Like, input: PaymentRecordInput) {
       input.paidAt ?? null
     )
     .run();
+
+  if (input.ownerUserId) {
+    await upsertInboxNotification(db, {
+      eventKey: buildInboxEventKey(["payment", input.ownerUserId, input.stripeSessionId]),
+      userId: input.ownerUserId,
+      category: "billing_events",
+      title: "Payment recorded",
+      message: `${input.planType} payment of ${input.amount} ${String(input.currency).toUpperCase()} was recorded.`,
+      href: "/owner/dashboard/",
+      level: "info",
+    });
+  }
 }
 
 async function getPendingExpiryEmailCandidates(db: D1Like) {
