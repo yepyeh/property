@@ -22,7 +22,7 @@ const allCities = Array.from(new Set(listings.map((listing) => listing.city))).s
 const allDistricts = Array.from(new Set(listings.map((listing) => listing.district))).sort();
 const saved = Astro.url.searchParams.get("saved");
 const activeFilters = [
-  filters.intent && filters.intent !== "buy" ? `Intent: ${filters.intent}` : filters.intent === "buy" ? "Intent: buy" : "",
+  filters.intent ? `Intent: ${filters.intent}` : "",
   filters.city ? `City: ${filters.city}` : "",
   filters.district ? `District: ${filters.district}` : "",
   filters.propertyType ? `Type: ${filters.propertyType}` : "",
@@ -55,22 +55,22 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
   title="Search Listings | Property App 2026"
   description="Search properties to buy or rent with real filterable results and a cleaner, portal-style search experience."
 >
-  <header class="search-header card">
-    <div class="header-copy">
-      <span class="pill">Results page</span>
-      <h1 class="section-title">Search properties to buy or rent.</h1>
-      <p class="section-copy">
-        The results surface now uses real query-string filters, not static demo controls. The URL is shareable, the
-        filters are stateful, and submitted D1 listings are included in the result set.
+  <section class="results-hero card">
+    <div class="hero-copy">
+      <span class="section-kicker">Search results</span>
+      <h1>Search property with less noise and stronger buyer signals.</h1>
+      <p>
+        The results surface should feel decisive: clear filters, stable URLs, visible result counts, and cleaner cards
+        that help a buyer compare quickly.
       </p>
     </div>
-    <div class="header-actions">
-      <a class="ghost" href="/">Home</a>
-      <a class="primary" href="#results">View results</a>
+    <div class="hero-actions">
+      <a class="button-secondary" href="/">Home</a>
+      <a class="button-dark" href="#results">Jump to results</a>
     </div>
-  </header>
+  </section>
 
-  <form class="search-shell card" method="GET" action="/listings/">
+  <form class="search-frame card" method="GET" action="/listings/">
     <div class="intent-tabs">
       <label class:list-active={selectedIntent === "buy"}>
         <input type="radio" name="intent" value="buy" checked={selectedIntent === "buy"} />
@@ -82,17 +82,17 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
       </label>
     </div>
 
-    <div class="query-grid">
-      <label>
-        City
+    <div class="filter-grid">
+      <label class="field">
+        <span>City</span>
         <input type="text" name="city" value={filters.city} placeholder="Ho Chi Minh City" />
       </label>
-      <label>
-        District
+      <label class="field">
+        <span>District</span>
         <input type="text" name="district" value={filters.district} placeholder="Thu Duc City" />
       </label>
-      <label>
-        Type
+      <label class="field">
+        <span>Property type</span>
         <select name="propertyType">
           <option value="">Any property</option>
           <option value="Condo" selected={filters.propertyType === "Condo"}>Condo</option>
@@ -103,8 +103,8 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
           <option value="Land" selected={filters.propertyType === "Land"}>Land</option>
         </select>
       </label>
-      <label>
-        Minimum beds
+      <label class="field">
+        <span>Minimum beds</span>
         <select name="minBeds">
           <option value="">Any beds</option>
           <option value="1" selected={filters.minBeds === 1}>1+</option>
@@ -113,16 +113,16 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
           <option value="4" selected={filters.minBeds === 4}>4+</option>
         </select>
       </label>
-      <label>
-        Minimum price
+      <label class="field">
+        <span>Minimum price</span>
         <input type="number" min="0" step="0.01" name="minPrice" value={filters.minPrice ?? ""} placeholder="0" />
       </label>
-      <label>
-        Maximum price
+      <label class="field">
+        <span>Maximum price</span>
         <input type="number" min="0" step="0.01" name="maxPrice" value={filters.maxPrice ?? ""} placeholder="10" />
       </label>
-      <label>
-        Sort
+      <label class="field">
+        <span>Sort</span>
         <select name="sort">
           <option value="newest" selected={selectedSort === "newest"}>Newest</option>
           <option value="price-asc" selected={selectedSort === "price-asc"}>Price: low to high</option>
@@ -130,15 +130,15 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
           <option value="beds-desc" selected={selectedSort === "beds-desc"}>Beds</option>
         </select>
       </label>
-      <div class="query-actions">
-        <button class="primary" type="submit">Search</button>
-        <a class="ghost" href="/listings/">Clear</a>
+      <div class="filter-actions">
+        <button class="button-dark" type="submit">Search</button>
+        <a class="button-secondary" href="/listings/">Clear</a>
       </div>
     </div>
 
     <div class="utility-row">
       <div class="filter-chips">
-        {activeFilters.length > 0 ? activeFilters.map((filter) => <span>{filter}</span>) : <span>No extra filters applied</span>}
+        {activeFilters.length > 0 ? activeFilters.map((filter) => <span>{filter}</span>) : <span>All live inventory</span>}
       </div>
       <div class="utility-links">
         <a href={dashboardHref}>{owner?.role === "buyer" ? "Saved searches" : "Track enquiries"}</a>
@@ -147,37 +147,30 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
     </div>
   </form>
 
-  {saved && (
-    <div class="card flash">
-      Search saved. You can manage it from your dashboard.
-    </div>
-  )}
+  {saved && <div class="card flash-banner">Search saved. You can manage it from your dashboard.</div>}
 
-  <section class="results-meta card" id="results">
+  <section class="results-summary card" id="results">
     <div>
       <strong>{resultSummary.total} listings</strong>
-      <span>
+      <p>
         across {resultSummary.cities} cities · {resultSummary.forRent} rentals live
         {hasFilters ? " · filtered results" : " · full inventory"}
-      </span>
+      </p>
     </div>
-    <div class="sort-row">
-      <span>Popular cities:</span>
+    <div class="summary-links">
+      <span>Popular cities</span>
       {allCities.slice(0, 3).map((city) => <a href={`/listings/?intent=${selectedIntent}&city=${encodeURIComponent(city)}`}>{city}</a>)}
     </div>
   </section>
 
-  <section class="card saved-search-panel">
+  <section class="save-search card">
     <div>
-      <span class="pill">Buyer alerts</span>
+      <span class="section-kicker">Buyer alerts</span>
       <h2>Save this search</h2>
-      <p>
-        Persist the current result set and come back to it later. This gives buyers a reusable shortlist before email
-        alerts are layered on top.
-      </p>
+      <p>Keep the current filter set as a reusable shortlist and turn it into an alert workflow later.</p>
     </div>
     {owner ? (
-      <form method="POST" action="/api/saved-searches" class="saved-search-form">
+      <form method="POST" action="/api/saved-searches" class="save-form">
         <input type="hidden" name="intent" value={filters.intent} />
         <input type="hidden" name="city" value={filters.city} />
         <input type="hidden" name="district" value={filters.district} />
@@ -186,32 +179,29 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
         <input type="hidden" name="maxPrice" value={filters.maxPrice ?? ""} />
         <input type="hidden" name="minBeds" value={filters.minBeds ?? ""} />
         <input type="hidden" name="sort" value={filters.sort} />
-        <label>
-          Search name
+        <label class="field">
+          <span>Search name</span>
           <input type="text" name="name" value={`Saved search · ${filters.intent === "rent" ? "Rent" : "Buy"} · ${filters.city || "All cities"}`} />
         </label>
-        <div class="saved-search-actions">
-          <button type="submit" class="primary">Save search</button>
-          <a class="ghost" href={dashboardHref}>Manage saved searches</a>
+        <div class="save-actions">
+          <button type="submit" class="button-dark">Save search</button>
+          <a class="button-secondary" href={dashboardHref}>Manage saved searches</a>
         </div>
       </form>
     ) : (
-      <div class="saved-search-auth">
+      <div class="save-auth">
         <p>Sign in to save this filter set and turn it into a reusable buyer alert.</p>
-        <a class="primary" href={`/login?redirect=${encodeURIComponent(`/listings/?${currentSearchQuery}`)}`}>Sign in to save</a>
+        <a class="button-dark" href={`/login?redirect=${encodeURIComponent(`/listings/?${currentSearchQuery}`)}`}>Sign in to save</a>
       </div>
     )}
   </section>
 
   <section class="results-layout">
-    <aside class="map-panel card">
-      <span class="pill">Market context</span>
-      <h2>Where people are searching</h2>
-      <p>
-        This side panel is still a placeholder for the eventual map, but the context is now tied to the live result
-        set instead of fixed demo copy.
-      </p>
-      <div class="map-box">
+    <aside class="market-panel card">
+      <span class="section-kicker">Market context</span>
+      <h2>Where current matches are clustered</h2>
+      <p>Map comes later. The useful part right now is giving a buyer quick district-level context tied to live results.</p>
+      <div class="district-list">
         {(allDistricts.length > 0 ? allDistricts : ["No matching districts"]).slice(0, 5).map((district) => <b>{district}</b>)}
       </div>
     </aside>
@@ -221,15 +211,15 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
         listings.map((listing) => <ListingCard listing={listing} />)
       ) : (
         <article class="empty-state card">
-          <span class="pill">No matches</span>
+          <span class="section-kicker">No matches</span>
           <h2>There are no listings for this filter set yet.</h2>
           <p>
             Broaden the city or district, lower the bed count requirement, or clear the price range. If you are testing
             owner supply, you can also add a new listing from the dashboard.
           </p>
           <div class="empty-actions">
-            <a class="primary" href="/listings/">Clear filters</a>
-            <a class="ghost" href="/submit-listing/">Post a listing</a>
+            <a class="button-dark" href="/listings/">Clear filters</a>
+            <a class="button-secondary" href="/submit-listing/">Post a listing</a>
           </div>
         </article>
       )}
@@ -237,67 +227,136 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
   </section>
 
   <style>
-    .search-header,
-    .search-shell,
-    .results-meta,
-    .saved-search-panel,
-    .flash {
+    .results-hero,
+    .search-frame,
+    .results-summary,
+    .save-search,
+    .market-panel,
+    .flash-banner,
+    .empty-state {
       padding: 1.4rem;
-      margin-bottom: 1rem;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
     }
 
-    .search-header,
+    .results-hero,
+    .hero-actions,
     .utility-row,
-    .results-meta {
+    .results-summary,
+    .summary-links,
+    .save-actions,
+    .empty-actions {
       display: flex;
       justify-content: space-between;
       gap: 1rem;
       align-items: flex-start;
-    }
-
-    .header-actions,
-    .utility-links,
-    .sort-row,
-    .filter-chips,
-    .intent-tabs,
-    .empty-actions,
-    .saved-search-actions {
-      display: flex;
       flex-wrap: wrap;
-      gap: 0.7rem;
     }
 
-    .primary,
-    .ghost,
-    .sort-row a,
+    .results-hero,
+    .search-frame,
+    .results-summary,
+    .save-search,
+    .flash-banner,
+    .results-layout {
+      margin-bottom: 1rem;
+    }
+
+    .hero-copy h1,
+    .save-search h2,
+    .market-panel h2,
+    .empty-state h2 {
+      margin: 0.8rem 0 0;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      letter-spacing: -0.06em;
+      line-height: 1;
+    }
+
+    .save-search h2,
+    .market-panel h2,
+    .empty-state h2 {
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
+    }
+
+    .hero-copy p,
+    .results-summary p,
+    .save-search p,
+    .market-panel p,
+    .empty-state p {
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 0.8rem 0 0;
+    }
+
+    .section-kicker {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2rem;
+      padding: 0.22rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(127, 86, 217, 0.08);
+      color: var(--accent-strong);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .button-dark,
+    .button-secondary,
+    .summary-links a,
+    .utility-links a,
+    .filter-chips span,
     .intent-tabs label span {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.9rem 1.1rem;
+      min-height: 2.75rem;
       border-radius: 999px;
+      padding: 0.82rem 1rem;
       font-weight: 700;
       text-decoration: none;
+      font: inherit;
       border: 1px solid var(--line);
     }
 
-    .primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+    .button-dark {
+      background: #101828;
       color: white;
-      border: none;
+      border-color: #101828;
       cursor: pointer;
     }
 
-    .flash {
-      color: var(--accent-strong);
+    .button-secondary,
+    .summary-links a,
+    .utility-links a,
+    .filter-chips span,
+    .intent-tabs label span {
+      background: white;
+      color: var(--text);
+    }
+
+    .flash-banner {
+      border-left: 4px solid rgba(18, 183, 106, 0.35);
+      color: #067647;
       font-weight: 700;
     }
 
-    .ghost,
-    .sort-row a,
-    .intent-tabs label span {
-      background: rgba(255, 255, 255, 0.72);
-      color: var(--text);
+    .intent-tabs,
+    .filter-grid,
+    .district-list {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .intent-tabs {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-bottom: 1rem;
+    }
+
+    .intent-tabs label {
+      position: relative;
+      cursor: pointer;
     }
 
     .intent-tabs input {
@@ -306,179 +365,139 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
       pointer-events: none;
     }
 
-    .intent-tabs label {
-      position: relative;
-      cursor: pointer;
-    }
-
     .intent-tabs label.list-active span {
-      background: var(--bg-deep);
-      border-color: var(--bg-deep);
+      background: #101828;
       color: white;
+      border-color: #101828;
     }
 
-    .query-grid {
-      display: grid;
+    .filter-grid {
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 0.8rem;
-      margin-top: 1rem;
     }
 
-    .query-actions {
+    .field,
+    .save-form {
       display: grid;
-      gap: 0.8rem;
-      align-content: end;
+      gap: 0.45rem;
     }
 
-    .saved-search-panel {
-      display: grid;
-      grid-template-columns: 1.1fr 1fr;
-      gap: 1rem;
-      align-items: start;
-    }
-
-    .saved-search-form,
-    .saved-search-auth {
-      display: grid;
-      gap: 0.8rem;
-    }
-
-    label {
-      display: block;
-      color: var(--muted);
+    .field span {
       font-size: 0.9rem;
-      font-weight: 600;
+      font-weight: 700;
+      color: var(--text);
     }
 
-    input,
-    select {
+    .field input,
+    .field select {
       width: 100%;
-      margin-top: 0.4rem;
-      padding: 0.95rem 1rem;
-      border-radius: 18px;
+      min-height: 3.1rem;
+      border-radius: 16px;
       border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.72);
+      background: white;
+      padding: 0.92rem 1rem;
+      color: var(--text);
       font: inherit;
+    }
+
+    .filter-actions,
+    .utility-links,
+    .filter-chips,
+    .save-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-actions {
+      align-items: end;
     }
 
     .utility-row {
       margin-top: 1rem;
-      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line);
     }
 
     .filter-chips span {
-      padding: 0.7rem 0.95rem;
-      border-radius: 999px;
-      background: rgba(15, 118, 110, 0.08);
-      color: var(--accent-strong);
-      font-weight: 700;
+      min-height: 2.3rem;
+      padding: 0.56rem 0.85rem;
+      font-size: 0.84rem;
+      background: #f8fafc;
     }
 
-    .utility-links a {
-      color: var(--muted);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .results-meta strong {
+    .results-summary strong {
       display: block;
-      font-size: 1.25rem;
+      font-size: 2rem;
+      letter-spacing: -0.04em;
     }
 
-    .results-meta span {
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .sort-row {
+    .summary-links {
       align-items: center;
     }
 
-    .sort-row span {
+    .summary-links span {
       color: var(--muted);
-      font-weight: 600;
+      font-weight: 700;
+    }
+
+    .save-search {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 1rem;
+      align-items: center;
     }
 
     .results-layout {
       display: grid;
-      grid-template-columns: 0.8fr 1.2fr;
+      grid-template-columns: minmax(17rem, 0.34fr) minmax(0, 1fr);
       gap: 1rem;
+      align-items: start;
     }
 
-    .map-panel {
-      padding: 1.4rem;
-      position: sticky;
-      top: 1rem;
-      align-self: start;
-    }
-
-    .map-panel h2 {
-      margin: 1rem 0 0.6rem;
-      font-size: 1.5rem;
-    }
-
-    .map-panel p,
-    .empty-state p {
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    .map-box {
-      display: grid;
-      place-items: center;
-      gap: 0.8rem;
-      min-height: 22rem;
-      margin-top: 1rem;
-      padding: 1.2rem;
-      border-radius: 24px;
-      background:
-        radial-gradient(circle at top, rgba(15, 118, 110, 0.22), transparent 30%),
-        linear-gradient(180deg, rgba(14, 22, 40, 0.04), rgba(14, 22, 40, 0.1));
+    .district-list b {
+      display: block;
+      padding: 0.9rem 1rem;
+      border-radius: 18px;
+      background: #f8fafc;
       border: 1px solid var(--line);
-    }
-
-    .map-box b {
-      display: inline-flex;
-      padding: 0.65rem 0.9rem;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.75);
+      font-size: 0.95rem;
     }
 
     .results-list {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 1rem;
     }
 
-    .empty-state {
-      padding: 1.4rem;
-      grid-column: 1 / -1;
+    .empty-actions {
+      margin-top: 1rem;
     }
 
-    .empty-state h2 {
-      margin: 1rem 0 0.65rem;
-      font-size: 1.5rem;
-    }
-
-    @media (max-width: 960px) {
-      .query-grid,
+    @media (max-width: 1100px) {
+      .filter-grid,
       .results-layout,
-      .results-list,
-      .saved-search-panel {
+      .save-search {
         grid-template-columns: 1fr;
-      }
-
-      .map-panel {
-        position: static;
       }
     }
 
     @media (max-width: 760px) {
-      .search-header,
+      .results-hero,
+      .hero-actions,
       .utility-row,
-      .results-meta {
-        flex-direction: column;
-        align-items: flex-start;
+      .results-summary,
+      .summary-links,
+      .save-actions,
+      .empty-actions {
+        display: grid;
+      }
+
+      .intent-tabs {
+        grid-template-columns: 1fr;
+      }
+
+      .button-dark,
+      .button-secondary {
+        width: 100%;
       }
     }
   </style>

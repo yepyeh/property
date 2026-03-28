@@ -7,144 +7,199 @@ export interface Props {
 
 const { listing } = Astro.props;
 const heroImage = listing.imageUrls?.[0];
+const intentLabel = listing.intent === "rent" ? "To rent" : "For sale";
 ---
 
-<article class={`listing card ${listing.tone}`}>
-  <div class="photo" style={heroImage ? `background-image: linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)), url(${heroImage})` : undefined}>
-    <span>{listing.status}</span>
-  </div>
+<article class={`listing-card card ${listing.tone}`}>
+  <a class="photo-wrap" href={`/listings/${listing.slug}/`}>
+    <div class="photo" style={heroImage ? `background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.4)), url(${heroImage})` : undefined}>
+      <div class="chip-row">
+        <span class="intent-chip">{intentLabel}</span>
+        <span class="status-chip">{listing.status}</span>
+      </div>
+    </div>
+  </a>
+
   <div class="listing-body">
-    <p class="price">{listing.priceLabel}</p>
-    <h3><a href={`/listings/${listing.slug}/`}>{listing.title}</a></h3>
-    <p class="meta">{listing.district} · {listing.type} · {listing.beds} beds · {listing.area} m2</p>
+    <div class="listing-top">
+      <div>
+        <p class="price">{listing.priceLabel}</p>
+        <h3><a href={`/listings/${listing.slug}/`}>{listing.title}</a></h3>
+      </div>
+      <span class="save-count">{listing.stats.saves} saves</span>
+    </div>
+
+    <p class="meta">{listing.district}, {listing.city}</p>
+    <div class="fact-row">
+      <span>{listing.type}</span>
+      <span>{listing.beds} beds</span>
+      <span>{listing.baths} baths</span>
+      <span>{listing.area} m2</span>
+    </div>
     <p class="summary">{listing.summary}</p>
-    <div class="listing-actions">
-      <a href={`/listings/${listing.slug}/`}>View details</a>
-      <span>{listing.stats.enquiries} enquiries</span>
+
+    <div class="listing-footer">
+      <div class="signal-row">
+        <span>{listing.stats.enquiries} enquiries</span>
+        <span>{listing.owner.verified ? "Verified owner" : "Owner listed"}</span>
+      </div>
+      <a class="details-link" href={`/listings/${listing.slug}/`}>View details</a>
     </div>
   </div>
 </article>
 
 <style>
-  .listing {
+  .listing-card {
     overflow: hidden;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 30px rgba(16, 24, 40, 0.06);
+  }
+
+  .photo-wrap {
+    display: block;
+    text-decoration: none;
   }
 
   .photo {
-    height: 14rem;
+    min-height: 15.5rem;
     padding: 1rem;
     display: flex;
     align-items: flex-start;
+    justify-content: space-between;
     background-size: cover;
     background-position: center;
   }
 
   .sea .photo:not([style]) {
-    background-image:
-      linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)),
-      linear-gradient(135deg, #86cfd0, #245a73);
+    background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.4)), linear-gradient(135deg, #98d4d5, #2f6f89);
   }
 
   .sun .photo:not([style]) {
-    background-image:
-      linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)),
-      linear-gradient(135deg, #eebf8a, #c96f47);
+    background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.42)), linear-gradient(135deg, #f4c78d, #cf6f46);
   }
 
   .forest .photo:not([style]) {
-    background-image:
-      linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.4)),
-      linear-gradient(135deg, #98c8a2, #245646);
+    background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.42)), linear-gradient(135deg, #a7d4b0, #255a4a);
   }
 
   .night .photo:not([style]) {
-    background-image:
-      linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.42)),
-      linear-gradient(135deg, #8291d6, #212950);
+    background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.45)), linear-gradient(135deg, #9ca8e6, #212c58);
   }
 
   .clay .photo:not([style]) {
-    background-image:
-      linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.42)),
-      linear-gradient(135deg, #d2a07d, #8d5e44);
+    background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.45)), linear-gradient(135deg, #deb28d, #996347);
   }
 
   .sky .photo:not([style]) {
-    background-image:
-      linear-gradient(180deg, rgba(15, 22, 40, 0.14), rgba(15, 22, 40, 0.42)),
-      linear-gradient(135deg, #b1d7ee, #4976a6);
+    background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.45)), linear-gradient(135deg, #c2dff6, #4f7cab);
   }
 
-  .photo span {
-    padding: 0.5rem 0.8rem;
+  .chip-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .intent-chip,
+  .status-chip,
+  .save-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 1.85rem;
+    padding: 0.22rem 0.7rem;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--bg-deep);
-    font-size: 0.82rem;
-    font-weight: 700;
-  }
-
-  .listing-body {
-    padding: 1.2rem;
-  }
-
-  .price {
-    display: block;
-    margin: 0;
-    font-size: 1.3rem;
+    font-size: 0.78rem;
     font-weight: 800;
   }
 
+  .intent-chip,
+  .status-chip {
+    background: rgba(255, 255, 255, 0.92);
+    color: #0f172a;
+  }
+
+  .listing-body {
+    display: grid;
+    gap: 0.8rem;
+    padding: 1.15rem 1.15rem 1.2rem;
+  }
+
+  .listing-top,
+  .listing-footer,
+  .fact-row,
+  .signal-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .price {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+  }
+
   h3 {
-    margin: 0.35rem 0 0.55rem;
-    font-size: 1.25rem;
-    line-height: 1.2;
+    margin: 0.3rem 0 0;
+    font-size: 1.2rem;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
   }
 
   h3 a {
     text-decoration: none;
   }
 
+  .save-count {
+    background: rgba(127, 86, 217, 0.08);
+    color: var(--accent-strong);
+  }
+
+  .meta,
+  .summary,
+  .fact-row,
+  .signal-row {
+    color: var(--muted);
+  }
+
   .meta,
   .summary {
-    color: var(--muted);
+    margin: 0;
     line-height: 1.65;
   }
 
-  .meta {
-    margin: 0;
+  .fact-row,
+  .signal-row {
+    font-size: 0.92rem;
   }
 
-  .summary {
-    margin: 0.55rem 0 0;
-  }
-
-  .listing-actions {
-    display: flex;
+  .details-link {
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 0.65rem;
-    margin-top: 1rem;
-  }
-
-  .listing-actions a {
-    padding: 0.85rem 1rem;
+    justify-content: center;
+    min-height: 2.6rem;
+    padding: 0.78rem 0.95rem;
     border-radius: 999px;
-    background: var(--bg-deep);
+    background: #101828;
     color: white;
     font-weight: 700;
     text-decoration: none;
   }
 
-  .listing-actions span {
-    color: var(--muted);
-    font-size: 0.92rem;
-  }
-
   @media (max-width: 760px) {
-    .listing-actions {
-      flex-direction: column;
-      align-items: stretch;
+    .listing-top,
+    .listing-footer,
+    .fact-row,
+    .signal-row {
+      align-items: flex-start;
+    }
+
+    .details-link {
+      width: 100%;
     }
   }
 </style>
