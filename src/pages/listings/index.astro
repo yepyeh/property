@@ -257,7 +257,16 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
 
     <div class="results-list">
       {listings.length > 0 ? (
-        listings.map((listing) => <ListingCard listing={listing} />)
+        listings.map((listing) => (
+          <div
+            class="listing-card-shell"
+            data-listing-card={listing.slug}
+            data-has-map={listing.location ? "true" : "false"}
+            tabindex={listing.location ? 0 : -1}
+          >
+            <ListingCard listing={listing} />
+          </div>
+        ))
       ) : (
         <article class="empty-state card">
           <span class="section-kicker">No matches</span>
@@ -279,6 +288,8 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
     const layoutNode = document.querySelector("[data-results-view]");
     const viewTriggerNodes = Array.from(document.querySelectorAll("[data-results-view-trigger]"));
     const mapNode = document.getElementById("results-map");
+    const cardNodes = Array.from(document.querySelectorAll("[data-listing-card]"));
+    const markerBySlug = new Map();
 
     function setResultsView(nextView) {
       if (!layoutNode) return;
@@ -289,6 +300,42 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
         node.classList.toggle("is-active", active);
         node.setAttribute("aria-pressed", active ? "true" : "false");
       });
+    }
+
+    function setActiveListing(slug, options = {}) {
+      const { openMarker = false, centerMap = false, scrollCard = false } = options;
+
+      cardNodes.forEach((node) => {
+        node.classList.toggle("is-active", node.getAttribute("data-listing-card") === slug);
+      });
+
+      const markerEntry = markerBySlug.get(slug);
+      if (markerEntry) {
+        markerBySlug.forEach((entry, entrySlug) => {
+          entry.marker.setStyle({
+            radius: entrySlug === slug ? 11 : 9,
+            weight: entrySlug === slug ? 3 : 2,
+            fillOpacity: entrySlug === slug ? 1 : 0.88,
+          });
+        });
+
+        if (centerMap) {
+          markerEntry.map.setView(markerEntry.marker.getLatLng(), Math.max(markerEntry.map.getZoom(), 13), {
+            animate: true,
+          });
+        }
+
+        if (openMarker) {
+          markerEntry.marker.openPopup();
+        }
+      }
+
+      if (scrollCard) {
+        const activeCard = document.querySelector(`[data-listing-card="${slug}"]`);
+        if (activeCard) {
+          activeCard.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
     }
 
     async function loadLeaflet() {
@@ -363,6 +410,15 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
           </div>
         `);
 
+        marker.on("click", () => {
+          setActiveListing(listing.slug, {
+            openMarker: true,
+            scrollCard: true,
+          });
+        });
+
+        markerBySlug.set(listing.slug, { marker, map });
+
         bounds.push([listing.lat, listing.lng]);
       });
 
@@ -371,12 +427,37 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
       } else {
         map.fitBounds(bounds, { padding: [24, 24] });
       }
+
+      if (listings[0]?.slug) {
+        setActiveListing(listings[0].slug);
+      }
     }
 
     viewTriggerNodes.forEach((node) => {
       node.addEventListener("click", () => {
         if (node.hasAttribute("disabled")) return;
         setResultsView(node.getAttribute("data-results-view-trigger") || "list");
+      });
+    });
+
+    cardNodes.forEach((node) => {
+      const slug = node.getAttribute("data-listing-card");
+      const hasMap = node.getAttribute("data-has-map") === "true";
+      if (!slug || !hasMap) return;
+
+      node.addEventListener("mouseenter", () => {
+        setActiveListing(slug, { centerMap: false, openMarker: false, scrollCard: false });
+      });
+
+      node.addEventListener("focusin", () => {
+        setActiveListing(slug, { centerMap: true, openMarker: true, scrollCard: false });
+      });
+
+      node.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        if (target.closest("a, button, input, textarea, select, form")) return;
+        setActiveListing(slug, { centerMap: true, openMarker: true, scrollCard: false });
       });
     });
 
@@ -710,6 +791,23 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
     .results-list {
       display: grid;
       gap: 1rem;
+    }
+
+    .listing-card-shell {
+      border-radius: 30px;
+      transition:
+        transform 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .listing-card-shell.is-active {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+    }
+
+    .listing-card-shell.is-active :global(.listing-card) {
+      outline: 2px solid rgba(15, 118, 110, 0.2);
+      outline-offset: 2px;
     }
 
     .empty-actions {
