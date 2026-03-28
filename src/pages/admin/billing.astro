@@ -17,6 +17,13 @@ const analytics = {
   activePaid: listings.filter((listing) => listing.plan_type === "paid" || listing.paid_until).length,
   activeFreeTrial: listings.filter((listing) => listing.plan_type === "free_trial" && listing.status !== "Expired listing").length,
   expiredListings: listings.filter((listing) => listing.status === "Expired listing").length,
+  expiringSoon: listings.filter((listing) => {
+    const paid = listing.paid_until ? new Date(listing.paid_until).getTime() - Date.now() : Number.POSITIVE_INFINITY;
+    const promoted = listing.promoted_until ? new Date(listing.promoted_until).getTime() - Date.now() : Number.POSITIVE_INFINITY;
+    const trial = listing.trial_ends_at ? new Date(listing.trial_ends_at).getTime() - Date.now() : Number.POSITIVE_INFINITY;
+    const threshold = 3 * 24 * 60 * 60 * 1000;
+    return paid <= threshold || promoted <= threshold || trial <= threshold;
+  }).length,
   paymentCount: payments.length,
   revenueVnd: payments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
   promotedSales: payments.filter((payment) => payment.plan_type === "promoted").length,
@@ -58,6 +65,7 @@ const conversionRate = analytics.totalListings > 0
     <article class="card stat"><strong>{analytics.activePromoted}</strong><span>promoted listings</span></article>
     <article class="card stat"><strong>{analytics.activeFreeTrial}</strong><span>free-trial listings</span></article>
     <article class="card stat"><strong>{analytics.expiredListings}</strong><span>expired listings</span></article>
+    <article class="card stat"><strong>{analytics.expiringSoon}</strong><span>expiring within 3 days</span></article>
     <article class="card stat"><strong>{analytics.paymentCount}</strong><span>recorded payments</span></article>
   </section>
 

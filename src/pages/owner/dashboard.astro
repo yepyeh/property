@@ -4,9 +4,9 @@ import { isBillingEnabled } from "../../lib/billing";
 import { getDashboardData, getDB } from "../../lib/marketplace";
 
 const owner = Astro.locals.owner;
-const { listings, enquiries, payments } = owner
+const { listings, enquiries, payments, notifications } = owner
   ? await getDashboardData(owner.id, getDB(Astro.locals.runtime))
-  : { listings: [], enquiries: [], payments: [] };
+  : { listings: [], enquiries: [], payments: [], notifications: [] };
 const uploaded = Astro.url.searchParams.get("uploaded");
 const updated = Astro.url.searchParams.get("updated");
 const billingEnabled = isBillingEnabled(Astro.locals.runtime);
@@ -88,6 +88,22 @@ function getImageCount(value: unknown) {
       Billing state updated for <code>{updated}</code>.
     </div>
   )}
+
+  <section class="card panel notification-panel">
+    <h2>Expiry notifications</h2>
+    {notifications.length === 0 ? <p>No renewal alerts right now.</p> : (
+      <ul class="notification-list">
+        {notifications.map((notification) => (
+          <li class={`notice-${notification.level}`}>
+            <strong>{notification.listingTitle}</strong>
+            <span>{notification.message}</span>
+            <span>{notification.category} · due {notification.dueAt}</span>
+            <span>{notification.ctaLabel}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
 
   <section class="panel-grid">
     <article class="card panel">
@@ -171,6 +187,7 @@ function getImageCount(value: unknown) {
 
   <style>
     .page-head, .panel { padding: 1.4rem; }
+    .notification-panel,
     .payment-panel { margin-top: 1rem; }
     .owner-card {
       display: grid;
@@ -230,6 +247,18 @@ function getImageCount(value: unknown) {
     .stat span, .panel p, .panel li span { color: var(--muted); }
     .panel ul { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: 0.9rem; }
     .panel li { display:grid; gap:0.2rem; padding: 0.9rem; border-radius: 18px; background: rgba(255,255,255,0.55); }
+    .notification-list li {
+      border: 1px solid var(--line);
+    }
+    .notice-info {
+      background: rgba(15, 118, 110, 0.08);
+    }
+    .notice-warning {
+      background: rgba(234, 179, 8, 0.12);
+    }
+    .notice-critical {
+      background: rgba(185, 28, 28, 0.08);
+    }
     .upload-form {
       display: grid;
       gap: 0.6rem;

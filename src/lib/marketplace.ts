@@ -116,8 +116,155 @@ export interface PaymentRecordInput {
   paidAt?: string | null;
 }
 
+export interface ExpiryNotification {
+  listingSlug: string;
+  listingTitle: string;
+  level: "info" | "warning" | "critical";
+  category: "trial" | "paid" | "promoted";
+  message: string;
+  ctaLabel: string;
+  planType: string;
+  dueAt: string;
+}
+
 export function getDB(runtime?: RuntimeLike | null) {
   return runtime?.env?.DB;
+}
+
+function getDaysUntil(dateValue?: string | null) {
+  if (!dateValue) return null;
+  const ms = new Date(dateValue).getTime() - Date.now();
+  return Math.ceil(ms / (1000 * 60 * 60 * 24));
+}
+
+function buildExpiryNotifications(
+  listings: Array<{
+    slug: string;
+    title: string;
+    status: string;
+    plan_type: string;
+    trial_ends_at?: string | null;
+    paid_until?: string | null;
+    promoted_until?: string | null;
+  }>
+) {
+  const notifications: ExpiryNotification[] = [];
+
+  for (const listing of listings) {
+    const trialDays = getDaysUntil(listing.trial_ends_at);
+    const paidDays = getDaysUntil(listing.paid_until);
+    const promotedDays = getDaysUntil(listing.promoted_until);
+
+    if (listing.status === "Expired listing") {
+      notifications.push({
+        listingSlug: listing.slug,
+        listingTitle: listing.title,
+        level: "critical",
+        category: "trial",
+        message: "This listing has expired and is no longer visible to buyers.",
+        ctaLabel: "Republish listing",
+        planType: listing.plan_type,
+        dueAt: listing.trial_ends_at || listing.paid_until || listing.promoted_until || new Date().toISOString(),
+      });
+      continue;
+    }
+
+    if (promotedDays !== null && promotedDays <= 0) {
+      notifications.push({
+        listingSlug: listing.slug,
+        listingTitle: listing.title,
+        level: "warning",
+        category: "promoted",
+        message: "Promotion has ended. Extend it to keep top placement.",
+        ctaLabel: "Extend promotion",
+        planType: listing.plan_type,
+        dueAt: listing.promoted_until || new Date().toISOString(),
+      });
+    } else if (promotedDays !== null && promotedDays <= 1) {
+      notifications.push({
+        listingSlug: listing.slug,
+        listingTitle: listing.title,
+        level: "warning",
+        category: "promoted",
+        message: `Promotion expires in ${promotedDays} day${promotedDays === 1 ? "" : "s"}.`,
+        ctaLabel: "Extend promotion",
+        planType: listing.plan_type,
+        dueAt: listing.promoted_until || new Date().toISOString(),
+      });
+    } else if (promotedDays !== null && promotedDays <= 3) {
+      notifications.push({
+        listingSlug: listing.slug,
+        listingTitle: listing.title,
+        level: "info",
+        category: "promoted",
+        message: `Promotion expires in ${promotedDays} days.`,
+        ctaLabel: "Review promotion",
+        planType: listing.plan_type,
+        dueAt: listing.promoted_until || new Date().toISOString(),
+      });
+    }
+
+    if (paidDays !== null && paidDays <= 0) {
+      notifications.push({
+        listingSlug: listing.slug,
+        listingTitle: listing.title,
+        level: "critical",
+        category: "paid",
+        message: "Paid coverage has ended. Renew now to keep this listing live.",
+        ctaLabel: "Renew paid plan",
+        planType: listing.plan_type,
+        dueAt: listing.paid_until || new Date().toISOString(),
+      });
+    } else if (paidDays !== null && paidDays <= 1) {
+      notifications.push({
+        listingSlug: listing.slug,
+        listingTitle: listing.title,
+        level: "warning",
+        category: "paid",
+        message: `Paid coverage expires in ${paidDays} day${paidDays === 1 ? "" : "s"}.`,
+        ctaLabel: "Renew paid plan",
+        planType: listing.plan_type,
+        dueAt: listing.paid_until || new Date().toISOString(),
+      });
+    } else if (paidDays !== null && paidDays <= 3) {
+      notifications.push({
+        listingSlug: listing.slug,
+        listingTitle: listing.title,
+        level: "info",
+        category: "paid",
+        message: `Paid coverage expires in ${paidDays} days.`,
+        ctaLabel: "Review renewal",
+        planType: listing.plan_type,
+        dueAt: listing.paid_until || new Date().toISOString(),
+      });
+    }
+
+    if (listing.plan_type === "free_trial" && trialDays !== null && trialDays <= 1) {
+      notifications.push({
+        listingSlug: listing.slug,
+        listingTitle: listing.title,
+        level: "warning",
+        category: "trial",
+        message: `Free trial expires in ${Math.max(trialDays, 0)} day${trialDays === 1 ? "" : "s"}.`,
+        ctaLabel: "Upgrade listing",
+        planType: listing.plan_type,
+        dueAt: listing.trial_ends_at || new Date().toISOString(),
+      });
+    } else if (listing.plan_type === "free_trial" && trialDays !== null && trialDays <= 3) {
+      notifications.push({
+        listingSlug: listing.slug,
+        listingTitle: listing.title,
+        level: "info",
+        category: "trial",
+        message: `Free trial expires in ${trialDays} days.`,
+        ctaLabel: "Review upgrade options",
+        planType: listing.plan_type,
+        dueAt: listing.trial_ends_at || new Date().toISOString(),
+      });
+    }
+  }
+
+  return notifications.sort((left, right) => new Date(left.dueAt).getTime() - new Date(right.dueAt).getTime());
 }
 
 export async function normalizeExpiredListingPlans(db?: D1Like) {
@@ -450,7 +597,7 @@ export async function createEnquiry(db: D1Like, input: EnquiryInput) {
 
 export async function getDashboardData(ownerUserId: number, db?: D1Like) {
   if (!db) {
-    return { listings: [], enquiries: [], payments: [] };
+    return { listings: [], enquiries: [], payments: [], notifications: [] };
   }
   await normalizeExpiredListingPlans(db);
 
@@ -487,10 +634,21 @@ export async function getDashboardData(ownerUserId: number, db?: D1Like) {
     .bind(ownerUserId)
     .all();
 
+  const listingRows = listingsResult.results as Array<{
+    slug: string;
+    title: string;
+    status: string;
+    plan_type: string;
+    trial_ends_at?: string | null;
+    paid_until?: string | null;
+    promoted_until?: string | null;
+  }>;
+
   return {
     listings: listingsResult.results,
     enquiries: enquiriesResult.results,
     payments: paymentsResult.results,
+    notifications: buildExpiryNotifications(listingRows),
   };
 }
 
