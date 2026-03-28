@@ -30,6 +30,14 @@ const similarListings = allListings
 const intentLabel = listing.intent === "buy" ? "For sale" : "For rent";
 const ownerTrustLabel = listing.owner.verified ? "Verified owner" : "Owner listed";
 const neighborhood = listing.neighborhood;
+const location = listing.location;
+const mapQuery = encodeURIComponent(`${listing.ward}, ${listing.district}, ${listing.city}`);
+const mapHref = location
+  ? `https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}`
+  : `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+const mapEmbedHref = location
+  ? `https://www.openstreetmap.org/export/embed.html?bbox=${location.lng - 0.01}%2C${location.lat - 0.01}%2C${location.lng + 0.01}%2C${location.lat + 0.01}&layer=mapnik&marker=${location.lat}%2C${location.lng}`
+  : undefined;
 ---
 
 <Layout
@@ -149,6 +157,37 @@ const neighborhood = listing.neighborhood;
           </div>
         </div>
       )}
+
+      <div class="panel-section">
+        <span class="section-kicker">Map and access</span>
+        <h2>Location view</h2>
+        <p>
+          Use the map as orientation, not as a promise of exact door-level precision. For marketplace trust, approximate
+          neighborhood placement is usually the right balance until the owner chooses to reveal more.
+        </p>
+        <div class="map-panel">
+          {mapEmbedHref ? (
+            <iframe
+              title={`Map for ${listing.title}`}
+              src={mapEmbedHref}
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+            ></iframe>
+          ) : (
+            <div class="map-fallback">
+              <strong>{listing.ward}, {listing.district}</strong>
+              <span>{listing.city}</span>
+            </div>
+          )}
+          <div class="map-meta">
+            <strong>{location?.precisionLabel || "Approximate neighborhood view"}</strong>
+            <span>{listing.ward}, {listing.district}, {listing.city}</span>
+            <div class="map-actions">
+              <a class="button-dark" href={mapHref} target="_blank" rel="noreferrer">Open map</a>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {listing.imageUrls && listing.imageUrls.length > 0 && (
         <div class="panel-section">
@@ -467,9 +506,69 @@ const neighborhood = listing.neighborhood;
       letter-spacing: -0.03em;
     }
 
-    .feature-grid {
+    .feature-grid,
+    .map-actions {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       margin-top: 1rem;
+    }
+
+    .map-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(16rem, 0.8fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .map-panel iframe,
+    .map-fallback {
+      width: 100%;
+      min-height: 20rem;
+      border: 0;
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.05), rgba(15, 23, 42, 0.12)),
+        radial-gradient(circle at 22% 20%, rgba(15, 118, 110, 0.16), transparent 18%),
+        linear-gradient(135deg, #f8fafc, #e5edf6);
+    }
+
+    .map-fallback {
+      display: grid;
+      place-content: center;
+      gap: 0.35rem;
+      padding: 1.2rem;
+      text-align: center;
+    }
+
+    .map-fallback strong {
+      font-size: 1.1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .map-fallback span,
+    .map-meta span {
+      color: var(--muted);
+    }
+
+    .map-meta {
+      display: grid;
+      gap: 0.9rem;
+      align-content: start;
+      padding: 1rem;
+      border-radius: 22px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+    }
+
+    .map-meta strong {
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .map-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 0.25rem;
     }
 
     .context-grid {
@@ -622,7 +721,8 @@ const neighborhood = listing.neighborhood;
       .detail-hero,
       .detail-grid,
       .similar-grid,
-      .context-grid {
+      .context-grid,
+      .map-panel {
         grid-template-columns: 1fr;
       }
 

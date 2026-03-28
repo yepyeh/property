@@ -9,6 +9,12 @@ export interface ListingNeighborhood {
   trustSignals: string[];
 }
 
+export interface ListingLocation {
+  lat: number;
+  lng: number;
+  precisionLabel: string;
+}
+
 export interface Listing {
   slug: string;
   title: string;
@@ -40,6 +46,7 @@ export interface Listing {
     saves: number;
     enquiries: number;
   };
+  location?: ListingLocation;
   neighborhood?: ListingNeighborhood;
   imageKeys?: string[];
   imageUrls?: string[];
@@ -84,6 +91,11 @@ export const listings: Listing[] = [
       saves: 38,
       enquiries: 11,
     },
+    location: {
+      lat: 10.8016,
+      lng: 106.7327,
+      precisionLabel: "Approximate area in Thao Dien",
+    },
     neighborhood: {
       headline: "Thao Dien is still one of the strongest family districts for buyers who want international schools, lower-friction daily services, and a softer residential feel than the city core.",
       commute: "Typically 15 to 20 minutes to Thu Thiem and around 25 minutes to central District 1 outside peak traffic.",
@@ -122,6 +134,11 @@ export const listings: Listing[] = [
       views24h: 301,
       saves: 54,
       enquiries: 18,
+    },
+    location: {
+      lat: 10.7781,
+      lng: 106.7046,
+      precisionLabel: "Approximate area in Ben Nghe",
     },
     neighborhood: {
       headline: "Ben Nghe works for buyers who want a prestige central address with walkable dining, offices, and hotel-grade amenities close by.",
@@ -162,6 +179,11 @@ export const listings: Listing[] = [
       saves: 19,
       enquiries: 7,
     },
+    location: {
+      lat: 16.0544,
+      lng: 108.2218,
+      precisionLabel: "Approximate area in Hai Chau",
+    },
     neighborhood: {
       headline: "Hai Chau remains one of the better urban districts for owner-occupiers who want a balanced work-home setup instead of purely tourist-led inventory.",
       commute: "Central Da Nang errands and office trips are generally short, with airport access usually within 15 minutes.",
@@ -200,6 +222,11 @@ export const listings: Listing[] = [
       views24h: 192,
       saves: 24,
       enquiries: 13,
+    },
+    location: {
+      lat: 10.7295,
+      lng: 106.7221,
+      precisionLabel: "Approximate area in Tan Phu, District 7",
     },
     neighborhood: {
       headline: "Tan Phu in District 7 suits renters who want cleaner building operations, broad retail access, and a more predictable expat-friendly lifestyle base.",
@@ -240,6 +267,11 @@ export const listings: Listing[] = [
       saves: 31,
       enquiries: 8,
     },
+    location: {
+      lat: 21.0662,
+      lng: 105.8237,
+      precisionLabel: "Approximate area in Quang An",
+    },
     neighborhood: {
       headline: "Quang An remains one of Tay Ho’s stronger family pockets for buyers who want a calmer residential lane while staying close to West Lake’s social and school network.",
       commute: "Typical trips toward Ba Dinh and inner Hanoi are straightforward, while West Lake amenities stay close to home.",
@@ -278,6 +310,11 @@ export const listings: Listing[] = [
       views24h: 329,
       saves: 61,
       enquiries: 22,
+    },
+    location: {
+      lat: 10.7826,
+      lng: 106.7297,
+      precisionLabel: "Approximate area in Thu Thiem",
     },
     neighborhood: {
       headline: "Thu Thiem is positioned for buyers who want future-facing inventory, newer infrastructure, and a cleaner bridge into the core than older high-density districts.",
@@ -325,4 +362,28 @@ export function buildListingNeighborhoodContext(listing: Pick<Listing, "city" | 
       `${listing.stats.enquiries} active buyer enquiries`,
     ],
   };
+}
+
+const fallbackLocationByDistrict: Record<string, ListingLocation> = {
+  "Thao Dien, Thu Duc City, Ho Chi Minh City": { lat: 10.8016, lng: 106.7327, precisionLabel: "Approximate area in Thao Dien" },
+  "Ben Nghe, District 1, Ho Chi Minh City": { lat: 10.7781, lng: 106.7046, precisionLabel: "Approximate area in Ben Nghe" },
+  "Binh Hien, Hai Chau, Da Nang": { lat: 16.0544, lng: 108.2218, precisionLabel: "Approximate area in Hai Chau" },
+  "Tan Phu, District 7, Ho Chi Minh City": { lat: 10.7295, lng: 106.7221, precisionLabel: "Approximate area in Tan Phu, District 7" },
+  "Quang An, Tay Ho, Hanoi": { lat: 21.0662, lng: 105.8237, precisionLabel: "Approximate area in Quang An" },
+  "An Khanh, Thu Duc City, Ho Chi Minh City": { lat: 10.7826, lng: 106.7297, precisionLabel: "Approximate area in Thu Thiem" },
+};
+
+const fallbackLocationByCity: Record<string, ListingLocation> = {
+  "Ho Chi Minh City": { lat: 10.7769, lng: 106.7009, precisionLabel: "Approximate city-level location" },
+  Hanoi: { lat: 21.0285, lng: 105.8542, precisionLabel: "Approximate city-level location" },
+  "Da Nang": { lat: 16.0544, lng: 108.2022, precisionLabel: "Approximate city-level location" },
+};
+
+export function buildListingLocationContext(listing: Pick<Listing, "city" | "district" | "ward"> & { location?: ListingLocation }): ListingLocation | undefined {
+  if (listing.location) {
+    return listing.location;
+  }
+
+  const exactKey = [listing.ward, listing.district, listing.city].filter(Boolean).join(", ");
+  return fallbackLocationByDistrict[exactKey] || fallbackLocationByCity[listing.city];
 }

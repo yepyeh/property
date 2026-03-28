@@ -1,4 +1,5 @@
 import {
+  buildListingLocationContext,
   buildListingNeighborhoodContext,
   getListingBySlug as getSeededListingBySlug,
   listings as seededListings,
@@ -762,6 +763,7 @@ function mapRowToListing(row: ListingRow): Listing {
 
   return {
     ...listing,
+    location: buildListingLocationContext(listing),
     neighborhood: buildListingNeighborhoodContext(listing),
   };
 }
