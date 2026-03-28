@@ -4,11 +4,12 @@ import { isBillingEnabled } from "../../lib/billing";
 import { getDashboardData, getDB } from "../../lib/marketplace";
 
 const owner = Astro.locals.owner;
-const { listings, enquiries, payments, notifications } = owner
+const { listings, enquiries, payments, notifications, savedSearches } = owner
   ? await getDashboardData(owner.id, getDB(Astro.locals.runtime))
-  : { listings: [], enquiries: [], payments: [], notifications: [] };
+  : { listings: [], enquiries: [], payments: [], notifications: [], savedSearches: [] };
 const uploaded = Astro.url.searchParams.get("uploaded");
 const updated = Astro.url.searchParams.get("updated");
+const savedSearchDeleted = Astro.url.searchParams.get("savedSearchDeleted");
 const billingEnabled = isBillingEnabled(Astro.locals.runtime);
 
 function isFutureDate(value?: string | null) {
@@ -89,6 +90,12 @@ function getImageCount(value: unknown) {
     </div>
   )}
 
+  {savedSearchDeleted && (
+    <div class="card flash">
+      Saved search deleted.
+    </div>
+  )}
+
   <section class="card panel notification-panel">
     <h2>Expiry notifications</h2>
     {notifications.length === 0 ? <p>No renewal alerts right now.</p> : (
@@ -99,6 +106,28 @@ function getImageCount(value: unknown) {
             <span>{notification.message}</span>
             <span>{notification.category} · due {notification.dueAt}</span>
             <span>{notification.ctaLabel}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+
+  <section class="card panel payment-panel">
+    <h2>Saved searches</h2>
+    {savedSearches.length === 0 ? <p>No saved searches yet. Save a filter from the listings page to build buyer alerts.</p> : (
+      <ul>
+        {savedSearches.map((search) => (
+          <li>
+            <strong>{search.name}</strong>
+            <span>{search.last_result_count} matching listings at last save</span>
+            <span>{search.route_query ? `/listings/?${search.route_query}` : "/listings/"}</span>
+            <div class="billing-actions">
+              <a class="billing-button" href={search.route_query ? `/listings/?${search.route_query}` : "/listings/"}>Open search</a>
+              <form method="POST" action="/api/saved-searches/delete">
+                <input type="hidden" name="id" value={search.id} />
+                <button type="submit" class="billing-button secondary-button">Delete</button>
+              </form>
+            </div>
           </li>
         ))}
       </ul>

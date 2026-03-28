@@ -1,7 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import ListingCard from "../../components/ListingCard.astro";
-import { getDB, searchListings } from "../../lib/marketplace";
+import { buildSavedSearchQuery, getDB, searchListings } from "../../lib/marketplace";
 
 const params = Astro.url.searchParams;
 const filters = {
@@ -16,8 +16,10 @@ const filters = {
 };
 
 const listings = await searchListings(filters, getDB(Astro.locals.runtime));
+const owner = Astro.locals.owner;
 const allCities = Array.from(new Set(listings.map((listing) => listing.city))).sort();
 const allDistricts = Array.from(new Set(listings.map((listing) => listing.district))).sort();
+const saved = Astro.url.searchParams.get("saved");
 const activeFilters = [
   filters.intent && filters.intent !== "buy" ? `Intent: ${filters.intent}` : filters.intent === "buy" ? "Intent: buy" : "",
   filters.city ? `City: ${filters.city}` : "",
@@ -45,6 +47,7 @@ const hasFilters =
   typeof filters.minBeds === "number" ||
   selectedIntent !== "buy" ||
   selectedSort !== "newest";
+const currentSearchQuery = buildSavedSearchQuery(filters);
 ---
 
 <Layout
@@ -143,6 +146,12 @@ const hasFilters =
     </div>
   </form>
 
+  {saved && (
+    <div class="card flash">
+      Search saved. You can manage it from your dashboard.
+    </div>
+  )}
+
   <section class="results-meta card" id="results">
     <div>
       <strong>{resultSummary.total} listings</strong>
@@ -155,6 +164,42 @@ const hasFilters =
       <span>Popular cities:</span>
       {allCities.slice(0, 3).map((city) => <a href={`/listings/?intent=${selectedIntent}&city=${encodeURIComponent(city)}`}>{city}</a>)}
     </div>
+  </section>
+
+  <section class="card saved-search-panel">
+    <div>
+      <span class="pill">Buyer alerts</span>
+      <h2>Save this search</h2>
+      <p>
+        Persist the current result set and come back to it later. This gives buyers a reusable shortlist before email
+        alerts are layered on top.
+      </p>
+    </div>
+    {owner ? (
+      <form method="POST" action="/api/saved-searches" class="saved-search-form">
+        <input type="hidden" name="intent" value={filters.intent} />
+        <input type="hidden" name="city" value={filters.city} />
+        <input type="hidden" name="district" value={filters.district} />
+        <input type="hidden" name="propertyType" value={filters.propertyType} />
+        <input type="hidden" name="minPrice" value={filters.minPrice ?? ""} />
+        <input type="hidden" name="maxPrice" value={filters.maxPrice ?? ""} />
+        <input type="hidden" name="minBeds" value={filters.minBeds ?? ""} />
+        <input type="hidden" name="sort" value={filters.sort} />
+        <label>
+          Search name
+          <input type="text" name="name" value={`Saved search · ${filters.intent === "rent" ? "Rent" : "Buy"} · ${filters.city || "All cities"}`} />
+        </label>
+        <div class="saved-search-actions">
+          <button type="submit" class="primary">Save search</button>
+          <a class="ghost" href="/owner/dashboard/">Manage saved searches</a>
+        </div>
+      </form>
+    ) : (
+      <div class="saved-search-auth">
+        <p>Sign in to save this filter set and turn it into a reusable buyer alert.</p>
+        <a class="primary" href={`/login?redirect=${encodeURIComponent(`/listings/?${currentSearchQuery}`)}`}>Sign in to save</a>
+      </div>
+    )}
   </section>
 
   <section class="results-layout">
@@ -193,7 +238,9 @@ const hasFilters =
   <style>
     .search-header,
     .search-shell,
-    .results-meta {
+    .results-meta,
+    .saved-search-panel,
+    .flash {
       padding: 1.4rem;
       margin-bottom: 1rem;
     }
@@ -212,7 +259,8 @@ const hasFilters =
     .sort-row,
     .filter-chips,
     .intent-tabs,
-    .empty-actions {
+    .empty-actions,
+    .saved-search-actions {
       display: flex;
       flex-wrap: wrap;
       gap: 0.7rem;
@@ -237,6 +285,11 @@ const hasFilters =
       color: white;
       border: none;
       cursor: pointer;
+    }
+
+    .flash {
+      color: var(--accent-strong);
+      font-weight: 700;
     }
 
     .ghost,
@@ -274,6 +327,19 @@ const hasFilters =
       display: grid;
       gap: 0.8rem;
       align-content: end;
+    }
+
+    .saved-search-panel {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .saved-search-form,
+    .saved-search-auth {
+      display: grid;
+      gap: 0.8rem;
     }
 
     label {
@@ -396,7 +462,8 @@ const hasFilters =
     @media (max-width: 960px) {
       .query-grid,
       .results-layout,
-      .results-list {
+      .results-list,
+      .saved-search-panel {
         grid-template-columns: 1fr;
       }
 

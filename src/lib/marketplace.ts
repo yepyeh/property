@@ -103,6 +103,12 @@ export interface ListingFilters {
   sort?: string;
 }
 
+export interface SavedSearchInput {
+  userId: number;
+  name: string;
+  filters: ListingFilters;
+}
+
 export interface ListingPlanUpdateInput {
   listingSlug: string;
   planType: "free_trial" | "paid" | "promoted";
@@ -132,6 +138,17 @@ export interface ExpiryNotification {
   ctaLabel: string;
   planType: string;
   dueAt: string;
+}
+
+export interface SavedSearchRecord {
+  id: number;
+  name: string;
+  route_query: string;
+  filters_json: string;
+  last_result_count: number;
+  created_at: string;
+  updated_at: string;
+  filters?: ListingFilters;
 }
 
 export interface ExpiryEmailDeliveryRecord {
@@ -432,6 +449,58 @@ function normalizeSort(value?: string) {
   return value === "price-asc" || value === "price-desc" || value === "beds-desc" ? value : "newest";
 }
 
+function normalizeListingFilters(filters: ListingFilters) {
+  return {
+    intent: filters.intent === "rent" ? "rent" : "buy",
+    city: filters.city?.trim() || "",
+    district: filters.district?.trim() || "",
+    propertyType: filters.propertyType?.trim() || "",
+    minPrice: typeof filters.minPrice === "number" && Number.isFinite(filters.minPrice) ? filters.minPrice : undefined,
+    maxPrice: typeof filters.maxPrice === "number" && Number.isFinite(filters.maxPrice) ? filters.maxPrice : undefined,
+    minBeds: typeof filters.minBeds === "number" && Number.isFinite(filters.minBeds) ? filters.minBeds : undefined,
+    sort: normalizeSort(filters.sort),
+  } satisfies ListingFilters;
+}
+
+export function buildSavedSearchQuery(filters: ListingFilters) {
+  const normalized = normalizeListingFilters(filters);
+  const params = new URLSearchParams();
+
+  params.set("intent", normalized.intent || "buy");
+  if (normalized.city) params.set("city", normalized.city);
+  if (normalized.district) params.set("district", normalized.district);
+  if (normalized.propertyType) params.set("propertyType", normalized.propertyType);
+  if (typeof normalized.minPrice === "number") params.set("minPrice", String(normalized.minPrice));
+  if (typeof normalized.maxPrice === "number") params.set("maxPrice", String(normalized.maxPrice));
+  if (typeof normalized.minBeds === "number") params.set("minBeds", String(normalized.minBeds));
+  if (normalized.sort && normalized.sort !== "newest") params.set("sort", normalized.sort);
+
+  return params.toString();
+}
+
+function buildSavedSearchName(filters: ListingFilters) {
+  const normalized = normalizeListingFilters(filters);
+  const parts = [
+    normalized.intent === "rent" ? "Rent" : "Buy",
+    normalized.propertyType || "Any type",
+    normalized.city || "All cities",
+  ];
+
+  if (normalized.district) parts.push(normalized.district);
+  if (typeof normalized.minBeds === "number") parts.push(`${normalized.minBeds}+ beds`);
+
+  return parts.join(" · ");
+}
+
+function parseSavedSearchFilters(value: string): ListingFilters {
+  try {
+    const parsed = JSON.parse(value) as ListingFilters;
+    return normalizeListingFilters(parsed);
+  } catch {
+    return normalizeListingFilters({});
+  }
+}
+
 function mapRowToListing(row: ListingRow): Listing {
   const imageKeys = row.image_keys ? JSON.parse(row.image_keys) : [];
 
@@ -711,7 +780,7 @@ export async function createEnquiry(db: D1Like, input: EnquiryInput) {
 
 export async function getDashboardData(ownerUserId: number, db?: D1Like) {
   if (!db) {
-    return { listings: [], enquiries: [], payments: [], notifications: [] };
+    return { listings: [], enquiries: [], payments: [], notifications: [], savedSearches: [] };
   }
   await normalizeExpiredListingPlans(db);
 
@@ -748,6 +817,16 @@ export async function getDashboardData(ownerUserId: number, db?: D1Like) {
     .bind(ownerUserId)
     .all();
 
+  const savedSearchesResult = await db
+    .prepare(
+      `SELECT id, name, route_query, filters_json, last_result_count, created_at, updated_at
+       FROM saved_searches
+       WHERE user_id = ?
+       ORDER BY updated_at DESC, created_at DESC`
+    )
+    .bind(ownerUserId)
+    .all<SavedSearchRecord>();
+
   const listingRows = listingsResult.results as Array<{
     slug: string;
     title: string;
@@ -763,6 +842,10 @@ export async function getDashboardData(ownerUserId: number, db?: D1Like) {
     enquiries: enquiriesResult.results,
     payments: paymentsResult.results,
     notifications: buildExpiryNotifications(listingRows),
+    savedSearches: savedSearchesResult.results.map((search) => ({
+      ...search,
+      filters: parseSavedSearchFilters(search.filters_json),
+    })),
   };
 }
 
@@ -807,6 +890,58 @@ export async function getAdminBillingData(db?: D1Like) {
     payments: paymentsResult.results,
     emailDeliveries: emailDeliveriesResult.results,
   };
+}
+
+export async function saveSearch(db: D1Like, input: SavedSearchInput) {
+  const filters = normalizeListingFilters(input.filters);
+  const routeQuery = buildSavedSearchQuery(filters);
+  const filtersJson = JSON.stringify(filters);
+  const name = input.name.trim() || buildSavedSearchName(filters);
+  const resultCount = (await searchListings(filters, db)).length;
+
+  const existing = await db
+    .prepare(
+      `SELECT id
+       FROM saved_searches
+       WHERE user_id = ?
+         AND route_query = ?
+       LIMIT 1`
+    )
+    .bind(input.userId, routeQuery)
+    .first<{ id: number }>();
+
+  if (existing) {
+    await db
+      .prepare(
+        `UPDATE saved_searches
+         SET name = ?, filters_json = ?, last_result_count = ?, updated_at = CURRENT_TIMESTAMP
+         WHERE id = ?`
+      )
+      .bind(name, filtersJson, resultCount, existing.id)
+      .run();
+
+    return { ok: true as const, id: existing.id, routeQuery };
+  }
+
+  await db
+    .prepare(
+      `INSERT INTO saved_searches (
+        user_id, name, route_query, filters_json, last_result_count
+      ) VALUES (?, ?, ?, ?, ?)`
+    )
+    .bind(input.userId, name, routeQuery, filtersJson, resultCount)
+    .run();
+
+  return { ok: true as const, routeQuery };
+}
+
+export async function deleteSavedSearch(db: D1Like, userId: number, id: number) {
+  await db
+    .prepare(`DELETE FROM saved_searches WHERE id = ? AND user_id = ?`)
+    .bind(id, userId)
+    .run();
+
+  return { ok: true as const };
 }
 
 export async function updateListingPlan(
