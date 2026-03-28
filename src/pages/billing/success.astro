@@ -1,0 +1,49 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="Payment Success | Property App 2026" description="Your payment was accepted and the listing upgrade is being applied.">
+  <section class="card shell">
+    <span class="pill">Payment received</span>
+    <h1 class="section-title">Checkout completed.</h1>
+    <p class="section-copy">
+      Stripe has accepted the payment. Your listing upgrade will appear after the webhook is processed. Return to the
+      owner dashboard to confirm the updated plan state.
+    </p>
+    <div class="actions">
+      <a class="primary" href="/owner/dashboard/">Go to dashboard</a>
+      <a class="ghost" href="/listings/">Browse listings</a>
+    </div>
+  </section>
+
+  <style>
+    .shell {
+      max-width: 40rem;
+      margin: 4rem auto 0;
+      padding: 1.5rem;
+    }
+    .actions {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    .primary, .ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.95rem 1.2rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: white;
+    }
+    .ghost {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.72);
+    }
+  </style>
+</Layout>

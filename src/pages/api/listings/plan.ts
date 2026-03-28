@@ -13,18 +13,22 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response("Owner account required", { status: 403 });
   }
 
+  if (owner.role !== "admin") {
+    return new Response("Admin account required", { status: 403 });
+  }
+
   const form = await request.formData();
   const listingSlug = String(form.get("listingSlug") || "");
   const planType = String(form.get("planType") || "free_trial");
   const paidDays = Number(form.get("paidDays") || 30);
   const promotedDays = Number(form.get("promotedDays") || 7);
-  const redirectTo = owner.role === "admin" ? "/admin/billing/" : "/owner/dashboard/";
+  const redirectTo = "/admin/billing/";
 
   if (!listingSlug || !["free_trial", "paid", "promoted"].includes(planType)) {
     return new Response("Invalid plan update", { status: 400 });
   }
 
-  const result = await updateListingPlan(db, owner.id, owner.role === "admin", {
+  const result = await updateListingPlan(db, owner.id, true, {
     listingSlug,
     planType: planType as "free_trial" | "paid" | "promoted",
     paidDays,

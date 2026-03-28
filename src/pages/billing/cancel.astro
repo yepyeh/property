@@ -1,0 +1,48 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="Payment Cancelled | Property App 2026" description="You cancelled checkout before paying for the listing upgrade.">
+  <section class="card shell">
+    <span class="pill">Checkout cancelled</span>
+    <h1 class="section-title">No payment was made.</h1>
+    <p class="section-copy">
+      Your listing remains on its current plan. You can return to the owner dashboard and try the upgrade again later.
+    </p>
+    <div class="actions">
+      <a class="primary" href="/owner/dashboard/">Back to dashboard</a>
+      <a class="ghost" href="/submit-listing/">Post another listing</a>
+    </div>
+  </section>
+
+  <style>
+    .shell {
+      max-width: 40rem;
+      margin: 4rem auto 0;
+      padding: 1.5rem;
+    }
+    .actions {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    .primary, .ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.95rem 1.2rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: white;
+    }
+    .ghost {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.72);
+    }
+  </style>
+</Layout>

@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import { isBillingEnabled } from "../../lib/billing";
 import { getDashboardData, getDB } from "../../lib/marketplace";
 
 const owner = Astro.locals.owner;
@@ -8,6 +9,7 @@ const { listings, enquiries } = owner
   : { listings: [], enquiries: [] };
 const uploaded = Astro.url.searchParams.get("uploaded");
 const updated = Astro.url.searchParams.get("updated");
+const billingEnabled = isBillingEnabled(Astro.locals.runtime);
 
 function getImageCount(value: unknown) {
   if (typeof value !== "string" || !value) return 0;
@@ -78,18 +80,22 @@ function getImageCount(value: unknown) {
               {listing.trial_ends_at && <span>Trial ends: {listing.trial_ends_at}</span>}
               {listing.promoted_until && <span>Promoted until: {listing.promoted_until}</span>}
               <div class="billing-actions">
-                <form method="POST" action="/api/listings/plan">
-                  <input type="hidden" name="listingSlug" value={listing.slug} />
-                  <input type="hidden" name="planType" value="paid" />
-                  <input type="hidden" name="paidDays" value="30" />
-                  <button type="submit" class="billing-button">Activate 30-day paid</button>
-                </form>
-                <form method="POST" action="/api/listings/plan">
-                  <input type="hidden" name="listingSlug" value={listing.slug} />
-                  <input type="hidden" name="planType" value="promoted" />
-                  <input type="hidden" name="promotedDays" value="7" />
-                  <button type="submit" class="billing-button secondary-button">Promote for 7 days</button>
-                </form>
+                {billingEnabled ? (
+                  <>
+                    <form method="POST" action="/api/billing/checkout">
+                      <input type="hidden" name="listingSlug" value={listing.slug} />
+                      <input type="hidden" name="planType" value="paid" />
+                      <button type="submit" class="billing-button">Pay for 30-day standard</button>
+                    </form>
+                    <form method="POST" action="/api/billing/checkout">
+                      <input type="hidden" name="listingSlug" value={listing.slug} />
+                      <input type="hidden" name="planType" value="promoted" />
+                      <button type="submit" class="billing-button secondary-button">Pay for 7-day promotion</button>
+                    </form>
+                  </>
+                ) : (
+                  <span class="billing-note">Stripe is not configured yet. Admin can still change the billing state manually.</span>
+                )}
               </div>
               <form class="upload-form" method="POST" action="/api/upload-image" enctype="multipart/form-data">
                 <input type="hidden" name="listingSlug" value={listing.slug} />
@@ -203,6 +209,11 @@ function getImageCount(value: unknown) {
     }
     .secondary-button {
       background: var(--bg-deep);
+    }
+    .billing-note {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
     }
     .upload-form label {
       display: grid;
