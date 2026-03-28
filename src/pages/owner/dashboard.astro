@@ -7,6 +7,7 @@ const { listings, enquiries } = owner
   ? await getDashboardData(owner.id, getDB(Astro.locals.runtime))
   : { listings: [], enquiries: [] };
 const uploaded = Astro.url.searchParams.get("uploaded");
+const updated = Astro.url.searchParams.get("updated");
 
 function getImageCount(value: unknown) {
   if (typeof value !== "string" || !value) return 0;
@@ -56,6 +57,12 @@ function getImageCount(value: unknown) {
     </div>
   )}
 
+  {updated && (
+    <div class="card flash">
+      Billing state updated for <code>{updated}</code>.
+    </div>
+  )}
+
   <section class="panel-grid">
     <article class="card panel">
       <h2>Submitted listings</h2>
@@ -70,6 +77,20 @@ function getImageCount(value: unknown) {
               <span>Plan: {listing.plan_type}</span>
               {listing.trial_ends_at && <span>Trial ends: {listing.trial_ends_at}</span>}
               {listing.promoted_until && <span>Promoted until: {listing.promoted_until}</span>}
+              <div class="billing-actions">
+                <form method="POST" action="/api/listings/plan">
+                  <input type="hidden" name="listingSlug" value={listing.slug} />
+                  <input type="hidden" name="planType" value="paid" />
+                  <input type="hidden" name="paidDays" value="30" />
+                  <button type="submit" class="billing-button">Activate 30-day paid</button>
+                </form>
+                <form method="POST" action="/api/listings/plan">
+                  <input type="hidden" name="listingSlug" value={listing.slug} />
+                  <input type="hidden" name="planType" value="promoted" />
+                  <input type="hidden" name="promotedDays" value="7" />
+                  <button type="submit" class="billing-button secondary-button">Promote for 7 days</button>
+                </form>
+              </div>
               <form class="upload-form" method="POST" action="/api/upload-image" enctype="multipart/form-data">
                 <input type="hidden" name="listingSlug" value={listing.slug} />
                 <label>
@@ -164,6 +185,24 @@ function getImageCount(value: unknown) {
       display: grid;
       gap: 0.6rem;
       margin-top: 0.6rem;
+    }
+    .billing-actions {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-top: 0.4rem;
+    }
+    .billing-button {
+      padding: 0.75rem 0.95rem;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .secondary-button {
+      background: var(--bg-deep);
     }
     .upload-form label {
       display: grid;

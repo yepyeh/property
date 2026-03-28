@@ -1,0 +1,187 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getAdminBillingData, getDB } from "../../lib/marketplace";
+
+const owner = Astro.locals.owner;
+
+if (!owner || owner.role !== "admin") {
+  return Astro.redirect("/owner/dashboard/");
+}
+
+const { listings } = await getAdminBillingData(getDB(Astro.locals.runtime));
+const updated = Astro.url.searchParams.get("updated");
+---
+
+<Layout title="Admin Billing | Property App 2026" description="Review listing plans and manually manage billing states before payment automation is added.">
+  <section class="page-head card">
+    <div>
+      <span class="pill">Admin billing</span>
+      <h1 class="section-title">Listing plans and upgrades</h1>
+      <p class="section-copy">
+        This is the operational billing console before Stripe. It lets you move listings between free-trial, paid,
+        and promoted states and control the duration windows manually.
+      </p>
+    </div>
+    <div class="actions">
+      <a class="ghost" href="/owner/dashboard/">Owner dashboard</a>
+      <form method="POST" action="/api/auth/logout">
+        <button class="ghost" type="submit">Log out</button>
+      </form>
+    </div>
+  </section>
+
+  {updated && (
+    <div class="card flash">
+      Updated billing state for <code>{updated}</code>.
+    </div>
+  )}
+
+  <section class="card panel">
+    <h2>All listing plans</h2>
+    {listings.length === 0 ? <p>No listings available.</p> : (
+      <ul class="listing-grid">
+        {listings.map((listing) => (
+          <li>
+            <strong>{listing.title}</strong>
+            <span>{listing.owner_name} · {listing.owner_email}</span>
+            <span>{listing.city} · {listing.district} · {listing.intent}</span>
+            <span>Plan: {listing.plan_type}</span>
+            {listing.trial_ends_at && <span>Trial ends: {listing.trial_ends_at}</span>}
+            {listing.paid_until && <span>Paid until: {listing.paid_until}</span>}
+            {listing.promoted_until && <span>Promoted until: {listing.promoted_until}</span>}
+
+            <div class="billing-controls">
+              <form method="POST" action="/api/listings/plan">
+                <input type="hidden" name="listingSlug" value={listing.slug} />
+                <input type="hidden" name="planType" value="free_trial" />
+                <button type="submit" class="ghost small">Reset to 7-day free trial</button>
+              </form>
+
+              <form method="POST" action="/api/listings/plan" class="inline-form">
+                <input type="hidden" name="listingSlug" value={listing.slug} />
+                <input type="hidden" name="planType" value="paid" />
+                <label>
+                  Paid days
+                  <input type="number" name="paidDays" min="1" value="30" />
+                </label>
+                <button type="submit" class="small primary">Apply paid</button>
+              </form>
+
+              <form method="POST" action="/api/listings/plan" class="inline-form">
+                <input type="hidden" name="listingSlug" value={listing.slug} />
+                <input type="hidden" name="planType" value="promoted" />
+                <label>
+                  Promote days
+                  <input type="number" name="promotedDays" min="1" value="7" />
+                </label>
+                <button type="submit" class="small dark">Apply promoted</button>
+              </form>
+            </div>
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+
+  <style>
+    .page-head, .panel { padding: 1.4rem; }
+    .page-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    .actions,
+    .billing-controls {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .flash {
+      padding: 1rem 1.2rem;
+      margin-bottom: 1rem;
+      color: var(--accent-strong);
+      font-weight: 700;
+    }
+    .ghost,
+    .primary,
+    .dark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-weight: 700;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .ghost {
+      padding: 0.95rem 1.2rem;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.72);
+      color: var(--text);
+    }
+    .primary, .dark {
+      padding: 0.85rem 1rem;
+      border: none;
+      color: white;
+    }
+    .primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+    }
+    .dark {
+      background: var(--bg-deep);
+    }
+    .small {
+      padding: 0.75rem 0.95rem;
+      font-size: 0.92rem;
+    }
+    .listing-grid {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0 0;
+      display: grid;
+      gap: 1rem;
+    }
+    .listing-grid li {
+      display: grid;
+      gap: 0.35rem;
+      padding: 1rem;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.55);
+    }
+    .listing-grid span,
+    .panel p,
+    label {
+      color: var(--muted);
+    }
+    .inline-form {
+      display: flex;
+      align-items: end;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+    label {
+      display: grid;
+      gap: 0.3rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    input {
+      padding: 0.75rem 0.85rem;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.8);
+      font: inherit;
+      min-width: 6rem;
+    }
+    @media (max-width: 960px) {
+      .page-head {
+        display: grid;
+      }
+      .inline-form {
+        align-items: stretch;
+      }
+    }
+  </style>
+</Layout>

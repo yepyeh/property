@@ -96,6 +96,13 @@ export interface ListingFilters {
   sort?: string;
 }
 
+export interface ListingPlanUpdateInput {
+  listingSlug: string;
+  planType: "free_trial" | "paid" | "promoted";
+  paidDays?: number;
+  promotedDays?: number;
+}
+
 export function getDB(runtime?: RuntimeLike | null) {
   return runtime?.env?.DB;
 }
@@ -413,4 +420,90 @@ export async function getDashboardData(ownerUserId: number, db?: D1Like) {
     listings: listingsResult.results,
     enquiries: enquiriesResult.results,
   };
+}
+
+export async function getAdminBillingData(db?: D1Like) {
+  if (!db) return { listings: [] };
+
+  const listingsResult = await db
+    .prepare(
+      `SELECT slug, title, city, district, intent, status, created_at, enquiries,
+              plan_type, trial_ends_at, paid_until, promoted_until,
+              owner_name, owner_email, owner_user_id
+       FROM listings
+       ORDER BY created_at DESC`
+    )
+    .bind()
+    .all();
+
+  return {
+    listings: listingsResult.results,
+  };
+}
+
+export async function updateListingPlan(
+  db: D1Like,
+  ownerUserId: number | null,
+  isAdmin: boolean,
+  input: ListingPlanUpdateInput
+) {
+  const listing = await db
+    .prepare(
+      `SELECT slug, owner_user_id, paid_until, promoted_until
+       FROM listings
+       WHERE slug = ?
+       LIMIT 1`
+    )
+    .bind(input.listingSlug)
+    .first<{ slug: string; owner_user_id: number | null; paid_until: string | null; promoted_until: string | null }>();
+
+  if (!listing) return { ok: false as const, error: "not_found" };
+  if (!isAdmin && listing.owner_user_id !== ownerUserId) return { ok: false as const, error: "forbidden" };
+
+  const paidDays = input.paidDays && input.paidDays > 0 ? input.paidDays : 30;
+  const promotedDays = input.promotedDays && input.promotedDays > 0 ? input.promotedDays : 7;
+
+  if (input.planType === "free_trial") {
+    await db
+      .prepare(
+        `UPDATE listings
+         SET plan_type = 'free_trial',
+             trial_ends_at = datetime('now', '+7 days'),
+             paid_until = NULL,
+             promoted_until = NULL
+         WHERE slug = ?`
+      )
+      .bind(input.listingSlug)
+      .run();
+
+    return { ok: true as const };
+  }
+
+  if (input.planType === "paid") {
+    await db
+      .prepare(
+        `UPDATE listings
+         SET plan_type = 'paid',
+             paid_until = datetime('now', ?),
+             promoted_until = NULL
+         WHERE slug = ?`
+      )
+      .bind(`+${paidDays} days`, input.listingSlug)
+      .run();
+
+    return { ok: true as const };
+  }
+
+  await db
+    .prepare(
+      `UPDATE listings
+       SET plan_type = 'promoted',
+           paid_until = COALESCE(paid_until, datetime('now', '+30 days')),
+           promoted_until = datetime('now', ?)
+       WHERE slug = ?`
+    )
+    .bind(`+${promotedDays} days`, input.listingSlug)
+    .run();
+
+  return { ok: true as const };
 }
