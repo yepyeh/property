@@ -3,136 +3,314 @@ import Layout from "../../layouts/Layout.astro";
 import ListingCard from "../../components/ListingCard.astro";
 import { listings } from "../../data/listings";
 
-const buyListings = listings.filter((listing) => listing.intent === "buy");
-const rentListings = listings.filter((listing) => listing.intent === "rent");
+const resultSummary = {
+  total: listings.length,
+  cities: Array.from(new Set(listings.map((listing) => listing.city))).length,
+  forRent: listings.filter((listing) => listing.intent === "rent").length,
+};
 ---
 
 <Layout
-  title="Browse Listings | Property App 2026"
-  description="Browse structured property listings across Vietnam with enquiry-ready detail pages and owner-focused workflows."
+  title="Search Listings | Property App 2026"
+  description="Search properties to buy or rent with a cleaner, Rightmove-style results experience adapted for Southeast Asia."
 >
-  <section class="page-head card">
-    <div>
-      <span class="pill">Browse listings</span>
-      <h1 class="section-title">The inventory layer starts here.</h1>
+  <header class="search-header card">
+    <div class="header-copy">
+      <span class="pill">Results page</span>
+      <h1 class="section-title">Search properties to buy or rent.</h1>
       <p class="section-copy">
-        This is the first real marketplace surface: structured listing data, reusable cards, and detail pages
-        ready for search, saved filters, and enquiry submission.
+        This page is now structured more like a real property portal: clear intent tabs, search controls, result counts,
+        and actions around saving searches and tracking enquiries.
       </p>
     </div>
-    <a class="cta" href="/">Back home</a>
+    <div class="header-actions">
+      <a class="ghost" href="/">Home</a>
+      <a class="primary" href="#results">View results</a>
+    </div>
+  </header>
+
+  <section class="search-shell card">
+    <div class="intent-tabs">
+      <button class="active">Buy</button>
+      <button>Rent</button>
+      <button>New homes</button>
+      <button>Commercial</button>
+    </div>
+
+    <div class="query-grid">
+      <label>
+        Area
+        <input type="text" value="Ho Chi Minh City" />
+      </label>
+      <label>
+        Type
+        <select>
+          <option>Any property</option>
+          <option>Condo</option>
+          <option>Villa</option>
+          <option>Townhouse</option>
+        </select>
+      </label>
+      <label>
+        Budget
+        <select>
+          <option>Any budget</option>
+          <option>Up to 5B VND</option>
+          <option>Up to 10B VND</option>
+        </select>
+      </label>
+      <label>
+        Beds
+        <select>
+          <option>Any beds</option>
+          <option>1+</option>
+          <option>2+</option>
+          <option>3+</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="utility-row">
+      <div class="filter-chips">
+        <span>Verified owner</span>
+        <span>New this week</span>
+        <span>Price reduced</span>
+        <span>Map nearby</span>
+        <span>Furnished</span>
+      </div>
+      <div class="utility-links">
+        <a href="#">Save search</a>
+        <a href="#">Create alert</a>
+        <a href="#">Track enquiries</a>
+      </div>
+    </div>
   </section>
 
-  <section class="filters card">
-    <div class="filter-row">
-      <span>Buy</span>
-      <span>Rent</span>
-      <span>Condo</span>
-      <span>Villa</span>
-      <span>Ho Chi Minh City</span>
-      <span>Hanoi</span>
-      <span>Da Nang</span>
+  <section class="results-meta card" id="results">
+    <div>
+      <strong>{resultSummary.total} listings</strong>
+      <span>across {resultSummary.cities} cities · {resultSummary.forRent} rentals live</span>
+    </div>
+    <div class="sort-row">
+      <span>Sort:</span>
+      <button class="sort active">Newest</button>
+      <button class="sort">Price</button>
+      <button class="sort">Response time</button>
     </div>
   </section>
 
-  <section class="group">
-    <div class="group-head">
-      <h2>Buy</h2>
-      <p>{buyListings.length} listings in the current mock inventory.</p>
-    </div>
-    <div class="listing-grid">
-      {buyListings.map((listing) => <ListingCard listing={listing} />)}
-    </div>
-  </section>
+  <section class="results-layout">
+    <aside class="map-panel card">
+      <span class="pill">Map mode</span>
+      <h2>Map and district context</h2>
+      <p>
+        This should become a real map later. For now it marks the intended portal pattern: results on one side,
+        location confidence on the other.
+      </p>
+      <div class="map-box">
+        <span>Ho Chi Minh City</span>
+        <b>Thu Duc</b>
+        <b>District 1</b>
+        <b>District 7</b>
+      </div>
+    </aside>
 
-  <section class="group">
-    <div class="group-head">
-      <h2>Rent</h2>
-      <p>{rentListings.length} rental listings in the current mock inventory.</p>
-    </div>
-    <div class="listing-grid">
-      {rentListings.map((listing) => <ListingCard listing={listing} />)}
+    <div class="results-list">
+      {listings.map((listing) => <ListingCard listing={listing} />)}
     </div>
   </section>
 
   <style>
-    .page-head,
-    .filters {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
+    .search-header,
+    .search-shell,
+    .results-meta {
       padding: 1.4rem;
       margin-bottom: 1rem;
     }
 
-    .cta {
+    .search-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .header-actions,
+    .utility-links,
+    .sort-row,
+    .intent-tabs,
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+    }
+
+    .primary,
+    .ghost,
+    .sort,
+    .intent-tabs button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.95rem 1.2rem;
+      padding: 0.9rem 1.1rem;
       border-radius: 999px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      color: white;
       font-weight: 700;
       text-decoration: none;
-      white-space: nowrap;
     }
 
-    .filter-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.65rem;
+    .primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: white;
     }
 
-    .filter-row span {
-      padding: 0.7rem 0.95rem;
-      border-radius: 999px;
+    .ghost,
+    .sort,
+    .intent-tabs button {
+      background: rgba(255, 255, 255, 0.72);
       border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.65);
+      color: var(--text);
+    }
+
+    .intent-tabs button.active,
+    .sort.active {
+      background: var(--bg-deep);
+      border-color: var(--bg-deep);
+      color: white;
+    }
+
+    .query-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
       font-weight: 600;
     }
 
-    .group {
-      margin-top: 1.35rem;
+    input,
+    select {
+      width: 100%;
+      margin-top: 0.4rem;
+      padding: 0.95rem 1rem;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.72);
+      font: inherit;
     }
 
-    .group-head {
-      margin-bottom: 1rem;
+    .utility-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 1rem;
     }
 
-    .group-head h2 {
-      margin: 0;
-      font-family: "Fraunces", serif;
-      font-size: 2rem;
+    .filter-chips span {
+      padding: 0.7rem 0.95rem;
+      border-radius: 999px;
+      background: rgba(15, 118, 110, 0.08);
+      color: var(--accent-strong);
+      font-weight: 700;
     }
 
-    .group-head p {
-      margin: 0.4rem 0 0;
+    .utility-links a {
       color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
     }
 
-    .listing-grid {
+    .results-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .results-meta strong {
+      display: block;
+      font-size: 1.25rem;
+    }
+
+    .results-meta span {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .results-layout {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 1rem;
+    }
+
+    .map-panel {
+      padding: 1.4rem;
+      position: sticky;
+      top: 1rem;
+      align-self: start;
+    }
+
+    .map-panel h2 {
+      margin: 1rem 0 0.6rem;
+      font-size: 1.5rem;
+    }
+
+    .map-panel p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .map-box {
+      display: grid;
+      place-items: center;
+      gap: 0.8rem;
+      min-height: 22rem;
+      margin-top: 1rem;
+      padding: 1.2rem;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at top, rgba(15, 118, 110, 0.22), transparent 30%),
+        linear-gradient(180deg, rgba(14, 22, 40, 0.04), rgba(14, 22, 40, 0.1));
+      border: 1px solid var(--line);
+    }
+
+    .map-box span,
+    .map-box b {
+      display: inline-flex;
+      padding: 0.65rem 0.9rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.75);
+    }
+
+    .results-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 1rem;
     }
 
     @media (max-width: 960px) {
-      .listing-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .query-grid,
+      .results-layout,
+      .results-list {
+        grid-template-columns: 1fr;
+      }
+
+      .map-panel {
+        position: static;
       }
     }
 
     @media (max-width: 760px) {
-      .page-head,
-      .filters {
+      .search-header,
+      .utility-row,
+      .results-meta {
         flex-direction: column;
         align-items: flex-start;
-      }
-
-      .listing-grid {
-        grid-template-columns: 1fr;
       }
     }
   </style>

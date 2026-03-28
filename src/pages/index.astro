@@ -5,6 +5,13 @@ import { getFeaturedListings } from "../data/listings";
 
 const quickFilters = ["Buy", "Rent", "Ho Chi Minh City", "Under 5B VND", "3+ bedrooms", "New listings"];
 const featuredListings = getFeaturedListings();
+const topNav = ["Buy", "Rent", "New Projects", "Find Agent", "Guides"];
+const utilityLinks = ["Saved searches", "Saved homes", "Enquiry tracking", "Owner dashboard"];
+const browseCities = [
+  { name: "Ho Chi Minh City", note: "Apartments, villas, and launch inventory" },
+  { name: "Hanoi", note: "Family homes, West Lake, and long-term rentals" },
+  { name: "Da Nang", note: "Coastal living, townhouses, and relocation demand" },
+];
 
 const workflows = [
   {
@@ -42,26 +49,31 @@ const platformFeatures = [
       </span>
     </a>
     <nav class="nav">
-      <a href="#listings">Listings</a>
-      <a href="#owners">Owners</a>
-      <a href="#app">PWA</a>
+      {topNav.map((item) => <a href={item === "Buy" || item === "Rent" ? "/listings/" : "#owners"}>{item}</a>)}
     </nav>
-    <a class="cta" href="/listings/">Browse listings</a>
+    <div class="header-actions">
+      <a class="account-link" href="#app">My Property App</a>
+      <a class="cta" href="/listings/">Browse listings</a>
+    </div>
   </header>
 
   <section class="hero card" id="top">
     <div class="hero-copy">
-      <span class="pill">Built for buy, rent, and enquiries</span>
-      <h1>Clean property search for buyers. Clear lead flow for owners.</h1>
+      <span class="pill">Search first, then organise</span>
+      <h1>Find the right home fast. Save, compare, and enquire without chaos.</h1>
       <p class="intro">
-        This product is positioned against broad portals like Dot Property, but with a sharper focus on trust,
-        speed, and an app-like experience. Search on mobile, save homes fast, then let owners manage enquiries
-        in one clean dashboard.
+        The product direction now follows the Rightmove pattern more closely: clear user intent, dominant search,
+        and account-level organisation. For Southeast Asia, that structure is paired with mobile-first enquiry flow
+        and stronger owner response signals.
       </p>
 
       <div class="hero-actions">
-        <a class="primary" href="/listings/">Explore listings</a>
+        <a class="primary" href="/listings/">Search properties</a>
         <a class="secondary" href="#owners">See owner workflow</a>
+      </div>
+
+      <div class="utility-strip">
+        {utilityLinks.map((item) => <span>{item}</span>)}
       </div>
 
       <div class="stats">
@@ -74,8 +86,8 @@ const platformFeatures = [
           <span>PWA install from mobile</span>
         </div>
         <div>
-          <strong>3 views</strong>
-          <span>browse, post, and manage enquiries</span>
+          <strong>3 loops</strong>
+          <span>search, save, and send enquiries</span>
         </div>
       </div>
     </div>
@@ -90,23 +102,24 @@ const platformFeatures = [
       <div class="search-box">
         <label>
           Search area
-          <input type="text" value="Thu Duc City, Ho Chi Minh City" />
+          <input type="text" value="Ho Chi Minh City" />
         </label>
         <div class="search-grid">
           <label>
             Property type
             <select>
-              <option>Villa</option>
+              <option>Any property</option>
               <option>Condo</option>
+              <option>Villa</option>
               <option>Townhouse</option>
             </select>
           </label>
           <label>
             Budget
             <select>
-              <option>Up to 10B VND</option>
+              <option>Any budget</option>
               <option>Up to 5B VND</option>
-              <option>Custom</option>
+              <option>Up to 10B VND</option>
             </select>
           </label>
         </div>
@@ -119,13 +132,32 @@ const platformFeatures = [
     </div>
   </section>
 
+  <section class="city-browser card">
+    <div class="section-head compact">
+      <span class="pill">Browse by city</span>
+      <h2 class="section-title">Start with place. Then narrow by property, budget, and trust.</h2>
+      <p class="section-copy">
+        That is the Rightmove lesson worth keeping. In this market, city and district familiarity matter before
+        deep filtering, especially on mobile.
+      </p>
+    </div>
+    <div class="city-grid">
+      {browseCities.map((city) => (
+        <a class="city-card" href="/listings/">
+          <strong>{city.name}</strong>
+          <span>{city.note}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
   <section class="overview" id="listings">
     <div class="section-head">
-      <span class="pill">Featured</span>
-      <h2 class="section-title">Listings that feel premium without feeling busy.</h2>
+      <span class="pill">Featured listings</span>
+      <h2 class="section-title">A cleaner result set than directory-style property portals.</h2>
       <p class="section-copy">
-        The home experience should feel lighter than the incumbent portals: fewer distractions, stronger trust
-        cues, and faster search-to-enquiry conversion on smaller screens.
+        Search results should feel trustworthy and scannable. Better cards, clearer status, and stronger enquiry
+        intent matter more than piling every possible link onto the first screen.
       </p>
     </div>
 
@@ -236,8 +268,7 @@ const platformFeatures = [
             <li>Mobile-first layout and touch-friendly controls</li>
           </ul>
           <p>
-            Next product step is not “make an app store build.” It is “validate listing submission, enquiry
-            handling, and retention.”
+            Next product step is not app-store packaging. It is saved searches, enquiry persistence, and owner inbox quality.
           </p>
         </div>
       </div>
@@ -247,9 +278,9 @@ const platformFeatures = [
   <section class="footer-bar">
     <div>
       <p class="footer-title">What this version proves</p>
-      <p>Brand direction, responsive experience, and PWA shape for the property platform.</p>
+      <p>Search-first information architecture with a stronger marketplace shape for Southeast Asia.</p>
     </div>
-    <a href="https://www.dotproperty.com.vn/en" target="_blank" rel="noreferrer">Competitor reference</a>
+    <a href="https://www.rightmove.co.uk/" target="_blank" rel="noreferrer">Rightmove reference</a>
   </section>
 
   <style>
@@ -259,7 +290,7 @@ const platformFeatures = [
       justify-content: space-between;
       gap: 1rem;
       margin-bottom: 1rem;
-      padding: 0.6rem 0.4rem;
+      padding: 0.7rem 0.4rem;
     }
 
     .brand {
@@ -298,12 +329,25 @@ const platformFeatures = [
     }
 
     .nav a,
+    .account-link,
     .cta,
     .primary,
     .secondary,
-    .footer-bar a {
+    .footer-bar a,
+    .city-card {
       text-decoration: none;
       transition: transform 160ms ease, opacity 160ms ease, background 160ms ease;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .account-link {
+      color: var(--muted);
+      font-weight: 600;
     }
 
     .cta,
@@ -325,7 +369,7 @@ const platformFeatures = [
 
     .hero {
       display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
+      grid-template-columns: 1.1fr 0.9fr;
       gap: 1.2rem;
       padding: 1.1rem;
       overflow: hidden;
@@ -377,6 +421,22 @@ const platformFeatures = [
       flex-wrap: wrap;
       gap: 0.9rem;
       margin-top: 1.8rem;
+    }
+
+    .utility-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+
+    .utility-strip span {
+      padding: 0.65rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(14, 22, 40, 0.05);
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 600;
     }
 
     .secondary {
@@ -500,6 +560,7 @@ const platformFeatures = [
       font-size: 0.84rem;
     }
 
+    .city-browser,
     .overview,
     .owners,
     .app {
@@ -516,6 +577,11 @@ const platformFeatures = [
       max-width: 42rem;
     }
 
+    .city-browser {
+      padding: 1.2rem;
+    }
+
+    .city-grid,
     .listing-grid,
     .workflow-grid,
     .split-grid,
@@ -524,9 +590,28 @@ const platformFeatures = [
       gap: 1rem;
     }
 
+    .city-grid,
     .listing-grid,
     .workflow-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .city-card {
+      display: grid;
+      gap: 0.5rem;
+      padding: 1.2rem;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid var(--line);
+    }
+
+    .city-card strong {
+      font-size: 1.1rem;
+    }
+
+    .city-card span {
+      color: var(--muted);
+      line-height: 1.6;
     }
 
     .workflow,
@@ -705,6 +790,7 @@ const platformFeatures = [
       .hero,
       .split-grid,
       .phone-grid,
+      .city-grid,
       .listing-grid,
       .workflow-grid,
       .dashboard-body {
@@ -729,6 +815,7 @@ const platformFeatures = [
       }
 
       .nav,
+      .account-link,
       .cta {
         display: none;
       }
