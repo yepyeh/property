@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
-import { getDB, getListingBySlug } from "../../../../lib/marketplace";
+import { getListingBySlug } from "../../../../lib/listings";
+import { getDB } from "../../../../lib/runtime";
 
 export const GET: APIRoute = async ({ params, locals }) => {
   const slug = params.slug || "";

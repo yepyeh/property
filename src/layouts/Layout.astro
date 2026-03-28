@@ -1,5 +1,6 @@
 ---
-import { getDB, getUnreadInboxNotificationCount } from "../lib/marketplace";
+import { getUnreadInboxNotificationCount } from "../lib/notifications";
+import { getDB } from "../lib/runtime";
 
 export interface Props {
   title?: string;

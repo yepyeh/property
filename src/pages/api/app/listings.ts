@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
-import { getDB, searchListings } from "../../../lib/marketplace";
+import { searchListings } from "../../../lib/listings";
+import { getDB } from "../../../lib/runtime";
 
 export const GET: APIRoute = async ({ url, locals }) => {
   const params = url.searchParams;

@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getDB, getNotificationPreferences } from "../../lib/marketplace";
+import { getNotificationPreferences } from "../../lib/notifications";
+import { getDB } from "../../lib/runtime";
 
 const viewer = Astro.locals.owner;
 

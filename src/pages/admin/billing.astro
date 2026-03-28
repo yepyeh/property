@@ -1,6 +1,8 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getAdminBillingData, getDB, isExpiryEmailEnabled } from "../../lib/marketplace";
+import { getAdminBillingData } from "../../lib/dashboard";
+import { isExpiryEmailEnabled } from "../../lib/notifications";
+import { getDB } from "../../lib/runtime";
 
 const owner = Astro.locals.owner;
 

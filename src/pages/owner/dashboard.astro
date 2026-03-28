@@ -1,7 +1,8 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { isBillingEnabled } from "../../lib/billing";
-import { getDB, getOwnerDashboardData } from "../../lib/marketplace";
+import { getOwnerDashboardData } from "../../lib/dashboard";
+import { getDB } from "../../lib/runtime";
 
 const owner = Astro.locals.owner;
 const { listings, enquiries, payments, notifications, savedSearches, inboxNotifications, unreadNotificationCount } = owner

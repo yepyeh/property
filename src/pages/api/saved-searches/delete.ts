@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
-import { deleteSavedSearch, getDB } from "../../../lib/marketplace";
+import { deleteSavedSearch } from "../../../lib/listings";
+import { getDB } from "../../../lib/runtime";
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const db = getDB(locals.runtime);

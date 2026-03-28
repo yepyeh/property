@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { sendPendingExpiryNotificationEmails } from "../../../../lib/marketplace";
+import { sendPendingExpiryNotificationEmails } from "../../../../lib/notifications";
 
 export const POST: APIRoute = async ({ locals, request }) => {
   const owner = locals.owner;

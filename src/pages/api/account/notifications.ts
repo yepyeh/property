@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
-import { getDB, updateNotificationPreferences } from "../../../lib/marketplace";
+import { updateNotificationPreferences } from "../../../lib/notifications";
+import { getDB } from "../../../lib/runtime";
 import { readBoolean, readEnum } from "../../../lib/validation";
 
 export const POST: APIRoute = async ({ request, locals }) => {

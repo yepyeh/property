@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
-import { getDB, removeSavedListingForBuyer } from "../../../lib/marketplace";
+import { removeSavedListingForBuyer } from "../../../lib/listings";
+import { getDB } from "../../../lib/runtime";
 import { appendQueryFlag, sanitizeInternalRedirect } from "../../../lib/http";
 
 export const POST: APIRoute = async ({ request, locals }) => {

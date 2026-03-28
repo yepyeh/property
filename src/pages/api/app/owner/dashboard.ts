@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
-import { getDB, getOwnerDashboardData } from "../../../../lib/marketplace";
+import { getOwnerDashboardData } from "../../../../lib/dashboard";
+import { getDB } from "../../../../lib/runtime";
 
 export const GET: APIRoute = async ({ locals }) => {
   const owner = locals.owner;

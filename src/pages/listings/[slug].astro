@@ -1,7 +1,8 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import ListingCard from "../../components/ListingCard.astro";
-import { getAllListings, getDB, getListingBySlug, isListingSavedByUser } from "../../lib/marketplace";
+import { getAllListings, getListingBySlug, isListingSavedByUser } from "../../lib/listings";
+import { getDB } from "../../lib/runtime";
 
 const { slug } = Astro.params;
 const db = getDB(Astro.locals.runtime);

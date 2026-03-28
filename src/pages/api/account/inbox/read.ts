@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
-import { getDB, markInboxNotificationRead } from "../../../../lib/marketplace";
+import { markInboxNotificationRead } from "../../../../lib/notifications";
+import { getDB } from "../../../../lib/runtime";
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const db = getDB(locals.runtime);

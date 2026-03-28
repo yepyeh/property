@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { BILLING_PRODUCTS, createCheckoutSession } from "../../../lib/billing";
-import { getDB } from "../../../lib/marketplace";
+import { getDB } from "../../../lib/runtime";
 
 export const POST: APIRoute = async ({ request, locals, url }) => {
   const owner = locals.owner;

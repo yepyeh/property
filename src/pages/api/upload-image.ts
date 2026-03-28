@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { getImageBucket, makeImageKey } from "../../lib/media";
-import { getDB } from "../../lib/marketplace";
+import { getDB } from "../../lib/runtime";
 import { ValidationError, readText } from "../../lib/validation";
 
 const ALLOWED_IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp", "image/avif"]);

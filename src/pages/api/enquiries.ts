@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
-import { createEnquiry, getDB } from "../../lib/marketplace";
+import { createEnquiry } from "../../lib/listings";
+import { getDB } from "../../lib/runtime";
 import { ValidationError, readOptionalText, readText } from "../../lib/validation";
 
 export const POST: APIRoute = async ({ request, locals }) => {
