@@ -68,6 +68,14 @@ const neighborhood = listing.neighborhood;
     overflow: hidden;
     background: rgba(255, 255, 255, 0.92);
     box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 30px rgba(16, 24, 40, 0.06);
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .listing-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 38px rgba(15, 23, 42, 0.1);
   }
 
   .photo-wrap {
@@ -137,7 +145,7 @@ const neighborhood = listing.neighborhood;
   .listing-body {
     display: grid;
     gap: 0.8rem;
-    padding: 1.15rem 1.15rem 1.2rem;
+    padding: 1.2rem 1.2rem 1.25rem;
   }
 
   .listing-top,
@@ -153,9 +161,9 @@ const neighborhood = listing.neighborhood;
 
   .price {
     margin: 0;
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     font-weight: 800;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.05em;
   }
 
   h3 {
@@ -172,6 +180,7 @@ const neighborhood = listing.neighborhood;
   .save-count {
     background: var(--brand-soft);
     color: var(--accent-strong);
+    border: 1px solid rgba(15, 23, 42, 0.06);
   }
 
   .meta,
@@ -216,11 +225,12 @@ const neighborhood = listing.neighborhood;
 
   .context-panel {
     display: grid;
-    gap: 0.55rem;
-    padding: 0.95rem 1rem;
-    border-radius: 18px;
-    background: #f8fafc;
-    border: 1px solid var(--line);
+    gap: 0.6rem;
+    padding: 1rem;
+    border-radius: 20px;
+    background:
+      linear-gradient(180deg, rgba(248,250,252,0.98), rgba(248,250,252,0.92));
+    border: 1px solid rgba(208, 213, 221, 0.74);
   }
 
   .context-headline {
@@ -240,6 +250,7 @@ const neighborhood = listing.neighborhood;
     color: white;
     font-weight: 700;
     text-decoration: none;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
   }
 
   @media (max-width: 760px) {

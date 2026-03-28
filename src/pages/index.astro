@@ -43,6 +43,7 @@ const ownerSteps = [
   description="A modern property marketplace for browsing listings, posting homes, and managing enquiries on mobile and desktop."
 >
   <section class="hero-shell card" id="top">
+    <div class="hero-aura"></div>
     <div class="hero-main">
       <div class="hero-copy">
         <span class="eyebrow-badge">Search-first property marketplace</span>
@@ -55,7 +56,7 @@ const ownerSteps = [
         <div class="hero-points">
           {trustSignals.map((signal) => (
             <div class="point-row">
-              <span class="point-mark"></span>
+              <span class="point-mark">•</span>
               <span>{signal}</span>
             </div>
           ))}
@@ -130,15 +131,18 @@ const ownerSteps = [
 
     <div class="hero-metrics">
       <article>
-        <strong>Live search</strong>
+        <span class="metric-label">Live search</span>
+        <strong>Query-led inventory</strong>
         <span>Query-driven inventory across buy and rent intent</span>
       </article>
       <article>
-        <strong>Owner workflow</strong>
+        <span class="metric-label">Owner workflow</span>
+        <strong>Supply and renewal loop</strong>
         <span>Listings, photos, enquiries, billing, and renewals in one system</span>
       </article>
       <article>
-        <strong>PWA-ready</strong>
+        <span class="metric-label">PWA-ready</span>
+        <strong>Mobile app behavior</strong>
         <span>Mobile-first shell that can install and behave like a lightweight app</span>
       </article>
     </div>
@@ -229,10 +233,21 @@ const ownerSteps = [
 
   <style>
     .hero-shell {
+      position: relative;
       padding: 1.1rem;
       display: grid;
       gap: 1rem;
       background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(255,255,255,0.82));
+      overflow: hidden;
+    }
+
+    .hero-aura {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 18% 16%, rgba(15, 118, 110, 0.13), transparent 26%),
+        radial-gradient(circle at 86% 18%, rgba(15, 23, 42, 0.08), transparent 22%);
+      pointer-events: none;
     }
 
     .hero-main {
@@ -248,12 +263,18 @@ const ownerSteps = [
     .city-card,
     .owner-card {
       box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
+      position: relative;
+      z-index: 1;
     }
 
     .hero-copy {
-      padding: 2rem;
-      border-radius: 24px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.74), rgba(255,255,255,0.56));
+      padding: 2.25rem;
+      border-radius: 30px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.64)),
+        linear-gradient(135deg, rgba(15, 118, 110, 0.04), rgba(15, 23, 42, 0.02));
+      border: 1px solid rgba(255,255,255,0.72);
+      backdrop-filter: blur(10px);
     }
 
     .eyebrow-badge,
@@ -275,9 +296,9 @@ const ownerSteps = [
     .section-heading h2,
     .band-copy h2 {
       margin: 0.9rem 0 0;
-      font-size: clamp(2.5rem, 5vw, 4.9rem);
+      font-size: clamp(2.8rem, 5.4vw, 5.4rem);
       line-height: 0.94;
-      letter-spacing: -0.06em;
+      letter-spacing: -0.08em;
       font-family: "Plus Jakarta Sans", sans-serif;
     }
 
@@ -299,6 +320,11 @@ const ownerSteps = [
       margin: 0;
     }
 
+    .hero-text {
+      max-width: 58ch;
+      font-size: 1.05rem;
+    }
+
     .hero-points {
       display: grid;
       gap: 0.75rem;
@@ -312,11 +338,17 @@ const ownerSteps = [
     }
 
     .point-mark {
-      width: 0.7rem;
-      height: 0.7rem;
-      margin-top: 0.45rem;
+      width: 1.5rem;
+      height: 1.5rem;
+      margin-top: 0.08rem;
       border-radius: 999px;
-      background: linear-gradient(135deg, var(--brand), #23314d);
+      background: var(--brand-soft);
+      color: var(--brand);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      line-height: 1;
       flex: none;
     }
 
@@ -371,10 +403,10 @@ const ownerSteps = [
     }
 
     .search-card {
-      padding: 1.1rem;
-      border-radius: 24px;
+      padding: 1.15rem;
+      border-radius: 30px;
       background: linear-gradient(180deg, #ffffff, #f8fafc);
-      border: 1px solid var(--line);
+      border: 1px solid rgba(208, 213, 221, 0.82);
     }
 
     .search-top,
@@ -471,6 +503,8 @@ const ownerSteps = [
 
     .hero-metrics {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+      position: relative;
+      z-index: 1;
     }
 
     .hero-metrics article,
@@ -479,6 +513,15 @@ const ownerSteps = [
       border-radius: 22px;
       border: 1px solid var(--line);
       background: rgba(255, 255, 255, 0.78);
+    }
+
+    .metric-label {
+      display: inline-flex;
+      color: var(--accent-strong);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     .hero-metrics strong,
@@ -521,6 +564,15 @@ const ownerSteps = [
       text-decoration: none;
       color: inherit;
       background: rgba(255, 255, 255, 0.88);
+      transition:
+        transform 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .city-card:hover,
+    .owner-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.1);
     }
 
     .step-index,
@@ -543,7 +595,9 @@ const ownerSteps = [
       display: grid;
       grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
       gap: 1rem;
-      background: linear-gradient(180deg, rgba(16, 24, 40, 0.96), rgba(30, 41, 59, 0.94));
+      background:
+        radial-gradient(circle at 18% 20%, rgba(15, 118, 110, 0.22), transparent 28%),
+        linear-gradient(180deg, rgba(16, 24, 40, 0.97), rgba(30, 41, 59, 0.94));
       color: white;
     }
 

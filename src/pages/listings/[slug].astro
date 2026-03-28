@@ -288,6 +288,9 @@ const mapEmbedHref = location
       grid-template-columns: minmax(0, 1.05fr) minmax(20rem, 0.95fr);
       gap: 1rem;
       overflow: hidden;
+      background:
+        radial-gradient(circle at 14% 14%, rgba(15, 118, 110, 0.08), transparent 22%),
+        linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.9));
     }
 
     .hero-media,
@@ -364,7 +367,7 @@ const mapEmbedHref = location
     .hero-panel {
       display: grid;
       gap: 1rem;
-      padding: 0.25rem 0.2rem 0.2rem;
+      padding: 0.35rem 0.3rem 0.3rem;
       align-content: start;
     }
 
@@ -390,8 +393,8 @@ const mapEmbedHref = location
     h1,
     .section-head h2 {
       margin: 0;
-      font-size: clamp(2.2rem, 4.5vw, 4rem);
-      letter-spacing: -0.06em;
+      font-size: clamp(2.4rem, 4.8vw, 4.35rem);
+      letter-spacing: -0.08em;
       line-height: 0.96;
     }
 
@@ -402,9 +405,9 @@ const mapEmbedHref = location
 
     .price {
       margin: 0;
-      font-size: 1.6rem;
+      font-size: 1.75rem;
       font-weight: 800;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.05em;
     }
 
     .summary,
@@ -434,9 +437,9 @@ const mapEmbedHref = location
     .stats-grid article,
     .context-grid article {
       padding: 1rem;
-      border-radius: 20px;
-      background: #f8fafc;
-      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+      border: 1px solid rgba(208, 213, 221, 0.74);
     }
 
     .fact-grid strong,
@@ -449,8 +452,8 @@ const mapEmbedHref = location
 
     .trust-bar span,
     .tag-row span {
-      background: #f8fafc;
-      border: 1px solid var(--line);
+      background: rgba(248,250,252,0.96);
+      border: 1px solid rgba(208, 213, 221, 0.74);
       color: var(--text);
       font-weight: 700;
     }
@@ -473,7 +476,7 @@ const mapEmbedHref = location
       border: none;
       background: var(--brand);
       color: white;
-      box-shadow: 0 12px 24px rgba(16, 24, 40, 0.16);
+      box-shadow: 0 14px 28px rgba(16, 24, 40, 0.16);
     }
 
     .button-secondary {
@@ -554,9 +557,9 @@ const mapEmbedHref = location
       gap: 0.9rem;
       align-content: start;
       padding: 1rem;
-      border-radius: 22px;
-      background: #f8fafc;
-      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+      border: 1px solid rgba(208, 213, 221, 0.74);
     }
 
     .map-meta strong {
@@ -601,9 +604,9 @@ const mapEmbedHref = location
       gap: 0.7rem;
       align-items: center;
       padding: 0.9rem 1rem;
-      border-radius: 18px;
-      background: #f8fafc;
-      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+      border: 1px solid rgba(208, 213, 221, 0.74);
     }
 
     .feature-dot {
@@ -658,9 +661,9 @@ const mapEmbedHref = location
       display: grid;
       gap: 0.2rem;
       padding: 1rem;
-      border-radius: 20px;
-      background: #f8fafc;
-      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+      border: 1px solid rgba(208, 213, 221, 0.74);
     }
 
     .owner-card strong {
