@@ -14,105 +14,143 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
 ---
 
 <Layout title="Buyer Dashboard | Property App 2026" description="Manage saved searches and buyer-side activity in the marketplace.">
-  <section class="page-head card">
-    <div>
-      <span class="pill">Buyer dashboard</span>
-      <h1 class="section-title">Saved searches and buyer activity</h1>
-      <p class="section-copy">
-        Buyer accounts focus on discovery. Save filter sets, come back to them quickly, and use them as the basis for
-        future alerting.
+  <section class="page-hero card">
+    <div class="hero-copy">
+      <p class="eyebrow">Buyer workspace</p>
+      <h1 class="hero-title">Track homes, shortlist areas, and return with context.</h1>
+      <p class="hero-text">
+        Search intent, favorite listings, and in-app notifications belong in one account surface so return visits feel
+        deliberate rather than fragmented.
       </p>
     </div>
-    <div class="actions">
-      <a class="primary" href="/listings/">Browse listings</a>
-      <a class="ghost" href="/account/notifications">Notifications</a>
-      <form method="POST" action="/api/auth/logout">
-        <button class="ghost" type="submit">Log out</button>
-      </form>
+    <div class="hero-actions">
+      <a class="button-primary" href="/listings/">Browse listings</a>
+      <a class="button-secondary" href="/account/inbox">Open inbox</a>
+      <a class="button-secondary" href="/account/notifications">Notification settings</a>
     </div>
   </section>
 
-  {savedSearchDeleted && (
-    <div class="card flash">
-      Saved search deleted.
-    </div>
-  )}
-
-  {savedListingDeleted && (
-    <div class="card flash">
-      Saved listing removed.
-    </div>
-  )}
+  {savedSearchDeleted && <div class="card flash-banner">Saved search deleted.</div>}
+  {savedListingDeleted && <div class="card flash-banner">Saved listing removed.</div>}
 
   <section class="stats-grid">
-    <article class="card stat"><strong>{savedSearches.length}</strong><span>saved searches</span></article>
-    <article class="card stat"><strong>{savedListings.length}</strong><span>saved listings</span></article>
-    <article class="card stat"><strong>{unreadNotificationCount}</strong><span>unread notifications</span></article>
+    <article class="card stat-card">
+      <span class="stat-label">Searches</span>
+      <strong>{savedSearches.length}</strong>
+      <span class="stat-copy">Saved searches</span>
+    </article>
+    <article class="card stat-card">
+      <span class="stat-label">Favorites</span>
+      <strong>{savedListings.length}</strong>
+      <span class="stat-copy">Saved listings</span>
+    </article>
+    <article class="card stat-card">
+      <span class="stat-label">Inbox</span>
+      <strong>{unreadNotificationCount}</strong>
+      <span class="stat-copy">Unread notifications</span>
+    </article>
   </section>
 
-  <section class="owner-card card">
-    <strong>{owner.full_name}</strong>
-    <span>{owner.email}</span>
-    <span>Account role: {owner.role}</span>
-    <span>Buyer flow: browse, save, and return to active searches</span>
-  </section>
-
-  <section class="card panel">
-    <h2>Notification inbox</h2>
-    {inboxNotifications.length === 0 ? <p>No inbox notifications yet.</p> : (
-      <ul>
-        {inboxNotifications.map((notification) => (
-          <li>
-            <strong>{notification.title}</strong>
-            <span>{notification.message}</span>
-            <span>{notification.category} · {notification.created_at}</span>
-          </li>
-        ))}
-      </ul>
-    )}
-    <div class="actions-row">
-      <a class="primary small" href="/account/inbox">Open inbox</a>
-      <a class="ghost small" href="/account/notifications">Manage notification settings</a>
+  <section class="card profile-panel">
+    <div class="profile-block">
+      <p class="eyebrow">Signed in as</p>
+      <strong>{owner.full_name}</strong>
+      <span>{owner.email}</span>
     </div>
+    <div class="profile-block">
+      <p class="eyebrow">Account role</p>
+      <strong>{owner.role}</strong>
+      <span>Browse, save, compare, and return to high-intent searches</span>
+    </div>
+    <form method="POST" action="/api/auth/logout" class="profile-actions">
+      <button class="button-secondary" type="submit">Log out</button>
+    </form>
   </section>
 
-  <section class="card panel">
-    <h2>Saved listings</h2>
-    {savedListings.length === 0 ? <p>No saved listings yet. Save individual properties from the listing detail page.</p> : (
-      <ul>
-        {savedListings.map((savedListing) => (
-          <li>
-            <strong>{savedListing.listing?.title ?? savedListing.listing_slug}</strong>
-            <span>{savedListing.listing?.city ?? "Unknown city"} · {savedListing.listing?.district ?? "Unknown district"}</span>
-            <span>{savedListing.listing?.priceLabel ?? "Listing unavailable"}</span>
-            <div class="actions-row">
-              <a class="primary small" href={`/listings/${savedListing.listing_slug}/`}>View listing</a>
-              <form method="POST" action="/api/saved-listings/delete">
-                <input type="hidden" name="listingSlug" value={savedListing.listing_slug} />
-                <input type="hidden" name="redirectTo" value="/buyer/dashboard/" />
-                <button type="submit" class="ghost small">Remove</button>
-              </form>
-            </div>
-          </li>
-        ))}
-      </ul>
-    )}
+  <section class="split-grid section-gap">
+    <article class="card panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Recent activity</p>
+          <h2>Notification inbox</h2>
+          <p class="panel-copy">Saved-search updates, listing changes, and account activity stay visible here.</p>
+        </div>
+        <a class="panel-link" href="/account/inbox">View all</a>
+      </div>
+      {inboxNotifications.length === 0 ? <p class="empty-copy">No inbox notifications yet.</p> : (
+        <ul class="stack-list compact-list">
+          {inboxNotifications.map((notification) => (
+            <li class="list-item">
+              <strong>{notification.title}</strong>
+              <p>{notification.message}</p>
+              <div class="meta-row">
+                <span>{notification.category}</span>
+                <span>{notification.created_at}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+      <div class="action-row">
+        <a class="button-secondary" href="/account/inbox">Open inbox</a>
+        <a class="button-tertiary" href="/account/notifications">Manage settings</a>
+      </div>
+    </article>
+
+    <article class="card panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Favorites</p>
+          <h2>Saved listings</h2>
+          <p class="panel-copy">Property-level intent you want to revisit quickly.</p>
+        </div>
+      </div>
+      {savedListings.length === 0 ? <p class="empty-copy">No saved listings yet. Save individual properties from the listing detail page.</p> : (
+        <ul class="stack-list compact-list">
+          {savedListings.map((savedListing) => (
+            <li class="list-item">
+              <strong>{savedListing.listing?.title ?? savedListing.listing_slug}</strong>
+              <p>{savedListing.listing?.city ?? "Unknown city"} · {savedListing.listing?.district ?? "Unknown district"}</p>
+              <div class="meta-row">
+                <span>{savedListing.listing?.priceLabel ?? "Listing unavailable"}</span>
+              </div>
+              <div class="action-row">
+                <a class="button-secondary" href={`/listings/${savedListing.listing_slug}/`}>View listing</a>
+                <form method="POST" action="/api/saved-listings/delete">
+                  <input type="hidden" name="listingSlug" value={savedListing.listing_slug} />
+                  <input type="hidden" name="redirectTo" value="/buyer/dashboard/" />
+                  <button type="submit" class="button-tertiary">Remove</button>
+                </form>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </article>
   </section>
 
-  <section class="card panel">
-    <h2>Saved searches</h2>
-    {savedSearches.length === 0 ? <p>No saved searches yet. Save a filter from the listings page to build your shortlist.</p> : (
-      <ul>
+  <section class="card panel section-gap">
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">Search intent</p>
+        <h2>Saved searches</h2>
+        <p class="panel-copy">Reusable filters that can evolve into alerts, shortlist flows, and revisit loops.</p>
+      </div>
+    </div>
+    {savedSearches.length === 0 ? <p class="empty-copy">No saved searches yet. Save a filter from the listings page to build your shortlist.</p> : (
+      <ul class="stack-list compact-list">
         {savedSearches.map((search) => (
-          <li>
+          <li class="list-item">
             <strong>{search.name}</strong>
-            <span>{search.last_result_count} matching listings at last save</span>
-            <span>{search.route_query ? `/listings/?${search.route_query}` : "/listings/"}</span>
-            <div class="actions-row">
-              <a class="primary small" href={search.route_query ? `/listings/?${search.route_query}` : "/listings/"}>Open search</a>
+            <p>{search.last_result_count} matching listings at last save</p>
+            <div class="meta-row">
+              <span>{search.route_query ? `/listings/?${search.route_query}` : "/listings/"}</span>
+            </div>
+            <div class="action-row">
+              <a class="button-secondary" href={search.route_query ? `/listings/?${search.route_query}` : "/listings/"}>Open search</a>
               <form method="POST" action="/api/saved-searches/delete">
                 <input type="hidden" name="id" value={search.id} />
-                <button type="submit" class="ghost small">Delete</button>
+                <button type="submit" class="button-tertiary">Delete</button>
               </form>
             </div>
           </li>
@@ -122,74 +160,221 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
   </section>
 
   <style>
-    .page-head, .panel { padding: 1.4rem; }
-    .page-head {
+    .page-hero,
+    .profile-panel,
+    .panel,
+    .stat-card,
+    .flash-banner {
+      padding: 1.5rem;
+    }
+
+    .page-hero,
+    .profile-panel,
+    .panel,
+    .stat-card,
+    .flash-banner {
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 40px rgba(16, 24, 40, 0.06);
+    }
+
+    .page-hero,
+    .profile-panel,
+    .panel-head,
+    .hero-actions,
+    .action-row,
+    .meta-row {
       display: flex;
+      align-items: flex-start;
       justify-content: space-between;
       gap: 1rem;
-      align-items: flex-start;
-      margin-bottom: 1rem;
-    }
-    .actions,
-    .actions-row {
-      display: flex;
-      gap: 0.75rem;
       flex-wrap: wrap;
+    }
+
+    .section-gap,
+    .profile-panel,
+    .flash-banner {
+      margin-top: 1rem;
+    }
+
+    .hero-copy {
+      max-width: 44rem;
+    }
+
+    .hero-title {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: -0.06em;
+      line-height: 1;
+    }
+
+    .hero-text,
+    .panel-copy,
+    .list-item p,
+    .empty-copy,
+    .profile-block span,
+    .meta-row,
+    .stat-copy {
+      color: var(--muted);
+    }
+
+    .hero-text,
+    .panel-copy,
+    .list-item p,
+    .empty-copy {
+      margin: 0;
+      line-height: 1.65;
+    }
+
+    .eyebrow,
+    .stat-label {
+      margin: 0 0 0.45rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .hero-actions,
+    .action-row {
       align-items: center;
     }
-    .stats-grid {
+
+    .stats-grid,
+    .split-grid {
       display: grid;
-      grid-template-columns: repeat(1, minmax(0, 1fr));
       gap: 1rem;
-      margin-bottom: 1rem;
+      margin-top: 1rem;
     }
-    .stat,
-    .owner-card,
-    .flash {
-      padding: 1.2rem;
+
+    .stats-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
-    .owner-card {
+
+    .split-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .stat-card strong {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 2.25rem;
+      line-height: 1;
+      letter-spacing: -0.06em;
+    }
+
+    .profile-panel {
       display: grid;
-      gap: 0.35rem;
-      margin-bottom: 1rem;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      align-items: end;
     }
-    .stat strong { display: block; font-size: 2rem; }
-    .stat span,
-    .panel p,
-    .panel li span,
-    .owner-card span { color: var(--muted); }
-    .panel ul { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: 0.9rem; }
-    .panel li { display: grid; gap: 0.25rem; padding: 0.9rem; border-radius: 18px; background: rgba(255,255,255,0.55); }
-    .primary,
-    .ghost {
+
+    .panel h2 {
+      margin: 0;
+      font-size: 1.3rem;
+      letter-spacing: -0.03em;
+    }
+
+    .panel-link {
+      text-decoration: none;
+      font-weight: 700;
+      color: var(--accent-strong);
+    }
+
+    .stack-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .list-item {
+      display: grid;
+      gap: 0.45rem;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 1rem;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.95));
+    }
+
+    .button-primary,
+    .button-secondary,
+    .button-tertiary {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.95rem 1.2rem;
+      min-height: 2.75rem;
       border-radius: 999px;
+      padding: 0.82rem 1.05rem;
+      font: inherit;
+      font-weight: 700;
       text-decoration: none;
-      font-weight: 700;
-    }
-    .small { padding: 0.75rem 0.95rem; }
-    .primary {
-      border: none;
-      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      color: white;
-    }
-    .ghost {
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.72);
-      color: var(--text);
       cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
     }
-    .flash {
-      margin-bottom: 1rem;
+
+    .button-primary:hover,
+    .button-secondary:hover,
+    .button-tertiary:hover {
+      transform: translateY(-1px);
+    }
+
+    .button-primary {
+      border: none;
+      background: linear-gradient(135deg, #12b76a, #079455);
+      color: white;
+      box-shadow: 0 12px 24px rgba(18, 183, 106, 0.2);
+    }
+
+    .button-secondary {
+      border: 1px solid var(--line-strong);
+      background: white;
+      color: var(--text);
+      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+    }
+
+    .button-tertiary {
+      border: 1px solid rgba(127, 86, 217, 0.18);
+      background: rgba(127, 86, 217, 0.06);
       color: var(--accent-strong);
+    }
+
+    .flash-banner {
+      border-left: 4px solid rgba(18, 183, 106, 0.35);
+      color: #067647;
       font-weight: 700;
     }
+
+    .list-item strong,
+    .profile-block strong {
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    @media (max-width: 960px) {
+      .split-grid,
+      .stats-grid,
+      .profile-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+
     @media (max-width: 760px) {
-      .page-head {
+      .page-hero,
+      .profile-panel,
+      .panel-head,
+      .hero-actions,
+      .action-row,
+      .meta-row {
         display: grid;
+      }
+
+      .button-primary,
+      .button-secondary,
+      .button-tertiary {
+        width: 100%;
       }
     }
   </style>
