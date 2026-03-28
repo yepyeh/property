@@ -1,27 +1,63 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import ListingCard from "../../components/ListingCard.astro";
-import { getAllListings, getDB } from "../../lib/marketplace";
+import { getDB, searchListings } from "../../lib/marketplace";
 
-const listings = await getAllListings(getDB(Astro.locals.runtime));
+const params = Astro.url.searchParams;
+const filters = {
+  intent: params.get("intent") || "buy",
+  city: params.get("city") || "",
+  district: params.get("district") || "",
+  propertyType: params.get("propertyType") || "",
+  minPrice: Number(params.get("minPrice") || "") || undefined,
+  maxPrice: Number(params.get("maxPrice") || "") || undefined,
+  minBeds: Number(params.get("minBeds") || "") || undefined,
+  sort: params.get("sort") || "newest",
+};
+
+const listings = await searchListings(filters, getDB(Astro.locals.runtime));
+const allCities = Array.from(new Set(listings.map((listing) => listing.city))).sort();
+const allDistricts = Array.from(new Set(listings.map((listing) => listing.district))).sort();
+const activeFilters = [
+  filters.intent && filters.intent !== "buy" ? `Intent: ${filters.intent}` : filters.intent === "buy" ? "Intent: buy" : "",
+  filters.city ? `City: ${filters.city}` : "",
+  filters.district ? `District: ${filters.district}` : "",
+  filters.propertyType ? `Type: ${filters.propertyType}` : "",
+  typeof filters.minPrice === "number" ? `Min price: ${filters.minPrice}` : "",
+  typeof filters.maxPrice === "number" ? `Max price: ${filters.maxPrice}` : "",
+  typeof filters.minBeds === "number" ? `Beds: ${filters.minBeds}+` : "",
+].filter(Boolean);
+
 const resultSummary = {
   total: listings.length,
   cities: Array.from(new Set(listings.map((listing) => listing.city))).length,
   forRent: listings.filter((listing) => listing.intent === "rent").length,
 };
+
+const selectedIntent = filters.intent === "rent" ? "rent" : "buy";
+const selectedSort = filters.sort || "newest";
+const hasFilters =
+  filters.city ||
+  filters.district ||
+  filters.propertyType ||
+  typeof filters.minPrice === "number" ||
+  typeof filters.maxPrice === "number" ||
+  typeof filters.minBeds === "number" ||
+  selectedIntent !== "buy" ||
+  selectedSort !== "newest";
 ---
 
 <Layout
   title="Search Listings | Property App 2026"
-  description="Search properties to buy or rent with a cleaner, Rightmove-style results experience adapted for Southeast Asia."
+  description="Search properties to buy or rent with real filterable results and a cleaner, portal-style search experience."
 >
   <header class="search-header card">
     <div class="header-copy">
       <span class="pill">Results page</span>
       <h1 class="section-title">Search properties to buy or rent.</h1>
       <p class="section-copy">
-        This page is now structured more like a real property portal: clear intent tabs, search controls, result counts,
-        and actions around saving searches and tracking enquiries.
+        The results surface now uses real query-string filters, not static demo controls. The URL is shareable, the
+        filters are stateful, and submitted D1 listings are included in the result set.
       </p>
     </div>
     <div class="header-actions">
@@ -30,94 +66,127 @@ const resultSummary = {
     </div>
   </header>
 
-  <section class="search-shell card">
+  <form class="search-shell card" method="GET" action="/listings/">
     <div class="intent-tabs">
-      <button class="active">Buy</button>
-      <button>Rent</button>
-      <button>New homes</button>
-      <button>Commercial</button>
+      <label class:list-active={selectedIntent === "buy"}>
+        <input type="radio" name="intent" value="buy" checked={selectedIntent === "buy"} />
+        <span>Buy</span>
+      </label>
+      <label class:list-active={selectedIntent === "rent"}>
+        <input type="radio" name="intent" value="rent" checked={selectedIntent === "rent"} />
+        <span>Rent</span>
+      </label>
     </div>
 
     <div class="query-grid">
       <label>
-        Area
-        <input type="text" value="Ho Chi Minh City" />
+        City
+        <input type="text" name="city" value={filters.city} placeholder="Ho Chi Minh City" />
+      </label>
+      <label>
+        District
+        <input type="text" name="district" value={filters.district} placeholder="Thu Duc City" />
       </label>
       <label>
         Type
-        <select>
-          <option>Any property</option>
-          <option>Condo</option>
-          <option>Villa</option>
-          <option>Townhouse</option>
+        <select name="propertyType">
+          <option value="">Any property</option>
+          <option value="Condo" selected={filters.propertyType === "Condo"}>Condo</option>
+          <option value="Villa" selected={filters.propertyType === "Villa"}>Villa</option>
+          <option value="Townhouse" selected={filters.propertyType === "Townhouse"}>Townhouse</option>
+          <option value="Apartment" selected={filters.propertyType === "Apartment"}>Apartment</option>
+          <option value="House" selected={filters.propertyType === "House"}>House</option>
+          <option value="Land" selected={filters.propertyType === "Land"}>Land</option>
         </select>
       </label>
       <label>
-        Budget
-        <select>
-          <option>Any budget</option>
-          <option>Up to 5B VND</option>
-          <option>Up to 10B VND</option>
+        Minimum beds
+        <select name="minBeds">
+          <option value="">Any beds</option>
+          <option value="1" selected={filters.minBeds === 1}>1+</option>
+          <option value="2" selected={filters.minBeds === 2}>2+</option>
+          <option value="3" selected={filters.minBeds === 3}>3+</option>
+          <option value="4" selected={filters.minBeds === 4}>4+</option>
         </select>
       </label>
       <label>
-        Beds
-        <select>
-          <option>Any beds</option>
-          <option>1+</option>
-          <option>2+</option>
-          <option>3+</option>
+        Minimum price
+        <input type="number" min="0" step="0.01" name="minPrice" value={filters.minPrice ?? ""} placeholder="0" />
+      </label>
+      <label>
+        Maximum price
+        <input type="number" min="0" step="0.01" name="maxPrice" value={filters.maxPrice ?? ""} placeholder="10" />
+      </label>
+      <label>
+        Sort
+        <select name="sort">
+          <option value="newest" selected={selectedSort === "newest"}>Newest</option>
+          <option value="price-asc" selected={selectedSort === "price-asc"}>Price: low to high</option>
+          <option value="price-desc" selected={selectedSort === "price-desc"}>Price: high to low</option>
+          <option value="beds-desc" selected={selectedSort === "beds-desc"}>Beds</option>
         </select>
       </label>
+      <div class="query-actions">
+        <button class="primary" type="submit">Search</button>
+        <a class="ghost" href="/listings/">Clear</a>
+      </div>
     </div>
 
     <div class="utility-row">
       <div class="filter-chips">
-        <span>Verified owner</span>
-        <span>New this week</span>
-        <span>Price reduced</span>
-        <span>Map nearby</span>
-        <span>Furnished</span>
+        {activeFilters.length > 0 ? activeFilters.map((filter) => <span>{filter}</span>) : <span>No extra filters applied</span>}
       </div>
       <div class="utility-links">
         <a href="/owner/dashboard/">Track enquiries</a>
         <a href="/submit-listing/">Post listing</a>
-        <a href="#results">Result tools</a>
       </div>
     </div>
-  </section>
+  </form>
 
   <section class="results-meta card" id="results">
     <div>
       <strong>{resultSummary.total} listings</strong>
-      <span>across {resultSummary.cities} cities · {resultSummary.forRent} rentals live</span>
+      <span>
+        across {resultSummary.cities} cities · {resultSummary.forRent} rentals live
+        {hasFilters ? " · filtered results" : " · full inventory"}
+      </span>
     </div>
     <div class="sort-row">
-      <span>Sort:</span>
-      <button class="sort active">Newest</button>
-      <button class="sort">Price</button>
-      <button class="sort">Response time</button>
+      <span>Popular cities:</span>
+      {allCities.slice(0, 3).map((city) => <a href={`/listings/?intent=${selectedIntent}&city=${encodeURIComponent(city)}`}>{city}</a>)}
     </div>
   </section>
 
   <section class="results-layout">
     <aside class="map-panel card">
-      <span class="pill">Map mode</span>
-      <h2>Map and district context</h2>
+      <span class="pill">Market context</span>
+      <h2>Where people are searching</h2>
       <p>
-        This should become a real map later. For now it marks the intended portal pattern: results on one side,
-        location confidence on the other.
+        This side panel is still a placeholder for the eventual map, but the context is now tied to the live result
+        set instead of fixed demo copy.
       </p>
       <div class="map-box">
-        <span>Ho Chi Minh City</span>
-        <b>Thu Duc</b>
-        <b>District 1</b>
-        <b>District 7</b>
+        {(allDistricts.length > 0 ? allDistricts : ["No matching districts"]).slice(0, 5).map((district) => <b>{district}</b>)}
       </div>
     </aside>
 
     <div class="results-list">
-      {listings.map((listing) => <ListingCard listing={listing} />)}
+      {listings.length > 0 ? (
+        listings.map((listing) => <ListingCard listing={listing} />)
+      ) : (
+        <article class="empty-state card">
+          <span class="pill">No matches</span>
+          <h2>There are no listings for this filter set yet.</h2>
+          <p>
+            Broaden the city or district, lower the bed count requirement, or clear the price range. If you are testing
+            owner supply, you can also add a new listing from the dashboard.
+          </p>
+          <div class="empty-actions">
+            <a class="primary" href="/listings/">Clear filters</a>
+            <a class="ghost" href="/submit-listing/">Post a listing</a>
+          </div>
+        </article>
+      )}
     </div>
   </section>
 
@@ -129,7 +198,9 @@ const resultSummary = {
       margin-bottom: 1rem;
     }
 
-    .search-header {
+    .search-header,
+    .utility-row,
+    .results-meta {
       display: flex;
       justify-content: space-between;
       gap: 1rem;
@@ -139,8 +210,9 @@ const resultSummary = {
     .header-actions,
     .utility-links,
     .sort-row,
+    .filter-chips,
     .intent-tabs,
-    .filter-chips {
+    .empty-actions {
       display: flex;
       flex-wrap: wrap;
       gap: 0.7rem;
@@ -148,8 +220,8 @@ const resultSummary = {
 
     .primary,
     .ghost,
-    .sort,
-    .intent-tabs button {
+    .sort-row a,
+    .intent-tabs label span {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -157,23 +229,35 @@ const resultSummary = {
       border-radius: 999px;
       font-weight: 700;
       text-decoration: none;
+      border: 1px solid var(--line);
     }
 
     .primary {
       background: linear-gradient(135deg, var(--accent), var(--accent-strong));
       color: white;
+      border: none;
+      cursor: pointer;
     }
 
     .ghost,
-    .sort,
-    .intent-tabs button {
+    .sort-row a,
+    .intent-tabs label span {
       background: rgba(255, 255, 255, 0.72);
-      border: 1px solid var(--line);
       color: var(--text);
     }
 
-    .intent-tabs button.active,
-    .sort.active {
+    .intent-tabs input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .intent-tabs label {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .intent-tabs label.list-active span {
       background: var(--bg-deep);
       border-color: var(--bg-deep);
       color: white;
@@ -184,6 +268,12 @@ const resultSummary = {
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 0.8rem;
       margin-top: 1rem;
+    }
+
+    .query-actions {
+      display: grid;
+      gap: 0.8rem;
+      align-content: end;
     }
 
     label {
@@ -205,11 +295,8 @@ const resultSummary = {
     }
 
     .utility-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
       margin-top: 1rem;
+      align-items: center;
     }
 
     .filter-chips span {
@@ -226,13 +313,6 @@ const resultSummary = {
       font-weight: 600;
     }
 
-    .results-meta {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-
     .results-meta strong {
       display: block;
       font-size: 1.25rem;
@@ -241,6 +321,15 @@ const resultSummary = {
     .results-meta span {
       color: var(--muted);
       line-height: 1.6;
+    }
+
+    .sort-row {
+      align-items: center;
+    }
+
+    .sort-row span {
+      color: var(--muted);
+      font-weight: 600;
     }
 
     .results-layout {
@@ -261,7 +350,8 @@ const resultSummary = {
       font-size: 1.5rem;
     }
 
-    .map-panel p {
+    .map-panel p,
+    .empty-state p {
       color: var(--muted);
       line-height: 1.7;
     }
@@ -280,7 +370,6 @@ const resultSummary = {
       border: 1px solid var(--line);
     }
 
-    .map-box span,
     .map-box b {
       display: inline-flex;
       padding: 0.65rem 0.9rem;
@@ -292,6 +381,16 @@ const resultSummary = {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 1rem;
+    }
+
+    .empty-state {
+      padding: 1.4rem;
+      grid-column: 1 / -1;
+    }
+
+    .empty-state h2 {
+      margin: 1rem 0 0.65rem;
+      font-size: 1.5rem;
     }
 
     @media (max-width: 960px) {
