@@ -1,0 +1,236 @@
+---
+import type { ListingFilters } from "../../lib/marketplace-types";
+
+export interface Props {
+  filters: ListingFilters;
+  owner: { role: string } | null;
+  dashboardHref: string;
+  activeFilters: string[];
+}
+
+const { filters, owner, dashboardHref, activeFilters } = Astro.props;
+const selectedIntent = filters.intent === "rent" ? "rent" : "buy";
+const selectedSort = filters.sort || "newest";
+---
+
+<form class="search-frame card" method="GET" action="/listings/">
+  <div class="intent-tabs">
+    <label class:list-active={selectedIntent === "buy"}>
+      <input type="radio" name="intent" value="buy" checked={selectedIntent === "buy"} />
+      <span>Buy</span>
+    </label>
+    <label class:list-active={selectedIntent === "rent"}>
+      <input type="radio" name="intent" value="rent" checked={selectedIntent === "rent"} />
+      <span>Rent</span>
+    </label>
+  </div>
+
+  <div class="filter-grid">
+    <label class="field">
+      <span>City</span>
+      <input type="text" name="city" value={filters.city} placeholder="Ho Chi Minh City" />
+    </label>
+    <label class="field">
+      <span>District</span>
+      <input type="text" name="district" value={filters.district} placeholder="Thu Duc City" />
+    </label>
+    <label class="field">
+      <span>Property type</span>
+      <select name="propertyType">
+        <option value="">Any property</option>
+        <option value="Condo" selected={filters.propertyType === "Condo"}>Condo</option>
+        <option value="Villa" selected={filters.propertyType === "Villa"}>Villa</option>
+        <option value="Townhouse" selected={filters.propertyType === "Townhouse"}>Townhouse</option>
+        <option value="Apartment" selected={filters.propertyType === "Apartment"}>Apartment</option>
+        <option value="House" selected={filters.propertyType === "House"}>House</option>
+        <option value="Land" selected={filters.propertyType === "Land"}>Land</option>
+      </select>
+    </label>
+    <label class="field">
+      <span>Minimum beds</span>
+      <select name="minBeds">
+        <option value="">Any beds</option>
+        <option value="1" selected={filters.minBeds === 1}>1+</option>
+        <option value="2" selected={filters.minBeds === 2}>2+</option>
+        <option value="3" selected={filters.minBeds === 3}>3+</option>
+        <option value="4" selected={filters.minBeds === 4}>4+</option>
+      </select>
+    </label>
+    <label class="field">
+      <span>Minimum price</span>
+      <input type="number" min="0" step="0.01" name="minPrice" value={filters.minPrice ?? ""} placeholder="0" />
+    </label>
+    <label class="field">
+      <span>Maximum price</span>
+      <input type="number" min="0" step="0.01" name="maxPrice" value={filters.maxPrice ?? ""} placeholder="10" />
+    </label>
+    <label class="field">
+      <span>Sort</span>
+      <select name="sort">
+        <option value="newest" selected={selectedSort === "newest"}>Newest</option>
+        <option value="price-asc" selected={selectedSort === "price-asc"}>Price: low to high</option>
+        <option value="price-desc" selected={selectedSort === "price-desc"}>Price: high to low</option>
+        <option value="beds-desc" selected={selectedSort === "beds-desc"}>Beds</option>
+      </select>
+    </label>
+    <div class="filter-actions">
+      <button class="button-dark" type="submit">Search</button>
+      <a class="button-secondary" href="/listings/">Clear</a>
+    </div>
+  </div>
+
+  <div class="utility-row">
+    <div class="filter-chips">
+      {activeFilters.length > 0 ? activeFilters.map((filter) => <span>{filter}</span>) : <span>All live inventory</span>}
+    </div>
+    <div class="utility-links">
+      <a href={dashboardHref}>{owner?.role === "buyer" ? "Saved searches" : "Track enquiries"}</a>
+      <a href={owner?.role === "buyer" ? "/signup?role=owner" : "/submit-listing/"}>{owner?.role === "buyer" ? "Create owner account" : "Post listing"}</a>
+    </div>
+  </div>
+</form>
+
+<style>
+  .search-frame {
+    margin-bottom: 1rem;
+    padding: 1.4rem;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
+  }
+
+  .intent-tabs,
+  .filter-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .intent-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 1rem;
+  }
+
+  .intent-tabs label {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .intent-tabs input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .intent-tabs label span,
+  .button-dark,
+  .button-secondary,
+  .utility-links a,
+  .filter-chips span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    border-radius: 999px;
+    padding: 0.82rem 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    font: inherit;
+    border: 1px solid var(--line);
+  }
+
+  .intent-tabs label span,
+  .button-secondary,
+  .utility-links a,
+  .filter-chips span {
+    background: white;
+    color: var(--text);
+  }
+
+  .intent-tabs label.list-active span {
+    background: var(--brand);
+    color: white;
+    border-color: var(--brand);
+  }
+
+  .filter-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .field {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .field span {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .field input,
+  .field select {
+    width: 100%;
+    min-height: 3.1rem;
+    border-radius: 18px;
+    border: 1px solid rgba(208, 213, 221, 0.82);
+    background: linear-gradient(180deg, #ffffff, #fbfcfe);
+    padding: 0.92rem 1rem;
+    color: var(--text);
+    font: inherit;
+  }
+
+  .filter-actions,
+  .utility-links,
+  .filter-chips {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-actions {
+    align-items: end;
+  }
+
+  .utility-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .filter-chips span {
+    min-height: 2.3rem;
+    padding: 0.56rem 0.85rem;
+    font-size: 0.84rem;
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+  }
+
+  .button-dark {
+    background: var(--brand);
+    color: white;
+    border-color: var(--brand);
+    cursor: pointer;
+  }
+
+  @media (max-width: 1100px) {
+    .filter-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .intent-tabs,
+    .utility-row {
+      grid-template-columns: 1fr;
+      display: grid;
+    }
+
+    .button-dark,
+    .button-secondary {
+      width: 100%;
+    }
+  }
+</style>

@@ -1,0 +1,322 @@
+---
+import ListingCard from "../ListingCard.astro";
+import type { Listing } from "../../data/listings";
+
+interface MappableListing {
+  slug: string;
+  title: string;
+  priceLabel: string;
+  ward: string;
+  district: string;
+  city: string;
+  lat: number;
+  lng: number;
+}
+
+export interface Props {
+  listings: Listing[];
+  mappableListings: MappableListing[];
+  allDistricts: string[];
+  topNeighborhoods: string[];
+}
+
+const { listings, mappableListings, allDistricts, topNeighborhoods } = Astro.props;
+---
+
+<div class="mobile-view-toggle" data-default-view="list">
+  <button type="button" class="toggle-chip is-active" data-results-view-trigger="list">List</button>
+  <button
+    type="button"
+    class="toggle-chip"
+    data-results-view-trigger="map"
+    disabled={mappableListings.length === 0}
+    aria-disabled={mappableListings.length === 0 ? "true" : "false"}
+  >
+    Map
+  </button>
+</div>
+
+<section class="results-layout" data-results-view="list">
+  <aside class="market-panel card">
+    <span class="section-kicker">Map view</span>
+    <h2>See the filtered listings on a live map</h2>
+    <p>Search by filters first, then use the map to validate coverage and cluster patterns instead of guessing where the inventory sits.</p>
+    {mappableListings.length > 0 ? (
+      <div id="results-map" class="results-map" data-listings={JSON.stringify(mappableListings)}></div>
+    ) : (
+      <div class="map-empty">
+        <strong>No map coordinates for this result set yet.</strong>
+        <span>Try a broader filter set or add owner coordinates when posting listings.</span>
+      </div>
+    )}
+    <div class="district-list">
+      {(allDistricts.length > 0 ? allDistricts : ["No matching districts"]).slice(0, 5).map((district) => <b>{district}</b>)}
+    </div>
+    {topNeighborhoods.length > 0 && (
+      <div class="neighborhood-list">
+        {topNeighborhoods.map((place) => <span>{place}</span>)}
+      </div>
+    )}
+  </aside>
+
+  <div class="results-list">
+    {listings.length > 0 ? (
+      listings.map((listing) => (
+        <div
+          class="listing-card-shell"
+          data-listing-card={listing.slug}
+          data-has-map={listing.location ? "true" : "false"}
+          tabindex={listing.location ? 0 : -1}
+        >
+          <ListingCard listing={listing} />
+        </div>
+      ))
+    ) : (
+      <article class="empty-state card">
+        <span class="section-kicker">No matches</span>
+        <h2>There are no listings for this filter set yet.</h2>
+        <p>
+          Broaden the city or district, lower the bed count requirement, or clear the price range. If you are testing
+          owner supply, you can also add a new listing from the dashboard.
+        </p>
+        <div class="empty-actions">
+          <a class="button-dark" href="/listings/">Clear filters</a>
+          <a class="button-secondary" href="/submit-listing/">Post a listing</a>
+        </div>
+      </article>
+    )}
+  </div>
+</section>
+
+<style>
+  .mobile-view-toggle {
+    display: none;
+    gap: 0.75rem;
+    padding: 0.35rem;
+    margin-bottom: 1rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .toggle-chip,
+  .button-dark,
+  .button-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    border-radius: 999px;
+    padding: 0.82rem 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    font: inherit;
+    border: 1px solid var(--line);
+  }
+
+  .toggle-chip {
+    flex: 1 1 0;
+    min-height: 2.9rem;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .toggle-chip.is-active {
+    background: var(--brand);
+    color: white;
+    border-color: var(--brand);
+  }
+
+  .toggle-chip[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .results-layout {
+    display: grid;
+    grid-template-columns: minmax(20rem, 0.42fr) minmax(0, 1fr);
+    gap: 1rem;
+    align-items: start;
+    margin-bottom: 1rem;
+  }
+
+  .market-panel,
+  .empty-state {
+    padding: 1.4rem;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
+  }
+
+  .market-panel {
+    position: sticky;
+    top: 6rem;
+    background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.92));
+  }
+
+  .section-kicker {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding: 0.22rem 0.75rem;
+    border-radius: 999px;
+    background: var(--brand-soft);
+    color: var(--accent-strong);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .market-panel h2,
+  .empty-state h2 {
+    margin: 0.8rem 0 0;
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    letter-spacing: -0.08em;
+    line-height: 1;
+  }
+
+  .market-panel p,
+  .empty-state p {
+    color: var(--muted);
+    line-height: 1.7;
+    margin: 0.8rem 0 0;
+  }
+
+  .results-map {
+    min-height: 22rem;
+    margin-top: 1rem;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid rgba(208, 213, 221, 0.78);
+    background: linear-gradient(180deg, #f8fafc, #e5edf6);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+  }
+
+  .map-empty {
+    display: grid;
+    gap: 0.45rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 24px;
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    border: 1px solid rgba(208, 213, 221, 0.74);
+  }
+
+  .map-empty strong {
+    font-size: 0.98rem;
+    letter-spacing: -0.02em;
+  }
+
+  .map-empty span {
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .district-list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .district-list b {
+    display: block;
+    padding: 0.9rem 1rem;
+    border-radius: 20px;
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    border: 1px solid rgba(208, 213, 221, 0.74);
+    font-size: 0.95rem;
+  }
+
+  .neighborhood-list {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .neighborhood-list span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding: 0.22rem 0.75rem;
+    border-radius: 999px;
+    background: var(--brand-soft);
+    color: var(--brand);
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  .results-list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .listing-card-shell {
+    border-radius: 30px;
+    transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+
+  .listing-card-shell.is-active {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 42px rgba(15, 23, 42, 0.12);
+  }
+
+  .listing-card-shell.is-active :global(.listing-card) {
+    outline: 2px solid rgba(15, 118, 110, 0.2);
+    outline-offset: 2px;
+  }
+
+  .empty-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .button-dark {
+    background: var(--brand);
+    color: white;
+    border-color: var(--brand);
+  }
+
+  .button-secondary {
+    background: white;
+    color: var(--text);
+  }
+
+  @media (max-width: 1100px) {
+    .results-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .market-panel {
+      position: static;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .mobile-view-toggle {
+      display: flex;
+    }
+
+    .empty-actions {
+      display: grid;
+    }
+
+    .button-dark,
+    .button-secondary {
+      width: 100%;
+    }
+
+    .results-layout[data-results-view="list"] .market-panel {
+      display: none;
+    }
+
+    .results-layout[data-results-view="map"] .results-list {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,118 @@
+<section class="results-hero card">
+  <div class="results-aura"></div>
+  <div class="hero-copy">
+    <span class="section-kicker">Search results</span>
+    <h1>Search property with less noise and stronger buyer signals.</h1>
+    <p>
+      The results surface should feel decisive: clear filters, stable URLs, visible result counts, and cleaner cards
+      that help a buyer compare quickly.
+    </p>
+  </div>
+  <div class="hero-actions">
+    <a class="button-secondary" href="/">Home</a>
+    <a class="button-dark" href="#results">Jump to results</a>
+  </div>
+</section>
+
+<style>
+  .results-hero {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    padding: 1.4rem;
+    background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.88));
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
+  }
+
+  .results-aura {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 14% 18%, rgba(15, 118, 110, 0.12), transparent 24%),
+      radial-gradient(circle at 86% 18%, rgba(15, 23, 42, 0.08), transparent 22%);
+    pointer-events: none;
+  }
+
+  .hero-copy,
+  .hero-actions {
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-kicker {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding: 0.22rem 0.75rem;
+    border-radius: 999px;
+    background: var(--brand-soft);
+    color: var(--accent-strong);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero-copy h1 {
+    margin: 0.8rem 0 0;
+    font-size: clamp(2.2rem, 4.3vw, 3.5rem);
+    letter-spacing: -0.08em;
+    line-height: 1;
+  }
+
+  .hero-copy p {
+    color: var(--muted);
+    line-height: 1.7;
+    margin: 0.8rem 0 0;
+  }
+
+  .hero-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .button-dark,
+  .button-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    border-radius: 999px;
+    padding: 0.82rem 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    font: inherit;
+    border: 1px solid var(--line);
+  }
+
+  .button-dark {
+    background: var(--brand);
+    color: white;
+    border-color: var(--brand);
+  }
+
+  .button-secondary {
+    background: white;
+    color: var(--text);
+  }
+
+  @media (max-width: 760px) {
+    .results-hero,
+    .hero-actions {
+      display: grid;
+    }
+
+    .button-dark,
+    .button-secondary {
+      width: 100%;
+    }
+  }
+</style>

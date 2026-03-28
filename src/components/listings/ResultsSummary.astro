@@ -1,0 +1,84 @@
+---
+export interface Props {
+  total: number;
+  cities: number;
+  forRent: number;
+  hasFilters: boolean;
+  allCities: string[];
+  selectedIntent: string;
+}
+
+const { total, cities, forRent, hasFilters, allCities, selectedIntent } = Astro.props;
+---
+
+<section class="results-summary card" id="results">
+  <div>
+    <strong>{total} listings</strong>
+    <p>
+      across {cities} cities · {forRent} rentals live
+      {hasFilters ? " · filtered results" : " · full inventory"}
+    </p>
+  </div>
+  <div class="summary-links">
+    <span>Popular cities</span>
+    {allCities.slice(0, 3).map((city) => <a href={`/listings/?intent=${selectedIntent}&city=${encodeURIComponent(city)}`}>{city}</a>)}
+  </div>
+</section>
+
+<style>
+  .results-summary {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    padding: 1.4rem;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
+  }
+
+  .results-summary strong {
+    display: block;
+    font-size: 2.2rem;
+    letter-spacing: -0.05em;
+  }
+
+  .results-summary p,
+  .summary-links span {
+    color: var(--muted);
+    margin: 0.8rem 0 0;
+    line-height: 1.7;
+    font-weight: 700;
+  }
+
+  .summary-links {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .summary-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    border-radius: 999px;
+    padding: 0.82rem 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    font: inherit;
+    border: 1px solid var(--line);
+    background: white;
+    color: var(--text);
+  }
+
+  @media (max-width: 760px) {
+    .results-summary,
+    .summary-links {
+      display: grid;
+    }
+  }
+</style>

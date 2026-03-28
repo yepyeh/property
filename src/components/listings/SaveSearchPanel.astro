@@ -1,0 +1,165 @@
+---
+export interface Props {
+  owner: { role: string } | null;
+  filters: {
+    intent?: string;
+    city?: string;
+    district?: string;
+    propertyType?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    minBeds?: number;
+    sort?: string;
+  };
+  dashboardHref: string;
+  currentSearchQuery: string;
+}
+
+const { owner, filters, dashboardHref, currentSearchQuery } = Astro.props;
+---
+
+<section class="save-search card">
+  <div>
+    <span class="section-kicker">Buyer alerts</span>
+    <h2>Save this search</h2>
+    <p>Keep the current filter set as a reusable shortlist and turn it into an alert workflow later.</p>
+  </div>
+  {owner ? (
+    <form method="POST" action="/api/saved-searches" class="save-form">
+      <input type="hidden" name="intent" value={filters.intent} />
+      <input type="hidden" name="city" value={filters.city} />
+      <input type="hidden" name="district" value={filters.district} />
+      <input type="hidden" name="propertyType" value={filters.propertyType} />
+      <input type="hidden" name="minPrice" value={filters.minPrice ?? ""} />
+      <input type="hidden" name="maxPrice" value={filters.maxPrice ?? ""} />
+      <input type="hidden" name="minBeds" value={filters.minBeds ?? ""} />
+      <input type="hidden" name="sort" value={filters.sort} />
+      <label class="field">
+        <span>Search name</span>
+        <input type="text" name="name" value={`Saved search · ${filters.intent === "rent" ? "Rent" : "Buy"} · ${filters.city || "All cities"}`} />
+      </label>
+      <div class="save-actions">
+        <button type="submit" class="button-dark">Save search</button>
+        <a class="button-secondary" href={dashboardHref}>Manage saved searches</a>
+      </div>
+    </form>
+  ) : (
+    <div class="save-auth">
+      <p>Sign in to save this filter set and turn it into a reusable buyer alert.</p>
+      <a class="button-dark" href={`/login?redirect=${encodeURIComponent(`/listings/?${currentSearchQuery}`)}`}>Sign in to save</a>
+    </div>
+  )}
+</section>
+
+<style>
+  .save-search {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 1.4rem;
+    background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.9));
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
+  }
+
+  .section-kicker {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding: 0.22rem 0.75rem;
+    border-radius: 999px;
+    background: var(--brand-soft);
+    color: var(--accent-strong);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .save-search h2 {
+    margin: 0.8rem 0 0;
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    letter-spacing: -0.08em;
+    line-height: 1;
+  }
+
+  .save-search p {
+    color: var(--muted);
+    line-height: 1.7;
+    margin: 0.8rem 0 0;
+  }
+
+  .save-form,
+  .field {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .field span {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .field input {
+    width: 100%;
+    min-height: 3.1rem;
+    border-radius: 18px;
+    border: 1px solid rgba(208, 213, 221, 0.82);
+    background: linear-gradient(180deg, #ffffff, #fbfcfe);
+    padding: 0.92rem 1rem;
+    color: var(--text);
+    font: inherit;
+  }
+
+  .save-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+  }
+
+  .button-dark,
+  .button-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    border-radius: 999px;
+    padding: 0.82rem 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    font: inherit;
+    border: 1px solid var(--line);
+  }
+
+  .button-dark {
+    background: var(--brand);
+    color: white;
+    border-color: var(--brand);
+    cursor: pointer;
+  }
+
+  .button-secondary {
+    background: white;
+    color: var(--text);
+  }
+
+  @media (max-width: 1100px) {
+    .save-search {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .save-actions {
+      display: grid;
+    }
+
+    .button-dark,
+    .button-secondary {
+      width: 100%;
+    }
+  }
+</style>

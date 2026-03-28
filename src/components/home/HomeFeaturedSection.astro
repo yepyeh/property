@@ -1,0 +1,113 @@
+---
+import ListingCard from "../ListingCard.astro";
+import type { Listing } from "../../data/listings";
+
+export interface Props {
+  featuredListings: Listing[];
+}
+
+const { featuredListings } = Astro.props;
+---
+
+<section class="feature-section">
+  <div class="section-heading">
+    <span class="section-kicker">Featured listings</span>
+    <h2>Search results should feel curated and trustworthy, not like a noisy directory.</h2>
+    <p>
+      Clear pricing, compact facts, and visible trust signals matter more than decorative clutter. The public browse
+      layer needs to feel efficient before it feels clever.
+    </p>
+  </div>
+
+  <div class="listing-grid">
+    {featuredListings.map((listing) => <ListingCard listing={listing} />)}
+  </div>
+
+  <div class="section-actions">
+    <a class="button-secondary" href="/listings/?intent=buy">Browse all listings</a>
+    <a class="button-secondary" href="/for-buyers">For buyers</a>
+  </div>
+</section>
+
+<style>
+  .feature-section {
+    margin-top: 1.15rem;
+  }
+
+  .section-heading {
+    max-width: 52rem;
+    margin-bottom: 1rem;
+  }
+
+  .section-kicker {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding: 0.22rem 0.75rem;
+    border-radius: 999px;
+    background: var(--brand-soft);
+    color: var(--accent-strong);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .section-heading h2 {
+    margin: 0.9rem 0 0;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1;
+    letter-spacing: -0.08em;
+    font-family: "Plus Jakarta Sans", sans-serif;
+  }
+
+  .section-heading p {
+    color: var(--muted);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .listing-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .section-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .button-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.9rem;
+    border-radius: 999px;
+    padding: 0.88rem 1.1rem;
+    font-weight: 700;
+    text-decoration: none;
+    font: inherit;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text);
+  }
+
+  @media (max-width: 1100px) {
+    .listing-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .section-actions {
+      display: grid;
+    }
+
+    .button-secondary {
+      width: 100%;
+    }
+  }
+</style>

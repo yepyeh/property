@@ -1,0 +1,429 @@
+---
+interface QuickFilter {
+  label: string;
+  href: string;
+}
+
+export interface Props {
+  quickFilters: QuickFilter[];
+  trustSignals: string[];
+}
+
+const { quickFilters, trustSignals } = Astro.props;
+---
+
+<section class="hero-shell card" id="top">
+  <div class="hero-aura"></div>
+  <div class="hero-main">
+    <div class="hero-copy">
+      <span class="eyebrow-badge">Search-first property marketplace</span>
+      <h1>Find the right place faster, then follow through with confidence.</h1>
+      <p class="hero-text">
+        The product should feel closer to Rightmove in structure: one dominant search action, clear buy-versus-rent
+        intent, and stronger account workflows once a user decides to save, enquire, or post.
+      </p>
+
+      <div class="hero-points">
+        {trustSignals.map((signal) => (
+          <div class="point-row">
+            <span class="point-mark">•</span>
+            <span>{signal}</span>
+          </div>
+        ))}
+      </div>
+
+      <div class="hero-actions">
+        <a class="button-primary" href="/for-buyers">I’m looking for property</a>
+        <a class="button-secondary" href="/for-owners">I want to post a listing</a>
+      </div>
+    </div>
+
+    <form class="search-card" method="GET" action="/listings/">
+      <div class="search-top">
+        <label class="intent-chip active">
+          <input type="radio" name="intent" value="buy" checked />
+          <span>Buy</span>
+        </label>
+        <label class="intent-chip">
+          <input type="radio" name="intent" value="rent" />
+          <span>Rent</span>
+        </label>
+      </div>
+
+      <div class="search-card-body">
+        <label class="field field-wide">
+          <span>Location</span>
+          <input type="text" name="city" value="Ho Chi Minh City" placeholder="City or district" />
+        </label>
+        <div class="field-grid">
+          <label class="field">
+            <span>Property type</span>
+            <select name="propertyType">
+              <option value="">Any property</option>
+              <option value="Condo">Condo</option>
+              <option value="Villa">Villa</option>
+              <option value="Townhouse">Townhouse</option>
+              <option value="Apartment">Apartment</option>
+              <option value="House">House</option>
+              <option value="Land">Land</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Budget ceiling</span>
+            <select name="maxPrice">
+              <option value="">Any budget</option>
+              <option value="5">Up to 5B VND</option>
+              <option value="10">Up to 10B VND</option>
+              <option value="20">Up to 20B VND</option>
+            </select>
+          </label>
+        </div>
+        <div class="field-grid field-grid-tight">
+          <label class="field">
+            <span>Beds</span>
+            <select name="minBeds">
+              <option value="">Any beds</option>
+              <option value="1">1+</option>
+              <option value="2">2+</option>
+              <option value="3">3+</option>
+              <option value="4">4+</option>
+            </select>
+          </label>
+          <button class="button-dark" type="submit">Search live inventory</button>
+        </div>
+      </div>
+
+      <div class="quick-filter-row">
+        {quickFilters.map((filter) => <a href={filter.href}>{filter.label}</a>)}
+      </div>
+    </form>
+  </div>
+
+  <div class="hero-metrics">
+    <article>
+      <span class="metric-label">Live search</span>
+      <strong>Query-led inventory</strong>
+      <span>Query-driven inventory across buy and rent intent</span>
+    </article>
+    <article>
+      <span class="metric-label">Owner workflow</span>
+      <strong>Supply and renewal loop</strong>
+      <span>Listings, photos, enquiries, billing, and renewals in one system</span>
+    </article>
+    <article>
+      <span class="metric-label">PWA-ready</span>
+      <strong>Mobile app behavior</strong>
+      <span>Mobile-first shell that can install and behave like a lightweight app</span>
+    </article>
+  </div>
+</section>
+
+<style>
+  .hero-shell {
+    position: relative;
+    padding: 1.1rem;
+    display: grid;
+    gap: 1rem;
+    background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(255,255,255,0.82));
+    overflow: hidden;
+  }
+
+  .hero-aura {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 18% 16%, rgba(15, 118, 110, 0.13), transparent 26%),
+      radial-gradient(circle at 86% 18%, rgba(15, 23, 42, 0.08), transparent 22%);
+    pointer-events: none;
+  }
+
+  .hero-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(22rem, 0.9fr);
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .hero-copy,
+  .search-card {
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-copy {
+    padding: 2.25rem;
+    border-radius: 30px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.64)),
+      linear-gradient(135deg, rgba(15, 118, 110, 0.04), rgba(15, 23, 42, 0.02));
+    border: 1px solid rgba(255,255,255,0.72);
+    backdrop-filter: blur(10px);
+  }
+
+  .eyebrow-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding: 0.22rem 0.75rem;
+    border-radius: 999px;
+    background: var(--brand-soft);
+    color: var(--accent-strong);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero-copy h1 {
+    margin: 0.9rem 0 0;
+    font-size: clamp(2.8rem, 5.4vw, 5.4rem);
+    line-height: 0.94;
+    letter-spacing: -0.08em;
+    font-family: "Plus Jakarta Sans", sans-serif;
+  }
+
+  .hero-text,
+  .hero-metrics span {
+    color: var(--muted);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .hero-text {
+    max-width: 58ch;
+    font-size: 1.05rem;
+  }
+
+  .hero-points {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1.4rem;
+  }
+
+  .point-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .point-mark {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0.08rem;
+    border-radius: 999px;
+    background: var(--brand-soft);
+    color: var(--brand);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    line-height: 1;
+    flex: none;
+  }
+
+  .hero-actions,
+  .quick-filter-row {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-actions {
+    margin-top: 1.5rem;
+  }
+
+  .button-primary,
+  .button-secondary,
+  .button-dark,
+  .quick-filter-row a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.9rem;
+    border-radius: 999px;
+    padding: 0.88rem 1.1rem;
+    font-weight: 700;
+    text-decoration: none;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .button-primary {
+    border: none;
+    background: linear-gradient(135deg, var(--brand), #23314d);
+    color: white;
+    box-shadow: 0 14px 30px rgba(18, 183, 106, 0.2);
+  }
+
+  .button-secondary,
+  .quick-filter-row a {
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text);
+  }
+
+  .button-dark {
+    width: 100%;
+    border: none;
+    background: var(--brand);
+    color: white;
+    box-shadow: 0 12px 24px rgba(16, 24, 40, 0.16);
+  }
+
+  .search-card {
+    padding: 1.15rem;
+    border-radius: 30px;
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    border: 1px solid rgba(208, 213, 221, 0.82);
+  }
+
+  .search-top,
+  .field-grid,
+  .hero-metrics {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .search-top {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 1rem;
+  }
+
+  .intent-chip {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .intent-chip input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .intent-chip span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.8rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: #f8fafc;
+    font-weight: 700;
+  }
+
+  .intent-chip.active span,
+  .intent-chip:has(input:checked) span {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: white;
+  }
+
+  .search-card-body {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .field {
+    display: grid;
+    gap: 0.45rem;
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .field-wide {
+    grid-column: 1 / -1;
+  }
+
+  .field input,
+  .field select {
+    width: 100%;
+    min-height: 3.2rem;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    background: white;
+    padding: 0.95rem 1rem;
+    color: var(--text);
+    font: inherit;
+  }
+
+  .field-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .field-grid-tight {
+    align-items: end;
+  }
+
+  .quick-filter-row {
+    margin-top: 1rem;
+  }
+
+  .quick-filter-row a {
+    min-height: 2.4rem;
+    padding: 0.62rem 0.9rem;
+    font-size: 0.84rem;
+  }
+
+  .hero-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-metrics article {
+    padding: 1.15rem;
+    border-radius: 22px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.78);
+  }
+
+  .metric-label {
+    display: inline-flex;
+    color: var(--accent-strong);
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero-metrics strong {
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+
+  @media (max-width: 1100px) {
+    .hero-main,
+    .hero-metrics {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .hero-shell {
+      padding: 0.8rem;
+    }
+
+    .hero-copy,
+    .search-card {
+      padding: 1rem;
+    }
+
+    .field-grid,
+    .search-top {
+      grid-template-columns: 1fr;
+    }
+
+    .button-primary,
+    .button-secondary,
+    .button-dark {
+      width: 100%;
+    }
+
+    .hero-actions,
+    .quick-filter-row {
+      display: grid;
+    }
+  }
+</style>
