@@ -76,8 +76,10 @@ function getImageCount(value: unknown) {
               <span>{listing.city} · {listing.district} · {listing.intent}</span>
               <span>{listing.enquiries} enquiries</span>
               <span>{getImageCount(listing.image_keys)} images</span>
+              <span>Status: {listing.status}</span>
               <span>Plan: {listing.plan_type}</span>
               {listing.trial_ends_at && <span>Trial ends: {listing.trial_ends_at}</span>}
+              {listing.paid_until && <span>Paid until: {listing.paid_until}</span>}
               {listing.promoted_until && <span>Promoted until: {listing.promoted_until}</span>}
               <div class="billing-actions">
                 {billingEnabled ? (

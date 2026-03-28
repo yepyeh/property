@@ -120,6 +120,49 @@ export function getDB(runtime?: RuntimeLike | null) {
   return runtime?.env?.DB;
 }
 
+export async function normalizeExpiredListingPlans(db?: D1Like) {
+  if (!db) return;
+
+  await db
+    .prepare(
+      `UPDATE listings
+       SET promoted_until = NULL,
+           plan_type = CASE
+             WHEN paid_until IS NOT NULL AND paid_until >= CURRENT_TIMESTAMP THEN 'paid'
+             WHEN trial_ends_at IS NOT NULL AND trial_ends_at >= CURRENT_TIMESTAMP THEN 'free_trial'
+             ELSE 'free_trial'
+           END
+       WHERE promoted_until IS NOT NULL
+         AND promoted_until < CURRENT_TIMESTAMP`
+    )
+    .bind()
+    .run();
+
+  await db
+    .prepare(
+      `UPDATE listings
+       SET plan_type = 'free_trial',
+           paid_until = NULL
+       WHERE paid_until IS NOT NULL
+         AND paid_until < CURRENT_TIMESTAMP`
+    )
+    .bind()
+    .run();
+
+  await db
+    .prepare(
+      `UPDATE listings
+       SET published = 0,
+           status = 'Expired listing'
+       WHERE plan_type = 'free_trial'
+         AND trial_ends_at IS NOT NULL
+         AND trial_ends_at < CURRENT_TIMESTAMP
+         AND (paid_until IS NULL OR paid_until < CURRENT_TIMESTAMP)`
+    )
+    .bind()
+    .run();
+}
+
 function normalizeTextFilter(value?: string) {
   return value?.trim().toLowerCase() || "";
 }
@@ -184,6 +227,7 @@ export function slugify(value: string) {
 
 export async function getDynamicListings(db?: D1Like) {
   if (!db) return [] as Listing[];
+  await normalizeExpiredListingPlans(db);
 
   const { results } = await db
     .prepare(
@@ -201,6 +245,7 @@ export async function getDynamicListings(db?: D1Like) {
 
 async function getFilteredDynamicListings(filters: ListingFilters, db?: D1Like) {
   if (!db) return [] as Listing[];
+  await normalizeExpiredListingPlans(db);
 
   const clauses = [
     "published = 1",
@@ -322,6 +367,7 @@ export async function searchListings(filters: ListingFilters, db?: D1Like) {
 
 export async function getListingBySlug(slug: string, db?: D1Like) {
   if (db) {
+    await normalizeExpiredListingPlans(db);
     const row = await db
       .prepare(`SELECT * FROM listings WHERE slug = ? LIMIT 1`)
       .bind(slug)
@@ -406,6 +452,7 @@ export async function getDashboardData(ownerUserId: number, db?: D1Like) {
   if (!db) {
     return { listings: [], enquiries: [], payments: [] };
   }
+  await normalizeExpiredListingPlans(db);
 
   const listingsResult = await db
     .prepare(
@@ -449,6 +496,7 @@ export async function getDashboardData(ownerUserId: number, db?: D1Like) {
 
 export async function getAdminBillingData(db?: D1Like) {
   if (!db) return { listings: [], payments: [] };
+  await normalizeExpiredListingPlans(db);
 
   const listingsResult = await db
     .prepare(
@@ -483,6 +531,8 @@ export async function updateListingPlan(
   isAdmin: boolean,
   input: ListingPlanUpdateInput
 ) {
+  await normalizeExpiredListingPlans(db);
+
   const listing = await db
     .prepare(
       `SELECT slug, owner_user_id, paid_until, promoted_until
