@@ -1,14 +1,14 @@
 import type { APIRoute } from "astro";
-import { buildSessionCookie, getAuthConfig } from "../../../lib/auth";
+import { authenticateOwner, buildSessionCookie, createSession } from "../../../lib/auth";
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const form = await request.formData();
   const email = String(form.get("email") || "").trim();
   const password = String(form.get("password") || "");
   const redirectTo = String(form.get("redirect") || "/owner/dashboard/");
-  const auth = getAuthConfig(locals.runtime);
+  const owner = await authenticateOwner(locals.runtime, email, password);
 
-  if (email !== auth.email || password !== auth.password || !auth.sessionToken) {
+  if (!owner) {
     return new Response(null, {
       status: 303,
       headers: {
@@ -17,11 +17,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
     });
   }
 
+  const token = await createSession(locals.runtime, owner.id);
+
   return new Response(null, {
     status: 303,
     headers: {
       Location: redirectTo,
-      "Set-Cookie": buildSessionCookie(auth.sessionToken),
+      "Set-Cookie": buildSessionCookie(token),
     },
   });
 };

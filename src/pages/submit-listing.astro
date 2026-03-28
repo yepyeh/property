@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 
 const created = Astro.url.searchParams.get("created");
+const owner = Astro.locals.owner;
 ---
 
 <Layout title="Post a Listing | Property App 2026" description="Owners can submit property listings directly into the marketplace.">
@@ -10,7 +11,8 @@ const created = Astro.url.searchParams.get("created");
       <span class="pill">Owner flow</span>
       <h1 class="section-title">Post a listing</h1>
       <p class="section-copy">
-        This is the first real supply-side workflow. Owners can now submit a listing into Cloudflare D1, which means the marketplace is no longer purely static.
+        Listings are now tied to real owner accounts. Every new listing starts with a 7-day free trial, after which it
+        can be converted into a paid or promoted placement.
       </p>
     </div>
     <div class="actions">
@@ -26,6 +28,15 @@ const created = Astro.url.searchParams.get("created");
       Listing created successfully. New slug: <code>{created}</code>. Add photos from the <a href="/owner/dashboard/">owner dashboard</a>.
     </div>
   )}
+
+  <div class="pricing card">
+    <strong>Monetization path</strong>
+    <ul>
+      <li>Free: every listing is visible for 7 days.</li>
+      <li>Paid: keep a listing live after the free-trial window.</li>
+      <li>Promoted: push the listing above standard inventory.</li>
+    </ul>
+  </div>
 
   <form class="form-shell card" method="POST" action="/api/listings">
     <div class="grid two">
@@ -56,9 +67,9 @@ const created = Astro.url.searchParams.get("created");
     <label>Full description<textarea name="description" rows="6" required placeholder="Describe the home, location, condition, and why it stands out."></textarea></label>
 
     <div class="grid three">
-      <label>Owner name<input name="ownerName" required placeholder="Nguyen Anh" /></label>
-      <label>Owner email<input name="ownerEmail" type="email" required placeholder="owner@example.com" /></label>
-      <label>Owner phone<input name="ownerPhone" required placeholder="+84 ..." /></label>
+      <label>Owner name<input name="ownerName" required placeholder="Nguyen Anh" value={owner?.full_name ?? ""} /></label>
+      <label>Owner email<input name="ownerEmail" type="email" required placeholder="owner@example.com" value={owner?.email ?? ""} /></label>
+      <label>Owner phone<input name="ownerPhone" required placeholder="+84 ..." value={owner?.phone ?? ""} /></label>
     </div>
 
     <button type="submit">Publish listing</button>
@@ -67,9 +78,16 @@ const created = Astro.url.searchParams.get("created");
   <style>
     .page-head,
     .form-shell,
-    .notice {
+    .notice,
+    .pricing {
       padding: 1.4rem;
       margin-bottom: 1rem;
+    }
+    .pricing ul {
+      margin: 0.6rem 0 0;
+      padding-left: 1.1rem;
+      color: var(--muted);
+      line-height: 1.7;
     }
     .page-head {
       display: flex;

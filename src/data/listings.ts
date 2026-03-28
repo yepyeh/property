@@ -35,6 +35,12 @@ export interface Listing {
   };
   imageKeys?: string[];
   imageUrls?: string[];
+  commerce?: {
+    planType: "free_trial" | "paid" | "promoted";
+    trialEndsAt?: string | null;
+    paidUntil?: string | null;
+    promotedUntil?: string | null;
+  };
 }
 
 export const listings: Listing[] = [

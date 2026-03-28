@@ -2,7 +2,10 @@
 import Layout from "../../layouts/Layout.astro";
 import { getDashboardData, getDB } from "../../lib/marketplace";
 
-const { listings, enquiries } = await getDashboardData(getDB(Astro.locals.runtime));
+const owner = Astro.locals.owner;
+const { listings, enquiries } = owner
+  ? await getDashboardData(owner.id, getDB(Astro.locals.runtime))
+  : { listings: [], enquiries: [] };
 const uploaded = Astro.url.searchParams.get("uploaded");
 
 function getImageCount(value: unknown) {
@@ -22,7 +25,10 @@ function getImageCount(value: unknown) {
     <div>
       <span class="pill">Owner dashboard</span>
       <h1 class="section-title">Listings and enquiries</h1>
-      <p class="section-copy">This is the first operational backend surface: what got submitted, and who enquired about it.</p>
+      <p class="section-copy">
+        This dashboard is owner-scoped. Listings, images, and enquiries belong to the signed-in account, which is the
+        baseline needed for trial windows, paid upgrades, and promoted inventory.
+      </p>
     </div>
     <div class="actions">
       <a class="primary" href="/submit-listing/">Post a listing</a>
@@ -35,6 +41,13 @@ function getImageCount(value: unknown) {
   <section class="stats-grid">
     <article class="card stat"><strong>{listings.length}</strong><span>database listings</span></article>
     <article class="card stat"><strong>{enquiries.length}</strong><span>enquiries received</span></article>
+  </section>
+
+  <section class="owner-card card">
+    <strong>{owner?.full_name}</strong>
+    <span>{owner?.email}</span>
+    <span>Account tier: {owner?.plan_tier ?? "starter"}</span>
+    <span>Monetization model: 7-day free trial, paid extension, promoted placement</span>
   </section>
 
   {uploaded && (
@@ -54,6 +67,9 @@ function getImageCount(value: unknown) {
               <span>{listing.city} · {listing.district} · {listing.intent}</span>
               <span>{listing.enquiries} enquiries</span>
               <span>{getImageCount(listing.image_keys)} images</span>
+              <span>Plan: {listing.plan_type}</span>
+              {listing.trial_ends_at && <span>Trial ends: {listing.trial_ends_at}</span>}
+              {listing.promoted_until && <span>Promoted until: {listing.promoted_until}</span>}
               <form class="upload-form" method="POST" action="/api/upload-image" enctype="multipart/form-data">
                 <input type="hidden" name="listingSlug" value={listing.slug} />
                 <label>
@@ -86,6 +102,12 @@ function getImageCount(value: unknown) {
 
   <style>
     .page-head, .panel { padding: 1.4rem; }
+    .owner-card {
+      display: grid;
+      gap: 0.35rem;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+    }
     .flash {
       padding: 1rem 1.2rem;
       margin-bottom: 1rem;

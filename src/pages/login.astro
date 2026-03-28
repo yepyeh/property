@@ -11,7 +11,7 @@ const redirectTo = Astro.url.searchParams.get("redirect") ?? "/owner/dashboard/"
       <span class="pill">Protected access</span>
       <h1 class="section-title">Owner login</h1>
       <p class="section-copy">
-        Listing submission and the owner dashboard are now protected. Use the admin credentials configured in Cloudflare.
+        Owners now have individual accounts. Sign in to manage your own listings, enquiries, trial windows, and upgrades.
       </p>
     </div>
 
@@ -23,6 +23,8 @@ const redirectTo = Astro.url.searchParams.get("redirect") ?? "/owner/dashboard/"
       <label>Password<input type="password" name="password" required placeholder="Enter password" /></label>
       <button type="submit">Sign in</button>
     </form>
+
+    <p class="switch-link">Need an account? <a href="/signup">Create an owner account</a>.</p>
   </section>
 
   <style>
@@ -69,6 +71,15 @@ const redirectTo = Astro.url.searchParams.get("redirect") ?? "/owner/dashboard/"
       color: white;
       font-weight: 700;
       cursor: pointer;
+    }
+    .switch-link {
+      margin: 1rem 0 0;
+      color: var(--muted);
+    }
+    .switch-link a {
+      color: var(--accent-strong);
+      font-weight: 700;
+      text-decoration: none;
     }
   </style>
 </Layout>

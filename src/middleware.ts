@@ -1,16 +1,19 @@
 import { defineMiddleware } from "astro:middleware";
-import { AUTH_COOKIE, isAuthenticated } from "./lib/auth";
+import { AUTH_COOKIE, getOwnerFromSession } from "./lib/auth";
 
 const protectedPrefixes = ["/owner", "/submit-listing", "/api/listings", "/api/upload-image"];
 
-export const onRequest = defineMiddleware((context, next) => {
+export const onRequest = defineMiddleware(async (context, next) => {
   const { pathname, search } = context.url;
   const isProtected = protectedPrefixes.some((prefix) => pathname.startsWith(prefix));
+  const session = context.cookies.get(AUTH_COOKIE)?.value;
+  const owner = await getOwnerFromSession(context.locals.runtime, session);
+
+  context.locals.owner = owner;
 
   if (!isProtected) return next();
 
-  const session = context.cookies.get(AUTH_COOKIE)?.value;
-  if (isAuthenticated(context.locals.runtime, session)) {
+  if (owner) {
     return next();
   }
 

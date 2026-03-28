@@ -1,0 +1,112 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const error = Astro.url.searchParams.get("error");
+const exists = Astro.url.searchParams.get("exists");
+---
+
+<Layout title="Create Owner Account | Property App 2026" description="Create an owner account to publish listings, manage enquiries, and upgrade into paid or promoted plans.">
+  <section class="signup-shell card">
+    <div>
+      <span class="pill">Owner accounts</span>
+      <h1 class="section-title">Create your owner account</h1>
+      <p class="section-copy">
+        New owners start on a starter plan: every listing gets a 7-day free trial. After that you can convert a listing
+        to a paid placement or pay extra for promoted visibility.
+      </p>
+    </div>
+
+    {(error || exists) && (
+      <p class="error">
+        {exists ? "That email already has an account." : "Use a valid email and a password with at least 8 characters."}
+      </p>
+    )}
+
+    <form class="signup-form" method="POST" action="/api/auth/register">
+      <label>Full name<input type="text" name="fullName" required placeholder="Nguyen Anh" /></label>
+      <label>Email<input type="email" name="email" required placeholder="owner@example.com" /></label>
+      <label>Phone<input type="text" name="phone" placeholder="+84 ..." /></label>
+      <label>Password<input type="password" name="password" required minlength="8" placeholder="At least 8 characters" /></label>
+      <button type="submit">Create account</button>
+    </form>
+
+    <div class="plan-card">
+      <strong>Monetization model</strong>
+      <ul>
+        <li>Every new listing starts as a 7-day free trial.</li>
+        <li>Paid listings can run beyond the trial window.</li>
+        <li>Promoted listings are prioritized above standard inventory.</li>
+      </ul>
+    </div>
+
+    <p class="switch-link">Already have an account? <a href="/login">Sign in</a>.</p>
+  </section>
+
+  <style>
+    .signup-shell {
+      max-width: 38rem;
+      margin: 4rem auto 0;
+      padding: 1.5rem;
+    }
+    .error {
+      padding: 0.9rem 1rem;
+      border-radius: 18px;
+      background: rgba(185, 28, 28, 0.08);
+      color: #991b1b;
+      font-weight: 600;
+    }
+    .signup-form {
+      display: grid;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+    input {
+      width: 100%;
+      margin-top: 0.4rem;
+      padding: 0.95rem 1rem;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.8);
+      font: inherit;
+    }
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.95rem 1.2rem;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .plan-card {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 22px;
+      background: rgba(15, 118, 110, 0.08);
+    }
+    .plan-card ul {
+      margin: 0.6rem 0 0;
+      padding-left: 1.1rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .switch-link {
+      margin: 1rem 0 0;
+      color: var(--muted);
+    }
+    .switch-link a {
+      color: var(--accent-strong);
+      font-weight: 700;
+      text-decoration: none;
+    }
+  </style>
+</Layout>

@@ -43,6 +43,11 @@ interface ListingRow {
   owner_role: string;
   owner_response_time: string;
   owner_verified: number;
+  owner_user_id: number | null;
+  plan_type: string;
+  trial_ends_at: string | null;
+  paid_until: string | null;
+  promoted_until: string | null;
   views_24h: number;
   saves: number;
   enquiries: number;
@@ -68,6 +73,7 @@ export interface ListingInput {
   ownerName: string;
   ownerEmail: string;
   ownerPhone: string;
+  ownerUserId?: number | null;
 }
 
 export interface EnquiryInput {
@@ -138,6 +144,12 @@ function mapRowToListing(row: ListingRow): Listing {
     },
     imageKeys,
     imageUrls: imageKeys.map((key: string) => `/media/${key}`),
+    commerce: {
+      planType: row.plan_type as NonNullable<Listing["commerce"]>["planType"],
+      trialEndsAt: row.trial_ends_at,
+      paidUntil: row.paid_until,
+      promotedUntil: row.promoted_until,
+    },
   };
 }
 
@@ -157,7 +169,9 @@ export async function getDynamicListings(db?: D1Like) {
     .prepare(
       `SELECT * FROM listings
        WHERE published = 1
-       ORDER BY created_at DESC`
+         AND (plan_type = 'paid' OR paid_until IS NOT NULL OR trial_ends_at IS NULL OR trial_ends_at >= CURRENT_TIMESTAMP)
+       ORDER BY (CASE WHEN promoted_until IS NOT NULL AND promoted_until >= CURRENT_TIMESTAMP THEN 0 ELSE 1 END),
+                created_at DESC`
     )
     .bind()
     .all<ListingRow>();
@@ -168,7 +182,10 @@ export async function getDynamicListings(db?: D1Like) {
 async function getFilteredDynamicListings(filters: ListingFilters, db?: D1Like) {
   if (!db) return [] as Listing[];
 
-  const clauses = ["published = 1"];
+  const clauses = [
+    "published = 1",
+    "(plan_type = 'paid' OR paid_until IS NOT NULL OR trial_ends_at IS NULL OR trial_ends_at >= CURRENT_TIMESTAMP)",
+  ];
   const values: unknown[] = [];
 
   if (filters.intent === "buy" || filters.intent === "rent") {
@@ -208,10 +225,10 @@ async function getFilteredDynamicListings(filters: ListingFilters, db?: D1Like) 
 
   const sort = normalizeSort(filters.sort);
   const orderBy = {
-    newest: "created_at DESC",
-    "price-asc": "numeric_price ASC, created_at DESC",
-    "price-desc": "numeric_price DESC, created_at DESC",
-    "beds-desc": "beds DESC, created_at DESC",
+    newest: "(CASE WHEN promoted_until IS NOT NULL AND promoted_until >= CURRENT_TIMESTAMP THEN 0 ELSE 1 END), created_at DESC",
+    "price-asc": "(CASE WHEN promoted_until IS NOT NULL AND promoted_until >= CURRENT_TIMESTAMP THEN 0 ELSE 1 END), numeric_price ASC, created_at DESC",
+    "price-desc": "(CASE WHEN promoted_until IS NOT NULL AND promoted_until >= CURRENT_TIMESTAMP THEN 0 ELSE 1 END), numeric_price DESC, created_at DESC",
+    "beds-desc": "(CASE WHEN promoted_until IS NOT NULL AND promoted_until >= CURRENT_TIMESTAMP THEN 0 ELSE 1 END), beds DESC, created_at DESC",
   }[sort];
 
   const { results } = await db
@@ -306,10 +323,10 @@ export async function createListing(db: D1Like, input: ListingInput) {
         slug, title, city, district, ward, property_type, intent,
         price_label, numeric_price, price_unit, beds, baths, area,
         status, tone, summary, description,
-        tags, features, image_keys,
+        tags, features, image_keys, owner_user_id, plan_type, trial_ends_at,
         owner_name, owner_email, owner_phone, owner_role, owner_response_time, owner_verified,
         views_24h, saves, enquiries, published
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now', '+7 days'), ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`
     )
     .bind(
       slug,
@@ -330,8 +347,10 @@ export async function createListing(db: D1Like, input: ListingInput) {
       input.summary,
       input.description,
       JSON.stringify(["Owner submitted", input.intent === "rent" ? "Rent" : "For sale"]),
-      JSON.stringify(["Photos pending", "Direct owner contact", "Dashboard managed"]),
+      JSON.stringify(["Photos pending", "Direct owner contact", "Dashboard managed", "7-day free trial"]),
       JSON.stringify([]),
+      input.ownerUserId ?? null,
+      "free_trial",
       input.ownerName,
       input.ownerEmail,
       input.ownerPhone,
@@ -363,28 +382,31 @@ export async function createEnquiry(db: D1Like, input: EnquiryInput) {
     .run();
 }
 
-export async function getDashboardData(db?: D1Like) {
+export async function getDashboardData(ownerUserId: number, db?: D1Like) {
   if (!db) {
     return { listings: [], enquiries: [] };
   }
 
   const listingsResult = await db
     .prepare(
-      `SELECT slug, title, city, district, intent, status, created_at, enquiries
-             , image_keys
+      `SELECT slug, title, city, district, intent, status, created_at, enquiries,
+              image_keys, plan_type, trial_ends_at, paid_until, promoted_until
        FROM listings
+       WHERE owner_user_id = ?
        ORDER BY created_at DESC`
     )
-    .bind()
+    .bind(ownerUserId)
     .all();
 
   const enquiriesResult = await db
     .prepare(
-      `SELECT listing_slug, listing_title, applicant_name, contact, preferred_time, created_at
-       FROM enquiries
-       ORDER BY created_at DESC`
+      `SELECT e.listing_slug, e.listing_title, e.applicant_name, e.contact, e.preferred_time, e.created_at
+       FROM enquiries e
+       JOIN listings l ON l.slug = e.listing_slug
+       WHERE l.owner_user_id = ?
+       ORDER BY e.created_at DESC`
     )
-    .bind()
+    .bind(ownerUserId)
     .all();
 
   return {

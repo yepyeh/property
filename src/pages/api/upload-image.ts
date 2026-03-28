@@ -9,6 +9,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (!bucket || !db) {
     return new Response("Storage binding missing", { status: 500 });
   }
+  if (!locals.owner) {
+    return new Response("Owner account required", { status: 403 });
+  }
 
   const form = await request.formData();
   const listingSlug = String(form.get("listingSlug") || "");
@@ -28,9 +31,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
   });
 
   const imageKeysResult = await db
-    .prepare(`SELECT image_keys FROM listings WHERE slug = ? LIMIT 1`)
-    .bind(listingSlug)
+    .prepare(`SELECT image_keys FROM listings WHERE slug = ? AND owner_user_id = ? LIMIT 1`)
+    .bind(listingSlug, locals.owner.id)
     .first<{ image_keys?: string }>();
+
+  if (!imageKeysResult) {
+    return new Response("Listing not found", { status: 404 });
+  }
 
   const existing = imageKeysResult?.image_keys ? JSON.parse(imageKeysResult.image_keys) : [];
   existing.push(key);

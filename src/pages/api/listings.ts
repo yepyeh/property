@@ -6,6 +6,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (!db) {
     return new Response("D1 database binding missing", { status: 500 });
   }
+  if (!locals.owner) {
+    return new Response("Owner account required", { status: 403 });
+  }
 
   const form = await request.formData();
   const slug = await createListing(db, {
@@ -26,6 +29,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     ownerName: String(form.get("ownerName") || ""),
     ownerEmail: String(form.get("ownerEmail") || ""),
     ownerPhone: String(form.get("ownerPhone") || ""),
+    ownerUserId: locals.owner.id,
   });
 
   return new Response(null, {
