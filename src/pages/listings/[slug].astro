@@ -1,9 +1,10 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getListingBySlug } from "../../data/listings";
+import { getDB, getListingBySlug } from "../../lib/marketplace";
 
 const { slug } = Astro.params;
-const listing = getListingBySlug(slug ?? "");
+const listing = await getListingBySlug(slug ?? "", getDB(Astro.locals.runtime));
+const enquirySent = Astro.url.searchParams.get("enquiry") === "sent";
 
 if (!listing) {
   throw new Error(`Listing not found: ${slug}`);
@@ -51,6 +52,7 @@ if (!listing) {
     <aside class="enquiry card">
       <span class="pill">Enquiry panel</span>
       <h2>Contact the owner</h2>
+      {enquirySent && <p class="success">Enquiry sent successfully. The owner can now see it in the dashboard.</p>}
       <p>
         This is the next critical product surface: a structured enquiry flow that captures applicant intent,
         preferred viewing time, and urgency.
@@ -62,20 +64,26 @@ if (!listing) {
         <span>{listing.owner.verified ? "Verified" : "Unverified"} · Replies in {listing.owner.responseTime}</span>
       </div>
 
-      <form class="form">
+      <form class="form" method="POST" action="/api/enquiries">
+        <input type="hidden" name="listingSlug" value={listing.slug} />
+        <input type="hidden" name="listingTitle" value={listing.title} />
         <label>
           Your name
-          <input type="text" placeholder="Enter your name" />
+          <input type="text" name="applicantName" required placeholder="Enter your name" />
         </label>
         <label>
           Contact
-          <input type="text" placeholder="Email or phone number" />
+          <input type="text" name="contact" required placeholder="Email or phone number" />
+        </label>
+        <label>
+          Preferred viewing time
+          <input type="text" name="preferredTime" placeholder="Saturday morning" />
         </label>
         <label>
           Message
-          <textarea rows="5" placeholder={`Hi, I'm interested in ${listing.title}. Is it still available?`}></textarea>
+          <textarea name="message" rows="5" required placeholder={`Hi, I'm interested in ${listing.title}. Is it still available?`}></textarea>
         </label>
-        <button type="button">Send enquiry</button>
+        <button type="submit">Send enquiry</button>
       </form>
     </aside>
   </section>
@@ -248,6 +256,14 @@ if (!listing) {
     .enquiry p {
       color: var(--muted);
       line-height: 1.75;
+    }
+
+    .success {
+      padding: 0.9rem 1rem;
+      border-radius: 18px;
+      background: rgba(15, 118, 110, 0.08);
+      color: var(--accent-strong);
+      font-weight: 600;
     }
 
     .tags {

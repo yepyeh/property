@@ -1,0 +1,126 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const created = Astro.url.searchParams.get("created");
+---
+
+<Layout title="Post a Listing | Property App 2026" description="Owners can submit property listings directly into the marketplace.">
+  <section class="page-head card">
+    <div>
+      <span class="pill">Owner flow</span>
+      <h1 class="section-title">Post a listing</h1>
+      <p class="section-copy">
+        This is the first real supply-side workflow. Owners can now submit a listing into Cloudflare D1, which means the marketplace is no longer purely static.
+      </p>
+    </div>
+    <a class="ghost" href="/owner/dashboard/">Owner dashboard</a>
+  </section>
+
+  {created && (
+    <div class="notice card">
+      Listing created successfully. New slug: <code>{created}</code>
+    </div>
+  )}
+
+  <form class="form-shell card" method="POST" action="/api/listings">
+    <div class="grid two">
+      <label>Listing title<input name="title" required placeholder="Modern 3BR condo in Thu Duc" /></label>
+      <label>Intent<select name="intent"><option value="buy">Buy</option><option value="rent">Rent</option></select></label>
+    </div>
+
+    <div class="grid three">
+      <label>City<input name="city" required placeholder="Ho Chi Minh City" /></label>
+      <label>District<input name="district" required placeholder="Thu Duc City" /></label>
+      <label>Ward<input name="ward" required placeholder="An Khanh" /></label>
+    </div>
+
+    <div class="grid four">
+      <label>Property type<select name="propertyType"><option>Condo</option><option>Villa</option><option>Townhouse</option><option>Apartment</option><option>House</option><option>Land</option></select></label>
+      <label>Price label<input name="priceLabel" required placeholder="9.5B VND" /></label>
+      <label>Numeric price<input name="numericPrice" type="number" min="0" step="0.01" required placeholder="9.5" /></label>
+      <label>Price unit<select name="priceUnit"><option value="VND">VND</option><option value="VND / month">VND / month</option></select></label>
+    </div>
+
+    <div class="grid three">
+      <label>Beds<input name="beds" type="number" min="0" required value="2" /></label>
+      <label>Baths<input name="baths" type="number" min="0" required value="2" /></label>
+      <label>Area (m2)<input name="area" type="number" min="1" required value="90" /></label>
+    </div>
+
+    <label>Short summary<textarea name="summary" rows="3" required placeholder="High-floor condo with strong owner response and easy metro access."></textarea></label>
+    <label>Full description<textarea name="description" rows="6" required placeholder="Describe the home, location, condition, and why it stands out."></textarea></label>
+
+    <div class="grid three">
+      <label>Owner name<input name="ownerName" required placeholder="Nguyen Anh" /></label>
+      <label>Owner email<input name="ownerEmail" type="email" required placeholder="owner@example.com" /></label>
+      <label>Owner phone<input name="ownerPhone" required placeholder="+84 ..." /></label>
+    </div>
+
+    <button type="submit">Publish listing</button>
+  </form>
+
+  <style>
+    .page-head,
+    .form-shell,
+    .notice {
+      padding: 1.4rem;
+      margin-bottom: 1rem;
+    }
+    .page-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .ghost,
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.95rem 1.2rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .ghost {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.72);
+    }
+    .form-shell {
+      display: grid;
+      gap: 1rem;
+    }
+    .grid {
+      display: grid;
+      gap: 0.9rem;
+    }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+    input, select, textarea {
+      width: 100%;
+      margin-top: 0.4rem;
+      padding: 0.95rem 1rem;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.8);
+      font: inherit;
+    }
+    button {
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: white;
+      cursor: pointer;
+    }
+    code { font-family: monospace; }
+    @media (max-width: 960px) {
+      .grid.two, .grid.three, .grid.four, .page-head { grid-template-columns: 1fr; display:grid; }
+    }
+  </style>
+</Layout>

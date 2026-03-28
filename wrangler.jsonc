@@ -7,6 +7,14 @@
     "nodejs_compat",
     "global_fetch_strictly_public"
   ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "property-app-2026-db",
+      "database_id": "dbaaabb0-bfcb-456e-995e-e7ebbefd5c8c",
+      "preview_database_id": "dbaaabb0-bfcb-456e-995e-e7ebbefd5c8c"
+    }
+  ],
   "observability": {
     "enabled": true
   }

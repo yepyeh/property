@@ -1,8 +1,9 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import ListingCard from "../../components/ListingCard.astro";
-import { listings } from "../../data/listings";
+import { getAllListings, getDB } from "../../lib/marketplace";
 
+const listings = await getAllListings(getDB(Astro.locals.runtime));
 const resultSummary = {
   total: listings.length,
   cities: Array.from(new Set(listings.map((listing) => listing.city))).length,
@@ -79,9 +80,9 @@ const resultSummary = {
         <span>Furnished</span>
       </div>
       <div class="utility-links">
-        <a href="#">Save search</a>
-        <a href="#">Create alert</a>
-        <a href="#">Track enquiries</a>
+        <a href="/owner/dashboard/">Track enquiries</a>
+        <a href="/submit-listing/">Post listing</a>
+        <a href="#results">Result tools</a>
       </div>
     </div>
   </section>
