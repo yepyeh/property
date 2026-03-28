@@ -24,6 +24,8 @@ export interface OwnerAccount {
   plan_tier: string;
 }
 
+export type AccountRole = "owner" | "buyer" | "admin";
+
 interface SessionRow extends OwnerAccount {
   token: string;
   expires_at: string;
@@ -66,7 +68,7 @@ async function ensureBootstrapAdmin(runtime?: RuntimeLike | null) {
 
 export async function createOwnerAccount(
   runtime: RuntimeLike | null | undefined,
-  input: { email: string; password: string; fullName: string; phone?: string | null }
+  input: { email: string; password: string; fullName: string; phone?: string | null; role?: AccountRole }
 ) {
   const db = getDB(runtime);
   if (!db) throw new Error("D1 database binding missing");
@@ -81,15 +83,18 @@ export async function createOwnerAccount(
 
   if (existing) return { ok: false as const, error: "exists" };
 
+  const role = input.role === "buyer" ? "buyer" : "owner";
+  const planTier = role === "buyer" ? "buyer" : "starter";
+
   await db
     .prepare(
       `INSERT INTO users (email, password_hash, full_name, phone, role, plan_tier)
-       VALUES (?, ?, ?, ?, 'owner', 'starter')`
+       VALUES (?, ?, ?, ?, ?, ?)`
     )
-    .bind(email, await hashPassword(input.password), input.fullName.trim(), input.phone?.trim() || null)
+    .bind(email, await hashPassword(input.password), input.fullName.trim(), input.phone?.trim() || null, role, planTier)
     .run();
 
-  return { ok: true as const };
+  return { ok: true as const, role };
 }
 
 export async function authenticateOwner(runtime: RuntimeLike | null | undefined, email: string, password: string) {
@@ -173,4 +178,9 @@ export function buildSessionCookie(token: string) {
 
 export function clearSessionCookie() {
   return `${AUTH_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`;
+}
+
+export function getDefaultRedirectForRole(role: string) {
+  if (role === "buyer") return "/buyer/dashboard/";
+  return "/owner/dashboard/";
 }

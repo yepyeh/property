@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { authenticateOwner, buildSessionCookie, createOwnerAccount, createSession } from "../../../lib/auth";
+import { authenticateOwner, buildSessionCookie, createOwnerAccount, createSession, getDefaultRedirectForRole } from "../../../lib/auth";
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const form = await request.formData();
@@ -7,23 +7,25 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const email = String(form.get("email") || "").trim();
   const phone = String(form.get("phone") || "").trim();
   const password = String(form.get("password") || "");
+  const role = String(form.get("role") || "owner") === "buyer" ? "buyer" : "owner";
+  const signupPath = role === "buyer" ? "/signup?role=buyer" : "/signup?role=owner";
 
   if (!fullName || !email || password.length < 8) {
     return new Response(null, {
       status: 303,
       headers: {
-        Location: "/signup?error=1",
+        Location: `${signupPath}&error=1`,
       },
     });
   }
 
-  const result = await createOwnerAccount(locals.runtime, { fullName, email, phone, password });
+  const result = await createOwnerAccount(locals.runtime, { fullName, email, phone, password, role });
 
   if (!result.ok) {
     return new Response(null, {
       status: 303,
       headers: {
-        Location: "/signup?exists=1",
+        Location: `${signupPath}&exists=1`,
       },
     });
   }
@@ -43,7 +45,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   return new Response(null, {
     status: 303,
     headers: {
-      Location: "/owner/dashboard/",
+      Location: getDefaultRedirectForRole(owner.role),
       "Set-Cookie": buildSessionCookie(token),
     },
   });

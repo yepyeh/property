@@ -1,11 +1,11 @@
 import type { APIRoute } from "astro";
-import { authenticateOwner, buildSessionCookie, createSession } from "../../../lib/auth";
+import { authenticateOwner, buildSessionCookie, createSession, getDefaultRedirectForRole } from "../../../lib/auth";
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const form = await request.formData();
   const email = String(form.get("email") || "").trim();
   const password = String(form.get("password") || "");
-  const redirectTo = String(form.get("redirect") || "/owner/dashboard/");
+  const redirectTo = String(form.get("redirect") || "");
   const owner = await authenticateOwner(locals.runtime, email, password);
 
   if (!owner) {
@@ -22,7 +22,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   return new Response(null, {
     status: 303,
     headers: {
-      Location: redirectTo,
+      Location: redirectTo || getDefaultRedirectForRole(owner.role),
       "Set-Cookie": buildSessionCookie(token),
     },
   });

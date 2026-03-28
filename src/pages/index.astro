@@ -14,6 +14,9 @@ const quickFilters = [
 const featuredListings = (await getAllListings(getDB(Astro.locals.runtime))).slice(0, 3);
 const topNav = ["Buy", "Rent", "New Projects", "Find Agent", "Guides"];
 const utilityLinks = ["Saved searches", "Saved homes", "Enquiry tracking", "Owner dashboard"];
+const viewer = Astro.locals.owner;
+const accountHref = viewer?.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashboard/";
+const accountLabel = viewer?.role === "buyer" ? "Buyer dashboard" : "My Property App";
 const browseCities = [
   { name: "Ho Chi Minh City", note: "Apartments, villas, and launch inventory", href: "/listings/?intent=buy&city=Ho%20Chi%20Minh%20City" },
   { name: "Hanoi", note: "Family homes, West Lake, and long-term rentals", href: "/listings/?intent=buy&city=Hanoi" },
@@ -61,7 +64,7 @@ const platformFeatures = [
       ))}
     </nav>
     <div class="header-actions">
-      <a class="account-link" href="/owner/dashboard/">My Property App</a>
+      <a class="account-link" href={accountHref}>{accountLabel}</a>
       <a class="cta" href="/listings/?intent=buy">Browse listings</a>
     </div>
   </header>
@@ -78,7 +81,7 @@ const platformFeatures = [
 
       <div class="hero-actions">
         <a class="primary" href="/listings/?intent=buy">Search properties</a>
-        <a class="secondary" href="/submit-listing/">Post your listing</a>
+        <a class="secondary" href="/signup?role=owner">Post your listing</a>
       </div>
 
       <div class="utility-strip">

@@ -3,17 +3,25 @@ import Layout from "../layouts/Layout.astro";
 
 const error = Astro.url.searchParams.get("error");
 const exists = Astro.url.searchParams.get("exists");
+const role = Astro.url.searchParams.get("role") === "buyer" ? "buyer" : "owner";
+const isBuyer = role === "buyer";
 ---
 
-<Layout title="Create Owner Account | Property App 2026" description="Create an owner account to publish listings, manage enquiries, and upgrade into paid or promoted plans.">
+<Layout title="Create Account | Property App 2026" description="Create an owner or buyer account to use the marketplace with the right workflow.">
   <section class="signup-shell card">
     <div>
-      <span class="pill">Owner accounts</span>
-      <h1 class="section-title">Create your owner account</h1>
+      <span class="pill">Marketplace accounts</span>
+      <h1 class="section-title">Create your {isBuyer ? "buyer" : "owner"} account</h1>
       <p class="section-copy">
-        New owners start on a starter plan: every listing gets a 7-day free trial. After that you can convert a listing
-        to a paid placement or pay extra for promoted visibility.
+        {isBuyer
+          ? "Buyer accounts are for search, saved filters, and future alerting. They do not have access to listing publishing or owner billing flows."
+          : "Owner accounts start on a starter plan: every listing gets a 7-day free trial. After that you can convert a listing to a paid placement or pay extra for promoted visibility."}
       </p>
+    </div>
+
+    <div class="role-switch">
+      <a class:list-active={!isBuyer} href="/signup?role=owner">Owner account</a>
+      <a class:list-active={isBuyer} href="/signup?role=buyer">Buyer account</a>
     </div>
 
     {(error || exists) && (
@@ -23,19 +31,30 @@ const exists = Astro.url.searchParams.get("exists");
     )}
 
     <form class="signup-form" method="POST" action="/api/auth/register">
+      <input type="hidden" name="role" value={role} />
       <label>Full name<input type="text" name="fullName" required placeholder="Nguyen Anh" /></label>
       <label>Email<input type="email" name="email" required placeholder="owner@example.com" /></label>
       <label>Phone<input type="text" name="phone" placeholder="+84 ..." /></label>
       <label>Password<input type="password" name="password" required minlength="8" placeholder="At least 8 characters" /></label>
-      <button type="submit">Create account</button>
+      <button type="submit">Create {isBuyer ? "buyer" : "owner"} account</button>
     </form>
 
     <div class="plan-card">
-      <strong>Monetization model</strong>
+      <strong>{isBuyer ? "Buyer workflow" : "Owner monetization model"}</strong>
       <ul>
-        <li>Every new listing starts as a 7-day free trial.</li>
-        <li>Paid listings can run beyond the trial window.</li>
-        <li>Promoted listings are prioritized above standard inventory.</li>
+        {isBuyer ? (
+          <>
+            <li>Save searches from the listings page.</li>
+            <li>Return to your buyer dashboard to reopen them quickly.</li>
+            <li>Future buyer alerts will build on these saved searches.</li>
+          </>
+        ) : (
+          <>
+            <li>Every new listing starts as a 7-day free trial.</li>
+            <li>Paid listings can run beyond the trial window.</li>
+            <li>Promoted listings are prioritized above standard inventory.</li>
+          </>
+        )}
       </ul>
     </div>
 
@@ -59,6 +78,29 @@ const exists = Astro.url.searchParams.get("exists");
       display: grid;
       gap: 1rem;
       margin-top: 1rem;
+    }
+    .role-switch {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    .role-switch a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.85rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      background: rgba(255,255,255,0.72);
+    }
+    .role-switch a.list-active {
+      background: var(--bg-deep);
+      border-color: var(--bg-deep);
+      color: white;
     }
     label {
       display: block;

@@ -1,0 +1,144 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getDashboardData, getDB } from "../../lib/marketplace";
+
+const owner = Astro.locals.owner;
+
+if (!owner || (owner.role !== "buyer" && owner.role !== "admin")) {
+  return Astro.redirect("/login");
+}
+
+const { savedSearches } = await getDashboardData(owner.id, getDB(Astro.locals.runtime));
+const savedSearchDeleted = Astro.url.searchParams.get("savedSearchDeleted");
+---
+
+<Layout title="Buyer Dashboard | Property App 2026" description="Manage saved searches and buyer-side activity in the marketplace.">
+  <section class="page-head card">
+    <div>
+      <span class="pill">Buyer dashboard</span>
+      <h1 class="section-title">Saved searches and buyer activity</h1>
+      <p class="section-copy">
+        Buyer accounts focus on discovery. Save filter sets, come back to them quickly, and use them as the basis for
+        future alerting.
+      </p>
+    </div>
+    <div class="actions">
+      <a class="primary" href="/listings/">Browse listings</a>
+      <form method="POST" action="/api/auth/logout">
+        <button class="ghost" type="submit">Log out</button>
+      </form>
+    </div>
+  </section>
+
+  {savedSearchDeleted && (
+    <div class="card flash">
+      Saved search deleted.
+    </div>
+  )}
+
+  <section class="stats-grid">
+    <article class="card stat"><strong>{savedSearches.length}</strong><span>saved searches</span></article>
+  </section>
+
+  <section class="owner-card card">
+    <strong>{owner.full_name}</strong>
+    <span>{owner.email}</span>
+    <span>Account role: {owner.role}</span>
+    <span>Buyer flow: browse, save, and return to active searches</span>
+  </section>
+
+  <section class="card panel">
+    <h2>Saved searches</h2>
+    {savedSearches.length === 0 ? <p>No saved searches yet. Save a filter from the listings page to build your shortlist.</p> : (
+      <ul>
+        {savedSearches.map((search) => (
+          <li>
+            <strong>{search.name}</strong>
+            <span>{search.last_result_count} matching listings at last save</span>
+            <span>{search.route_query ? `/listings/?${search.route_query}` : "/listings/"}</span>
+            <div class="actions-row">
+              <a class="primary small" href={search.route_query ? `/listings/?${search.route_query}` : "/listings/"}>Open search</a>
+              <form method="POST" action="/api/saved-searches/delete">
+                <input type="hidden" name="id" value={search.id} />
+                <button type="submit" class="ghost small">Delete</button>
+              </form>
+            </div>
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+
+  <style>
+    .page-head, .panel { padding: 1.4rem; }
+    .page-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    .actions,
+    .actions-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .stat,
+    .owner-card,
+    .flash {
+      padding: 1.2rem;
+    }
+    .owner-card {
+      display: grid;
+      gap: 0.35rem;
+      margin-bottom: 1rem;
+    }
+    .stat strong { display: block; font-size: 2rem; }
+    .stat span,
+    .panel p,
+    .panel li span,
+    .owner-card span { color: var(--muted); }
+    .panel ul { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: 0.9rem; }
+    .panel li { display: grid; gap: 0.25rem; padding: 0.9rem; border-radius: 18px; background: rgba(255,255,255,0.55); }
+    .primary,
+    .ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.95rem 1.2rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .small { padding: 0.75rem 0.95rem; }
+    .primary {
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: white;
+    }
+    .ghost {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.72);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .flash {
+      margin-bottom: 1rem;
+      color: var(--accent-strong);
+      font-weight: 700;
+    }
+    @media (max-width: 760px) {
+      .page-head {
+        display: grid;
+      }
+    }
+  </style>
+</Layout>

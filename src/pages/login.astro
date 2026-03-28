@@ -2,16 +2,16 @@
 import Layout from "../layouts/Layout.astro";
 
 const error = Astro.url.searchParams.get("error");
-const redirectTo = Astro.url.searchParams.get("redirect") ?? "/owner/dashboard/";
+const redirectTo = Astro.url.searchParams.get("redirect") ?? "";
 ---
 
-<Layout title="Owner Login | Property App 2026" description="Secure login for owners and administrators managing property listings and enquiries.">
+<Layout title="Account Login | Property App 2026" description="Secure login for buyer, owner, and administrator accounts.">
   <section class="login-shell card">
     <div>
       <span class="pill">Protected access</span>
-      <h1 class="section-title">Owner login</h1>
+      <h1 class="section-title">Account login</h1>
       <p class="section-copy">
-        Owners now have individual accounts. Sign in to manage your own listings, enquiries, trial windows, and upgrades.
+        Sign in with the account type you created. Owners are routed into listing management. Buyers are routed into saved-search management.
       </p>
     </div>
 
@@ -24,7 +24,7 @@ const redirectTo = Astro.url.searchParams.get("redirect") ?? "/owner/dashboard/"
       <button type="submit">Sign in</button>
     </form>
 
-    <p class="switch-link">Need an account? <a href="/signup">Create an owner account</a>.</p>
+    <p class="switch-link">Need an account? <a href="/signup?role=owner">Create an owner account</a> or <a href="/signup?role=buyer">create a buyer account</a>.</p>
   </section>
 
   <style>

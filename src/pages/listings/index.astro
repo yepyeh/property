@@ -17,6 +17,7 @@ const filters = {
 
 const listings = await searchListings(filters, getDB(Astro.locals.runtime));
 const owner = Astro.locals.owner;
+const dashboardHref = owner?.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashboard/";
 const allCities = Array.from(new Set(listings.map((listing) => listing.city))).sort();
 const allDistricts = Array.from(new Set(listings.map((listing) => listing.district))).sort();
 const saved = Astro.url.searchParams.get("saved");
@@ -140,8 +141,8 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
         {activeFilters.length > 0 ? activeFilters.map((filter) => <span>{filter}</span>) : <span>No extra filters applied</span>}
       </div>
       <div class="utility-links">
-        <a href="/owner/dashboard/">Track enquiries</a>
-        <a href="/submit-listing/">Post listing</a>
+        <a href={dashboardHref}>{owner?.role === "buyer" ? "Saved searches" : "Track enquiries"}</a>
+        <a href={owner?.role === "buyer" ? "/signup?role=owner" : "/submit-listing/"}>{owner?.role === "buyer" ? "Create owner account" : "Post listing"}</a>
       </div>
     </div>
   </form>
@@ -191,7 +192,7 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
         </label>
         <div class="saved-search-actions">
           <button type="submit" class="primary">Save search</button>
-          <a class="ghost" href="/owner/dashboard/">Manage saved searches</a>
+          <a class="ghost" href={dashboardHref}>Manage saved searches</a>
         </div>
       </form>
     ) : (
