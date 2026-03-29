@@ -26,4 +26,8 @@ const { pathname, viewer, unreadCount, dashboardHref } = Astro.props;
     <span class="mobile-icon" aria-hidden="true">{viewer ? "◉" : "→"}</span>
     <span>{viewer ? "Account" : "Sign in"}</span>
   </a>
+  <button class="mobile-link theme-mobile-toggle" type="button" data-theme-toggle>
+    <span class="mobile-icon" aria-hidden="true" data-theme-icon>◐</span>
+    <span data-theme-label>Dark mode</span>
+  </button>
 </nav>

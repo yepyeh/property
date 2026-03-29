@@ -1,25 +1,87 @@
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
 
 :root {
-  color-scheme: light;
-  --bg: #f3efe7;
-  --bg-soft: #fbf8f3;
-  --panel: rgba(255, 255, 255, 0.94);
-  --panel-strong: rgba(255, 255, 255, 0.985);
-  --surface-alt: #ebe5d9;
-  --text: #121212;
-  --muted: #746d63;
-  --muted-strong: #4f483f;
-  --accent: #d8f6d2;
-  --accent-strong: #204f43;
-  --brand: #111111;
-  --brand-strong: #050505;
-  --brand-soft: #f0eadf;
-  --line: rgba(17, 17, 17, 0.08);
-  --line-strong: rgba(17, 17, 17, 0.14);
-  --shadow: 0 28px 80px rgba(17, 17, 17, 0.07);
-  --shadow-soft: 0 14px 36px rgba(17, 17, 17, 0.05);
   font-family: "Manrope", sans-serif;
+
+  /* Open Props-inspired semantic token layer */
+  --stone-0: #fdfbf7;
+  --stone-1: #f7f2ea;
+  --stone-2: #efe7da;
+  --stone-3: #ddd1be;
+  --stone-7: #746d63;
+  --stone-8: #4f483f;
+  --stone-9: #1a1714;
+
+  --sage-2: #d8f6d2;
+  --sage-8: #204f43;
+
+  --surface-canvas: var(--stone-1);
+  --surface-elevated: rgba(255, 255, 255, 0.94);
+  --surface-elevated-strong: rgba(255, 255, 255, 0.985);
+  --surface-soft: var(--stone-2);
+  --surface-brand-soft: #f0eadf;
+  --text-1: #121212;
+  --text-2: var(--stone-7);
+  --text-3: var(--stone-8);
+  --border-subtle: rgba(17, 17, 17, 0.08);
+  --border-strong: rgba(17, 17, 17, 0.14);
+  --accent-1: var(--sage-2);
+  --accent-9: var(--sage-8);
+  --brand-9: #111111;
+  --brand-10: #050505;
+  --shadow-color: rgba(17, 17, 17, 0.07);
+  --shadow-soft-color: rgba(17, 17, 17, 0.05);
+
+  /* Backwards-compatible app variables */
+  color-scheme: light;
+  --bg: var(--surface-canvas);
+  --bg-soft: var(--stone-0);
+  --panel: var(--surface-elevated);
+  --panel-strong: var(--surface-elevated-strong);
+  --surface-alt: var(--surface-soft);
+  --text: var(--text-1);
+  --muted: var(--text-2);
+  --muted-strong: var(--text-3);
+  --accent: var(--accent-1);
+  --accent-strong: var(--accent-9);
+  --brand: var(--brand-9);
+  --brand-strong: var(--brand-10);
+  --brand-soft: var(--surface-brand-soft);
+  --line: var(--border-subtle);
+  --line-strong: var(--border-strong);
+  --shadow: 0 28px 80px var(--shadow-color);
+  --shadow-soft: 0 14px 36px var(--shadow-soft-color);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --stone-0: #0f1724;
+  --stone-1: #111827;
+  --stone-2: #162132;
+  --stone-3: #243247;
+  --stone-7: #93a1b7;
+  --stone-8: #c8d2e1;
+  --stone-9: #f8fafc;
+
+  --sage-2: #163a33;
+  --sage-8: #8ce0ca;
+
+  --surface-canvas: #0b1220;
+  --surface-elevated: rgba(17, 24, 39, 0.92);
+  --surface-elevated-strong: rgba(15, 23, 42, 0.98);
+  --surface-soft: #111c2d;
+  --surface-brand-soft: #162132;
+  --text-1: #f8fafc;
+  --text-2: #9fb0c5;
+  --text-3: #d9e2ef;
+  --border-subtle: rgba(148, 163, 184, 0.16);
+  --border-strong: rgba(148, 163, 184, 0.28);
+  --accent-1: rgba(64, 124, 108, 0.35);
+  --accent-9: #9de6d1;
+  --brand-9: #f8fafc;
+  --brand-10: #ffffff;
+  --shadow-color: rgba(2, 6, 23, 0.45);
+  --shadow-soft-color: rgba(2, 6, 23, 0.28);
 }
 
 * { box-sizing: border-box; }
@@ -30,9 +92,10 @@ body {
   min-height: 100vh;
   color: var(--text);
   background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.86), transparent 26%),
-    radial-gradient(circle at top right, rgba(216, 246, 210, 0.2), transparent 16%),
-    linear-gradient(180deg, #fcfaf6 0%, var(--bg) 100%);
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.12), transparent 26%),
+    radial-gradient(circle at top right, rgba(216, 246, 210, 0.14), transparent 16%),
+    linear-gradient(180deg, color-mix(in srgb, var(--bg-soft) 72%, transparent) 0%, var(--bg) 100%);
+  transition: background-color 160ms ease, color 160ms ease;
 }
 
 main {
@@ -96,7 +159,7 @@ p { margin: 0; }
   position: sticky;
   top: 0.75rem;
   z-index: 20;
-  background: rgba(251, 248, 243, 0.9);
+  background: color-mix(in srgb, var(--bg-soft) 88%, transparent);
   box-shadow: var(--shadow-soft);
   backdrop-filter: blur(16px);
 }
@@ -135,7 +198,8 @@ p { margin: 0; }
 .nav-link,
 .utility-link,
 .auth-link,
-.nav-button {
+.nav-button,
+.theme-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -148,6 +212,7 @@ p { margin: 0; }
   font-size: 0.92rem;
   font-weight: 700;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .nav-link.active,
@@ -162,7 +227,7 @@ p { margin: 0; }
 
 .auth-link {
   border-color: var(--line);
-  background: rgba(255, 255, 255, 0.84);
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
 }
 
 .auth-link.primary {
@@ -189,6 +254,31 @@ p { margin: 0; }
   line-height: 1;
 }
 
+.theme-toggle {
+  gap: 0.55rem;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--panel) 84%, transparent);
+  color: var(--muted-strong);
+}
+
+.theme-toggle:hover {
+  background: color-mix(in srgb, var(--panel-strong) 88%, transparent);
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+
+.theme-toggle-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-size: 0.78rem;
+}
+
 .account-menu { position: relative; }
 .account-summary {
   list-style: none;
@@ -199,7 +289,7 @@ p { margin: 0; }
   padding: 0.45rem 0.55rem 0.45rem 0.45rem;
   border-radius: 999px;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.92);
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
   cursor: pointer;
   box-shadow: 0 10px 22px rgba(17,17,17,0.05);
 }
@@ -261,7 +351,7 @@ p { margin: 0; }
 .account-quick-grid > div {
   padding: 0.75rem;
   border-radius: 1rem;
-  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(243,239,231,0.88));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--panel-strong) 92%, transparent), color-mix(in srgb, var(--bg) 88%, transparent));
   border: 1px solid var(--line);
 }
 
@@ -336,6 +426,14 @@ p { margin: 0; }
   box-shadow: 0 18px 45px rgba(17, 17, 17, 0.14);
   backdrop-filter: blur(16px);
   z-index: 30;
+}
+
+.theme-mobile-toggle {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
 }
 
 .mobile-utility a {

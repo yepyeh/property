@@ -35,6 +35,10 @@ const { primaryNav, viewer, viewerLabel, viewerRoleLabel, viewerInitials, accoun
     </nav>
 
     <div class="utility-links">
+      <button class="theme-toggle" type="button" data-theme-toggle>
+        <span class="theme-toggle-icon" data-theme-icon>◐</span>
+        <span data-theme-label>Dark mode</span>
+      </button>
       {viewer ? (
         <AccountMenu
           viewerLabel={viewerLabel}
