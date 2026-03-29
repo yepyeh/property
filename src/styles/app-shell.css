@@ -364,6 +364,103 @@ p { margin: 0; }
   color: white;
 }
 
+.app-footer {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background:
+    radial-gradient(circle at top right, rgba(216, 246, 210, 0.24), transparent 18%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 243, 236, 0.94));
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(10rem, 1fr));
+  gap: 1.2rem;
+}
+
+.footer-brand {
+  display: grid;
+  gap: 0.8rem;
+  padding-right: 1rem;
+}
+
+.footer-brand h2 {
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.9rem);
+  line-height: 0.96;
+  letter-spacing: -0.07em;
+  max-width: 12ch;
+}
+
+.footer-brand p,
+.footer-column a,
+.footer-bottom p,
+.footer-bottom-links a {
+  color: var(--muted);
+}
+
+.footer-brand p {
+  line-height: 1.72;
+  max-width: 34rem;
+}
+
+.footer-column {
+  display: grid;
+  align-content: start;
+  gap: 0.55rem;
+}
+
+.footer-column strong {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.footer-column a,
+.footer-bottom-links a {
+  text-decoration: none;
+}
+
+.footer-column a:hover,
+.footer-bottom-links a:hover {
+  color: var(--text);
+}
+
+.footer-cta-row,
+.footer-bottom,
+.footer-bottom-links {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.footer-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.9rem;
+  padding: 0.85rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.footer-cta.primary {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: white;
+}
+
+.footer-bottom {
+  justify-content: space-between;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
 .mobile-spacer { display: none; }
 
 @media (max-width: 1120px) {
@@ -371,6 +468,7 @@ p { margin: 0; }
   .nav-cluster { display: grid; }
   .nav-links,
   .utility-links { justify-content: flex-start; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 760px) {
@@ -384,5 +482,12 @@ p { margin: 0; }
   .nav-links,
   .utility-links { display: none; }
   .mobile-utility { display: grid; }
+  .app-footer {
+    padding: 1.15rem;
+    margin-top: 1.4rem;
+  }
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-bottom { display: grid; grid-template-columns: 1fr; }
+  .footer-brand { padding-right: 0; }
   .mobile-spacer { display: block; height: 5.5rem; }
 }

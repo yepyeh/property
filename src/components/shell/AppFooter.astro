@@ -1,0 +1,72 @@
+---
+const { viewer } = Astro.props;
+
+const isBuyer = viewer?.role === "buyer";
+const isOwner = viewer?.role === "owner" || viewer?.role === "admin";
+const isAdmin = viewer?.role === "admin";
+---
+
+<footer class="app-footer card">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="pill">Property App 2026</span>
+      <h2>Search clearly. Decide faster. Move with context.</h2>
+      <p>
+        A property workflow for buyers and owners across Southeast Asia. Browse with confidence signals,
+        shortlist intelligently, and manage listings with real feedback.
+      </p>
+      <div class="footer-cta-row">
+        <a class="footer-cta primary" href="/listings/?intent=buy">Browse homes</a>
+        <a class="footer-cta" href="/help/">Open help centre</a>
+      </div>
+    </div>
+
+    <div class="footer-column">
+      <strong>Explore</strong>
+      <a href="/listings/?intent=buy">Buy property</a>
+      <a href="/listings/?intent=rent">Rent homes</a>
+      <a href="/for-buyers">For buyers</a>
+      <a href="/for-owners">For owners</a>
+      <a href="/pricing">Pricing</a>
+    </div>
+
+    <div class="footer-column">
+      <strong>Help</strong>
+      <a href="/help/">Help centre</a>
+      <a href="/help/getting-started/">Getting started</a>
+      <a href="/help/buyer-shortlist-and-compare/">Shortlist and compare</a>
+      <a href="/help/posting-and-managing-listings/">Posting listings</a>
+      <a href="/help/what-changed-march-2026/">What changed</a>
+    </div>
+
+    <div class="footer-column">
+      <strong>Account</strong>
+      {viewer ? (
+        <>
+          <a href={isBuyer ? "/buyer/dashboard/" : "/owner/dashboard/"}>{isBuyer ? "Buyer dashboard" : "Owner dashboard"}</a>
+          {isBuyer && <a href="/buyer/compare/">Compare shortlist</a>}
+          {isOwner && <a href="/submit-listing/">Post a listing</a>}
+          <a href="/account/inbox">Inbox</a>
+          <a href="/account/notifications">Notifications</a>
+          {isAdmin && <a href="/admin/billing/">Billing admin</a>}
+        </>
+      ) : (
+        <>
+          <a href="/login">Sign in</a>
+          <a href="/signup?role=buyer">Create buyer account</a>
+          <a href="/signup?role=owner">Create owner account</a>
+          <a href="/help/getting-started/">How it works</a>
+        </>
+      )}
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>Built for listing discovery, buyer decision-making, and owner-side follow-through.</p>
+    <div class="footer-bottom-links">
+      <a href="/help/notifications-and-inbox/">Notifications</a>
+      <a href="/help/billing-and-promoted-listings/">Billing</a>
+      <a href="/help/">Support</a>
+    </div>
+  </div>
+</footer>

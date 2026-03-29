@@ -1,5 +1,6 @@
 ---
 import appShellCss from "../styles/app-shell.css?raw";
+import AppFooter from "../components/shell/AppFooter.astro";
 import GlobalNav from "../components/shell/GlobalNav.astro";
 import MobileNav from "../components/shell/MobileNav.astro";
 import { getUnreadInboxNotificationCount } from "../lib/notifications";
@@ -85,6 +86,7 @@ const accountMenu = [
     </div>
     <main>
       <slot />
+      <AppFooter viewer={viewer} />
       <div class="mobile-spacer"></div>
     </main>
     <MobileNav pathname={pathname} viewer={viewer} unreadCount={unreadCount} dashboardHref={dashboardHref} />
