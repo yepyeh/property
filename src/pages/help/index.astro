@@ -9,6 +9,7 @@ const categories = [
   { key: "owners", label: "Owners" },
   { key: "billing", label: "Billing" },
   { key: "account", label: "Account" },
+  { key: "updates", label: "Updates" },
 ];
 ---
 
@@ -50,6 +51,23 @@ const categories = [
         </article>
       );
     })}
+  </section>
+
+  <section class="card maintenance-note section-gap">
+    <strong>Recent updates</strong>
+    <ul class="update-list">
+      {articles
+        .filter((article) => article.data.category === "updates")
+        .slice(0, 3)
+        .map((article) => (
+          <li>
+            <a href={`/help/${article.id}/`}>
+              <strong>{article.data.title}</strong>
+              <span>{article.data.updatedAt}</span>
+            </a>
+          </li>
+        ))}
+    </ul>
   </section>
 
   <section class="card maintenance-note section-gap">
@@ -131,10 +149,36 @@ const categories = [
       text-decoration: none;
       color: inherit;
     }
+    .update-list {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0 0;
+      display: grid;
+      gap: 0.8rem;
+    }
+    .update-list li a {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid var(--line);
+      text-decoration: none;
+      color: inherit;
+    }
+    .update-list span {
+      color: var(--muted);
+      white-space: nowrap;
+    }
     @media (max-width: 900px) {
       .help-hero,
       .category-grid {
         grid-template-columns: 1fr;
+      }
+      .update-list li a {
+        display: grid;
       }
     }
   </style>

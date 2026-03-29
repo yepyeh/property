@@ -120,6 +120,34 @@ function getImageUrls(value: unknown) {
   {updated && !action && <FlashBanner message={`Listing state updated for ${updated}.`} />}
   {savedSearchDeleted && <FlashBanner message="Saved search deleted." />}
 
+  <section class="card panel section-gap">
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">Operator guide</p>
+        <h2>Keep owner workflow predictable</h2>
+        <p class="panel-copy">Owners should always know what to do next: tighten listing quality, watch demand signals, respond to enquiries, then use visibility upgrades when the listing is strong enough to justify them.</p>
+      </div>
+    </div>
+    <div class="compare-preview">
+      <article class="compare-chip">
+        <strong>1. Fix presentation first</strong>
+        <span>Better photos and clearer location context before paid promotion.</span>
+      </article>
+      <article class="compare-chip">
+        <strong>2. Watch demand signals</strong>
+        <span>Views, saves, and enquiries tell you whether the listing is working.</span>
+      </article>
+      <article class="compare-chip">
+        <strong>3. React quickly</strong>
+        <span>Respond to inbound enquiries and keep listing state current.</span>
+      </article>
+    </div>
+    <div class="action-row">
+      <a class="button-secondary" href="/help/posting-and-managing-listings/">Open owner guide</a>
+      <a class="button-tertiary" href="/help/what-changed-march-2026/">What changed</a>
+    </div>
+  </section>
+
   <section class="split-grid split-grid-top">
     <article class="card panel">
       <div class="panel-head">
