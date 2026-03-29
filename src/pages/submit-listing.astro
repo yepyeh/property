@@ -47,6 +47,39 @@ const owner = Astro.locals.owner;
         <li>Clear ownership identity and realistic response expectations.</li>
       </ul>
     </div>
+
+    <div class="pricing card">
+      <strong>Photo checklist</strong>
+      <ul>
+        <li>One strong exterior or tower/context image.</li>
+        <li>Main living area in natural light.</li>
+        <li>Kitchen, primary bedroom, and bathroom.</li>
+        <li>One neighborhood or amenities image if available.</li>
+      </ul>
+    </div>
+
+    <div class="pricing card">
+      <strong>Before you publish</strong>
+      <ul>
+        <li>Lead with the specific buyer fit, not vague “luxury” claims.</li>
+        <li>Use the location section to explain why the area works.</li>
+        <li>Upload a gallery immediately after publishing from the owner workspace.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section-map card">
+    <div class="section-map-copy">
+      <span class="pill">Build in order</span>
+      <h2 class="section-title">Treat this like a publish flow, not a raw database form.</h2>
+      <p class="section-copy">Start with the searchable facts, then write the buyer-facing positioning, then finish the trust and contact layer. The better the first version is, the less paid promotion has to compensate for weak content.</p>
+    </div>
+    <ol class="section-steps">
+      <li><strong>Core facts</strong><span>Searchable details and price.</span></li>
+      <li><strong>Positioning</strong><span>Headline, summary, and standout features.</span></li>
+      <li><strong>Location context</strong><span>Commute, nearby anchors, and trust signals.</span></li>
+      <li><strong>Contact identity</strong><span>Who replies and how quickly.</span></li>
+    </ol>
   </section>
 
   <form class="form-shell card" method="POST" action="/api/listings">
@@ -91,8 +124,8 @@ const owner = Astro.locals.owner;
         <label>Visual tone<select name="tone"><option value="sea">Sea</option><option value="sun">Sun</option><option value="forest">Forest</option><option value="night">Night</option><option value="clay">Clay</option><option value="sky">Sky</option></select></label>
         <label>Tags<input name="tags" placeholder="River-facing, School-run ready, Investor-safe" /></label>
       </div>
-      <label>Short summary<textarea name="summary" rows="3" required placeholder="High-floor condo with clean finish quality, direct bridge access into the core, and a layout that feels stronger than typical investor stock."></textarea></label>
-      <label>Full description<textarea name="description" rows="6" required placeholder="Describe the home, location, condition, buyer fit, and why it stands out against nearby alternatives."></textarea></label>
+      <label>Short summary<textarea name="summary" rows="3" required placeholder="High-floor condo with clean finish quality, direct bridge access into the core, and a layout that feels stronger than typical investor stock."></textarea><span class="field-tip">Three lines. Think listing card, not brochure.</span></label>
+      <label>Full description<textarea name="description" rows="6" required placeholder="Describe the home, location, condition, buyer fit, and why it stands out against nearby alternatives."></textarea><span class="field-tip">Write for a buyer deciding whether to enquire today.</span></label>
       <label>Included features<input name="features" placeholder="Private garden, Home office, Pool deck, Covered parking" /></label>
     </div>
 
@@ -104,8 +137,8 @@ const owner = Astro.locals.owner;
       <label>Neighborhood headline<textarea name="neighborhoodHeadline" rows="3" placeholder="A calmer family pocket in Thu Duc with strong access to international schools and riverfront services."></textarea></label>
       <label>Commute and access<textarea name="commuteNotes" rows="3" placeholder="About 15 to 20 minutes to Thu Thiem, 25 minutes to District 1 outside peak traffic."></textarea></label>
       <div class="grid two">
-        <label>Nearby landmarks or amenities<input name="nearbyPlaces" placeholder="International school, Metro stop, Retail podium" /></label>
-        <label>Trust signals<input name="trustSignals" placeholder="Low-rise pocket, Verified owner, Strong rental fallback" /></label>
+        <label>Nearby landmarks or amenities<input name="nearbyPlaces" placeholder="International school, Metro stop, Retail podium" /><span class="field-tip">Comma-separated is fine.</span></label>
+        <label>Trust signals<input name="trustSignals" placeholder="Low-rise pocket, Verified owner, Strong rental fallback" /><span class="field-tip">Use the things a cautious buyer would actually ask.</span></label>
       </div>
       <div class="grid three">
         <label>Latitude<input name="lat" type="number" step="0.000001" placeholder="10.7826" /></label>
@@ -186,6 +219,37 @@ const owner = Astro.locals.owner;
       display: grid;
       gap: 1rem;
     }
+    .section-map {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(18rem, 0.7fr);
+      gap: 1rem;
+      padding: 1.35rem;
+      margin-bottom: 1rem;
+      align-items: start;
+    }
+    .section-map-copy {
+      display: grid;
+      gap: 0.75rem;
+    }
+    .section-steps {
+      display: grid;
+      gap: 0.8rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .section-steps li {
+      display: grid;
+      gap: 0.2rem;
+      padding: 0.95rem 1rem;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid var(--line);
+    }
+    .section-steps span {
+      color: var(--muted);
+      line-height: 1.55;
+    }
     .section-block {
       display: grid;
       gap: 1rem;
@@ -247,6 +311,14 @@ const owner = Astro.locals.owner;
       background: rgba(255,255,255,0.8);
       font: inherit;
     }
+    .field-tip {
+      display: block;
+      margin-top: 0.45rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.5;
+      font-weight: 500;
+    }
     .check-field {
       display: flex;
       align-items: center;
@@ -273,7 +345,7 @@ const owner = Astro.locals.owner;
     }
     code { font-family: monospace; }
     @media (max-width: 960px) {
-      .prep-grid, .grid.two, .grid.three, .grid.four, .page-head, .submit-row { grid-template-columns: 1fr; display:grid; }
+      .prep-grid, .grid.two, .grid.three, .grid.four, .page-head, .submit-row, .section-map { grid-template-columns: 1fr; display:grid; }
       .check-field { padding-top: 0; }
     }
   </style>

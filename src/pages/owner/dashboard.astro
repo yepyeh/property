@@ -13,6 +13,7 @@ const { listings, enquiries, payments, notifications, savedSearches, inboxNotifi
   ? await getOwnerDashboardData(owner.id, getDB(Astro.locals.runtime))
   : { listings: [], enquiries: [], payments: [], notifications: [], savedSearches: [], inboxNotifications: [], unreadNotificationCount: 0 };
 const uploaded = Astro.url.searchParams.get("uploaded");
+const uploadCount = Astro.url.searchParams.get("uploadCount");
 const updated = Astro.url.searchParams.get("updated");
 const savedSearchDeleted = Astro.url.searchParams.get("savedSearchDeleted");
 const billingEnabled = isBillingEnabled(Astro.locals.runtime);
@@ -51,6 +52,17 @@ function getImageCount(value: unknown) {
     return 0;
   }
 }
+
+function getImageUrls(value: unknown) {
+  if (typeof value !== "string" || !value) return [] as string[];
+
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed.map((key) => `/media/${key}`) : [];
+  } catch {
+    return [] as string[];
+  }
+}
 ---
 
 <Layout title="Owner Dashboard | Property App 2026" description="Review submitted listings and enquiries from the marketplace backend.">
@@ -80,7 +92,7 @@ function getImageCount(value: unknown) {
     ]}
   />
 
-  {uploaded && <FlashBanner message={`Image uploaded for ${uploaded}.`} />}
+  {uploaded && <FlashBanner message={`${uploadCount || "1"} image${uploadCount === "1" ? "" : "s"} uploaded for ${uploaded}.`} />}
   {updated && <FlashBanner message={`Billing state updated for ${updated}.`} />}
   {savedSearchDeleted && <FlashBanner message="Saved search deleted." />}
 
@@ -179,12 +191,14 @@ function getImageCount(value: unknown) {
         <div>
           <p class="eyebrow">Supply</p>
           <h2>Live inventory</h2>
-          <p class="panel-copy">Each card shows current visibility state, media coverage, and the next commercial action that matters.</p>
+          <p class="panel-copy">Each card shows visibility state, media coverage, and the next commercial action that actually matters. Add a stronger photo set here before you worry about promotion.</p>
         </div>
       </div>
       {listings.length === 0 ? <p class="empty-copy">No database listings yet.</p> : (
         <ul class="stack-list listing-list">
-          {listings.map((listing) => (
+          {listings.map((listing) => {
+            const imageUrls = getImageUrls(listing.image_keys);
+            return (
             <li class="listing-item">
               <div class="listing-head">
                 <div>
@@ -193,6 +207,26 @@ function getImageCount(value: unknown) {
                 </div>
                 <span class="status-chip">{listing.plan_type}</span>
               </div>
+              <div class="listing-layout">
+                <div class="listing-media">
+                  {imageUrls.length > 0 ? (
+                    <>
+                      <div class="primary-media" style={`background-image:url(${imageUrls[0]})`}></div>
+                      <div class="media-rail">
+                        {imageUrls.slice(1, 4).map((imageUrl) => (
+                          <div class="thumb-media" style={`background-image:url(${imageUrl})`}></div>
+                        ))}
+                        {imageUrls.length === 1 && <div class="thumb-placeholder">Add more angles</div>}
+                      </div>
+                    </>
+                  ) : (
+                    <div class="media-empty">
+                      <strong>No gallery yet</strong>
+                      <p>Upload 4 to 8 photos so the card and detail page stop looking provisional.</p>
+                    </div>
+                  )}
+                </div>
+                <div class="listing-main">
               <div class="meta-grid">
                 <span>{listing.enquiries} enquiries</span>
                 <span>{getImageCount(listing.image_keys)} images</span>
@@ -200,6 +234,11 @@ function getImageCount(value: unknown) {
                 {listing.trial_ends_at && <span>Trial ends: {listing.trial_ends_at}</span>}
                 {listing.paid_until && <span>Paid until: {listing.paid_until}</span>}
                 {listing.promoted_until && <span>Promoted until: {listing.promoted_until}</span>}
+              </div>
+              <div class="quality-strip">
+                <span>{getImageCount(listing.image_keys) >= 4 ? "Gallery ready" : "Needs more photos"}</span>
+                <span>{listing.enquiries > 0 ? "Buyer demand active" : "Awaiting enquiries"}</span>
+                <a href={`/listings/${listing.slug}/`} class="quality-link">Preview public page</a>
               </div>
               <div class="action-row action-row-wrap">
                 {billingEnabled ? (
@@ -222,13 +261,16 @@ function getImageCount(value: unknown) {
               <form class="upload-form" method="POST" action="/api/upload-image" enctype="multipart/form-data">
                 <input type="hidden" name="listingSlug" value={listing.slug} />
                 <label>
-                  <span class="upload-label">Add photo</span>
-                  <input type="file" name="image" accept="image/png,image/jpeg,image/webp,image/avif" required />
+                  <span class="upload-label">Add photos</span>
+                  <span class="upload-copy">Upload up to 8 images at once. Use one exterior, one living space, one kitchen, one bedroom, and one location/context shot.</span>
+                  <input type="file" name="image" accept="image/png,image/jpeg,image/webp,image/avif" multiple required />
                 </label>
-                <button type="submit" class="button-secondary">Upload</button>
+                <button type="submit" class="button-secondary">Upload gallery</button>
               </form>
+                </div>
+              </div>
             </li>
-          ))}
+          )})}
         </ul>
       )}
     </article>
@@ -369,9 +411,106 @@ function getImageCount(value: unknown) {
       font-weight: 700;
     }
 
+    .upload-copy {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
     .upload-form input[type="file"] {
       font: inherit;
       color: var(--muted);
+    }
+
+    .listing-layout {
+      display: grid;
+      grid-template-columns: minmax(15rem, 18rem) minmax(0, 1fr);
+      gap: 1rem;
+      margin-top: 0.9rem;
+    }
+
+    .listing-media {
+      display: grid;
+      gap: 0.7rem;
+    }
+
+    .primary-media,
+    .thumb-media,
+    .thumb-placeholder {
+      border-radius: 20px;
+      background-size: cover;
+      background-position: center;
+      border: 1px solid var(--line);
+      background-color: rgba(15, 23, 42, 0.06);
+    }
+
+    .primary-media {
+      min-height: 12rem;
+    }
+
+    .media-rail {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.6rem;
+    }
+
+    .thumb-media,
+    .thumb-placeholder {
+      min-height: 4.8rem;
+    }
+
+    .thumb-placeholder,
+    .media-empty {
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--muted);
+      background: linear-gradient(180deg, rgba(248,250,252,0.94), rgba(255,255,255,0.98));
+    }
+
+    .media-empty {
+      min-height: 17.5rem;
+      padding: 1rem;
+      border-radius: 22px;
+      border: 1px dashed var(--line-strong);
+    }
+
+    .media-empty strong {
+      color: var(--text);
+      display: block;
+      margin-bottom: 0.35rem;
+    }
+
+    .media-empty p {
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .listing-main {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .quality-strip {
+      display: flex;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+      align-items: center;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .quality-strip span,
+    .quality-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.05);
+      color: var(--muted-strong);
+      text-decoration: none;
+      font-weight: 700;
     }
 
     .helper-copy {
@@ -383,6 +522,7 @@ function getImageCount(value: unknown) {
         grid-template-columns: 1fr;
       }
 
+      .listing-layout,
       .meta-grid {
         grid-template-columns: 1fr;
       }

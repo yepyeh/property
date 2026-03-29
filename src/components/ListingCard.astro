@@ -9,6 +9,7 @@ const { listing } = Astro.props;
 const heroImage = listing.imageUrls?.[0];
 const intentLabel = listing.intent === "rent" ? "To rent" : "For sale";
 const neighborhood = listing.neighborhood;
+const imageCount = listing.imageUrls?.length || 0;
 ---
 
 <article class={`listing-card card ${listing.tone}`}>
@@ -19,7 +20,10 @@ const neighborhood = listing.neighborhood;
           <span class="intent-chip">{intentLabel}</span>
           <span class="status-chip">{listing.status}</span>
         </div>
-        <span class="save-count">{listing.stats.saves} saves</span>
+        <div class="media-meta">
+          <span class="save-count">{listing.stats.saves} saves</span>
+          <span class="save-count">{imageCount} photos</span>
+        </div>
       </div>
     </div>
   </a>
@@ -100,6 +104,13 @@ const neighborhood = listing.neighborhood;
     gap: 0.8rem;
     align-items: flex-start;
     flex-wrap: wrap;
+  }
+
+  .media-meta {
+    display: flex;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 
   .sea .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.06), rgba(17,17,17,0.26)), linear-gradient(135deg, #c7ddd7, #95bcb4); }
@@ -224,6 +235,7 @@ const neighborhood = listing.neighborhood;
 
   .summary {
     font-size: 0.95rem;
+    min-height: 4.8rem;
   }
 
   .fact-row,
@@ -258,6 +270,10 @@ const neighborhood = listing.neighborhood;
     color: white;
     font-weight: 700;
     text-decoration: none;
+  }
+
+  .details-link:hover {
+    background: #1e293b;
   }
 
   @media (max-width: 760px) {

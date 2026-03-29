@@ -12,6 +12,7 @@ export interface Props {
 
 const { listing, intentLabel, ownerTrustLabel, isBuyer, isSaved, savedListing } = Astro.props;
 const heroImage = listing.imageUrls?.[0];
+const galleryImages = listing.imageUrls || [];
 ---
 
 <section class="detail-hero card">
@@ -21,15 +22,19 @@ const heroImage = listing.imageUrls?.[0];
         <span class="badge-primary">{intentLabel}</span>
         <span class="badge-secondary">{listing.status}</span>
       </div>
+      <div class="gallery-count">{galleryImages.length} photos</div>
       <div class="hero-image-note">
         <strong>{listing.ward}, {listing.district}</strong>
         <span>{listing.city}</span>
       </div>
     </div>
-    {listing.imageUrls && listing.imageUrls.length > 1 && (
+    {galleryImages.length > 1 && (
       <div class="gallery-strip">
-        {listing.imageUrls.slice(0, 4).map((imageUrl) => (
-          <img src={imageUrl} alt={listing.title} loading="lazy" />
+        {galleryImages.slice(0, 4).map((imageUrl, index) => (
+          <div class="gallery-card">
+            <img src={imageUrl} alt={`${listing.title} photo ${index + 1}`} loading="lazy" />
+            <span>{index === 0 ? "Primary view" : `Gallery ${index + 1}`}</span>
+          </div>
         ))}
       </div>
     )}
@@ -159,6 +164,20 @@ const heroImage = listing.imageUrls?.[0];
     gap: 0.75rem;
     flex-wrap: wrap;
     align-items: center;
+  }
+
+  .gallery-count {
+    margin-top: auto;
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding: 0.2rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.76);
+    color: white;
+    font-size: 0.78rem;
+    font-weight: 800;
   }
 
   .hero-signal-grid {
@@ -311,12 +330,23 @@ const heroImage = listing.imageUrls?.[0];
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
+  .gallery-card {
+    display: grid;
+    gap: 0.4rem;
+  }
+
   .gallery-strip img {
     width: 100%;
-    height: 7rem;
+    height: 7.5rem;
     border-radius: 18px;
     object-fit: cover;
     background: rgba(14, 22, 40, 0.08);
+  }
+
+  .gallery-card span {
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 600;
   }
 
   @media (max-width: 1100px) {

@@ -20,18 +20,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const form = await request.formData();
     const listingSlug = readText(form, "listingSlug", { required: true, maxLength: 120 });
-    const file = form.get("image");
+    const files = form.getAll("image").filter((value): value is File => value instanceof File && value.size > 0);
 
-    if (!(file instanceof File) || !file.size) {
-      return new Response("Image file is required", { status: 400 });
+    if (files.length === 0) {
+      return new Response("At least one image file is required", { status: 400 });
     }
 
-    if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
-      return new Response("Unsupported image type", { status: 400 });
-    }
-
-    if (file.size > MAX_IMAGE_BYTES) {
-      return new Response("Image file is too large", { status: 400 });
+    if (files.length > 8) {
+      return new Response("Upload up to 8 images at a time", { status: 400 });
     }
 
     const imageKeysResult = await db
@@ -43,17 +39,28 @@ export const POST: APIRoute = async ({ request, locals }) => {
       return new Response("Listing not found", { status: 404 });
     }
 
-    const key = makeImageKey(listingSlug, file.name || "listing-image");
-    const bytes = await file.arrayBuffer();
-
-    await bucket.put(key, bytes, {
-      httpMetadata: {
-        contentType: file.type,
-      },
-    });
-
     const existing = imageKeysResult.image_keys ? JSON.parse(imageKeysResult.image_keys) : [];
-    existing.push(key);
+
+    for (const file of files) {
+      if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+        return new Response("Unsupported image type", { status: 400 });
+      }
+
+      if (file.size > MAX_IMAGE_BYTES) {
+        return new Response("Image file is too large", { status: 400 });
+      }
+
+      const key = makeImageKey(listingSlug, file.name || "listing-image");
+      const bytes = await file.arrayBuffer();
+
+      await bucket.put(key, bytes, {
+        httpMetadata: {
+          contentType: file.type,
+        },
+      });
+
+      existing.push(key);
+    }
 
     await db
       .prepare(`UPDATE listings SET image_keys = ? WHERE slug = ?`)
@@ -63,7 +70,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response(null, {
       status: 303,
       headers: {
-        Location: `/owner/dashboard/?uploaded=${encodeURIComponent(listingSlug)}`,
+        Location: `/owner/dashboard/?uploaded=${encodeURIComponent(listingSlug)}&uploadCount=${files.length}`,
       },
     });
   } catch (error) {
