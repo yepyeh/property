@@ -43,15 +43,52 @@ function toHex(bytes: Uint8Array) {
   return Array.from(bytes).map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
+const BASE64_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
 function toBase64(bytes: Uint8Array) {
-  let binary = "";
-  for (const byte of bytes) binary += String.fromCharCode(byte);
-  return btoa(binary);
+  let output = "";
+
+  for (let index = 0; index < bytes.length; index += 3) {
+    const a = bytes[index] ?? 0;
+    const b = bytes[index + 1] ?? 0;
+    const c = bytes[index + 2] ?? 0;
+    const chunk = (a << 16) | (b << 8) | c;
+
+    output += BASE64_ALPHABET[(chunk >> 18) & 63];
+    output += BASE64_ALPHABET[(chunk >> 12) & 63];
+    output += index + 1 < bytes.length ? BASE64_ALPHABET[(chunk >> 6) & 63] : "=";
+    output += index + 2 < bytes.length ? BASE64_ALPHABET[chunk & 63] : "=";
+  }
+
+  return output;
 }
 
 function fromBase64(value: string) {
-  const binary = atob(value);
-  return new Uint8Array(Array.from(binary, (char) => char.charCodeAt(0)));
+  const cleaned = value.replace(/\s+/g, "");
+  if (!cleaned || cleaned.length % 4 !== 0) {
+    throw new Error("Invalid base64 value");
+  }
+
+  const bytes: number[] = [];
+
+  for (let index = 0; index < cleaned.length; index += 4) {
+    const chunk = cleaned.slice(index, index + 4);
+    const values = chunk.split("").map((char) => {
+      if (char === "=") return 0;
+      const position = BASE64_ALPHABET.indexOf(char);
+      if (position === -1) {
+        throw new Error("Invalid base64 character");
+      }
+      return position;
+    });
+
+    const combined = (values[0] << 18) | (values[1] << 12) | (values[2] << 6) | values[3];
+    bytes.push((combined >> 16) & 255);
+    if (chunk[2] !== "=") bytes.push((combined >> 8) & 255);
+    if (chunk[3] !== "=") bytes.push(combined & 255);
+  }
+
+  return new Uint8Array(bytes);
 }
 
 async function hashLegacyPassword(value: string) {
@@ -83,6 +120,7 @@ async function hashPassword(value: string) {
 }
 
 async function verifyPassword(storedHash: string, candidate: string) {
+  try {
   if (!storedHash) return { ok: false as const, needsUpgrade: false };
 
   const [scheme, iterationValue, saltValue, digestValue] = storedHash.split("$");
@@ -109,7 +147,10 @@ async function verifyPassword(storedHash: string, candidate: string) {
   }
 
   const legacyHash = await hashLegacyPassword(candidate);
-  return { ok: legacyHash === storedHash, needsUpgrade: legacyHash === storedHash };
+  return { ok: legacyHash === storedHash, needsUpgrade: false };
+  } catch {
+    return { ok: false as const, needsUpgrade: false };
+  }
 }
 
 export async function ensureBootstrapAdmin(runtime?: RuntimeLike | null) {
