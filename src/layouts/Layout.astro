@@ -43,6 +43,7 @@ const primaryNav = [
   { label: "For buyers", href: "/for-buyers", active: pathname === "/for-buyers" },
   { label: "For owners", href: "/for-owners", active: pathname === "/for-owners" },
   { label: "Pricing", href: "/pricing", active: pathname === "/pricing" },
+  { label: "Help", href: "/help/", active: pathname === "/help/" || pathname.startsWith("/help/") },
   ...(isOwner ? [{ label: "Post", href: "/submit-listing/", active: pathname === "/submit-listing/" }] : []),
   ...(viewer ? [{ label: "Inbox", href: "/account/inbox", active: pathname.startsWith("/account/inbox"), count: unreadCount }] : []),
 ];

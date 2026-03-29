@@ -1,0 +1,141 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+const articles = (await getCollection("help")).sort((a, b) => a.data.order - b.data.order);
+const categories = [
+  { key: "getting-started", label: "Getting started" },
+  { key: "buyers", label: "Buyers" },
+  { key: "owners", label: "Owners" },
+  { key: "billing", label: "Billing" },
+  { key: "account", label: "Account" },
+];
+---
+
+<Layout title="Help Centre | Property App 2026" description="Guides for buyers, owners, billing, notifications, and core platform workflows.">
+  <section class="help-hero card">
+    <div>
+      <span class="pill">Help centre</span>
+      <h1>Help users understand the product as it changes.</h1>
+      <p>
+        This help centre is content-driven, so product changes can be reflected by updating articles instead of rebuilding
+        page structure. Buyers, owners, and admins should all be able to find the right workflow quickly.
+      </p>
+    </div>
+    <div class="hero-meta">
+      <strong>{articles.length}</strong>
+      <span>Guides live now</span>
+    </div>
+  </section>
+
+  <section class="category-grid section-gap">
+    {categories.map((category) => {
+      const categoryArticles = articles.filter((article) => article.data.category === category.key);
+      return (
+        <article class="card category-card">
+          <div class="category-head">
+            <strong>{category.label}</strong>
+            <span>{categoryArticles.length} article{categoryArticles.length === 1 ? "" : "s"}</span>
+          </div>
+          <ul class="article-list">
+            {categoryArticles.map((article) => (
+              <li>
+                <a href={`/help/${article.id}/`}>
+                  <strong>{article.data.title}</strong>
+                  <span>{article.data.description}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </article>
+      );
+    })}
+  </section>
+
+  <section class="card maintenance-note section-gap">
+    <strong>How to keep this updated</strong>
+    <p>
+      Each guide lives in `src/content/help/`. When a buyer flow, owner workflow, billing rule, or inbox behavior changes,
+      the right maintenance step is to update the relevant article in that collection as part of the same code change.
+    </p>
+  </section>
+
+  <style is:inline>
+    .help-hero,
+    .category-card,
+    .maintenance-note {
+      padding: 1.4rem;
+    }
+    .help-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 1rem;
+      align-items: start;
+    }
+    .help-hero h1 {
+      margin: 0.75rem 0 0;
+      font-size: clamp(2rem, 5vw, 3.35rem);
+      line-height: 0.94;
+      letter-spacing: -0.08em;
+      max-width: 11ch;
+    }
+    .help-hero p,
+    .maintenance-note p {
+      max-width: 48rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+    .hero-meta {
+      min-width: 10rem;
+      padding: 1rem;
+      border-radius: 22px;
+      background: rgba(15, 23, 42, 0.05);
+      display: grid;
+      gap: 0.25rem;
+    }
+    .hero-meta strong {
+      font-size: 2rem;
+      letter-spacing: -0.06em;
+    }
+    .hero-meta span,
+    .category-head span,
+    .article-list a span {
+      color: var(--muted);
+    }
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+    .category-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .article-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 0.8rem;
+    }
+    .article-list li a {
+      display: grid;
+      gap: 0.25rem;
+      padding: 1rem;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid var(--line);
+      text-decoration: none;
+      color: inherit;
+    }
+    @media (max-width: 900px) {
+      .help-hero,
+      .category-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</Layout>
