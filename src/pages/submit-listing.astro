@@ -154,6 +154,45 @@ const owner = Astro.locals.owner;
       </div>
     </div>
 
+    <div class="outcome-preview card-inset" data-outcome-preview>
+      <div class="section-intro">
+        <strong>What you unlock after step one</strong>
+        <p>Once the core facts are in place, the system can route the listing correctly, open the 7-day free visibility window, and give you a usable live listing instead of a draft buried in a back office.</p>
+      </div>
+      <div class="preview-grid">
+        <article class="preview-card live-preview">
+          <span class="preview-kicker">Your live route</span>
+          <strong data-preview-title>Add the core facts above</strong>
+          <p data-preview-route>The system will turn this into a searchable listing route with the right buy/rent, location, and property filters.</p>
+          <div class="preview-metadata">
+            <span data-preview-intent>Intent pending</span>
+            <span data-preview-location>Location pending</span>
+            <span data-preview-facts>Facts pending</span>
+          </div>
+        </article>
+
+        <article class="preview-card">
+          <span class="preview-kicker">Included immediately</span>
+          <ul class="preview-list">
+            <li>Search placement in the right market lane</li>
+            <li>7-day free visibility to test real demand</li>
+            <li>Owner dashboard tracking for views, saves, and enquiries</li>
+            <li>Upgrade path into paid, promoted, or auction mode later</li>
+          </ul>
+        </article>
+
+        <article class="preview-card">
+          <span class="preview-kicker">Why use this service</span>
+          <ul class="preview-list">
+            <li>Cleaner buyer intent than old directory-style portals</li>
+            <li>Structured enquiry history instead of scattered messages</li>
+            <li>Trust, verification, and safety tools inside the workflow</li>
+            <li>Self-serve first, with concierge support when needed</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+
     <div class="section-block">
       <div class="section-intro">
         <strong>2. Position the listing</strong>
@@ -215,6 +254,61 @@ const owner = Astro.locals.owner;
       <button type="submit">Publish listing</button>
     </div>
   </form>
+
+  <script is:inline>
+    const submitForm = document.querySelector(".form-shell");
+    if (submitForm) {
+      const titleInput = submitForm.querySelector('input[name="title"]');
+      const intentInput = submitForm.querySelector('select[name="intent"]');
+      const propertyTypeInput = submitForm.querySelector('select[name="propertyType"]');
+      const cityInput = submitForm.querySelector('input[name="city"]');
+      const districtInput = submitForm.querySelector('input[name="district"]');
+      const priceLabelInput = submitForm.querySelector('input[name="priceLabel"]');
+      const bedsInput = submitForm.querySelector('input[name="beds"]');
+      const bathsInput = submitForm.querySelector('input[name="baths"]');
+      const areaInput = submitForm.querySelector('input[name="area"]');
+
+      const titleNode = submitForm.querySelector("[data-preview-title]");
+      const routeNode = submitForm.querySelector("[data-preview-route]");
+      const intentNode = submitForm.querySelector("[data-preview-intent]");
+      const locationNode = submitForm.querySelector("[data-preview-location]");
+      const factsNode = submitForm.querySelector("[data-preview-facts]");
+
+      const updatePreview = () => {
+        const title = titleInput?.value.trim();
+        const intent = intentInput?.value === "rent" ? "Rental route" : "Sale route";
+        const propertyType = propertyTypeInput?.value || "Property";
+        const city = cityInput?.value.trim();
+        const district = districtInput?.value.trim();
+        const priceLabel = priceLabelInput?.value.trim();
+        const beds = bedsInput?.value || "?";
+        const baths = bathsInput?.value || "?";
+        const area = areaInput?.value || "?";
+
+        if (titleNode) {
+          titleNode.textContent = title || "Add the core facts above";
+        }
+
+        if (routeNode) {
+          routeNode.textContent = title && city
+            ? `${title} will go live in the ${intent.toLowerCase()} for ${city}${district ? `, ${district}` : ""}, with the right searchable route from the first publish.`
+            : "The system will turn this into a searchable listing route with the right buy/rent, location, and property filters.";
+        }
+
+        if (intentNode) intentNode.textContent = `${intent} · ${propertyType}`;
+        if (locationNode) locationNode.textContent = city ? `${city}${district ? ` · ${district}` : ""}` : "Location pending";
+        if (factsNode) factsNode.textContent = priceLabel ? `${priceLabel} · ${beds}bd / ${baths}ba · ${area} m2` : "Facts pending";
+      };
+
+      [titleInput, intentInput, propertyTypeInput, cityInput, districtInput, priceLabelInput, bedsInput, bathsInput, areaInput]
+        .forEach((field) => {
+          field?.addEventListener("input", updatePreview);
+          field?.addEventListener("change", updatePreview);
+        });
+
+      updatePreview();
+    }
+  </script>
 
   <style is:inline>
     .page-head,
@@ -391,6 +485,76 @@ const owner = Astro.locals.owner;
       background: rgba(248, 250, 252, 0.88);
       border: 1px solid var(--line);
     }
+    .outcome-preview {
+      gap: 1rem;
+    }
+    .preview-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr 1fr;
+      gap: 1rem;
+    }
+    .preview-card {
+      display: grid;
+      gap: 0.7rem;
+      padding: 1rem;
+      border-radius: 20px;
+      background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
+      border: 1px solid var(--line);
+      align-content: start;
+    }
+    .live-preview {
+      background:
+        radial-gradient(circle at top left, color-mix(in srgb, var(--accent-strong) 14%, transparent), transparent 22rem),
+        linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
+    }
+    .preview-kicker {
+      display: inline-flex;
+      align-items: center;
+      min-height: 1.9rem;
+      width: fit-content;
+      padding: 0.22rem 0.7rem;
+      border-radius: 999px;
+      background: var(--surface-overlay);
+      border: 1px solid var(--line);
+      color: var(--muted-strong);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .preview-card strong {
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+    }
+    .preview-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    .preview-metadata {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+    }
+    .preview-metadata span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 1.9rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 999px;
+      background: var(--brand-soft);
+      color: var(--muted-strong);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+    .preview-list {
+      margin: 0;
+      padding-left: 1rem;
+      color: var(--muted);
+      line-height: 1.65;
+      display: grid;
+      gap: 0.35rem;
+    }
     .card-inset strong {
       font-size: 1.05rem;
       letter-spacing: -0.02em;
@@ -459,7 +623,7 @@ const owner = Astro.locals.owner;
     }
     code { font-family: monospace; }
     @media (max-width: 960px) {
-      .prep-grid, .grid.two, .grid.three, .grid.four, .page-head, .submit-row, .section-map, .onboarding-strip, .strip-grid { grid-template-columns: 1fr; display:grid; }
+      .prep-grid, .grid.two, .grid.three, .grid.four, .page-head, .submit-row, .section-map, .onboarding-strip, .strip-grid, .preview-grid { grid-template-columns: 1fr; display:grid; }
       .check-field { padding-top: 0; }
     }
   </style>
