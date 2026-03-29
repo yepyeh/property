@@ -666,6 +666,7 @@ export async function updateSavedListingForBuyer(
     buyerState: "saved" | "finalist" | "contacted" | "follow_up";
     followUpOn?: string | null;
     buyerNote?: string | null;
+    collectionName?: string | null;
   }
 ) {
   const existing = await db
@@ -685,10 +686,11 @@ export async function updateSavedListingForBuyer(
 
   await db
     .prepare(
-      `UPDATE saved_listings
+       `UPDATE saved_listings
        SET buyer_state = ?,
            follow_up_on = ?,
            buyer_note = ?,
+           collection_name = ?,
            updated_at = CURRENT_TIMESTAMP
        WHERE user_id = ?
          AND listing_slug = ?`
@@ -697,6 +699,7 @@ export async function updateSavedListingForBuyer(
       input.buyerState,
       input.followUpOn ?? null,
       input.buyerNote?.trim() || null,
+      input.collectionName?.trim() || null,
       userId,
       input.listingSlug
     )
@@ -779,7 +782,7 @@ export async function markSavedSearchVisited(db: D1Like, userId: number, id: num
 export async function getSavedListingRecords(db: D1Like, userId: number) {
   const savedListingsResult = await db
     .prepare(
-      `SELECT id, listing_slug, created_at, updated_at, buyer_state, follow_up_on, buyer_note
+      `SELECT id, listing_slug, created_at, updated_at, buyer_state, follow_up_on, buyer_note, collection_name
        FROM saved_listings
        WHERE user_id = ?
        ORDER BY

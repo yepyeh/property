@@ -18,6 +18,13 @@ const savedSearchDeleted = Astro.url.searchParams.get("savedSearchDeleted");
 const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
 const savedListingUpdated = Astro.url.searchParams.get("savedListingUpdated");
 const finalistCount = savedListings.filter((listing) => listing.buyer_state === "finalist").length;
+const collectionGroups = Array.from(
+  savedListings.reduce((map, savedListing) => {
+    const key = savedListing.collection_name?.trim() || "General shortlist";
+    map.set(key, (map.get(key) || 0) + 1);
+    return map;
+  }, new Map<string, number>())
+).sort((a, b) => b[1] - a[1]);
 const enquiryStatusCounts = {
   new: enquiries.filter((enquiry) => enquiry.response_status === "new").length,
   responded: enquiries.filter((enquiry) => enquiry.response_status === "responded").length,
@@ -74,16 +81,16 @@ const enquiryStatusCounts = {
         <p>Add any promising listing first. You do not need to decide on the spot.</p>
       </article>
       <article class="journey-step">
-        <strong>2. Compare a few</strong>
+        <strong>2. Group into collections</strong>
+        <p>Use collections for areas, trips, or move plans so your shortlist does not turn into one long pile.</p>
+      </article>
+      <article class="journey-step">
+        <strong>3. Compare a few</strong>
         <p>Put two or three options next to each other so tradeoffs are obvious.</p>
       </article>
       <article class="journey-step">
-        <strong>3. Mark a finalist</strong>
-        <p>Use `Finalist` when one listing is pulling ahead but you still want to think.</p>
-      </article>
-      <article class="journey-step">
-        <strong>4. Contact with context</strong>
-        <p>Once you are ready, contact from the listing page and track the response here.</p>
+        <strong>4. Mark finalist, then contact</strong>
+        <p>Use `Finalist` when one listing is pulling ahead, then contact from the listing page when you are ready.</p>
       </article>
     </div>
     <div class="action-row top-gap">
@@ -127,9 +134,16 @@ const enquiryStatusCounts = {
         <div>
           <p class="eyebrow">Favorites</p>
           <h2>Saved listings</h2>
-          <p class="panel-copy">Your shortlist of specific homes worth comparing, revisiting, or enquiring on. The strongest listings should surface key facts and one good image immediately.</p>
-        </div>
+        <p class="panel-copy">Your shortlist of specific homes worth comparing, revisiting, or enquiring on. Use collections to group homes by trip, area, or move plan before you decide what deserves a direct enquiry.</p>
       </div>
+    </div>
+      {collectionGroups.length > 0 && (
+        <div class="collection-strip">
+          {collectionGroups.map(([name, count]) => (
+            <span class="collection-chip"><strong>{name}</strong> {count}</span>
+          ))}
+        </div>
+      )}
       {savedListings.length === 0 ? <p class="empty-copy">No saved listings yet. Save individual properties from the listing detail page.</p> : (
         <ul class="stack-list saved-list-grid">
           {savedListings.map((savedListing) => (
@@ -148,6 +162,7 @@ const enquiryStatusCounts = {
               </div>
               <div class="meta-row">
                 <span class={`shortlist-chip state-${savedListing.buyer_state ?? "saved"}`}>{savedListing.buyer_state ?? "saved"}</span>
+                <span class="collection-badge">{savedListing.collection_name?.trim() || "General shortlist"}</span>
                 {savedListing.follow_up_on && <span>Follow up {savedListing.follow_up_on}</span>}
               </div>
               {savedListing.buyer_note && <p class="enquiry-snippet"><strong>Buyer note:</strong> {savedListing.buyer_note}</p>}
@@ -161,6 +176,7 @@ const enquiryStatusCounts = {
                   <option value="follow_up" selected={savedListing.buyer_state === "follow_up"}>Follow up</option>
                 </select>
                 <input type="date" name="followUpOn" value={savedListing.follow_up_on ?? ""} />
+                <input type="text" name="collectionName" value={savedListing.collection_name ?? ""} placeholder="Collection or trip" />
                 <input type="text" name="buyerNote" value={savedListing.buyer_note ?? ""} placeholder="Short note" />
                 <button type="submit" class="button-tertiary">Update</button>
               </form>
@@ -312,6 +328,31 @@ const enquiryStatusCounts = {
   </section>
 
   <style is:inline>
+    .collection-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-bottom: 1rem;
+    }
+
+    .collection-chip,
+    .collection-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      min-height: 1.9rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.06);
+      color: var(--muted-strong);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .collection-chip strong {
+      color: var(--text);
+    }
+
     .split-grid {
       display: grid;
       gap: 1rem;
@@ -401,7 +442,7 @@ const enquiryStatusCounts = {
 
     .saved-state-form {
       display: grid;
-      grid-template-columns: 0.9fr 0.9fr 1.3fr auto;
+      grid-template-columns: 0.9fr 0.9fr 1fr 1.2fr auto;
       gap: 0.55rem;
       align-items: center;
     }

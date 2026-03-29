@@ -24,6 +24,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     buyerState: buyerState as "saved" | "finalist" | "contacted" | "follow_up",
     followUpOn: String(form.get("followUpOn") || "").trim() || null,
     buyerNote: String(form.get("buyerNote") || "").trim() || null,
+    collectionName: String(form.get("collectionName") || "").trim() || null,
   });
 
   return new Response(null, {

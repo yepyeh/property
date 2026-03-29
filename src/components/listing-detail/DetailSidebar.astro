@@ -1,4 +1,5 @@
 ---
+import { estimateMonthlyPayment, formatVndAmount } from "../../lib/affordability";
 import type { Listing } from "../../data/listings";
 
 export interface Props {
@@ -9,6 +10,12 @@ export interface Props {
 }
 
 const { listing, ownerTrustLabel, enquirySent, isBuyer = false } = Astro.props;
+const defaultDownPayment = 20;
+const defaultRate = 7.5;
+const defaultYears = 20;
+const defaultMonthlyEstimate = formatVndAmount(
+  estimateMonthlyPayment(listing.numericPrice, defaultDownPayment, defaultRate, defaultYears)
+);
 ---
 
 <aside class="sidebar-stack">
@@ -41,7 +48,7 @@ const { listing, ownerTrustLabel, enquirySent, isBuyer = false } = Astro.props;
     {isBuyer && (
       <div class="buyer-guide">
         <strong>Not sure yet?</strong>
-        <p>Save this to your shortlist first. Then compare it against two or three other places. If it still looks strongest, mark it as a finalist and come back here to enquire.</p>
+        <p>Save this to your shortlist first. Add it to a collection if you are planning by area or trip. Then compare it against two or three other places. If it still looks strongest, mark it as a finalist and come back here to enquire.</p>
         <a class="guide-link" href="/help/buyer-shortlist-and-compare/">Open buyer guide</a>
       </div>
     )}
@@ -88,7 +95,71 @@ const { listing, ownerTrustLabel, enquirySent, isBuyer = false } = Astro.props;
       </article>
     </div>
   </section>
+
+  {listing.intent === "buy" && (
+    <section
+      class="budget-panel card"
+      data-affordability-card
+      data-price={listing.numericPrice}
+    >
+      <span class="section-kicker">Budget guide</span>
+      <h2>Estimate the monthly cost</h2>
+      <p class="enquiry-copy">A quick financing check before you contact. Major portals push this because buyers use it constantly during shortlisting.</p>
+      <div class="budget-output">
+        <strong data-monthly-output>{defaultMonthlyEstimate} VND / month</strong>
+        <span data-financed-output>Loan amount: {formatVndAmount(listing.numericPrice * 0.8)} VND</span>
+      </div>
+      <div class="budget-grid">
+        <label>
+          <span>Down payment %</span>
+          <input data-down-input type="number" min="0" max="90" step="1" value={defaultDownPayment} />
+        </label>
+        <label>
+          <span>Interest %</span>
+          <input data-rate-input type="number" min="0" max="25" step="0.1" value={defaultRate} />
+        </label>
+        <label>
+          <span>Years</span>
+          <input data-years-input type="number" min="1" max="35" step="1" value={defaultYears} />
+        </label>
+      </div>
+    </section>
+  )}
 </aside>
+
+{listing.intent === "buy" && (
+  <script is:inline>
+    document.querySelectorAll("[data-affordability-card]").forEach((card) => {
+      const price = Number(card.getAttribute("data-price") || "0");
+      const downInput = card.querySelector("[data-down-input]");
+      const rateInput = card.querySelector("[data-rate-input]");
+      const yearsInput = card.querySelector("[data-years-input]");
+      const monthlyOutput = card.querySelector("[data-monthly-output]");
+      const financedOutput = card.querySelector("[data-financed-output]");
+
+      const format = (value) =>
+        new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(Math.round(value));
+
+      const compute = () => {
+        const down = Math.max(0, Math.min(90, Number(downInput?.value || 20)));
+        const rate = Math.max(0, Number(rateInput?.value || 7.5));
+        const years = Math.max(1, Number(yearsInput?.value || 20));
+        const principal = price * Math.max(0, 1 - down / 100);
+        const monthlyRate = rate / 100 / 12;
+        const months = years * 12;
+        const monthly = monthlyRate <= 0
+          ? principal / months
+          : (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
+
+        if (monthlyOutput) monthlyOutput.textContent = `${format(monthly)} VND / month`;
+        if (financedOutput) financedOutput.textContent = `Loan amount: ${format(principal)} VND`;
+      };
+
+      [downInput, rateInput, yearsInput].forEach((input) => input?.addEventListener("input", compute));
+      compute();
+    });
+  </script>
+)}
 
 <style is:inline>
   .sidebar-stack {
@@ -99,7 +170,8 @@ const { listing, ownerTrustLabel, enquirySent, isBuyer = false } = Astro.props;
   }
 
   .enquiry-panel,
-  .stats-panel {
+  .stats-panel,
+  .budget-panel {
     padding: 1.1rem;
     background: rgba(255, 255, 255, 0.92);
     box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 18px 40px rgba(16, 24, 40, 0.06);
@@ -140,6 +212,32 @@ const { listing, ownerTrustLabel, enquirySent, isBuyer = false } = Astro.props;
     background: rgba(18, 183, 106, 0.08);
     color: #067647;
     font-weight: 700;
+  }
+
+  .budget-output {
+    display: grid;
+    gap: 0.18rem;
+    margin-top: 0.9rem;
+    padding: 1rem;
+    border-radius: 20px;
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    border: 1px solid rgba(208, 213, 221, 0.74);
+  }
+
+  .budget-output strong {
+    font-size: 1.25rem;
+    letter-spacing: -0.04em;
+  }
+
+  .budget-output span {
+    color: var(--muted);
+  }
+
+  .budget-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.9rem;
   }
 
   .owner-card {
@@ -219,14 +317,21 @@ const { listing, ownerTrustLabel, enquirySent, isBuyer = false } = Astro.props;
     gap: 0.4rem;
   }
 
-  .enquiry-form label span {
+  .budget-grid label {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .enquiry-form label span,
+  .budget-grid label span {
     font-size: 0.9rem;
     font-weight: 700;
     color: var(--text);
   }
 
   .enquiry-form input,
-  .enquiry-form textarea {
+  .enquiry-form textarea,
+  .budget-grid input {
     width: 100%;
     border: 1px solid var(--line);
     border-radius: 16px;
@@ -300,6 +405,10 @@ const { listing, ownerTrustLabel, enquirySent, isBuyer = false } = Astro.props;
 
   @media (max-width: 760px) {
     .expectation-row {
+      grid-template-columns: 1fr;
+    }
+
+    .budget-grid {
       grid-template-columns: 1fr;
     }
   }

@@ -174,6 +174,7 @@ export interface SavedListingRecord {
   buyer_state?: "saved" | "finalist" | "contacted" | "follow_up";
   follow_up_on?: string | null;
   buyer_note?: string | null;
+  collection_name?: string | null;
   listing?: Listing | null;
 }
 
