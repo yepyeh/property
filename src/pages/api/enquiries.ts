@@ -20,6 +20,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       contact: readText(form, "contact", { required: true, maxLength: 160 }),
       message: readText(form, "message", { required: true, maxLength: 2000 }),
       preferredTime: readOptionalText(form, "preferredTime", { maxLength: 120 }),
+      applicantUserId: locals.owner?.role === "buyer" || locals.owner?.role === "admin" ? locals.owner.id : null,
     });
 
     return new Response(null, {

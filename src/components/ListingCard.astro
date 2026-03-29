@@ -3,9 +3,10 @@ import type { Listing } from "../data/listings";
 
 export interface Props {
   listing: Listing;
+  showCompareLink?: boolean;
 }
 
-const { listing } = Astro.props;
+const { listing, showCompareLink = false } = Astro.props;
 const heroImage = listing.imageUrls?.[0];
 const intentLabel = listing.intent === "rent" ? "To rent" : "For sale";
 const neighborhood = listing.neighborhood;
@@ -64,7 +65,10 @@ const imageCount = listing.imageUrls?.length || 0;
         <span>{listing.stats.enquiries} enquiries</span>
         <span>{listing.owner.verified ? "Verified owner" : "Owner listed"}</span>
       </div>
-      <a class="details-link" href={`/listings/${listing.slug}/`}>View details</a>
+      <div class="footer-actions">
+        {showCompareLink && <a class="compare-link" href="/buyer/compare/">Compare</a>}
+        <a class="details-link" href={`/listings/${listing.slug}/`}>View details</a>
+      </div>
     </div>
   </div>
 </article>
@@ -183,6 +187,7 @@ const imageCount = listing.imageUrls?.length || 0;
 
   .listing-top,
   .listing-footer,
+  .footer-actions,
   .fact-row,
   .signal-row,
   .context-row {
@@ -274,6 +279,20 @@ const imageCount = listing.imageUrls?.length || 0;
 
   .details-link:hover {
     background: #1e293b;
+  }
+
+  .compare-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.7rem;
+    padding: 0.78rem 0.95rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.92);
+    color: var(--text);
+    font-weight: 700;
+    text-decoration: none;
   }
 
   @media (max-width: 760px) {

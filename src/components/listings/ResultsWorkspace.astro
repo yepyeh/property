@@ -18,9 +18,10 @@ export interface Props {
   mappableListings: MappableListing[];
   allDistricts: string[];
   topNeighborhoods: string[];
+  showCompareLink?: boolean;
 }
 
-const { listings, mappableListings, allDistricts, topNeighborhoods } = Astro.props;
+const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareLink = false } = Astro.props;
 ---
 
 <div class="mobile-view-toggle" data-default-view="list">
@@ -68,7 +69,7 @@ const { listings, mappableListings, allDistricts, topNeighborhoods } = Astro.pro
           data-has-map={listing.location ? "true" : "false"}
           tabindex={listing.location ? 0 : -1}
         >
-          <ListingCard listing={listing} />
+          <ListingCard listing={listing} showCompareLink={showCompareLink} />
         </div>
       ))
     ) : (

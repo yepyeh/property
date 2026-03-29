@@ -102,6 +102,7 @@ const currentSearchQuery = buildSavedSearchQuery(filters);
     mappableListings={mappableListings}
     allDistricts={allDistricts}
     topNeighborhoods={topNeighborhoods}
+    showCompareLink={owner?.role === "buyer" || owner?.role === "admin"}
   />
 
   <script is:inline>

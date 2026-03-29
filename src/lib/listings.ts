@@ -381,10 +381,10 @@ export async function createEnquiry(db: D1Like, input: EnquiryInput) {
   await db
     .prepare(
       `INSERT INTO enquiries (
-        listing_slug, listing_title, applicant_name, contact, message, preferred_time
-      ) VALUES (?, ?, ?, ?, ?, ?)`
+        listing_slug, listing_title, applicant_name, contact, message, preferred_time, applicant_user_id
+      ) VALUES (?, ?, ?, ?, ?, ?, ?)`
     )
-    .bind(input.listingSlug, input.listingTitle, input.applicantName, input.contact, input.message, input.preferredTime)
+    .bind(input.listingSlug, input.listingTitle, input.applicantName, input.contact, input.message, input.preferredTime, input.applicantUserId ?? null)
     .run();
 
   await db
@@ -408,6 +408,34 @@ export async function createEnquiry(db: D1Like, input: EnquiryInput) {
       level: "info",
     });
   }
+}
+
+export async function getBuyerEnquiryRecords(db: D1Like, userId: number) {
+  const enquiries = await db
+    .prepare(
+      `SELECT e.listing_slug, e.listing_title, e.applicant_name, e.contact, e.message, e.preferred_time, e.created_at,
+              l.city, l.district, l.ward, l.price_label
+       FROM enquiries e
+       LEFT JOIN listings l ON l.slug = e.listing_slug
+       WHERE e.applicant_user_id = ?
+       ORDER BY e.created_at DESC`
+    )
+    .bind(userId)
+    .all<{
+      listing_slug: string;
+      listing_title: string;
+      applicant_name: string;
+      contact: string;
+      message: string;
+      preferred_time: string | null;
+      created_at: string;
+      city: string | null;
+      district: string | null;
+      ward: string | null;
+      price_label: string | null;
+    }>();
+
+  return enquiries.results;
 }
 
 export async function saveSearch(db: D1Like, input: SavedSearchInput) {

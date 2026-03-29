@@ -102,6 +102,7 @@ export interface EnquiryInput {
   contact: string;
   message: string;
   preferredTime: string;
+  applicantUserId?: number | null;
 }
 
 export interface ListingFilters {

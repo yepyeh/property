@@ -13,7 +13,7 @@ if (!owner || (owner.role !== "buyer" && owner.role !== "admin")) {
   return Astro.redirect("/login");
 }
 
-const { savedSearches, savedListings, inboxNotifications, unreadNotificationCount } = await getBuyerDashboardData(owner.id, getDB(Astro.locals.runtime));
+const { savedSearches, savedListings, enquiries, inboxNotifications, unreadNotificationCount } = await getBuyerDashboardData(owner.id, getDB(Astro.locals.runtime));
 const savedSearchDeleted = Astro.url.searchParams.get("savedSearchDeleted");
 const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
 ---
@@ -38,6 +38,7 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
     items={[
       { label: "Searches", value: savedSearches.length, copy: "Saved searches" },
       { label: "Favorites", value: savedListings.length, copy: "Saved listings" },
+      { label: "Enquiries", value: enquiries.length, copy: "Sent enquiries" },
       { label: "Inbox", value: unreadNotificationCount, copy: "Unread notifications" },
     ]}
   />
@@ -145,6 +146,34 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
   <section class="card panel section-gap">
     <div class="panel-head">
       <div>
+        <p class="eyebrow">Contact history</p>
+        <h2>Sent enquiries</h2>
+        <p class="panel-copy">Track which homes you already contacted so the shortlist, compare flow, and owner responses stay connected.</p>
+      </div>
+    </div>
+    {enquiries.length === 0 ? <p class="empty-copy">No enquiries sent yet. Use listing detail pages to contact owners.</p> : (
+      <ul class="stack-list compact-list">
+        {enquiries.map((enquiry) => (
+          <li class="list-item">
+            <strong>{enquiry.listing_title}</strong>
+            <p>{enquiry.ward ?? "Unknown ward"} · {enquiry.district ?? "Unknown district"} · {enquiry.city ?? "Unknown city"}</p>
+            <div class="meta-row">
+              <span>{enquiry.price_label ?? "Price unavailable"}</span>
+              <span>{enquiry.created_at}</span>
+            </div>
+            <p class="enquiry-snippet">{enquiry.message}</p>
+            <div class="action-row">
+              <a class="button-secondary" href={`/listings/${enquiry.listing_slug}/`}>Open listing</a>
+            </div>
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+
+  <section class="card panel section-gap">
+    <div class="panel-head">
+      <div>
         <p class="eyebrow">Search intent</p>
         <h2>Saved searches</h2>
         <p class="panel-copy">Reusable routes back into the market when you are tracking one area, budget, or housing type over time.</p>
@@ -224,7 +253,8 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
     }
 
     .search-list .list-item p,
-    .saved-content p {
+    .saved-content p,
+    .enquiry-snippet {
       margin: 0;
       color: var(--muted);
       line-height: 1.65;

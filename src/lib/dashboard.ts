@@ -1,5 +1,5 @@
 import { normalizeExpiredListingPlans } from "./listing-lifecycle";
-import { getSavedListingRecords, getSavedSearchRecords } from "./listings";
+import { getBuyerEnquiryRecords, getSavedListingRecords, getSavedSearchRecords } from "./listings";
 import type {
   ExpiryEmailDeliveryRecord,
   NotificationPreferences,
@@ -139,6 +139,7 @@ export async function getBuyerDashboardData(userId: number, db?: D1Like) {
     return {
       savedSearches: [],
       savedListings: [],
+      enquiries: [],
       notificationPreferences: null,
       inboxNotifications: [],
       unreadNotificationCount: 0,
@@ -155,6 +156,7 @@ export async function getBuyerDashboardData(userId: number, db?: D1Like) {
   return {
     savedSearches: await getSavedSearchRecords(db, userId),
     savedListings: await getSavedListingRecords(db, userId),
+    enquiries: await getBuyerEnquiryRecords(db, userId),
     notificationPreferences,
     inboxNotifications,
     unreadNotificationCount,

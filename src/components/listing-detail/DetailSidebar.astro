@@ -5,9 +5,10 @@ export interface Props {
   listing: Listing;
   ownerTrustLabel: string;
   enquirySent: boolean;
+  isBuyer?: boolean;
 }
 
-const { listing, ownerTrustLabel, enquirySent } = Astro.props;
+const { listing, ownerTrustLabel, enquirySent, isBuyer = false } = Astro.props;
 ---
 
 <aside class="sidebar-stack">
@@ -36,6 +37,8 @@ const { listing, ownerTrustLabel, enquirySent } = Astro.props;
         <span>{listing.owner.responseTime} when the listing is actively managed.</span>
       </article>
     </div>
+
+    {isBuyer && <a class="button-secondary full-width" href="/buyer/compare/">Compare against saved homes</a>}
 
     <form class="enquiry-form" method="POST" action="/api/enquiries">
       <input type="hidden" name="listingSlug" value={listing.slug} />
@@ -217,6 +220,22 @@ const { listing, ownerTrustLabel, enquirySent } = Astro.props;
     background: var(--brand);
     color: white;
     box-shadow: 0 14px 28px rgba(16, 24, 40, 0.16);
+  }
+
+  .button-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.8rem;
+    padding: 0.85rem 1rem;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid var(--line-strong);
+    background: white;
+    color: var(--text);
+    text-decoration: none;
   }
 
   .full-width {
