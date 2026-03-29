@@ -26,6 +26,17 @@ const { listing, ownerTrustLabel, enquirySent } = Astro.props;
       <span>{ownerTrustLabel} · Replies in {listing.owner.responseTime}</span>
     </div>
 
+    <div class="expectation-row">
+      <article>
+        <strong>Best first message</strong>
+        <span>Ask about availability, viewings, and any building or ownership conditions.</span>
+      </article>
+      <article>
+        <strong>Typical response</strong>
+        <span>{listing.owner.responseTime} when the listing is actively managed.</span>
+      </article>
+    </div>
+
     <form class="enquiry-form" method="POST" action="/api/enquiries">
       <input type="hidden" name="listingSlug" value={listing.slug} />
       <input type="hidden" name="listingTitle" value={listing.title} />
@@ -35,7 +46,7 @@ const { listing, ownerTrustLabel, enquirySent } = Astro.props;
       </label>
       <label>
         <span>Contact</span>
-        <input type="text" name="contact" required placeholder="Email or phone number" />
+        <input type="text" name="contact" required placeholder="Email, WhatsApp, or phone number" />
       </label>
       <label>
         <span>Preferred viewing time</span>
@@ -141,6 +152,35 @@ const { listing, ownerTrustLabel, enquirySent } = Astro.props;
     margin-top: 1rem;
   }
 
+  .expectation-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+
+  .expectation-row article {
+    padding: 0.95rem 1rem;
+    border-radius: 18px;
+    background: rgba(243, 239, 231, 0.72);
+    border: 1px solid var(--line);
+  }
+
+  .expectation-row strong,
+  .expectation-row span {
+    display: block;
+  }
+
+  .expectation-row strong {
+    margin-bottom: 0.35rem;
+    font-size: 0.95rem;
+  }
+
+  .expectation-row span {
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
   .enquiry-form label {
     display: grid;
     gap: 0.4rem;
@@ -206,6 +246,12 @@ const { listing, ownerTrustLabel, enquirySent } = Astro.props;
   @media (max-width: 1100px) {
     .sidebar-stack {
       position: static;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .expectation-row {
+      grid-template-columns: 1fr;
     }
   }
 </style>

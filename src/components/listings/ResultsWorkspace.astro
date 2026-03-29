@@ -252,9 +252,18 @@ const { listings, mappableListings, allDistricts, topNeighborhoods } = Astro.pro
     gap: 1rem;
   }
 
+  .results-list > :global(*) + :global(*) {
+    margin-top: 0;
+  }
+
   .listing-card-shell {
     border-radius: 30px;
     transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+
+  .district-list,
+  .neighborhood-list {
+    margin-top: 1rem;
   }
 
   .listing-card-shell.is-active {

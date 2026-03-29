@@ -21,8 +21,8 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
 <Layout title="Buyer Dashboard | Property App 2026" description="Manage saved searches and buyer-side activity in the marketplace.">
   <WorkspaceHero
     eyebrow="Buyer workspace"
-    title="Track homes, shortlist areas, and return with context."
-    text="Search intent, favorite listings, and in-app notifications belong in one account surface so return visits feel deliberate rather than fragmented."
+    title="Track homes, return to strong areas, and keep your shortlist moving."
+    text="This should feel like a clean buyer workspace, not a storage page. Saved searches, favorite listings, and new activity stay in one place so revisits feel deliberate."
     actions={[
       { href: "/listings/", label: "Browse listings" },
       { href: "/account/inbox", label: "Open inbox", kind: "secondary" },
@@ -53,8 +53,8 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
       <div class="panel-head">
         <div>
           <p class="eyebrow">Recent activity</p>
-          <h2>Notification inbox</h2>
-          <p class="panel-copy">Saved-search updates, listing changes, and account activity stay visible here.</p>
+          <h2>Recent inbox activity</h2>
+          <p class="panel-copy">Saved-search updates, listing changes, and account activity stay visible here first.</p>
         </div>
         <a class="panel-link" href="/account/inbox">View all</a>
       </div>
@@ -83,7 +83,7 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
         <div>
           <p class="eyebrow">Favorites</p>
           <h2>Saved listings</h2>
-          <p class="panel-copy">Property-level intent you want to revisit quickly.</p>
+          <p class="panel-copy">Your shortlist of specific homes worth comparing, revisiting, or enquiring on.</p>
         </div>
       </div>
       {savedListings.length === 0 ? <p class="empty-copy">No saved listings yet. Save individual properties from the listing detail page.</p> : (
@@ -115,7 +115,7 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
       <div>
         <p class="eyebrow">Search intent</p>
         <h2>Saved searches</h2>
-        <p class="panel-copy">Reusable filters that can evolve into alerts, shortlist flows, and revisit loops.</p>
+        <p class="panel-copy">Reusable routes back into the market when you are tracking one area, budget, or housing type over time.</p>
       </div>
     </div>
     {savedSearches.length === 0 ? <p class="empty-copy">No saved searches yet. Save a filter from the listings page to build your shortlist.</p> : (
@@ -146,6 +146,13 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
       gap: 1rem;
       margin-top: 1rem;
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .list-item {
+      padding: 1rem;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92));
+      border: 1px solid var(--line);
     }
 
     @media (max-width: 960px) {

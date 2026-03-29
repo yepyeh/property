@@ -25,6 +25,10 @@ const neighborhood = listing.neighborhood;
   </a>
 
   <div class="listing-body">
+    <div class="listing-label-row">
+      <span class="market-chip">{listing.type}</span>
+      <span class="market-chip muted">{listing.intent === "rent" ? "Monthly rental" : "Private sale"}</span>
+    </div>
     <div class="listing-top">
       <div>
         <p class="price">{listing.priceLabel}</p>
@@ -140,6 +144,32 @@ const neighborhood = listing.neighborhood;
     padding: 1.15rem;
   }
 
+  .listing-label-row {
+    display: flex;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+  }
+
+  .market-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding: 0.2rem 0.72rem;
+    border-radius: 999px;
+    background: rgba(17, 17, 17, 0.05);
+    color: var(--brand);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .market-chip.muted {
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid var(--line);
+    color: var(--muted-strong);
+  }
+
   .listing-top,
   .listing-footer,
   .fact-row,
@@ -192,6 +222,10 @@ const neighborhood = listing.neighborhood;
     line-height: 1.68;
   }
 
+  .summary {
+    font-size: 0.95rem;
+  }
+
   .fact-row,
   .signal-row,
   .context-row {
@@ -209,7 +243,7 @@ const neighborhood = listing.neighborhood;
     gap: 0.58rem;
     padding: 0.92rem;
     border-radius: 1.25rem;
-    background: rgba(243, 239, 231, 0.78);
+    background: linear-gradient(180deg, rgba(243, 239, 231, 0.96), rgba(255, 255, 255, 0.96));
     border: 1px solid var(--line);
   }
 
@@ -227,6 +261,7 @@ const neighborhood = listing.neighborhood;
   }
 
   @media (max-width: 760px) {
+    .listing-label-row,
     .listing-top,
     .listing-footer,
     .fact-row,

@@ -28,6 +28,10 @@ const { owner, filters, dashboardHref, currentSearchQuery } = Astro.props;
       <span>Buyer follow-up later</span>
       <span>Alert-ready structure</span>
     </div>
+    <div class="save-meter">
+      <strong>Best used for:</strong>
+      <span>buyers watching one district, one budget band, or one property type over time.</span>
+    </div>
   </div>
   {owner ? (
     <form method="POST" action="/api/saved-searches" class="save-form">
@@ -118,6 +122,24 @@ const { owner, filters, dashboardHref, currentSearchQuery } = Astro.props;
     font-size: 0.8rem;
     font-weight: 700;
     color: var(--muted-strong);
+  }
+
+  .save-meter {
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.95rem 1rem;
+    border-radius: 20px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(243,239,231,0.9));
+    border: 1px solid var(--line);
+  }
+
+  .save-meter strong {
+    font-size: 0.95rem;
+  }
+
+  .save-meter span {
+    color: var(--muted);
+    line-height: 1.65;
   }
 
   .save-form,

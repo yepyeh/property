@@ -56,8 +56,8 @@ function getImageCount(value: unknown) {
 <Layout title="Owner Dashboard | Property App 2026" description="Review submitted listings and enquiries from the marketplace backend.">
   <WorkspaceHero
     eyebrow="Owner workspace"
-    title="Operate listings, billing, and follow-up from one surface."
-    text="Inventory health, enquiry flow, and monetization should stay visible without bouncing across scattered tools. This dashboard keeps the supply-side loop legible."
+    title="Run listings, enquiries, and renewals without losing the thread."
+    text="This should feel closer to an operator workspace than an admin panel. Inventory health, buyer follow-up, and paid visibility all stay readable in one place."
     actions={[
       { href: "/submit-listing/", label: "Post a listing" },
       { href: "/account/inbox", label: "Open inbox", kind: "secondary" },
@@ -89,8 +89,8 @@ function getImageCount(value: unknown) {
       <div class="panel-head">
         <div>
           <p class="eyebrow">Renewal</p>
-          <h2>Expiry notifications</h2>
-          <p class="panel-copy">Trial, paid, and promotion reminders are prioritized here first.</p>
+          <h2>Renewal watchlist</h2>
+          <p class="panel-copy">Listings at risk of dropping out of visibility show up here before they become a revenue leak.</p>
         </div>
         <a class="panel-link" href="/account/notifications">Preferences</a>
       </div>
@@ -117,8 +117,8 @@ function getImageCount(value: unknown) {
       <div class="panel-head">
         <div>
           <p class="eyebrow">Recent activity</p>
-          <h2>Notification inbox</h2>
-          <p class="panel-copy">Unread account events stay visible without opening a separate admin flow.</p>
+          <h2>Recent inbox activity</h2>
+          <p class="panel-copy">Unread owner events stay visible here so you do not need to bounce into a separate notifications screen first.</p>
         </div>
         <a class="panel-link" href="/account/inbox">View all</a>
       </div>
@@ -147,8 +147,8 @@ function getImageCount(value: unknown) {
     <div class="panel-head">
       <div>
         <p class="eyebrow">Demand signals</p>
-        <h2>Saved searches</h2>
-        <p class="panel-copy">Buyer intent worth revisiting later or converting into alerts.</p>
+          <h2>Buyer demand signals</h2>
+          <p class="panel-copy">Saved searches are a lightweight demand layer. Use them to understand what buyers keep coming back to.</p>
       </div>
     </div>
     {savedSearches.length === 0 ? <p class="empty-copy">No saved searches yet. Save a filter from the listings page to build buyer alerts.</p> : (
@@ -178,8 +178,8 @@ function getImageCount(value: unknown) {
       <div class="panel-head">
         <div>
           <p class="eyebrow">Supply</p>
-          <h2>Submitted listings</h2>
-          <p class="panel-copy">Each listing shows current plan state, media count, and next billing action.</p>
+          <h2>Live inventory</h2>
+          <p class="panel-copy">Each card shows current visibility state, media coverage, and the next commercial action that matters.</p>
         </div>
       </div>
       {listings.length === 0 ? <p class="empty-copy">No database listings yet.</p> : (
@@ -259,8 +259,8 @@ function getImageCount(value: unknown) {
         <div class="panel-head">
           <div>
             <p class="eyebrow">Revenue</p>
-            <h2>Payment history</h2>
-            <p class="panel-copy">Completed Stripe checkouts and plan changes recorded against this account.</p>
+          <h2>Revenue log</h2>
+          <p class="panel-copy">Completed upgrades and recorded billing events for this account.</p>
           </div>
         </div>
         {payments.length === 0 ? <p class="empty-copy">No payments recorded yet. New completed Stripe checkouts will appear here.</p> : (
@@ -308,6 +308,10 @@ function getImageCount(value: unknown) {
       flex-wrap: wrap;
     }
 
+    .panel-copy {
+      max-width: 42rem;
+    }
+
     .badge-text,
     .status-chip {
       display: inline-flex;
@@ -318,9 +322,18 @@ function getImageCount(value: unknown) {
       border-radius: 999px;
       font-size: 0.78rem;
       font-weight: 700;
-      background: rgba(127, 86, 217, 0.12);
+      background: rgba(17, 17, 17, 0.06);
       color: var(--accent-strong);
       text-transform: capitalize;
+    }
+
+    .listing-item,
+    .list-item,
+    .alert-item {
+      border-radius: 22px;
+      padding: 1rem;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92));
+      border: 1px solid var(--line);
     }
 
     .alert-warning {

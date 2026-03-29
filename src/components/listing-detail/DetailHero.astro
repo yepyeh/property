@@ -21,6 +21,10 @@ const heroImage = listing.imageUrls?.[0];
         <span class="badge-primary">{intentLabel}</span>
         <span class="badge-secondary">{listing.status}</span>
       </div>
+      <div class="hero-image-note">
+        <strong>{listing.ward}, {listing.district}</strong>
+        <span>{listing.city}</span>
+      </div>
     </div>
     {listing.imageUrls && listing.imageUrls.length > 1 && (
       <div class="gallery-strip">
@@ -57,6 +61,21 @@ const heroImage = listing.imageUrls?.[0];
       <span>{ownerTrustLabel}</span>
       <span>{listing.owner.role}</span>
       <span>Replies in {listing.owner.responseTime}</span>
+    </div>
+
+    <div class="hero-signal-grid">
+      <article>
+        <strong>{listing.stats.views24h}</strong>
+        <span>Views in the last 24 hours</span>
+      </article>
+      <article>
+        <strong>{listing.stats.saves}</strong>
+        <span>Saves from active buyers</span>
+      </article>
+      <article>
+        <strong>{listing.stats.enquiries}</strong>
+        <span>Recent enquiry conversations</span>
+      </article>
     </div>
 
     <div class="hero-actions">
@@ -104,6 +123,26 @@ const heroImage = listing.imageUrls?.[0];
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
+    flex-direction: column;
+  }
+
+  .hero-image-note {
+    margin-top: auto;
+    padding: 0.95rem 1rem;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--brand);
+    backdrop-filter: blur(10px);
+  }
+
+  .hero-image-note strong,
+  .hero-image-note span {
+    display: block;
+  }
+
+  .hero-image-note span {
+    margin-top: 0.2rem;
+    color: var(--muted-strong);
   }
 
   .sea:not([style]) { background-image: linear-gradient(180deg, rgba(15,23,42,0.08), rgba(15,23,42,0.42)), linear-gradient(135deg, #98d4d5, #2f6f89); }
@@ -120,6 +159,32 @@ const heroImage = listing.imageUrls?.[0];
     gap: 0.75rem;
     flex-wrap: wrap;
     align-items: center;
+  }
+
+  .hero-signal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  .hero-signal-grid article {
+    padding: 1rem;
+    border-radius: 20px;
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    border: 1px solid rgba(208, 213, 221, 0.74);
+  }
+
+  .hero-signal-grid strong {
+    display: block;
+    font-size: 1.2rem;
+    letter-spacing: -0.04em;
+  }
+
+  .hero-signal-grid span {
+    display: block;
+    margin-top: 0.3rem;
+    color: var(--muted);
+    line-height: 1.5;
   }
 
   .badge-primary,
@@ -256,6 +321,10 @@ const heroImage = listing.imageUrls?.[0];
 
   @media (max-width: 1100px) {
     .detail-hero {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-signal-grid {
       grid-template-columns: 1fr;
     }
   }

@@ -12,15 +12,19 @@ const { total, cities, forRent, hasFilters, allCities, selectedIntent } = Astro.
 ---
 
 <section class="results-summary card" id="results">
-  <div>
+  <div class="summary-main">
     <strong>{total} listings</strong>
     <p>
       across {cities} cities · {forRent} rentals live
       {hasFilters ? " · filtered results" : " · full inventory"}
     </p>
+    <div class="summary-pills">
+      <span>{selectedIntent === "rent" ? "Rental search" : "Purchase search"}</span>
+      <span>{hasFilters ? "Custom filter set" : "Full live inventory"}</span>
+    </div>
   </div>
   <div class="summary-links">
-    <span>Popular cities</span>
+    <span>Popular city routes</span>
     {allCities.slice(0, 3).map((city) => <a href={`/listings/?intent=${selectedIntent}&city=${encodeURIComponent(city)}`}>{city}</a>)}
   </div>
 </section>
@@ -49,6 +53,30 @@ const { total, cities, forRent, hasFilters, allCities, selectedIntent } = Astro.
     color: var(--muted);
     margin-top: 0.7rem;
     line-height: 1.72;
+    font-weight: 700;
+  }
+
+  .summary-main {
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  .summary-pills {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .summary-pills span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding: 0.3rem 0.78rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid var(--line);
+    color: var(--muted-strong);
+    font-size: 0.8rem;
     font-weight: 700;
   }
 
