@@ -16,6 +16,11 @@ if (!owner || (owner.role !== "buyer" && owner.role !== "admin")) {
 const { savedSearches, savedListings, enquiries, recentlyViewed, inboxNotifications, unreadNotificationCount } = await getBuyerDashboardData(owner.id, getDB(Astro.locals.runtime));
 const savedSearchDeleted = Astro.url.searchParams.get("savedSearchDeleted");
 const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
+const enquiryStatusCounts = {
+  new: enquiries.filter((enquiry) => enquiry.response_status === "new").length,
+  responded: enquiries.filter((enquiry) => enquiry.response_status === "responded").length,
+  archived: enquiries.filter((enquiry) => enquiry.response_status === "archived").length,
+};
 ---
 
 <Layout title="Buyer Dashboard | Property App 2026" description="Manage saved searches and buyer-side activity in the marketplace.">
@@ -152,6 +157,20 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
         <p class="panel-copy">Track which homes you already contacted so the shortlist, compare flow, and owner responses stay connected.</p>
       </div>
     </div>
+    <div class="compare-preview status-preview">
+      <div class="compare-chip">
+        <strong>{enquiryStatusCounts.new}</strong>
+        <span>Awaiting owner reply</span>
+      </div>
+      <div class="compare-chip">
+        <strong>{enquiryStatusCounts.responded}</strong>
+        <span>Owner responded</span>
+      </div>
+      <div class="compare-chip">
+        <strong>{enquiryStatusCounts.archived}</strong>
+        <span>Archived</span>
+      </div>
+    </div>
     {enquiries.length === 0 ? <p class="empty-copy">No enquiries sent yet. Use listing detail pages to contact owners.</p> : (
       <ul class="stack-list compact-list">
         {enquiries.map((enquiry) => (
@@ -162,6 +181,11 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
               <span>{enquiry.price_label ?? "Price unavailable"}</span>
               <span>{enquiry.created_at}</span>
             </div>
+            <div class="meta-row">
+              <span>Status: {enquiry.response_status ?? "new"}</span>
+              {enquiry.responded_at && <span>Updated {enquiry.responded_at}</span>}
+            </div>
+            {enquiry.owner_note && <p class="enquiry-snippet"><strong>Owner note:</strong> {enquiry.owner_note}</p>}
             <p class="enquiry-snippet">{enquiry.message}</p>
             <div class="action-row">
               <a class="button-secondary" href={`/listings/${enquiry.listing_slug}/`}>Open listing</a>
@@ -213,13 +237,17 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
           <li class="list-item">
             <strong>{search.name}</strong>
             <p>{search.last_result_count} matching listings at last save</p>
+            <div class={`freshness-row ${search.new_result_count ? "freshness-hot" : ""}`}>
+              <span>{search.freshness_label}</span>
+            </div>
             <div class="meta-row">
               <span>{search.route_query ? `/listings/?${search.route_query}` : "/listings/"}</span>
             </div>
             <div class="action-row">
-              <a class="button-secondary" href={search.route_query ? `/listings/?${search.route_query}` : "/listings/"}>Open search</a>
+              <a class="button-secondary" href={`/api/saved-searches/visit?id=${search.id}&redirectTo=${encodeURIComponent(search.route_query ? `/listings/?${search.route_query}` : "/listings/")}`}>Open search</a>
               <form method="POST" action="/api/saved-searches/delete">
                 <input type="hidden" name="id" value={search.id} />
+                <input type="hidden" name="redirectTo" value="/buyer/dashboard/" />
                 <button type="submit" class="button-tertiary">Delete</button>
               </form>
             </div>
@@ -305,6 +333,27 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
 
     .compare-chip span {
       color: var(--muted);
+    }
+
+    .status-preview {
+      margin-bottom: 1rem;
+    }
+
+    .freshness-row {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 0.45rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.06);
+      color: var(--muted-strong);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .freshness-hot {
+      background: rgba(6, 95, 70, 0.12);
+      color: #065f46;
     }
 
     @media (max-width: 960px) {

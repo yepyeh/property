@@ -40,6 +40,56 @@ function normalizeListingFilters(filters: ListingFilters) {
   } satisfies ListingFilters;
 }
 
+function buildDynamicListingWhere(filters: ListingFilters, options: { createdAfter?: string } = {}) {
+  const clauses = [
+    "published = 1",
+    "(plan_type = 'paid' OR paid_until IS NOT NULL OR trial_ends_at IS NULL OR trial_ends_at >= CURRENT_TIMESTAMP)",
+  ];
+  const values: unknown[] = [];
+
+  if (filters.intent === "buy" || filters.intent === "rent") {
+    clauses.push("intent = ?");
+    values.push(filters.intent);
+  }
+
+  if (filters.city) {
+    clauses.push("LOWER(city) LIKE ?");
+    values.push(`%${normalizeTextFilter(filters.city)}%`);
+  }
+
+  if (filters.district) {
+    clauses.push("LOWER(district) LIKE ?");
+    values.push(`%${normalizeTextFilter(filters.district)}%`);
+  }
+
+  if (filters.propertyType) {
+    clauses.push("property_type = ?");
+    values.push(filters.propertyType);
+  }
+
+  if (typeof filters.minPrice === "number" && Number.isFinite(filters.minPrice)) {
+    clauses.push("numeric_price >= ?");
+    values.push(filters.minPrice);
+  }
+
+  if (typeof filters.maxPrice === "number" && Number.isFinite(filters.maxPrice)) {
+    clauses.push("numeric_price <= ?");
+    values.push(filters.maxPrice);
+  }
+
+  if (typeof filters.minBeds === "number" && Number.isFinite(filters.minBeds)) {
+    clauses.push("beds >= ?");
+    values.push(filters.minBeds);
+  }
+
+  if (options.createdAfter) {
+    clauses.push("created_at > ?");
+    values.push(options.createdAfter);
+  }
+
+  return { clauses, values };
+}
+
 export function buildSavedSearchQuery(filters: ListingFilters) {
   const normalized = normalizeListingFilters(filters);
   const params = new URLSearchParams();
@@ -190,46 +240,7 @@ async function getFilteredDynamicListings(filters: ListingFilters, db?: D1Like) 
   if (!db) return [] as Listing[];
   await normalizeExpiredListingPlans(db);
 
-  const clauses = [
-    "published = 1",
-    "(plan_type = 'paid' OR paid_until IS NOT NULL OR trial_ends_at IS NULL OR trial_ends_at >= CURRENT_TIMESTAMP)",
-  ];
-  const values: unknown[] = [];
-
-  if (filters.intent === "buy" || filters.intent === "rent") {
-    clauses.push("intent = ?");
-    values.push(filters.intent);
-  }
-
-  if (filters.city) {
-    clauses.push("LOWER(city) LIKE ?");
-    values.push(`%${normalizeTextFilter(filters.city)}%`);
-  }
-
-  if (filters.district) {
-    clauses.push("LOWER(district) LIKE ?");
-    values.push(`%${normalizeTextFilter(filters.district)}%`);
-  }
-
-  if (filters.propertyType) {
-    clauses.push("property_type = ?");
-    values.push(filters.propertyType);
-  }
-
-  if (typeof filters.minPrice === "number" && Number.isFinite(filters.minPrice)) {
-    clauses.push("numeric_price >= ?");
-    values.push(filters.minPrice);
-  }
-
-  if (typeof filters.maxPrice === "number" && Number.isFinite(filters.maxPrice)) {
-    clauses.push("numeric_price <= ?");
-    values.push(filters.maxPrice);
-  }
-
-  if (typeof filters.minBeds === "number" && Number.isFinite(filters.minBeds)) {
-    clauses.push("beds >= ?");
-    values.push(filters.minBeds);
-  }
+  const { clauses, values } = buildDynamicListingWhere(filters);
 
   const sort = normalizeSort(filters.sort);
   const orderBy = {
@@ -249,6 +260,21 @@ async function getFilteredDynamicListings(filters: ListingFilters, db?: D1Like) 
     .all<ListingRow>();
 
   return results.map(mapRowToListing);
+}
+
+async function countNewListingsForSavedSearch(db: D1Like, search: SavedSearchRecord) {
+  const filters = search.filters ?? parseSavedSearchFilters(search.filters_json);
+  const { clauses, values } = buildDynamicListingWhere(filters, { createdAfter: search.updated_at });
+  const result = await db
+    .prepare(
+      `SELECT COUNT(*) as count
+       FROM listings
+       WHERE ${clauses.join(" AND ")}`
+    )
+    .bind(...values)
+    .first<{ count: number }>();
+
+  return Number(result?.count || 0);
 }
 
 function applyListingFilters(listings: Listing[], filters: ListingFilters) {
@@ -656,10 +682,47 @@ export async function getSavedSearchRecords(db: D1Like, userId: number) {
     .bind(userId)
     .all<SavedSearchRecord>();
 
-  return savedSearchesResult.results.map((search) => ({
-    ...search,
-    filters: parseSavedSearchFilters(search.filters_json),
-  }));
+  return Promise.all(
+    savedSearchesResult.results.map(async (search) => {
+      const filters = parseSavedSearchFilters(search.filters_json);
+      const newResultCount = await countNewListingsForSavedSearch(db, { ...search, filters });
+
+      return {
+        ...search,
+        filters,
+        new_result_count: newResultCount,
+        freshness_label: newResultCount > 0 ? `${newResultCount} new since last visit` : "No new matches since last visit",
+      };
+    })
+  );
+}
+
+export async function markSavedSearchVisited(db: D1Like, userId: number, id: number) {
+  const existing = await db
+    .prepare(
+      `SELECT id, filters_json
+       FROM saved_searches
+       WHERE id = ? AND user_id = ?
+       LIMIT 1`
+    )
+    .bind(id, userId)
+    .first<{ id: number; filters_json: string }>();
+
+  if (!existing) return { ok: false as const };
+
+  const filters = parseSavedSearchFilters(existing.filters_json);
+  const resultCount = (await searchListings(filters, db)).length;
+
+  await db
+    .prepare(
+      `UPDATE saved_searches
+       SET last_result_count = ?, updated_at = CURRENT_TIMESTAMP
+       WHERE id = ? AND user_id = ?`
+    )
+    .bind(resultCount, id, userId)
+    .run();
+
+  return { ok: true as const, routeQuery: buildSavedSearchQuery(filters) };
 }
 
 export async function getSavedListingRecords(db: D1Like, userId: number) {

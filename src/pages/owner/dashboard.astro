@@ -18,6 +18,11 @@ const updated = Astro.url.searchParams.get("updated");
 const mediaAction = Astro.url.searchParams.get("mediaAction");
 const savedSearchDeleted = Astro.url.searchParams.get("savedSearchDeleted");
 const billingEnabled = isBillingEnabled(Astro.locals.runtime);
+const enquiryStatusCounts = {
+  new: enquiries.filter((enquiry) => enquiry.response_status === "new").length,
+  responded: enquiries.filter((enquiry) => enquiry.response_status === "responded").length,
+  archived: enquiries.filter((enquiry) => enquiry.response_status === "archived").length,
+};
 
 function isFutureDate(value?: string | null) {
   return Boolean(value) && new Date(value as string).getTime() > Date.now();
@@ -170,13 +175,17 @@ function getImageUrls(value: unknown) {
           <li class="list-item">
             <strong>{search.name}</strong>
             <p>{search.last_result_count} matching listings at last save</p>
+            <div class={`freshness-row ${search.new_result_count ? "freshness-hot" : ""}`}>
+              <span>{search.freshness_label}</span>
+            </div>
             <div class="meta-row">
               <span>{search.route_query ? `/listings/?${search.route_query}` : "/listings/"}</span>
             </div>
             <div class="action-row">
-              <a class="button-secondary" href={search.route_query ? `/listings/?${search.route_query}` : "/listings/"}>Open search</a>
+              <a class="button-secondary" href={`/api/saved-searches/visit?id=${search.id}&redirectTo=${encodeURIComponent(search.route_query ? `/listings/?${search.route_query}` : "/listings/")}`}>Open search</a>
               <form method="POST" action="/api/saved-searches/delete">
                 <input type="hidden" name="id" value={search.id} />
+                <input type="hidden" name="redirectTo" value="/owner/dashboard/" />
                 <button type="submit" class="button-tertiary">Delete</button>
               </form>
             </div>
@@ -313,6 +322,20 @@ function getImageUrls(value: unknown) {
             <p class="panel-copy">Most recent inbound demand on your listings.</p>
           </div>
         </div>
+        <div class="compare-preview status-preview">
+          <div class="compare-chip">
+            <strong>{enquiryStatusCounts.new}</strong>
+            <span>New enquiries</span>
+          </div>
+          <div class="compare-chip">
+            <strong>{enquiryStatusCounts.responded}</strong>
+            <span>Responded</span>
+          </div>
+          <div class="compare-chip">
+            <strong>{enquiryStatusCounts.archived}</strong>
+            <span>Archived</span>
+          </div>
+        </div>
         {enquiries.length === 0 ? <p class="empty-copy">No enquiries yet.</p> : (
           <ul class="stack-list compact-list">
             {enquiries.map((enquiry) => (
@@ -384,6 +407,30 @@ function getImageUrls(value: unknown) {
       gap: 1rem;
     }
 
+    .compare-preview {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .compare-chip {
+      display: grid;
+      gap: 0.35rem;
+      padding: 0.95rem 1rem;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.58);
+      border: 1px solid var(--line);
+    }
+
+    .compare-chip span {
+      color: var(--muted);
+    }
+
+    .status-preview {
+      margin-bottom: 1rem;
+    }
+
     .action-row-wrap,
     .alert-head,
     .listing-head {
@@ -411,6 +458,23 @@ function getImageUrls(value: unknown) {
       background: rgba(17, 17, 17, 0.06);
       color: var(--accent-strong);
       text-transform: capitalize;
+    }
+
+    .freshness-row {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 0.45rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.06);
+      color: var(--muted-strong);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .freshness-hot {
+      background: rgba(6, 95, 70, 0.12);
+      color: #065f46;
     }
 
     .listing-item,

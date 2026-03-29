@@ -167,7 +167,7 @@ export async function getBuyerDashboardData(userId: number, db?: D1Like) {
 }
 
 export async function getAdminBillingData(db?: D1Like) {
-  if (!db) return { listings: [], payments: [], emailDeliveries: [] };
+  if (!db) return { listings: [], payments: [], emailDeliveries: [], performanceSeries: [] };
   await normalizeExpiredListingPlans(db);
 
   const listingsResult = await db
@@ -202,9 +202,56 @@ export async function getAdminBillingData(db?: D1Like) {
     .bind()
     .all<ExpiryEmailDeliveryRecord>();
 
+  const [listingSeriesResult, enquirySeriesResult, paymentSeriesResult] = await Promise.all([
+    db.prepare(
+      `SELECT DATE(created_at) as day, COUNT(*) as count
+       FROM listings
+       WHERE created_at >= datetime('now', '-6 days')
+       GROUP BY DATE(created_at)
+       ORDER BY day ASC`
+    ).bind().all<{ day: string; count: number }>(),
+    db.prepare(
+      `SELECT DATE(created_at) as day, COUNT(*) as count
+       FROM enquiries
+       WHERE created_at >= datetime('now', '-6 days')
+       GROUP BY DATE(created_at)
+       ORDER BY day ASC`
+    ).bind().all<{ day: string; count: number }>(),
+    db.prepare(
+      `SELECT DATE(COALESCE(paid_at, created_at)) as day, COUNT(*) as count, COALESCE(SUM(amount), 0) as revenue
+       FROM payments
+       WHERE COALESCE(paid_at, created_at) >= datetime('now', '-6 days')
+       GROUP BY DATE(COALESCE(paid_at, created_at))
+       ORDER BY day ASC`
+    ).bind().all<{ day: string; count: number; revenue: number }>(),
+  ]);
+
+  const listingCounts = new Map(listingSeriesResult.results.map((row) => [row.day, Number(row.count || 0)]));
+  const enquiryCounts = new Map(enquirySeriesResult.results.map((row) => [row.day, Number(row.count || 0)]));
+  const paymentCounts = new Map(
+    paymentSeriesResult.results.map((row) => [row.day, { count: Number(row.count || 0), revenue: Number(row.revenue || 0) }])
+  );
+
+  const performanceSeries = Array.from({ length: 7 }, (_, offset) => {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    date.setDate(date.getDate() - (6 - offset));
+    const isoDay = date.toISOString().slice(0, 10);
+    const paymentDay = paymentCounts.get(isoDay) || { count: 0, revenue: 0 };
+
+    return {
+      day: isoDay,
+      listings: listingCounts.get(isoDay) || 0,
+      enquiries: enquiryCounts.get(isoDay) || 0,
+      payments: paymentDay.count,
+      revenue: paymentDay.revenue,
+    };
+  });
+
   return {
     listings: listingsResult.results,
     payments: paymentsResult.results,
     emailDeliveries: emailDeliveriesResult.results,
+    performanceSeries,
   };
 }

@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { deleteSavedSearch } from "../../../lib/listings";
+import { appendQueryFlag, sanitizeInternalRedirect } from "../../../lib/http";
 import { getDB } from "../../../lib/runtime";
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -11,6 +12,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   const form = await request.formData();
   const id = Number(form.get("id") || 0);
+  const redirectTo = sanitizeInternalRedirect(String(form.get("redirectTo") || ""), owner.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashboard/");
 
   if (!id) return new Response("Invalid saved search id", { status: 400 });
 
@@ -19,7 +21,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   return new Response(null, {
     status: 303,
     headers: {
-      Location: "/owner/dashboard/?savedSearchDeleted=1",
+      Location: appendQueryFlag(redirectTo, "savedSearchDeleted"),
     },
   });
 };

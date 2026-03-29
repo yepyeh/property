@@ -10,7 +10,7 @@ if (!owner || owner.role !== "admin") {
   return Astro.redirect("/owner/dashboard/");
 }
 
-const { listings, payments, emailDeliveries } = await getAdminBillingData(getDB(Astro.locals.runtime));
+const { listings, payments, emailDeliveries, performanceSeries } = await getAdminBillingData(getDB(Astro.locals.runtime));
 const updated = Astro.url.searchParams.get("updated");
 const emailed = Number(Astro.url.searchParams.get("emailed") || 0);
 const skipped = Number(Astro.url.searchParams.get("skipped") || 0);
@@ -111,6 +111,29 @@ const conversionRate = analytics.totalListings > 0
         <strong>{analytics.promotedSales}</strong>
         <span>promotion sales</span>
       </div>
+    </div>
+  </section>
+
+  <section class="card panel summary-panel">
+    <h2>Last 7 days</h2>
+    <p>Supply, demand, and revenue in one lightweight view.</p>
+    <div class="trend-table">
+      <div class="trend-row trend-head">
+        <span>Day</span>
+        <span>New listings</span>
+        <span>Enquiries</span>
+        <span>Payments</span>
+        <span>Revenue</span>
+      </div>
+      {performanceSeries.map((day) => (
+        <div class="trend-row">
+          <span>{day.day}</span>
+          <span>{day.listings}</span>
+          <span>{day.enquiries}</span>
+          <span>{day.payments}</span>
+          <span>{day.revenue.toLocaleString("en-US")} VND</span>
+        </div>
+      ))}
     </div>
   </section>
 
@@ -317,6 +340,25 @@ const conversionRate = analytics.totalListings > 0
       align-items: end;
       gap: 0.6rem;
       flex-wrap: wrap;
+    }
+    .trend-table {
+      display: grid;
+      gap: 0.55rem;
+      margin-top: 1rem;
+    }
+    .trend-row {
+      display: grid;
+      grid-template-columns: 1.2fr repeat(4, minmax(0, 1fr));
+      gap: 0.75rem;
+      align-items: center;
+      padding: 0.9rem 1rem;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.58);
+    }
+    .trend-head {
+      background: rgba(15, 23, 42, 0.08);
+      font-weight: 700;
+      color: var(--muted-strong);
     }
     label {
       display: grid;

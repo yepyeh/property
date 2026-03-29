@@ -162,6 +162,8 @@ export interface SavedSearchRecord {
   created_at: string;
   updated_at: string;
   filters?: ListingFilters;
+  new_result_count?: number;
+  freshness_label?: string;
 }
 
 export interface SavedListingRecord {
