@@ -1,4 +1,5 @@
 ---
+import appShellCss from "../styles/app-shell.css?raw";
 import GlobalNav from "../components/shell/GlobalNav.astro";
 import MobileNav from "../components/shell/MobileNav.astro";
 import { getUnreadInboxNotificationCount } from "../lib/notifications";
@@ -7,11 +8,13 @@ import { getDB } from "../lib/runtime";
 export interface Props {
   title?: string;
   description?: string;
+  inlineShellCss?: boolean;
 }
 
 const {
   title = "Property App 2026",
   description = "A clean property marketplace for searching homes, posting listings, and handling enquiries across mobile and desktop.",
+  inlineShellCss = false,
 } = Astro.props;
 
 const viewer = Astro.locals.owner;
@@ -64,6 +67,7 @@ const accountMenu = [
     <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/icons/icon-192.svg" />
     <title>{title}</title>
+    {inlineShellCss && <style is:inline set:html={appShellCss}></style>}
   </head>
   <body>
     <div class="shell">
