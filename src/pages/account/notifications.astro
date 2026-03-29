@@ -29,6 +29,24 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
 
   {updated && <FlashBanner message="Notification preferences updated." />}
 
+  <section class="settings-summary section-gap">
+    <article class="card summary-card">
+      <span class="summary-label">Email</span>
+      <strong>{preferences?.email_enabled ? "On" : "Off"}</strong>
+      <p>{preferences?.email_enabled ? "Digest and transactional email can be sent." : "Email delivery is paused for this account."}</p>
+    </article>
+    <article class="card summary-card">
+      <span class="summary-label">In-app</span>
+      <strong>{preferences?.in_app_enabled ? "On" : "Off"}</strong>
+      <p>{preferences?.in_app_enabled ? "Inbox notifications stay active inside the product." : "Inbox delivery is currently paused."}</p>
+    </article>
+    <article class="card summary-card">
+      <span class="summary-label">Cadence</span>
+      <strong>{preferences?.cadence ?? "daily"}</strong>
+      <p>Use weekly if you want fewer reminders and less account noise.</p>
+    </article>
+  </section>
+
   <form class="settings-grid section-gap" method="POST" action="/api/account/notifications">
     <section class="card panel">
       <div class="panel-head">
@@ -96,6 +114,37 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
   </form>
 
   <style is:inline>
+    .settings-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .summary-card {
+      padding: 1.1rem;
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .summary-card strong {
+      font-size: 1.7rem;
+      letter-spacing: -0.05em;
+      text-transform: capitalize;
+    }
+
+    .summary-card p,
+    .summary-label {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .summary-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+
     .settings-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -150,6 +199,7 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
     }
 
     @media (max-width: 960px) {
+      .settings-summary,
       .settings-grid,
       .choice-grid {
         grid-template-columns: 1fr;

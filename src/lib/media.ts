@@ -4,6 +4,7 @@ interface R2BucketLike {
     body: ReadableStream | null;
     httpMetadata?: { contentType?: string };
   } | null>;
+  delete(key: string): Promise<unknown>;
 }
 
 interface RuntimeLike {

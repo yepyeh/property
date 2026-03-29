@@ -33,7 +33,25 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
     <FlashBanner message={allRead ? "All notifications marked as read." : "Notification marked as read."} />
   )}
 
-  <section class="card panel section-gap">
+  <section class="inbox-metrics section-gap">
+    <article class="card metric-card">
+      <span class="metric-label">Unread now</span>
+      <strong>{notifications.filter((notification) => !notification.read_at).length}</strong>
+      <p>Items that still need a look.</p>
+    </article>
+    <article class="card metric-card">
+      <span class="metric-label">Feed size</span>
+      <strong>{notifications.length}</strong>
+      <p>Recent account events kept in one place.</p>
+    </article>
+    <article class="card metric-card">
+      <span class="metric-label">Role</span>
+      <strong>{viewer.role}</strong>
+      <p>{viewer.role === "buyer" ? "Buyer-side alerts and saved-search changes." : "Owner-side listings, billing, and enquiry events."}</p>
+    </article>
+  </section>
+
+  <section class="card panel">
     <div class="panel-head">
       <div>
         <p class="eyebrow">Feed</p>
@@ -72,6 +90,37 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
   </section>
 
   <style is:inline>
+    .inbox-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .metric-card {
+      padding: 1.1rem;
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    .metric-card strong {
+      font-size: 1.8rem;
+      letter-spacing: -0.05em;
+      text-transform: capitalize;
+    }
+
+    .metric-card p,
+    .metric-label {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .metric-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+
     .inbox-list {
       display: grid;
       gap: 1rem;
@@ -136,6 +185,7 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
     }
 
     @media (max-width: 760px) {
+      .inbox-metrics,
       .item-head {
         display: grid;
       }

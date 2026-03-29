@@ -15,6 +15,7 @@ const { listings, enquiries, payments, notifications, savedSearches, inboxNotifi
 const uploaded = Astro.url.searchParams.get("uploaded");
 const uploadCount = Astro.url.searchParams.get("uploadCount");
 const updated = Astro.url.searchParams.get("updated");
+const mediaAction = Astro.url.searchParams.get("mediaAction");
 const savedSearchDeleted = Astro.url.searchParams.get("savedSearchDeleted");
 const billingEnabled = isBillingEnabled(Astro.locals.runtime);
 
@@ -93,7 +94,7 @@ function getImageUrls(value: unknown) {
   />
 
   {uploaded && <FlashBanner message={`${uploadCount || "1"} image${uploadCount === "1" ? "" : "s"} uploaded for ${uploaded}.`} />}
-  {updated && <FlashBanner message={`Billing state updated for ${updated}.`} />}
+  {updated && <FlashBanner message={`${mediaAction === "deleted" ? "Gallery updated. Removed one image from" : mediaAction === "reordered" ? "Gallery order updated for" : "Billing state updated for"} ${updated}.`} />}
   {savedSearchDeleted && <FlashBanner message="Saved search deleted." />}
 
   <section class="split-grid split-grid-top">
@@ -213,10 +214,38 @@ function getImageUrls(value: unknown) {
                     <>
                       <div class="primary-media" style={`background-image:url(${imageUrls[0]})`}></div>
                       <div class="media-rail">
-                        {imageUrls.slice(1, 4).map((imageUrl) => (
-                          <div class="thumb-media" style={`background-image:url(${imageUrl})`}></div>
+                        {imageUrls.slice(1, 4).map((imageUrl, railIndex) => (
+                          <div class="thumb-stack">
+                            <div class="thumb-media" style={`background-image:url(${imageUrl})`}></div>
+                            <div class="thumb-tools">
+                              <form method="POST" action="/api/upload-image/reorder">
+                                <input type="hidden" name="listingSlug" value={listing.slug} />
+                                <input type="hidden" name="imageIndex" value={railIndex + 1} />
+                                <input type="hidden" name="direction" value="left" />
+                                <button type="submit" class="thumb-action" aria-label="Move image left">←</button>
+                              </form>
+                              <form method="POST" action="/api/upload-image/reorder">
+                                <input type="hidden" name="listingSlug" value={listing.slug} />
+                                <input type="hidden" name="imageIndex" value={railIndex + 1} />
+                                <input type="hidden" name="direction" value="right" />
+                                <button type="submit" class="thumb-action" aria-label="Move image right">→</button>
+                              </form>
+                              <form method="POST" action="/api/upload-image/delete">
+                                <input type="hidden" name="listingSlug" value={listing.slug} />
+                                <input type="hidden" name="imageIndex" value={railIndex + 1} />
+                                <button type="submit" class="thumb-action thumb-danger" aria-label="Delete image">×</button>
+                              </form>
+                            </div>
+                          </div>
                         ))}
                         {imageUrls.length === 1 && <div class="thumb-placeholder">Add more angles</div>}
+                      </div>
+                      <div class="primary-tools">
+                        <form method="POST" action="/api/upload-image/delete">
+                          <input type="hidden" name="listingSlug" value={listing.slug} />
+                          <input type="hidden" name="imageIndex" value="0" />
+                          <button type="submit" class="thumb-action thumb-danger">Delete cover</button>
+                        </form>
                       </div>
                     </>
                   ) : (
@@ -454,9 +483,41 @@ function getImageUrls(value: unknown) {
       gap: 0.6rem;
     }
 
+    .thumb-stack {
+      display: grid;
+      gap: 0.35rem;
+    }
+
     .thumb-media,
     .thumb-placeholder {
       min-height: 4.8rem;
+    }
+
+    .thumb-tools,
+    .primary-tools {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+
+    .thumb-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 1.9rem;
+      padding: 0.2rem 0.55rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.92);
+      color: var(--text);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .thumb-danger {
+      color: #b42318;
+      border-color: rgba(180, 35, 24, 0.18);
     }
 
     .thumb-placeholder,
