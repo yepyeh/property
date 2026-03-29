@@ -42,6 +42,7 @@ const { listing, ownerTrustLabel, enquirySent, isBuyer = false } = Astro.props;
       <div class="buyer-guide">
         <strong>Not sure yet?</strong>
         <p>Save this to your shortlist first. Then compare it against two or three other places. If it still looks strongest, mark it as a finalist and come back here to enquire.</p>
+        <a class="guide-link" href="/help/buyer-shortlist-and-compare/">Open buyer guide</a>
       </div>
     )}
 
@@ -168,6 +169,14 @@ const { listing, ownerTrustLabel, enquirySent, isBuyer = false } = Astro.props;
     margin: 0.35rem 0 0;
     color: var(--muted);
     line-height: 1.65;
+  }
+
+  .guide-link {
+    width: fit-content;
+    margin-top: 0.6rem;
+    color: var(--accent-strong);
+    font-weight: 700;
+    text-decoration: none;
   }
 
   .enquiry-form {

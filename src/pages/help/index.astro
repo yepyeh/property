@@ -11,6 +11,29 @@ const categories = [
   { key: "account", label: "Account" },
   { key: "updates", label: "Updates" },
 ];
+
+const faqs = [
+  {
+    question: "I like a listing, but I am not ready to contact yet. What should I do?",
+    answer: "Save it to your shortlist first. Then save two or three comparable places, open compare, mark a finalist, and only then contact the strongest option.",
+    href: "/help/buyer-shortlist-and-compare/",
+  },
+  {
+    question: "What does finalist mean?",
+    answer: "Finalist means the listing is currently leading your shortlist after you compared it on price, location, trust, and fit.",
+    href: "/help/buyer-shortlist-and-compare/",
+  },
+  {
+    question: "How should owners know whether to upgrade a listing?",
+    answer: "Use upgrades after the listing is already credible. If photos, trust signals, and location context are weak, promotion will not fix the underlying problem.",
+    href: "/help/posting-and-managing-listings/",
+  },
+  {
+    question: "Where do I manage notifications and account alerts?",
+    answer: "Use the inbox for current activity and notification settings to control category, channel, and cadence preferences.",
+    href: "/help/notifications-and-inbox/",
+  },
+];
 ---
 
 <Layout title="Help Centre | Property App 2026" description="Guides for buyers, owners, billing, notifications, and core platform workflows.">
@@ -67,6 +90,23 @@ const categories = [
             </a>
           </li>
         ))}
+    </ul>
+  </section>
+
+  <section class="card maintenance-note section-gap">
+    <strong>Quick answers</strong>
+    <p>Use this like a lightweight FAQ until the help centre grows into a larger knowledge base.</p>
+    <div class="faq-search">
+      <input id="help-search" type="search" placeholder="Search guides and quick answers" />
+    </div>
+    <ul class="faq-list" id="faq-list">
+      {faqs.map((faq) => (
+        <li data-help-search={`${faq.question} ${faq.answer}`.toLowerCase()}>
+          <strong>{faq.question}</strong>
+          <p>{faq.answer}</p>
+          <a href={faq.href}>Open related guide</a>
+        </li>
+      ))}
     </ul>
   </section>
 
@@ -172,6 +212,43 @@ const categories = [
       color: var(--muted);
       white-space: nowrap;
     }
+    .faq-search {
+      margin-top: 1rem;
+    }
+    .faq-search input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+      padding: 0.95rem 1rem;
+      color: var(--text);
+      font: inherit;
+    }
+    .faq-list {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0 0;
+      display: grid;
+      gap: 0.8rem;
+    }
+    .faq-list li {
+      display: grid;
+      gap: 0.35rem;
+      padding: 1rem;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid var(--line);
+    }
+    .faq-list p {
+      margin: 0;
+      color: var(--muted);
+    }
+    .faq-list a {
+      width: fit-content;
+      color: var(--accent-strong);
+      font-weight: 700;
+      text-decoration: none;
+    }
     @media (max-width: 900px) {
       .help-hero,
       .category-grid {
@@ -182,4 +259,18 @@ const categories = [
       }
     }
   </style>
+  <script is:inline>
+    const searchInput = document.getElementById("help-search");
+    const faqItems = Array.from(document.querySelectorAll("#faq-list li"));
+
+    if (searchInput) {
+      searchInput.addEventListener("input", (event) => {
+        const value = String(event.currentTarget.value || "").trim().toLowerCase();
+        faqItems.forEach((item) => {
+          const haystack = item.getAttribute("data-help-search") || "";
+          item.style.display = !value || haystack.includes(value) ? "" : "none";
+        });
+      });
+    }
+  </script>
 </Layout>

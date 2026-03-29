@@ -47,6 +47,15 @@ function getCons(listing: NonNullable<(typeof compareEntries)[number]["listing"]
 
   {savedListingUpdated && <FlashBanner message="Shortlist decision updated from compare view." />}
 
+  <section class="card compare-help section-gap">
+    <strong>Need help using compare?</strong>
+    <p>Compare is best for two or three listings you already care about. If you want the full buyer workflow spelled out, use the help centre article below.</p>
+    <div class="action-row">
+      <a class="button-secondary small" href="/help/buyer-shortlist-and-compare/">Open buyer compare guide</a>
+      <a class="button-tertiary small" href="/help/what-changed-march-2026/">What changed</a>
+    </div>
+  </section>
+
   {compareEntries.length < 2 ? (
     <section class="card compare-empty section-gap">
       <strong>Save at least two listings to compare them.</strong>
@@ -132,6 +141,18 @@ function getCons(listing: NonNullable<(typeof compareEntries)[number]["listing"]
     .compare-table {
       padding: 1rem;
       overflow-x: auto;
+    }
+
+    .compare-help {
+      padding: 1.1rem;
+      display: grid;
+      gap: 0.65rem;
+    }
+
+    .compare-help p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
     }
 
     .compare-guide {

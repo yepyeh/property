@@ -38,3 +38,15 @@ Minimum expectation:
 4. notable product release -> add or update an article in the `updates` category
 
 This keeps the live help centre aligned with the real product instead of turning into stale documentation.
+
+## Release note template
+
+Use the reusable updates template at:
+
+- `src/content/help/_release-note-template.md`
+
+When shipping meaningful user-facing changes:
+
+1. copy the template to a dated file name
+2. write only user-visible changes, not implementation details
+3. link that article from the help centre `updates` category

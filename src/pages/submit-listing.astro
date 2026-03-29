@@ -17,6 +17,7 @@ const owner = Astro.locals.owner;
     </div>
     <div class="actions">
       <a class="ghost" href="/owner/dashboard/">Owner dashboard</a>
+      <a class="ghost" href="/help/posting-and-managing-listings/">Owner help</a>
       <form method="POST" action="/api/auth/logout">
         <button class="ghost" type="submit">Log out</button>
       </form>
@@ -73,6 +74,10 @@ const owner = Astro.locals.owner;
       <span class="pill">Build in order</span>
       <h2 class="section-title">Treat this like a publish flow, not a raw database form.</h2>
       <p class="section-copy">Start with the searchable facts, then write the buyer-facing positioning, then finish the trust and contact layer. The better the first version is, the less paid promotion has to compensate for weak content.</p>
+      <div class="action-row">
+        <a class="ghost small-ghost" href="/help/posting-and-managing-listings/">Open owner guide</a>
+        <a class="ghost small-ghost" href="/help/what-changed-march-2026/">What changed</a>
+      </div>
     </div>
     <ol class="section-steps">
       <li><strong>Core facts</strong><span>Searchable details and price.</span></li>
@@ -214,6 +219,9 @@ const owner = Astro.locals.owner;
     .ghost {
       border: 1px solid var(--line);
       background: rgba(255,255,255,0.72);
+    }
+    .small-ghost {
+      padding: 0.8rem 1rem;
     }
     .form-shell {
       display: grid;
