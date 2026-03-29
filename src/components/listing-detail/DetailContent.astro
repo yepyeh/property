@@ -1,14 +1,17 @@
 ---
 import type { Listing } from "../../data/listings";
+import type { ListingInsights } from "../../lib/insights";
 
 export interface Props {
   listing: Listing;
   mapHref: string;
   mapEmbedHref?: string;
+  insights?: ListingInsights;
+  hasPremiumInsights?: boolean;
   t?: (value: string) => string;
 }
 
-const { listing, mapHref, mapEmbedHref, t = (value: string) => value } = Astro.props;
+const { listing, mapHref, mapEmbedHref, insights, hasPremiumInsights = false, t = (value: string) => value } = Astro.props;
 const neighborhood = listing.neighborhood;
 const location = listing.location;
 const isAuction = listing.saleMode === "auction";
@@ -75,6 +78,59 @@ const isAuction = listing.saleMode === "auction";
       ))}
     </div>
   </div>
+
+  {insights && (
+    <div class="panel-section">
+      <span class="section-kicker">{t("Market insights")}</span>
+      <h2>{t("How this listing sits against nearby alternatives")}</h2>
+      <p>{t("These signals come from comparable live listings in the same market. They help users understand asking-price context and demand, but they are not completed sale records.")}</p>
+      <div class="insights-grid">
+        <article class="insight-card">
+          <strong>{t("Free insight")}</strong>
+          <ul>
+            <li>{t("Comparable listings")}: {insights.free.comparableCount}</li>
+            <li>{t("District median ask")}: {insights.free.districtMedianLabel}</li>
+            <li>{t("Average price per m2")}: {insights.free.averagePricePerSqmLabel}</li>
+            <li>{t("Comparable range")}: {insights.free.rangeLabel}</li>
+          </ul>
+          <p>{insights.free.pricingPositionLabel}</p>
+          <p>{insights.free.demandLabel}</p>
+        </article>
+
+        <article class={`insight-card premium-card ${hasPremiumInsights ? "is-open" : "is-locked"}`}>
+          <strong>{t("Premium insight")}</strong>
+          {hasPremiumInsights ? (
+            <>
+              <ul>
+                <li>{t("Pricing band")}: {insights.premium.pricingBandLabel}</li>
+                <li>{t("Value position")}: {insights.premium.percentileLabel}</li>
+              </ul>
+              <p>{insights.premium.narrative}</p>
+              <div class="premium-comps">
+                {insights.premium.comparableListings.map((entry) => (
+                  <a class="premium-comp" href={`/listings/${entry.slug}/`}>
+                    <strong>{entry.title}</strong>
+                    <span>{entry.priceLabel}</span>
+                    <span>{entry.locationLabel}</span>
+                    <small>{entry.reasons.join(" · ")}</small>
+                  </a>
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              <p>{t("Advanced users can unlock deeper pricing context, ranked comparables, and stronger negotiation cues.")}</p>
+              <ul>
+                <li>{t("Comparable pricing band")}</li>
+                <li>{t("Local percentile positioning")}</li>
+                <li>{t("Top matched alternatives")}</li>
+              </ul>
+            </>
+          )}
+        </article>
+      </div>
+    </div>
+  )}
 
   {neighborhood && (
     <div class="panel-section">
@@ -239,6 +295,60 @@ const isAuction = listing.saleMode === "auction";
     margin-top: 1rem;
   }
 
+  .insights-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .insight-card {
+    padding: 1rem;
+    border-radius: 22px;
+    background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
+    border: 1px solid var(--line);
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  .insight-card strong {
+    font-size: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .insight-card ul,
+  .context-grid ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.35rem;
+    color: var(--muted);
+  }
+
+  .premium-card.is-locked {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent-strong) 10%, transparent), var(--surface-elevated-strong));
+  }
+
+  .premium-comps {
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  .premium-comp {
+    display: grid;
+    gap: 0.2rem;
+    padding: 0.9rem;
+    border-radius: 18px;
+    background: var(--surface-overlay);
+    border: 1px solid var(--line);
+    text-decoration: none;
+  }
+
+  .premium-comp span,
+  .premium-comp small {
+    color: var(--muted);
+  }
+
   .overview-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -304,10 +414,6 @@ const isAuction = listing.saleMode === "auction";
     margin: 0;
     color: var(--muted);
     line-height: 1.65;
-  }
-
-  .context-grid ul {
-    padding-left: 1.1rem;
   }
 
   .map-panel {
@@ -408,6 +514,7 @@ const isAuction = listing.saleMode === "auction";
   }
 
   @media (max-width: 1100px) {
+    .insights-grid,
     .overview-grid,
     .auction-grid,
     .context-grid,

@@ -4,6 +4,8 @@ import WorkspaceHero from "../../components/workspace/WorkspaceHero.astro";
 import FlashBanner from "../../components/workspace/FlashBanner.astro";
 import { estimateMonthlyPayment, formatVndAmount } from "../../lib/affordability";
 import { getBuyerDashboardData } from "../../lib/dashboard";
+import { buildListingInsights, hasPremiumInsightsAccess } from "../../lib/insights";
+import { getAllListings } from "../../lib/listings";
 import { getDB } from "../../lib/runtime";
 
 const viewer = Astro.locals.owner;
@@ -12,12 +14,16 @@ if (!viewer || (viewer.role !== "buyer" && viewer.role !== "admin")) {
   return Astro.redirect("/login");
 }
 
-const { savedListings } = await getBuyerDashboardData(viewer.id, getDB(Astro.locals.runtime));
+const db = getDB(Astro.locals.runtime);
+const { savedListings } = await getBuyerDashboardData(viewer.id, db);
+const allListings = await getAllListings(db);
 const savedListingUpdated = Astro.url.searchParams.get("savedListingUpdated");
 const compareEntries = savedListings
   .filter((entry) => entry.listing)
   .slice(0, 3);
 const compareCollections = Array.from(new Set(compareEntries.map((entry) => entry.collection_name?.trim()).filter(Boolean)));
+const compareInsights = compareEntries.map((entry) => buildListingInsights(entry.listing!, allListings));
+const hasPremiumInsights = hasPremiumInsightsAccess(viewer);
 
 function getPros(listing: NonNullable<(typeof compareEntries)[number]["listing"]>) {
   return [
@@ -71,6 +77,16 @@ function getCons(listing: NonNullable<(typeof compareEntries)[number]["listing"]
     </section>
   ) : (
     <section class="card compare-table section-gap">
+      <div class="compare-insights">
+        <article class="insight-band">
+          <strong>Free market insight</strong>
+          <p>Use this to identify whether one option is clearly better value, simply more expensive, or sitting inside the normal market band for the area.</p>
+        </article>
+        <article class={`insight-band ${hasPremiumInsights ? "premium-open" : "premium-locked"}`}>
+          <strong>Premium market insight</strong>
+          <p>{hasPremiumInsights ? "You can see deeper pricing bands and local percentile context across the shortlist." : "Premium users unlock deeper pricing bands and local percentile context across the shortlist."}</p>
+        </article>
+      </div>
       <div class="compare-guide">
         <strong>Decision rule</strong>
         <p>Use compare for two or three listings only. When one option still looks strongest after price, location context, trust, and watchouts, mark it as a finalist. Contact only after that.</p>
@@ -120,6 +136,12 @@ function getCons(listing: NonNullable<(typeof compareEntries)[number]["listing"]
         { label: "Trust", values: compareEntries.map((entry) => entry.listing!.owner.verified ? "Verified contact" : "Owner listed") },
         { label: "Response time", values: compareEntries.map((entry) => entry.listing!.owner.responseTime) },
         { label: "Location context", values: compareEntries.map((entry) => entry.listing!.neighborhood?.headline || `${entry.listing!.ward}, ${entry.listing!.district}`) },
+        { label: "District median ask", values: compareInsights.map((insight) => insight.free.districtMedianLabel) },
+        { label: "Average price per m2", values: compareInsights.map((insight) => insight.free.averagePricePerSqmLabel) },
+        { label: "Value signal", values: compareInsights.map((insight) => insight.free.pricingPositionLabel) },
+        { label: "Demand signal", values: compareInsights.map((insight) => insight.free.demandLabel) },
+        { label: "Premium pricing band", values: compareInsights.map((insight) => hasPremiumInsights ? insight.premium.pricingBandLabel : "Premium insight") },
+        { label: "Premium percentile", values: compareInsights.map((insight) => hasPremiumInsights ? insight.premium.percentileLabel : "Premium insight") },
         { label: "Pluses", values: compareEntries.map((entry) => getPros(entry.listing!).join(" · ")) },
         { label: "Watchouts", values: compareEntries.map((entry) => getCons(entry.listing!).join(" · ")) },
       ].map((row) => (
@@ -195,6 +217,32 @@ function getCons(listing: NonNullable<(typeof compareEntries)[number]["listing"]
       margin: 0.35rem 0 0;
       color: var(--muted);
       line-height: 1.65;
+    }
+
+    .compare-insights {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.8rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .insight-band {
+      padding: 1rem 1.05rem;
+      border-radius: 20px;
+      background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
+      border: 1px solid var(--line);
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .insight-band p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .premium-locked {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--accent-strong) 10%, transparent), var(--surface-elevated-strong));
     }
 
     .compare-grid {
@@ -309,6 +357,12 @@ function getCons(listing: NonNullable<(typeof compareEntries)[number]["listing"]
     @media (max-width: 960px) {
       .compare-grid {
         grid-template-columns: minmax(8rem, 10rem) repeat(3, minmax(13rem, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .compare-insights {
+        grid-template-columns: 1fr;
       }
     }
   </style>

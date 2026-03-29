@@ -4,6 +4,7 @@ import DetailHero from "../../components/listing-detail/DetailHero.astro";
 import DetailContent from "../../components/listing-detail/DetailContent.astro";
 import DetailSidebar from "../../components/listing-detail/DetailSidebar.astro";
 import SimilarListingsSection from "../../components/listing-detail/SimilarListingsSection.astro";
+import { buildListingInsights, hasPremiumInsightsAccess } from "../../lib/insights";
 import { getAllListings, getAuctionWatchRecord, getListingBySlug, isListingSavedByUser, recordRecentlyViewedListing } from "../../lib/listings";
 import { getDB } from "../../lib/runtime";
 
@@ -38,6 +39,8 @@ const similarListings = allListings
     return bScore - aScore;
   })
   .slice(0, 3);
+const insights = buildListingInsights(listing, allListings);
+const hasPremiumInsights = hasPremiumInsightsAccess(viewer);
 
 const intentLabel = listing.saleMode === "auction" ? t("Auction") : listing.intent === "buy" ? t("For sale") : t("For rent");
 const ownerTrustLabel = listing.owner.verified ? t("Verified owner") : t("Owner listed");
@@ -64,7 +67,7 @@ const auctionWatch = listing.saleMode === "auction" ? await getAuctionWatchRecor
   />
 
   <section class="detail-grid">
-    <DetailContent listing={listing} mapHref={mapHref} mapEmbedHref={mapEmbedHref} t={t} />
+    <DetailContent listing={listing} mapHref={mapHref} mapEmbedHref={mapEmbedHref} insights={insights} hasPremiumInsights={hasPremiumInsights} t={t} />
     <DetailSidebar
       listing={listing}
       ownerTrustLabel={ownerTrustLabel}
