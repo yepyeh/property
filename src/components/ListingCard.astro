@@ -13,10 +13,13 @@ const neighborhood = listing.neighborhood;
 
 <article class={`listing-card card ${listing.tone}`}>
   <a class="photo-wrap" href={`/listings/${listing.slug}/`}>
-    <div class="photo" style={heroImage ? `background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.4)), url(${heroImage})` : undefined}>
-      <div class="chip-row">
-        <span class="intent-chip">{intentLabel}</span>
-        <span class="status-chip">{listing.status}</span>
+    <div class="photo" style={heroImage ? `background-image: linear-gradient(180deg, rgba(17, 17, 17, 0.06), rgba(17, 17, 17, 0.32)), url(${heroImage})` : undefined}>
+      <div class="photo-top">
+        <div class="chip-row">
+          <span class="intent-chip">{intentLabel}</span>
+          <span class="status-chip">{listing.status}</span>
+        </div>
+        <span class="save-count">{listing.stats.saves} saves</span>
       </div>
     </div>
   </a>
@@ -27,7 +30,6 @@ const neighborhood = listing.neighborhood;
         <p class="price">{listing.priceLabel}</p>
         <h3><a href={`/listings/${listing.slug}/`}>{listing.title}</a></h3>
       </div>
-      <span class="save-count">{listing.stats.saves} saves</span>
     </div>
 
     <p class="meta">{listing.ward}, {listing.district}, {listing.city}</p>
@@ -45,11 +47,6 @@ const neighborhood = listing.neighborhood;
           <span>{neighborhood.commute}</span>
           <span>{neighborhood.nearby[0]}</span>
         </div>
-        {neighborhood.nearby.length > 1 && (
-          <div class="nearby-row">
-            {neighborhood.nearby.slice(0, 2).map((item) => <span>{item}</span>)}
-          </div>
-        )}
       </div>
     )}
 
@@ -66,16 +63,15 @@ const neighborhood = listing.neighborhood;
 <style>
   .listing-card {
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.92);
-    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 30px rgba(16, 24, 40, 0.06);
-    transition:
-      transform 180ms ease,
-      box-shadow 180ms ease;
+    background: rgba(255, 255, 255, 0.94);
+    border-radius: 1.9rem;
+    box-shadow: 0 24px 52px rgba(17, 17, 17, 0.08);
+    transition: transform 180ms ease, box-shadow 180ms ease;
   }
 
   .listing-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 20px 38px rgba(15, 23, 42, 0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 32px 64px rgba(17, 17, 17, 0.1);
   }
 
   .photo-wrap {
@@ -84,42 +80,33 @@ const neighborhood = listing.neighborhood;
   }
 
   .photo {
-    min-height: 15.5rem;
+    min-height: 13.5rem;
     padding: 1rem;
     display: flex;
     align-items: flex-start;
-    justify-content: space-between;
     background-size: cover;
     background-position: center;
   }
 
-  .sea .photo:not([style]) {
-    background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.4)), linear-gradient(135deg, #98d4d5, #2f6f89);
+  .photo-top {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.8rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
   }
 
-  .sun .photo:not([style]) {
-    background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.42)), linear-gradient(135deg, #f4c78d, #cf6f46);
-  }
-
-  .forest .photo:not([style]) {
-    background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.42)), linear-gradient(135deg, #a7d4b0, #255a4a);
-  }
-
-  .night .photo:not([style]) {
-    background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.45)), linear-gradient(135deg, #9ca8e6, #212c58);
-  }
-
-  .clay .photo:not([style]) {
-    background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.45)), linear-gradient(135deg, #deb28d, #996347);
-  }
-
-  .sky .photo:not([style]) {
-    background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.45)), linear-gradient(135deg, #c2dff6, #4f7cab);
-  }
+  .sea .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.05), rgba(17,17,17,0.28)), linear-gradient(135deg, #c9e2da, #8eb8b0); }
+  .sun .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.05), rgba(17,17,17,0.3)), linear-gradient(135deg, #efd3af, #d19a66); }
+  .forest .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.05), rgba(17,17,17,0.3)), linear-gradient(135deg, #cadcc7, #93af96); }
+  .night .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.05), rgba(17,17,17,0.34)), linear-gradient(135deg, #d5d7e2, #868da3); }
+  .clay .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.05), rgba(17,17,17,0.32)), linear-gradient(135deg, #e8d1c1, #ba907a); }
+  .sky .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.05), rgba(17,17,17,0.32)), linear-gradient(135deg, #d9e7ee, #9fb4c0); }
 
   .chip-row {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.45rem;
     flex-wrap: wrap;
   }
 
@@ -129,58 +116,56 @@ const neighborhood = listing.neighborhood;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 1.85rem;
+    min-height: 1.9rem;
     padding: 0.22rem 0.7rem;
     border-radius: 999px;
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     font-weight: 800;
+    backdrop-filter: blur(10px);
   }
 
   .intent-chip,
-  .status-chip {
-    background: rgba(255, 255, 255, 0.92);
-    color: #0f172a;
+  .status-chip,
+  .save-count {
+    background: rgba(255, 255, 255, 0.88);
+    color: #111;
+    border: 1px solid rgba(17, 17, 17, 0.06);
   }
 
   .listing-body {
     display: grid;
-    gap: 0.8rem;
-    padding: 1.2rem 1.2rem 1.25rem;
+    gap: 0.85rem;
+    padding: 1.1rem;
   }
 
   .listing-top,
   .listing-footer,
   .fact-row,
-  .signal-row {
+  .signal-row,
+  .context-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.75rem;
+    gap: 0.7rem;
     flex-wrap: wrap;
   }
 
   .price {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.45rem;
     font-weight: 800;
-    letter-spacing: -0.05em;
+    letter-spacing: -0.06em;
   }
 
   h3 {
-    margin: 0.3rem 0 0;
-    font-size: 1.2rem;
-    line-height: 1.25;
-    letter-spacing: -0.02em;
+    margin: 0.25rem 0 0;
+    font-size: 1.12rem;
+    line-height: 1.2;
+    letter-spacing: -0.05em;
   }
 
   h3 a {
     text-decoration: none;
-  }
-
-  .save-count {
-    background: var(--brand-soft);
-    color: var(--accent-strong);
-    border: 1px solid rgba(15, 23, 42, 0.06);
   }
 
   .meta,
@@ -193,7 +178,8 @@ const neighborhood = listing.neighborhood;
   }
 
   .meta,
-  .summary {
+  .summary,
+  .context-headline {
     margin: 0;
     line-height: 1.65;
   }
@@ -201,42 +187,16 @@ const neighborhood = listing.neighborhood;
   .fact-row,
   .signal-row,
   .context-row {
-    font-size: 0.92rem;
-  }
-
-  .nearby-row {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .nearby-row span {
-    display: inline-flex;
-    align-items: center;
-    min-height: 1.8rem;
-    padding: 0.18rem 0.6rem;
-    border-radius: 999px;
-    background: white;
-    border: 1px solid var(--line);
-    color: var(--text);
-    font-size: 0.78rem;
-    font-weight: 700;
+    font-size: 0.88rem;
   }
 
   .context-panel {
     display: grid;
-    gap: 0.6rem;
-    padding: 1rem;
-    border-radius: 20px;
-    background:
-      linear-gradient(180deg, rgba(248,250,252,0.98), rgba(248,250,252,0.92));
-    border: 1px solid rgba(208, 213, 221, 0.74);
-  }
-
-  .context-headline {
-    margin: 0;
-    font-size: 0.94rem;
-    line-height: 1.55;
+    gap: 0.58rem;
+    padding: 0.9rem;
+    border-radius: 1.2rem;
+    background: rgba(244, 240, 232, 0.72);
+    border: 1px solid var(--line);
   }
 
   .details-link {
@@ -244,21 +204,21 @@ const neighborhood = listing.neighborhood;
     align-items: center;
     justify-content: center;
     min-height: 2.6rem;
-    padding: 0.78rem 0.95rem;
+    padding: 0.76rem 0.98rem;
     border-radius: 999px;
     background: var(--brand);
     color: white;
     font-weight: 700;
     text-decoration: none;
-    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
   }
 
   @media (max-width: 760px) {
     .listing-top,
     .listing-footer,
     .fact-row,
-    .signal-row {
-      align-items: flex-start;
+    .signal-row,
+    .context-row {
+      display: grid;
     }
 
     .details-link {

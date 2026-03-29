@@ -23,8 +23,9 @@ const { browseCities } = Astro.props;
   </div>
 
   <div class="city-grid">
-    {browseCities.map((city) => (
-      <a class="city-card card" href={city.href}>
+    {browseCities.map((city, index) => (
+      <a class:list={["city-card", index === 0 && "featured"]} href={city.href}>
+        <span class="city-index">0{index + 1}</span>
         <strong>{city.name}</strong>
         <span>{city.note}</span>
       </a>
@@ -34,70 +35,76 @@ const { browseCities } = Astro.props;
 
 <style>
   .city-section {
-    margin-top: 1.15rem;
+    margin-top: 2.35rem;
   }
 
   .section-heading {
-    max-width: 52rem;
-    margin-bottom: 1rem;
+    max-width: 46rem;
+    margin-bottom: 1.15rem;
   }
 
-  .section-kicker {
+  .section-kicker,
+  .city-index {
     display: inline-flex;
     align-items: center;
     min-height: 2rem;
-    padding: 0.22rem 0.75rem;
+    padding: 0.35rem 0.82rem;
     border-radius: 999px;
-    background: var(--brand-soft);
-    color: var(--accent-strong);
-    font-size: 0.78rem;
-    font-weight: 800;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.72);
+    color: var(--muted-strong);
+    font-size: 0.72rem;
+    font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
   .section-heading h2 {
-    margin: 0.9rem 0 0;
-    font-size: clamp(2rem, 4vw, 3.2rem);
-    line-height: 1;
-    letter-spacing: -0.08em;
-    font-family: "Plus Jakarta Sans", sans-serif;
+    margin: 0.65rem 0 0;
+    font-size: clamp(2.5rem, 5vw, 4.75rem);
+    line-height: 0.9;
+    letter-spacing: -0.1em;
   }
 
   .section-heading p,
-  .city-card span {
+  .city-card span:last-child {
     color: var(--muted);
-    line-height: 1.7;
-    margin: 0;
+    line-height: 1.72;
   }
 
   .city-grid {
     display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: 1.1fr repeat(3, minmax(0, 1fr));
+    gap: 0.95rem;
   }
 
   .city-card {
-    padding: 1.25rem;
+    display: grid;
+    gap: 0.6rem;
+    padding: 1.2rem;
+    border-radius: 1.75rem;
     border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.72);
     text-decoration: none;
-    color: inherit;
-    background: rgba(255, 255, 255, 0.88);
-    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
-    transition: transform 180ms ease, box-shadow 180ms ease;
-  }
-
-  .city-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.1);
+    box-shadow: var(--shadow-soft);
   }
 
   .city-card strong {
-    display: block;
-    margin-bottom: 0.35rem;
+    font-size: 1.08rem;
+    letter-spacing: -0.05em;
   }
 
-  @media (max-width: 1100px) {
+  .city-card.featured {
+    background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.76));
+  }
+
+  @media (max-width: 1080px) {
+    .city-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 760px) {
     .city-grid {
       grid-template-columns: 1fr;
     }

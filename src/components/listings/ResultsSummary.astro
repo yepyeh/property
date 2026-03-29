@@ -33,21 +33,21 @@ const { total, cities, forRent, hasFilters, allCities, selectedIntent } = Astro.
     align-items: flex-start;
     flex-wrap: wrap;
     margin-bottom: 1rem;
-    padding: 1.4rem;
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
+    padding: 1.35rem;
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: var(--shadow-soft);
   }
 
   .results-summary strong {
     display: block;
-    font-size: 2.2rem;
-    letter-spacing: -0.05em;
+    font-size: 2.35rem;
+    letter-spacing: -0.07em;
   }
 
   .results-summary p,
   .summary-links span {
     color: var(--muted);
-    margin: 0.8rem 0 0;
+    margin-top: 0.7rem;
     line-height: 1.7;
     font-weight: 700;
   }
@@ -55,7 +55,7 @@ const { total, cities, forRent, hasFilters, allCities, selectedIntent } = Astro.
   .summary-links {
     display: flex;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 0.8rem;
     align-items: center;
     flex-wrap: wrap;
   }
@@ -64,9 +64,9 @@ const { total, cities, forRent, hasFilters, allCities, selectedIntent } = Astro.
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 2.75rem;
+    min-height: 2.7rem;
     border-radius: 999px;
-    padding: 0.82rem 1rem;
+    padding: 0.78rem 0.96rem;
     font-weight: 700;
     text-decoration: none;
     font: inherit;

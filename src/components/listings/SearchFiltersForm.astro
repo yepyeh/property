@@ -93,9 +93,9 @@ const selectedSort = filters.sort || "newest";
 <style>
   .search-frame {
     margin-bottom: 1rem;
-    padding: 1.4rem;
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
+    padding: 1.35rem;
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: var(--shadow-soft);
   }
 
   .intent-tabs,
@@ -128,9 +128,9 @@ const selectedSort = filters.sort || "newest";
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 2.75rem;
+    min-height: 2.95rem;
     border-radius: 999px;
-    padding: 0.82rem 1rem;
+    padding: 0.86rem 1rem;
     font-weight: 700;
     text-decoration: none;
     font: inherit;
@@ -157,22 +157,22 @@ const selectedSort = filters.sort || "newest";
 
   .field {
     display: grid;
-    gap: 0.45rem;
+    gap: 0.42rem;
   }
 
   .field span {
-    font-size: 0.9rem;
+    font-size: 0.82rem;
     font-weight: 700;
-    color: var(--text);
+    color: var(--muted-strong);
   }
 
   .field input,
   .field select {
     width: 100%;
     min-height: 3.1rem;
-    border-radius: 18px;
-    border: 1px solid rgba(208, 213, 221, 0.82);
-    background: linear-gradient(180deg, #ffffff, #fbfcfe);
+    border-radius: 1rem;
+    border: 1px solid var(--line);
+    background: var(--bg-soft);
     padding: 0.92rem 1rem;
     color: var(--text);
     font: inherit;
@@ -202,10 +202,10 @@ const selectedSort = filters.sort || "newest";
   }
 
   .filter-chips span {
-    min-height: 2.3rem;
-    padding: 0.56rem 0.85rem;
-    font-size: 0.84rem;
-    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    min-height: 2.25rem;
+    padding: 0.56rem 0.84rem;
+    font-size: 0.82rem;
+    background: rgba(255, 255, 255, 0.82);
   }
 
   .button-dark {

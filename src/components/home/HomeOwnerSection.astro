@@ -30,25 +30,20 @@ const { ownerSteps } = Astro.props;
       </article>
     ))}
   </div>
-
-  <div class="section-actions">
-    <a class="button-secondary" href="/for-owners">See owner landing page</a>
-    <a class="button-secondary" href="/pricing">See pricing</a>
-  </div>
 </section>
 
 <style>
   .owners-section {
-    margin-top: 1.15rem;
+    margin-top: 2.35rem;
   }
 
   .section-heading {
-    max-width: 52rem;
-    margin-bottom: 1rem;
+    max-width: 46rem;
+    margin-bottom: 1.15rem;
   }
 
   .section-heading.narrow {
-    max-width: 46rem;
+    max-width: 43rem;
   }
 
   .section-kicker,
@@ -56,91 +51,54 @@ const { ownerSteps } = Astro.props;
     display: inline-flex;
     align-items: center;
     min-height: 2rem;
-    padding: 0.22rem 0.75rem;
+    padding: 0.35rem 0.82rem;
     border-radius: 999px;
-    background: var(--brand-soft);
-    color: var(--accent-strong);
-    font-size: 0.78rem;
-    font-weight: 800;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.72);
+    color: var(--muted-strong);
+    font-size: 0.72rem;
+    font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
   .section-heading h2 {
-    margin: 0.9rem 0 0;
-    font-size: clamp(2rem, 4vw, 3.2rem);
-    line-height: 1;
-    letter-spacing: -0.08em;
-    font-family: "Plus Jakarta Sans", sans-serif;
+    margin: 0.65rem 0 0;
+    font-size: clamp(2.5rem, 5vw, 4.75rem);
+    line-height: 0.9;
+    letter-spacing: -0.1em;
   }
 
   .section-heading p,
   .owner-card p {
     color: var(--muted);
-    line-height: 1.7;
-    margin: 0;
+    line-height: 1.72;
   }
 
   .owner-grid {
     display: grid;
-    gap: 1rem;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
   }
 
   .owner-card {
-    padding: 1.25rem;
-    border: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.88);
-    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
-    transition: transform 180ms ease, box-shadow 180ms ease;
-  }
-
-  .owner-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.1);
+    display: grid;
+    gap: 0.85rem;
+    padding: 1.3rem;
+    border-radius: 1.75rem;
+    background: rgba(255, 255, 255, 0.72);
   }
 
   .owner-card h3 {
-    margin: 0.6rem 0 0.5rem;
-    font-size: 1.22rem;
-    letter-spacing: -0.02em;
+    margin: 0;
+    font-size: 1.2rem;
+    line-height: 1.15;
+    letter-spacing: -0.05em;
   }
 
-  .section-actions {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    margin-top: 1rem;
-  }
-
-  .button-secondary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 2.9rem;
-    border-radius: 999px;
-    padding: 0.88rem 1.1rem;
-    font-weight: 700;
-    text-decoration: none;
-    font: inherit;
-    border: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--text);
-  }
-
-  @media (max-width: 1100px) {
+  @media (max-width: 1080px) {
     .owner-grid {
       grid-template-columns: 1fr;
-    }
-  }
-
-  @media (max-width: 760px) {
-    .section-actions {
-      display: grid;
-    }
-
-    .button-secondary {
-      width: 100%;
     }
   }
 </style>
