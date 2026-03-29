@@ -1,0 +1,324 @@
+---
+import type { Listing } from "../../data/listings";
+
+export interface Props {
+  listing: Listing;
+  mapHref: string;
+  mapEmbedHref?: string;
+}
+
+const { listing, mapHref, mapEmbedHref } = Astro.props;
+const neighborhood = listing.neighborhood;
+const location = listing.location;
+---
+
+<article class="content-panel card">
+  <div class="panel-section">
+    <span class="section-kicker">Overview</span>
+    <h2>Property overview</h2>
+    <p>{listing.description}</p>
+  </div>
+
+  <div class="panel-section">
+    <span class="section-kicker">Highlights</span>
+    <div class="tag-row">
+      {listing.tags.map((tag) => <span>{tag}</span>)}
+    </div>
+  </div>
+
+  <div class="panel-section">
+    <span class="section-kicker">Included features</span>
+    <div class="feature-grid">
+      {listing.features.map((feature) => (
+        <div class="feature-item">
+          <span class="feature-dot"></span>
+          <span>{feature}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  {neighborhood && (
+    <div class="panel-section">
+      <span class="section-kicker">Neighborhood context</span>
+      <h2>What this location adds beyond the unit itself</h2>
+      <p>{neighborhood.headline}</p>
+      <div class="context-grid">
+        <article>
+          <strong>Commute and access</strong>
+          <p>{neighborhood.commute}</p>
+        </article>
+        <article>
+          <strong>Nearby anchors</strong>
+          <ul>
+            {neighborhood.nearby.map((item) => <li>{item}</li>)}
+          </ul>
+        </article>
+        <article>
+          <strong>Trust signals</strong>
+          <ul>
+            {neighborhood.trustSignals.map((item) => <li>{item}</li>)}
+          </ul>
+        </article>
+      </div>
+    </div>
+  )}
+
+  <div class="panel-section">
+    <span class="section-kicker">Map and access</span>
+    <h2>Location view</h2>
+    <p>
+      Use the map as orientation, not as a promise of exact door-level precision. For marketplace trust, approximate
+      neighborhood placement is usually the right balance until the owner chooses to reveal more.
+    </p>
+    <div class="map-panel">
+      {mapEmbedHref ? (
+        <iframe
+          title={`Map for ${listing.title}`}
+          src={mapEmbedHref}
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      ) : (
+        <div class="map-fallback">
+          <strong>{listing.ward}, {listing.district}</strong>
+          <span>{listing.city}</span>
+        </div>
+      )}
+      <div class="map-meta">
+        <strong>{location?.precisionLabel || "Approximate neighborhood view"}</strong>
+        <span>{listing.ward}, {listing.district}, {listing.city}</span>
+        <div class="map-actions">
+          <a class="button-dark" href={mapHref} target="_blank" rel="noreferrer">Open map</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {listing.imageUrls && listing.imageUrls.length > 0 && (
+    <div class="panel-section">
+      <span class="section-kicker">Photo gallery</span>
+      <div class="gallery-grid">
+        {listing.imageUrls.map((imageUrl) => (
+          <img src={imageUrl} alt={listing.title} loading="lazy" />
+        ))}
+      </div>
+    </div>
+  )}
+</article>
+
+<style>
+  .content-panel {
+    padding: 1.1rem;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 18px 40px rgba(16, 24, 40, 0.06);
+  }
+
+  .panel-section + .panel-section {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .section-kicker,
+  .tag-row span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2rem;
+    padding: 0.22rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
+
+  .section-kicker {
+    background: var(--brand-soft);
+    color: var(--accent-strong);
+    text-transform: uppercase;
+  }
+
+  .tag-row,
+  .map-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .panel-section h2 {
+    margin: 0.7rem 0 0;
+    font-size: 1.55rem;
+    letter-spacing: -0.03em;
+  }
+
+  .panel-section p,
+  .feature-item {
+    color: var(--muted);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .tag-row span {
+    background: rgba(248,250,252,0.96);
+    border: 1px solid rgba(208, 213, 221, 0.74);
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .feature-item {
+    display: flex;
+    gap: 0.7rem;
+    align-items: center;
+    padding: 0.9rem 1rem;
+    border-radius: 20px;
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    border: 1px solid rgba(208, 213, 221, 0.74);
+  }
+
+  .feature-dot {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--brand), #23314d);
+    flex: none;
+  }
+
+  .context-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .context-grid article {
+    padding: 1rem;
+    border-radius: 22px;
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    border: 1px solid rgba(208, 213, 221, 0.74);
+  }
+
+  .context-grid strong {
+    display: block;
+    margin-bottom: 0.55rem;
+    font-size: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .context-grid p,
+  .context-grid ul {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .context-grid ul {
+    padding-left: 1.1rem;
+  }
+
+  .map-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(16rem, 0.8fr);
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .map-panel iframe,
+  .map-fallback {
+    width: 100%;
+    min-height: 20rem;
+    border: 0;
+    border-radius: 22px;
+    background:
+      linear-gradient(180deg, rgba(15, 23, 42, 0.05), rgba(15, 23, 42, 0.12)),
+      radial-gradient(circle at 22% 20%, rgba(15, 118, 110, 0.16), transparent 18%),
+      linear-gradient(135deg, #f8fafc, #e5edf6);
+  }
+
+  .map-fallback {
+    display: grid;
+    place-content: center;
+    gap: 0.35rem;
+    padding: 1.2rem;
+    text-align: center;
+  }
+
+  .map-fallback strong {
+    font-size: 1.1rem;
+    letter-spacing: -0.03em;
+  }
+
+  .map-fallback span,
+  .map-meta span {
+    color: var(--muted);
+  }
+
+  .map-meta {
+    display: grid;
+    gap: 0.9rem;
+    align-content: start;
+    padding: 1rem;
+    border-radius: 24px;
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    border: 1px solid rgba(208, 213, 221, 0.74);
+  }
+
+  .map-meta strong {
+    font-size: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .button-dark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.8rem;
+    padding: 0.85rem 1rem;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    background: var(--brand);
+    color: white;
+    box-shadow: 0 14px 28px rgba(16, 24, 40, 0.16);
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .gallery-grid img {
+    width: 100%;
+    height: 15rem;
+    border-radius: 18px;
+    object-fit: cover;
+    background: rgba(14, 22, 40, 0.08);
+  }
+
+  @media (max-width: 1100px) {
+    .context-grid,
+    .map-panel {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .feature-grid,
+    .gallery-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
