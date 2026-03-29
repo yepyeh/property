@@ -38,6 +38,13 @@ const { listing, ownerTrustLabel, enquirySent, isBuyer = false } = Astro.props;
       </article>
     </div>
 
+    {isBuyer && (
+      <div class="buyer-guide">
+        <strong>Not sure yet?</strong>
+        <p>Save this to your shortlist first. Then compare it against two or three other places. If it still looks strongest, mark it as a finalist and come back here to enquire.</p>
+      </div>
+    )}
+
     {isBuyer && <a class="button-secondary full-width" href="/buyer/compare/">Compare against saved homes</a>}
 
     <form class="enquiry-form" method="POST" action="/api/enquiries">
@@ -147,6 +154,20 @@ const { listing, ownerTrustLabel, enquirySent, isBuyer = false } = Astro.props;
     display: block;
     font-size: 1.05rem;
     margin-bottom: 0.15rem;
+  }
+
+  .buyer-guide {
+    margin-top: 1rem;
+    padding: 0.95rem 1rem;
+    border-radius: 18px;
+    background: rgba(15, 23, 42, 0.05);
+    border: 1px solid var(--line);
+  }
+
+  .buyer-guide p {
+    margin: 0.35rem 0 0;
+    color: var(--muted);
+    line-height: 1.65;
   }
 
   .enquiry-form {

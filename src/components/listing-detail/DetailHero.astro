@@ -88,14 +88,14 @@ const galleryImages = listing.imageUrls || [];
         <form method="POST" action={isSaved ? "/api/saved-listings/delete" : "/api/saved-listings"}>
           <input type="hidden" name="listingSlug" value={listing.slug} />
           <input type="hidden" name="redirectTo" value={`/listings/${listing.slug}/`} />
-          <button type="submit" class="button-secondary">{isSaved ? "Saved to favorites" : "Save listing"}</button>
+          <button type="submit" class="button-secondary">{isSaved ? "Saved to shortlist" : "Save to shortlist"}</button>
         </form>
       ) : (
         <a class="button-secondary" href={`/login?redirect=${encodeURIComponent(`/listings/${listing.slug}/`)}`}>Sign in to save</a>
       )}
       <a class="button-dark" href="#enquiry-panel">Enquire now</a>
     </div>
-    {savedListing && <p class="flash-inline">Listing saved to your buyer dashboard.</p>}
+    {savedListing && <p class="flash-inline">Listing saved to your shortlist. Compare it before you decide whether to contact.</p>}
   </div>
 </section>
 

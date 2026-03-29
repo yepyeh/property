@@ -38,7 +38,7 @@ function getCons(listing: NonNullable<(typeof compareEntries)[number]["listing"]
   <WorkspaceHero
     eyebrow="Buyer comparison"
     title="Compare shortlisted homes side by side."
-    text="This is the point where a shortlist becomes a decision. Compare price, area, trust signals, and location fit without bouncing between detail pages."
+    text="This is where a shortlist turns into a decision. Compare price, area, trust, and location first. If one listing clearly pulls ahead, mark it as a finalist. If you are ready, move it to contacted and continue from the listing page."
     actions={[
       { href: "/buyer/dashboard/", label: "Back to dashboard", kind: "secondary" },
       { href: "/listings/", label: "Browse listings", kind: "secondary" },
@@ -55,6 +55,10 @@ function getCons(listing: NonNullable<(typeof compareEntries)[number]["listing"]
     </section>
   ) : (
     <section class="card compare-table section-gap">
+      <div class="compare-guide">
+        <strong>Decision rule</strong>
+        <p>Use compare for two or three listings only. When one option still looks strongest after price, location context, trust, and watchouts, mark it as a finalist. Contact only after that.</p>
+      </div>
       <div class="compare-grid compare-head">
         <div class="compare-label">Compare</div>
         {compareEntries.map((entry) => {
@@ -128,6 +132,20 @@ function getCons(listing: NonNullable<(typeof compareEntries)[number]["listing"]
     .compare-table {
       padding: 1rem;
       overflow-x: auto;
+    }
+
+    .compare-guide {
+      padding: 1rem 1.05rem;
+      margin-bottom: 0.9rem;
+      border-radius: 20px;
+      background: rgba(15, 23, 42, 0.05);
+      border: 1px solid var(--line);
+    }
+
+    .compare-guide p {
+      margin: 0.35rem 0 0;
+      color: var(--muted);
+      line-height: 1.65;
     }
 
     .compare-grid {

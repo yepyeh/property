@@ -60,6 +60,34 @@ const enquiryStatusCounts = {
     ]}
   />
 
+  <section class="card panel section-gap">
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">How to use this</p>
+        <h2>Like a listing, but not ready to contact yet?</h2>
+        <p class="panel-copy">Use the buyer flow in order. Save a few places into your shortlist, compare them side by side, mark a finalist, then contact the one that still looks strongest after price, location, and trust are all on the table.</p>
+      </div>
+    </div>
+    <div class="journey-grid">
+      <article class="journey-step">
+        <strong>1. Save to shortlist</strong>
+        <p>Add any promising listing first. You do not need to decide on the spot.</p>
+      </article>
+      <article class="journey-step">
+        <strong>2. Compare a few</strong>
+        <p>Put two or three options next to each other so tradeoffs are obvious.</p>
+      </article>
+      <article class="journey-step">
+        <strong>3. Mark a finalist</strong>
+        <p>Use `Finalist` when one listing is pulling ahead but you still want to think.</p>
+      </article>
+      <article class="journey-step">
+        <strong>4. Contact with context</strong>
+        <p>Once you are ready, contact from the listing page and track the response here.</p>
+      </article>
+    </div>
+  </section>
+
   <section class="split-grid section-gap">
     <article class="card panel">
       <div class="panel-head">
@@ -344,6 +372,25 @@ const enquiryStatusCounts = {
       gap: 0.8rem;
     }
 
+    .journey-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.8rem;
+    }
+
+    .journey-step {
+      padding: 1rem;
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92));
+      border: 1px solid var(--line);
+    }
+
+    .journey-step p {
+      margin: 0.45rem 0 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
     .saved-state-form {
       display: grid;
       grid-template-columns: 0.9fr 0.9fr 1.3fr auto;
@@ -422,7 +469,8 @@ const enquiryStatusCounts = {
 
       .compare-preview,
       .saved-property-card,
-      .saved-state-form {
+      .saved-state-form,
+      .journey-grid {
         grid-template-columns: 1fr;
       }
     }
