@@ -1,30 +1,32 @@
 ---
 export interface Props {
   total: number;
+  countries: number;
   cities: number;
   forRent: number;
   hasFilters: boolean;
   allCities: string[];
   selectedIntent: string;
+  t?: (value: string) => string;
 }
 
-const { total, cities, forRent, hasFilters, allCities, selectedIntent } = Astro.props;
+const { total, countries, cities, forRent, hasFilters, allCities, selectedIntent, t = (value: string) => value } = Astro.props;
 ---
 
 <section class="results-summary card" id="results">
   <div class="summary-main">
-    <strong>{total} listings</strong>
+    <strong>{total} {t("listings")}</strong>
     <p>
-      across {cities} cities · {forRent} rentals live
-      {hasFilters ? " · filtered results" : " · full inventory"}
+      {t("Across")} {countries} {t("countries")} · {cities} {t("cities")} · {forRent} {t("rentals live")}
+      {hasFilters ? ` · ${t("filtered results")}` : ` · ${t("full inventory")}`}
     </p>
     <div class="summary-pills">
-      <span>{selectedIntent === "rent" ? "Rental search" : "Purchase search"}</span>
-      <span>{hasFilters ? "Custom filter set" : "Full live inventory"}</span>
+      <span>{selectedIntent === "rent" ? t("Rental search") : t("Purchase search")}</span>
+      <span>{hasFilters ? t("Custom filter set") : t("Full live inventory")}</span>
     </div>
   </div>
   <div class="summary-links">
-    <span>Popular city routes</span>
+    <span>{t("Popular city routes")}</span>
     {allCities.slice(0, 3).map((city) => <a href={`/listings/?intent=${selectedIntent}&city=${encodeURIComponent(city)}`}>{city}</a>)}
   </div>
 </section>

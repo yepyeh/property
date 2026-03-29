@@ -132,3 +132,600 @@ msgstr "បានណែនាំ"
 
 msgid "English-first, with your local language available."
 msgstr "ប្រើអង់គ្លេសជាមូលដ្ឋាន ហើយមានភាសាក្នុងតំបន់របស់អ្នកសម្រាប់ជម្រើស។"
+
+msgid "Search-first property marketplace"
+msgstr "Search-first property marketplace"
+
+msgid "Find the right place faster, then follow through with confidence."
+msgstr "Find the right place faster, then follow through with confidence."
+
+msgid "Start your search"
+msgstr "Start your search"
+
+msgid "Post a property"
+msgstr "Post a property"
+
+msgid "Active inventory"
+msgstr "Active inventory"
+
+msgid "Location"
+msgstr "Location"
+
+msgid "Property type"
+msgstr "Property type"
+
+msgid "Any property"
+msgstr "Any property"
+
+msgid "Budget ceiling"
+msgstr "Budget ceiling"
+
+msgid "Any budget"
+msgstr "Any budget"
+
+msgid "Any beds"
+msgstr "Any beds"
+
+msgid "Search inventory"
+msgstr "Search inventory"
+
+msgid "Live search"
+msgstr "Live search"
+
+msgid "Query-driven inventory"
+msgstr "Query-driven inventory"
+
+msgid "Buyer and rent intent"
+msgstr "Buyer and rent intent"
+
+msgid "Owner workflow"
+msgstr "Owner workflow"
+
+msgid "Leads, billing, renewals"
+msgstr "Leads, billing, renewals"
+
+msgid "Supply-side operations"
+msgstr "Supply-side operations"
+
+msgid "Fast routes"
+msgstr "Fast routes"
+
+msgid "Start from the most common searches"
+msgstr "Start from the most common searches"
+
+msgid "PWA-ready"
+msgstr "PWA-ready"
+
+msgid "Mobile-first shell"
+msgstr "Mobile-first shell"
+
+msgid "Choose your path"
+msgstr "Choose your path"
+
+msgid "Need something beyond what is already advertised?"
+msgstr "Need something beyond what is already advertised?"
+
+msgid "Request concierge help"
+msgstr "Request concierge help"
+
+msgid "See trust approach"
+msgstr "See trust approach"
+
+msgid "Search results"
+msgstr "Search results"
+
+msgid "Search property with less noise and stronger buyer signals."
+msgstr "Search property with less noise and stronger buyer signals."
+
+msgid "The results surface should feel decisive: clear filters, stable URLs, visible result counts, and cleaner cards that help a buyer compare quickly."
+msgstr "The results surface should feel decisive: clear filters, stable URLs, visible result counts, and cleaner cards that help a buyer compare quickly."
+
+msgid "Home"
+msgstr "Home"
+
+msgid "Jump to results"
+msgstr "Jump to results"
+
+msgid "Search listings"
+msgstr "Search listings"
+
+msgid "Search properties to buy or rent with real filterable results and a cleaner, portal-style search experience."
+msgstr "Search properties to buy or rent with real filterable results and a cleaner, portal-style search experience."
+
+msgid "Search saved. You can manage it from your dashboard."
+msgstr "Search saved. You can manage it from your dashboard."
+
+msgid "Refine the shortlist"
+msgstr "Refine the shortlist"
+
+msgid "Search by location, price band, and home type."
+msgstr "Search by location, price band, and home type."
+
+msgid "Use the filters to get to a tighter results set first. The map works better once the shortlist is already credible."
+msgstr "Use the filters to get to a tighter results set first. The map works better once the shortlist is already credible."
+
+msgid "Country"
+msgstr "Country"
+
+msgid "All countries"
+msgstr "All countries"
+
+msgid "City"
+msgstr "City"
+
+msgid "District"
+msgstr "District"
+
+msgid "Condo"
+msgstr "Condo"
+
+msgid "Villa"
+msgstr "Villa"
+
+msgid "Townhouse"
+msgstr "Townhouse"
+
+msgid "Apartment"
+msgstr "Apartment"
+
+msgid "House"
+msgstr "House"
+
+msgid "Land"
+msgstr "Land"
+
+msgid "Sale mode"
+msgstr "Sale mode"
+
+msgid "Any mode"
+msgstr "Any mode"
+
+msgid "Private sale"
+msgstr "Private sale"
+
+msgid "Auction"
+msgstr "Auction"
+
+msgid "Minimum beds"
+msgstr "Minimum beds"
+
+msgid "Minimum price"
+msgstr "Minimum price"
+
+msgid "Maximum price"
+msgstr "Maximum price"
+
+msgid "Sort"
+msgstr "Sort"
+
+msgid "Newest"
+msgstr "Newest"
+
+msgid "Price: low to high"
+msgstr "Price: low to high"
+
+msgid "Price: high to low"
+msgstr "Price: high to low"
+
+msgid "Clear"
+msgstr "Clear"
+
+msgid "All live inventory"
+msgstr "All live inventory"
+
+msgid "Saved searches"
+msgstr "Saved searches"
+
+msgid "Track enquiries"
+msgstr "Track enquiries"
+
+msgid "listings"
+msgstr "listings"
+
+msgid "Across"
+msgstr "Across"
+
+msgid "countries"
+msgstr "countries"
+
+msgid "cities"
+msgstr "cities"
+
+msgid "rentals live"
+msgstr "rentals live"
+
+msgid "filtered results"
+msgstr "filtered results"
+
+msgid "full inventory"
+msgstr "full inventory"
+
+msgid "Rental search"
+msgstr "Rental search"
+
+msgid "Purchase search"
+msgstr "Purchase search"
+
+msgid "Custom filter set"
+msgstr "Custom filter set"
+
+msgid "Full live inventory"
+msgstr "Full live inventory"
+
+msgid "Popular city routes"
+msgstr "Popular city routes"
+
+msgid "List"
+msgstr "List"
+
+msgid "Map"
+msgstr "Map"
+
+msgid "Map view"
+msgstr "Map view"
+
+msgid "See the filtered listings on a live map"
+msgstr "See the filtered listings on a live map"
+
+msgid "Search by filters first, then use the map to validate coverage and cluster patterns instead of guessing where the inventory sits."
+msgstr "Search by filters first, then use the map to validate coverage and cluster patterns instead of guessing where the inventory sits."
+
+msgid "No map coordinates for this result set yet."
+msgstr "No map coordinates for this result set yet."
+
+msgid "Try a broader filter set or add owner coordinates when posting listings."
+msgstr "Try a broader filter set or add owner coordinates when posting listings."
+
+msgid "No matching districts"
+msgstr "No matching districts"
+
+msgid "No matches"
+msgstr "No matches"
+
+msgid "There are no listings for this filter set yet."
+msgstr "There are no listings for this filter set yet."
+
+msgid "Broaden the city or district, lower the bed count requirement, or clear the price range. If you are testing owner supply, you can also add a new listing from the dashboard."
+msgstr "Broaden the city or district, lower the bed count requirement, or clear the price range. If you are testing owner supply, you can also add a new listing from the dashboard."
+
+msgid "Clear filters"
+msgstr "Clear filters"
+
+msgid "To rent"
+msgstr "To rent"
+
+msgid "Live auction"
+msgstr "Live auction"
+
+msgid "Auction ended"
+msgstr "Auction ended"
+
+msgid "saves"
+msgstr "saves"
+
+msgid "photos"
+msgstr "photos"
+
+msgid "Monthly rental"
+msgstr "Monthly rental"
+
+msgid "Rental"
+msgstr "Rental"
+
+msgid "Sale"
+msgstr "Sale"
+
+msgid "beds"
+msgstr "beds"
+
+msgid "baths"
+msgstr "baths"
+
+msgid "Ends"
+msgstr "Ends"
+
+msgid "enquiries"
+msgstr "enquiries"
+
+msgid "Owner listed"
+msgstr "Owner listed"
+
+msgid "View details"
+msgstr "View details"
+
+msgid "Primary view"
+msgstr "Primary view"
+
+msgid "Gallery"
+msgstr "Gallery"
+
+msgid "All listings"
+msgstr "All listings"
+
+msgid "Bidding is live"
+msgstr "Bidding is live"
+
+msgid "Auction closed"
+msgstr "Auction closed"
+
+msgid "Auction scheduled"
+msgstr "Auction scheduled"
+
+msgid "Opening bid"
+msgstr "Opening bid"
+
+msgid "Bedrooms"
+msgstr "Bedrooms"
+
+msgid "Bathrooms"
+msgstr "Bathrooms"
+
+msgid "Square meters"
+msgstr "Square meters"
+
+msgid "Replies in"
+msgstr "Replies in"
+
+msgid "Views in the last 24 hours"
+msgstr "Views in the last 24 hours"
+
+msgid "Saves from active buyers"
+msgstr "Saves from active buyers"
+
+msgid "Recent enquiry conversations"
+msgstr "Recent enquiry conversations"
+
+msgid "Saved to shortlist"
+msgstr "Saved to shortlist"
+
+msgid "Save to shortlist"
+msgstr "Save to shortlist"
+
+msgid "Sign in to save"
+msgstr "Sign in to save"
+
+msgid "Enquire now"
+msgstr "Enquire now"
+
+msgid "Listing saved to your shortlist. Compare it before you decide whether to contact."
+msgstr "Listing saved to your shortlist. Compare it before you decide whether to contact."
+
+msgid "How this auction works"
+msgstr "How this auction works"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Bidding is live now."
+msgstr "Bidding is live now."
+
+msgid "This auction has ended."
+msgstr "This auction has ended."
+
+msgid "Auction is scheduled."
+msgstr "Auction is scheduled."
+
+msgid "Reserve"
+msgstr "Reserve"
+
+msgid "Reserve not published"
+msgstr "Reserve not published"
+
+msgid "Window"
+msgstr "Window"
+
+msgid "Start to be announced"
+msgstr "Start to be announced"
+
+msgid "end to be announced"
+msgstr "end to be announced"
+
+msgid "to"
+msgstr "to"
+
+msgid "Overview"
+msgstr "Overview"
+
+msgid "Property overview"
+msgstr "Property overview"
+
+msgid "Best suited for"
+msgstr "Best suited for"
+
+msgid "Renters who want a settled move-in experience, not another generic short-stay unit."
+msgstr "Renters who want a settled move-in experience, not another generic short-stay unit."
+
+msgid "Buyers who want location confidence and a layout that can hold long-term value."
+msgstr "Buyers who want location confidence and a layout that can hold long-term value."
+
+msgid "Why this listing stands out"
+msgstr "Why this listing stands out"
+
+msgid "Highlights"
+msgstr "Highlights"
+
+msgid "Included features"
+msgstr "Included features"
+
+msgid "What this location adds beyond the unit itself"
+msgstr "What this location adds beyond the unit itself"
+
+msgid "Commute and access"
+msgstr "Commute and access"
+
+msgid "Nearby anchors"
+msgstr "Nearby anchors"
+
+msgid "Trust signals"
+msgstr "Trust signals"
+
+msgid "Map and access"
+msgstr "Map and access"
+
+msgid "Location view"
+msgstr "Location view"
+
+msgid "Use the map as orientation, not as a promise of exact door-level precision. For marketplace trust, approximate neighborhood placement is usually the right balance until the owner chooses to reveal more."
+msgstr "Use the map as orientation, not as a promise of exact door-level precision. For marketplace trust, approximate neighborhood placement is usually the right balance until the owner chooses to reveal more."
+
+msgid "Approximate neighborhood view"
+msgstr "Approximate neighborhood view"
+
+msgid "Open map"
+msgstr "Open map"
+
+msgid "Photo gallery"
+msgstr "Photo gallery"
+
+msgid "Enquiry panel"
+msgstr "Enquiry panel"
+
+msgid "Contact the owner"
+msgstr "Contact the owner"
+
+msgid "Structured enquiries are the conversion layer. Buyers should know who they are contacting and owners should receive clean intent data, not vague messages."
+msgstr "Structured enquiries are the conversion layer. Buyers should know who they are contacting and owners should receive clean intent data, not vague messages."
+
+msgid "Enquiry sent successfully. The owner can now see it in the dashboard."
+msgstr "Enquiry sent successfully. The owner can now see it in the dashboard."
+
+msgid "Your enquiry stays inside the platform flow first. That gives both sides a cleaner history and a safer follow-up path."
+msgstr "Your enquiry stays inside the platform flow first. That gives both sides a cleaner history and a safer follow-up path."
+
+msgid "Best first message"
+msgstr "Best first message"
+
+msgid "Ask about availability, viewings, and any building or ownership conditions."
+msgstr "Ask about availability, viewings, and any building or ownership conditions."
+
+msgid "Typical response"
+msgstr "Typical response"
+
+msgid "when the listing is actively managed."
+msgstr "when the listing is actively managed."
+
+msgid "Not sure yet?"
+msgstr "Not sure yet?"
+
+msgid "Save this to your shortlist first. Add it to a collection if you are planning by area or trip. Then compare it against two or three other places. If it still looks strongest, mark it as a finalist and come back here to enquire."
+msgstr "Save this to your shortlist first. Add it to a collection if you are planning by area or trip. Then compare it against two or three other places. If it still looks strongest, mark it as a finalist and come back here to enquire."
+
+msgid "Open buyer guide"
+msgstr "Open buyer guide"
+
+msgid "Compare against saved homes"
+msgstr "Compare against saved homes"
+
+msgid "Register auction interest"
+msgstr "Register auction interest"
+
+msgid "Your name"
+msgstr "Your name"
+
+msgid "Enter your name"
+msgstr "Enter your name"
+
+msgid "Contact"
+msgstr "Contact"
+
+msgid "Email, WhatsApp, or phone number"
+msgstr "Email, WhatsApp, or phone number"
+
+msgid "Preferred viewing time"
+msgstr "Preferred viewing time"
+
+msgid "Saturday morning"
+msgstr "Saturday morning"
+
+msgid "Message"
+msgstr "Message"
+
+msgid "Hi, I'm interested in"
+msgstr "Hi, I'm interested in"
+
+msgid "Is it still available?"
+msgstr "Is it still available?"
+
+msgid "Send enquiry"
+msgstr "Send enquiry"
+
+msgid "Demand signals"
+msgstr "Demand signals"
+
+msgid "Buyers saved this listing"
+msgstr "Buyers saved this listing"
+
+msgid "Open conversations"
+msgstr "Open conversations"
+
+msgid "Protection"
+msgstr "Protection"
+
+msgid "Need to flag this listing?"
+msgstr "Need to flag this listing?"
+
+msgid "Report listings that look misleading, duplicated, suspicious, or unsafe. This creates a moderation record for admin review."
+msgstr "Report listings that look misleading, duplicated, suspicious, or unsafe. This creates a moderation record for admin review."
+
+msgid "Report submitted. The moderation queue now includes this listing."
+msgstr "Report submitted. The moderation queue now includes this listing."
+
+msgid "Reason"
+msgstr "Reason"
+
+msgid "Misleading information"
+msgstr "Misleading information"
+
+msgid "Duplicate listing"
+msgstr "Duplicate listing"
+
+msgid "Suspicious contact"
+msgstr "Suspicious contact"
+
+msgid "Pricing issue"
+msgstr "Pricing issue"
+
+msgid "Other safety concern"
+msgstr "Other safety concern"
+
+msgid "Optional"
+msgstr "Optional"
+
+msgid "Optional email or phone"
+msgstr "Optional email or phone"
+
+msgid "Details"
+msgstr "Details"
+
+msgid "What looks wrong or unsafe?"
+msgstr "What looks wrong or unsafe?"
+
+msgid "Report listing"
+msgstr "Report listing"
+
+msgid "Budget guide"
+msgstr "Budget guide"
+
+msgid "Estimate the monthly cost"
+msgstr "Estimate the monthly cost"
+
+msgid "A quick financing check before you contact. Major portals push this because buyers use it constantly during shortlisting."
+msgstr "A quick financing check before you contact. Major portals push this because buyers use it constantly during shortlisting."
+
+msgid "Down payment %"
+msgstr "Down payment %"
+
+msgid "Interest %"
+msgstr "Interest %"
+
+msgid "Years"
+msgstr "Years"
+
+msgid "Similar listings"
+msgstr "Similar listings"
+
+msgid "Nearby alternatives worth comparing"
+msgstr "Nearby alternatives worth comparing"
+
+msgid "Good detail pages should recover the browse journey instead of trapping the user on one listing."
+msgstr "Good detail pages should recover the browse journey instead of trapping the user on one listing."

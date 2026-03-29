@@ -4,15 +4,16 @@ import type { Listing } from "../data/listings";
 export interface Props {
   listing: Listing;
   showCompareLink?: boolean;
+  t?: (value: string) => string;
 }
 
-const { listing, showCompareLink = false } = Astro.props;
+const { listing, showCompareLink = false, t = (value: string) => value } = Astro.props;
 const heroImage = listing.imageUrls?.[0];
-const intentLabel = listing.intent === "rent" ? "To rent" : "For sale";
+const intentLabel = listing.intent === "rent" ? t("To rent") : t("For sale");
 const neighborhood = listing.neighborhood;
 const imageCount = listing.imageUrls?.length || 0;
 const isAuction = listing.saleMode === "auction";
-const auctionLabel = listing.auction?.phase === "live" ? "Live auction" : listing.auction?.phase === "ended" ? "Auction ended" : "Auction";
+const auctionLabel = listing.auction?.phase === "live" ? t("Live auction") : listing.auction?.phase === "ended" ? t("Auction ended") : t("Auction");
 ---
 
 <article class={`listing-card card ${listing.tone}`}>
@@ -25,8 +26,8 @@ const auctionLabel = listing.auction?.phase === "live" ? "Live auction" : listin
           <span class="status-chip">{listing.status}</span>
         </div>
         <div class="media-meta">
-          <span class="save-count">{listing.stats.saves} saves</span>
-          <span class="save-count">{imageCount} photos</span>
+          <span class="save-count">{listing.stats.saves} {t("saves")}</span>
+          <span class="save-count">{imageCount} {t("photos")}</span>
         </div>
       </div>
     </div>
@@ -35,28 +36,28 @@ const auctionLabel = listing.auction?.phase === "live" ? "Live auction" : listin
   <div class="listing-body">
     <div class="listing-label-row">
       <span class="market-chip">{listing.type}</span>
-      <span class="market-chip muted">{listing.intent === "rent" ? "Monthly rental" : isAuction ? "Auction" : "Private sale"}</span>
+      <span class="market-chip muted">{listing.intent === "rent" ? t("Monthly rental") : isAuction ? t("Auction") : t("Private sale")}</span>
     </div>
     <div class="listing-top">
       <div>
         <p class="price">{listing.priceLabel}</p>
         <h3><a href={`/listings/${listing.slug}/`}>{listing.title}</a></h3>
       </div>
-      <span class="meta-label">{listing.intent === "rent" ? "Rental" : "Sale"}</span>
+      <span class="meta-label">{listing.intent === "rent" ? t("Rental") : t("Sale")}</span>
     </div>
 
-    <p class="meta">{listing.ward}, {listing.district}, {listing.city}</p>
+    <p class="meta">{listing.ward}, {listing.district}, {listing.city}, {listing.country}</p>
     <div class="fact-row">
       <span>{listing.type}</span>
-      <span>{listing.beds} beds</span>
-      <span>{listing.baths} baths</span>
+      <span>{listing.beds} {t("beds")}</span>
+      <span>{listing.baths} {t("baths")}</span>
       <span>{listing.area} m2</span>
     </div>
     <p class="summary">{listing.summary}</p>
     {isAuction && listing.auction && (
       <div class="auction-strip">
         <strong>{listing.auction.startingPriceLabel || listing.priceLabel}</strong>
-        {listing.auction.endsAt && <span>Ends {listing.auction.endsAt}</span>}
+        {listing.auction.endsAt && <span>{t("Ends")} {listing.auction.endsAt}</span>}
       </div>
     )}
     {neighborhood && (
@@ -71,12 +72,12 @@ const auctionLabel = listing.auction?.phase === "live" ? "Live auction" : listin
 
     <div class="listing-footer">
       <div class="signal-row">
-        <span>{listing.stats.enquiries} enquiries</span>
-        <span>{listing.owner.verified ? "Verified owner" : "Owner listed"}</span>
+        <span>{listing.stats.enquiries} {t("enquiries")}</span>
+        <span>{listing.owner.verified ? t("Verified owner") : t("Owner listed")}</span>
       </div>
       <div class="footer-actions">
-        {showCompareLink && <a class="compare-link" href="/buyer/compare/">Compare</a>}
-        <a class="details-link" href={`/listings/${listing.slug}/`}>View details</a>
+        {showCompareLink && <a class="compare-link" href="/buyer/compare/">{t("Compare")}</a>}
+        <a class="details-link" href={`/listings/${listing.slug}/`}>{t("View details")}</a>
       </div>
     </div>
   </div>

@@ -1,15 +1,22 @@
+---
+export interface Props {
+  t?: (value: string) => string;
+}
+
+const { t = (value: string) => value } = Astro.props;
+---
+
 <section class="results-hero card">
   <div class="hero-copy">
-    <span class="section-kicker">Search results</span>
-    <h1>Search property with less noise and stronger buyer signals.</h1>
+    <span class="section-kicker">{t("Search results")}</span>
+    <h1>{t("Search property with less noise and stronger buyer signals.")}</h1>
     <p>
-      The results surface should feel decisive: clear filters, stable URLs, visible result counts, and cleaner cards
-      that help a buyer compare quickly.
+      {t("The results surface should feel decisive: clear filters, stable URLs, visible result counts, and cleaner cards that help a buyer compare quickly.")}
     </p>
   </div>
   <div class="hero-actions">
-    <a class="button-secondary" href="/">Home</a>
-    <a class="button-dark" href="#results">Jump to results</a>
+    <a class="button-secondary" href="/">{t("Home")}</a>
+    <a class="button-dark" href="#results">{t("Jump to results")}</a>
   </div>
 </section>
 

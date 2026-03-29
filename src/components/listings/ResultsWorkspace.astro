@@ -19,13 +19,14 @@ export interface Props {
   allDistricts: string[];
   topNeighborhoods: string[];
   showCompareLink?: boolean;
+  t?: (value: string) => string;
 }
 
-const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareLink = false } = Astro.props;
+const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareLink = false, t = (value: string) => value } = Astro.props;
 ---
 
 <div class="mobile-view-toggle" data-default-view="list">
-  <button type="button" class="toggle-chip is-active" data-results-view-trigger="list">List</button>
+  <button type="button" class="toggle-chip is-active" data-results-view-trigger="list">{t("List")}</button>
   <button
     type="button"
     class="toggle-chip"
@@ -33,25 +34,25 @@ const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareL
     disabled={mappableListings.length === 0}
     aria-disabled={mappableListings.length === 0 ? "true" : "false"}
   >
-    Map
+    {t("Map")}
   </button>
 </div>
 
 <section class="results-layout" data-results-view="list">
   <aside class="market-panel card">
-    <span class="section-kicker">Map view</span>
-    <h2>See the filtered listings on a live map</h2>
-    <p>Search by filters first, then use the map to validate coverage and cluster patterns instead of guessing where the inventory sits.</p>
+    <span class="section-kicker">{t("Map view")}</span>
+    <h2>{t("See the filtered listings on a live map")}</h2>
+    <p>{t("Search by filters first, then use the map to validate coverage and cluster patterns instead of guessing where the inventory sits.")}</p>
     {mappableListings.length > 0 ? (
       <div id="results-map" class="results-map" data-listings={JSON.stringify(mappableListings)}></div>
     ) : (
       <div class="map-empty">
-        <strong>No map coordinates for this result set yet.</strong>
-        <span>Try a broader filter set or add owner coordinates when posting listings.</span>
+        <strong>{t("No map coordinates for this result set yet.")}</strong>
+        <span>{t("Try a broader filter set or add owner coordinates when posting listings.")}</span>
       </div>
     )}
     <div class="district-list">
-      {(allDistricts.length > 0 ? allDistricts : ["No matching districts"]).slice(0, 5).map((district) => <b>{district}</b>)}
+      {(allDistricts.length > 0 ? allDistricts : [t("No matching districts")]).slice(0, 5).map((district) => <b>{district}</b>)}
     </div>
     {topNeighborhoods.length > 0 && (
       <div class="neighborhood-list">
@@ -69,20 +70,19 @@ const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareL
           data-has-map={listing.location ? "true" : "false"}
           tabindex={listing.location ? 0 : -1}
         >
-          <ListingCard listing={listing} showCompareLink={showCompareLink} />
+          <ListingCard listing={listing} showCompareLink={showCompareLink} t={t} />
         </div>
       ))
     ) : (
       <article class="empty-state card">
-        <span class="section-kicker">No matches</span>
-        <h2>There are no listings for this filter set yet.</h2>
+        <span class="section-kicker">{t("No matches")}</span>
+        <h2>{t("There are no listings for this filter set yet.")}</h2>
         <p>
-          Broaden the city or district, lower the bed count requirement, or clear the price range. If you are testing
-          owner supply, you can also add a new listing from the dashboard.
+          {t("Broaden the city or district, lower the bed count requirement, or clear the price range. If you are testing owner supply, you can also add a new listing from the dashboard.")}
         </p>
         <div class="empty-actions">
-          <a class="button-dark" href="/listings/">Clear filters</a>
-          <a class="button-secondary" href="/submit-listing/">Post a listing</a>
+          <a class="button-dark" href="/listings/">{t("Clear filters")}</a>
+          <a class="button-secondary" href="/submit-listing/">{t("Post a listing")}</a>
         </div>
       </article>
     )}

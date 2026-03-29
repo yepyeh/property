@@ -4,20 +4,21 @@ import type { Listing } from "../../data/listings";
 
 export interface Props {
   similarListings: Listing[];
+  t?: (value: string) => string;
 }
 
-const { similarListings } = Astro.props;
+const { similarListings, t = (value: string) => value } = Astro.props;
 ---
 
 {similarListings.length > 0 && (
   <section class="similar-section">
     <div class="section-head">
-      <span class="section-kicker">Similar listings</span>
-      <h2>Nearby alternatives worth comparing</h2>
-      <p>Good detail pages should recover the browse journey instead of trapping the user on one listing.</p>
+      <span class="section-kicker">{t("Similar listings")}</span>
+      <h2>{t("Nearby alternatives worth comparing")}</h2>
+      <p>{t("Good detail pages should recover the browse journey instead of trapping the user on one listing.")}</p>
     </div>
     <div class="similar-grid">
-      {similarListings.map((similarListing) => <ListingCard listing={similarListing} />)}
+      {similarListings.map((similarListing) => <ListingCard listing={similarListing} t={t} />)}
     </div>
   </section>
 )}

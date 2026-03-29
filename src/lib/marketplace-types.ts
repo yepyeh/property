@@ -18,6 +18,7 @@ export interface ListingRow {
   id: number;
   slug: string;
   title: string;
+  country: string;
   city: string;
   district: string;
   ward: string;
@@ -68,6 +69,7 @@ export interface ListingRow {
 
 export interface ListingInput {
   title: string;
+  country: string;
   city: string;
   district: string;
   ward: string;
@@ -119,6 +121,7 @@ export interface EnquiryInput {
 
 export interface ListingFilters {
   intent?: string;
+  country?: string;
   city?: string;
   district?: string;
   propertyType?: string;

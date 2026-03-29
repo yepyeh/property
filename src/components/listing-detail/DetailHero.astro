@@ -8,9 +8,10 @@ export interface Props {
   isBuyer: boolean;
   isSaved: boolean;
   savedListing: boolean;
+  t?: (value: string) => string;
 }
 
-const { listing, intentLabel, ownerTrustLabel, isBuyer, isSaved, savedListing } = Astro.props;
+const { listing, intentLabel, ownerTrustLabel, isBuyer, isSaved, savedListing, t = (value: string) => value } = Astro.props;
 const heroImage = listing.imageUrls?.[0];
 const galleryImages = listing.imageUrls || [];
 const isAuction = listing.saleMode === "auction";
@@ -23,10 +24,10 @@ const isAuction = listing.saleMode === "auction";
         <span class="badge-primary">{intentLabel}</span>
         <span class="badge-secondary">{listing.status}</span>
       </div>
-      <div class="gallery-count">{galleryImages.length} photos</div>
+      <div class="gallery-count">{galleryImages.length} {t("photos")}</div>
       <div class="hero-image-note">
         <strong>{listing.ward}, {listing.district}</strong>
-        <span>{listing.city}</span>
+        <span>{listing.city}, {listing.country}</span>
       </div>
     </div>
     {galleryImages.length > 1 && (
@@ -34,7 +35,7 @@ const isAuction = listing.saleMode === "auction";
         {galleryImages.slice(0, 4).map((imageUrl, index) => (
           <div class="gallery-card">
             <img src={imageUrl} alt={`${listing.title} photo ${index + 1}`} loading="lazy" />
-            <span>{index === 0 ? "Primary view" : `Gallery ${index + 1}`}</span>
+            <span>{index === 0 ? t("Primary view") : `${t("Gallery")} ${index + 1}`}</span>
           </div>
         ))}
       </div>
@@ -42,15 +43,15 @@ const isAuction = listing.saleMode === "auction";
   </div>
 
   <div class="hero-panel">
-    <a class="back-link" href="/listings/">All listings</a>
-    <p class="eyebrow">{listing.type} · {listing.district}, {listing.city}</p>
+    <a class="back-link" href="/listings/">{t("All listings")}</a>
+    <p class="eyebrow">{listing.type} · {listing.district}, {listing.city}, {listing.country}</p>
     <h1>{listing.title}</h1>
     <p class="price">{listing.priceLabel}</p>
     {isAuction && listing.auction && (
       <div class="auction-summary">
-        <span>{listing.auction.phase === "live" ? "Bidding is live" : listing.auction.phase === "ended" ? "Auction closed" : "Auction scheduled"}</span>
-        {listing.auction.startingPriceLabel && <span>Opening bid {listing.auction.startingPriceLabel}</span>}
-        {listing.auction.endsAt && <span>Ends {listing.auction.endsAt}</span>}
+        <span>{listing.auction.phase === "live" ? t("Bidding is live") : listing.auction.phase === "ended" ? t("Auction closed") : t("Auction scheduled")}</span>
+        {listing.auction.startingPriceLabel && <span>{t("Opening bid")} {listing.auction.startingPriceLabel}</span>}
+        {listing.auction.endsAt && <span>{t("Ends")} {listing.auction.endsAt}</span>}
       </div>
     )}
     <p class="summary">{listing.summary}</p>
@@ -58,36 +59,36 @@ const isAuction = listing.saleMode === "auction";
     <div class="fact-grid">
       <article>
         <strong>{listing.beds}</strong>
-        <span>Bedrooms</span>
+        <span>{t("Bedrooms")}</span>
       </article>
       <article>
         <strong>{listing.baths}</strong>
-        <span>Bathrooms</span>
+        <span>{t("Bathrooms")}</span>
       </article>
       <article>
         <strong>{listing.area}</strong>
-        <span>Square meters</span>
+        <span>{t("Square meters")}</span>
       </article>
     </div>
 
     <div class="trust-bar">
       <span>{ownerTrustLabel}</span>
       <span>{listing.owner.role}</span>
-      <span>Replies in {listing.owner.responseTime}</span>
+      <span>{t("Replies in")} {listing.owner.responseTime}</span>
     </div>
 
     <div class="hero-signal-grid">
       <article>
         <strong>{listing.stats.views24h}</strong>
-        <span>Views in the last 24 hours</span>
+        <span>{t("Views in the last 24 hours")}</span>
       </article>
       <article>
         <strong>{listing.stats.saves}</strong>
-        <span>Saves from active buyers</span>
+        <span>{t("Saves from active buyers")}</span>
       </article>
       <article>
         <strong>{listing.stats.enquiries}</strong>
-        <span>Recent enquiry conversations</span>
+        <span>{t("Recent enquiry conversations")}</span>
       </article>
     </div>
 
@@ -96,14 +97,14 @@ const isAuction = listing.saleMode === "auction";
         <form method="POST" action={isSaved ? "/api/saved-listings/delete" : "/api/saved-listings"}>
           <input type="hidden" name="listingSlug" value={listing.slug} />
           <input type="hidden" name="redirectTo" value={`/listings/${listing.slug}/`} />
-          <button type="submit" class="button-secondary">{isSaved ? "Saved to shortlist" : "Save to shortlist"}</button>
+          <button type="submit" class="button-secondary">{isSaved ? t("Saved to shortlist") : t("Save to shortlist")}</button>
         </form>
       ) : (
-        <a class="button-secondary" href={`/login?redirect=${encodeURIComponent(`/listings/${listing.slug}/`)}`}>Sign in to save</a>
+        <a class="button-secondary" href={`/login?redirect=${encodeURIComponent(`/listings/${listing.slug}/`)}`}>{t("Sign in to save")}</a>
       )}
-      <a class="button-dark" href="#enquiry-panel">Enquire now</a>
+      <a class="button-dark" href="#enquiry-panel">{t("Enquire now")}</a>
     </div>
-    {savedListing && <p class="flash-inline">Listing saved to your shortlist. Compare it before you decide whether to contact.</p>}
+    {savedListing && <p class="flash-inline">{t("Listing saved to your shortlist. Compare it before you decide whether to contact.")}</p>}
   </div>
 </section>
 

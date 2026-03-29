@@ -6,9 +6,11 @@ export interface Props {
   owner: { role: string } | null;
   dashboardHref: string;
   activeFilters: string[];
+  allCountries?: string[];
+  t?: (value: string) => string;
 }
 
-const { filters, owner, dashboardHref, activeFilters } = Astro.props;
+const { filters, owner, dashboardHref, activeFilters, allCountries = [], t = (value: string) => value } = Astro.props;
 const selectedIntent = filters.intent === "rent" ? "rent" : "buy";
 const selectedSort = filters.sort || "newest";
 ---
@@ -16,56 +18,63 @@ const selectedSort = filters.sort || "newest";
 <form class="search-frame card" method="GET" action="/listings/">
   <div class="search-head">
     <div>
-      <p class="search-kicker">Refine the shortlist</p>
-      <h2>Search by location, price band, and home type.</h2>
+      <p class="search-kicker">{t("Refine the shortlist")}</p>
+      <h2>{t("Search by location, price band, and home type.")}</h2>
     </div>
-    <p class="search-note">Use the filters to get to a tighter results set first. The map works better once the shortlist is already credible.</p>
+    <p class="search-note">{t("Use the filters to get to a tighter results set first. The map works better once the shortlist is already credible.")}</p>
   </div>
 
   <div class="intent-tabs">
     <label class:list-active={selectedIntent === "buy"}>
       <input type="radio" name="intent" value="buy" checked={selectedIntent === "buy"} />
-      <span>Buy</span>
+      <span>{t("Buy")}</span>
     </label>
     <label class:list-active={selectedIntent === "rent"}>
       <input type="radio" name="intent" value="rent" checked={selectedIntent === "rent"} />
-      <span>Rent</span>
+      <span>{t("Rent")}</span>
     </label>
   </div>
 
   <div class="filter-grid">
     <label class="field">
-      <span>City</span>
-      <input type="text" name="city" value={filters.city} placeholder="Ho Chi Minh City" />
+      <span>{t("Country")}</span>
+      <select name="country">
+        <option value="">{t("All countries")}</option>
+        {allCountries.map((country) => <option value={country} selected={filters.country === country}>{country}</option>)}
+      </select>
     </label>
     <label class="field">
-      <span>District</span>
-      <input type="text" name="district" value={filters.district} placeholder="Thu Duc City" />
+      <span>{t("City")}</span>
+      <input type="text" name="city" value={filters.city} placeholder={t("Ho Chi Minh City")} />
     </label>
     <label class="field">
-      <span>Property type</span>
+      <span>{t("District")}</span>
+      <input type="text" name="district" value={filters.district} placeholder={t("Thu Duc City")} />
+    </label>
+    <label class="field">
+      <span>{t("Property type")}</span>
       <select name="propertyType">
-        <option value="">Any property</option>
-        <option value="Condo" selected={filters.propertyType === "Condo"}>Condo</option>
-        <option value="Villa" selected={filters.propertyType === "Villa"}>Villa</option>
-        <option value="Townhouse" selected={filters.propertyType === "Townhouse"}>Townhouse</option>
-        <option value="Apartment" selected={filters.propertyType === "Apartment"}>Apartment</option>
-        <option value="House" selected={filters.propertyType === "House"}>House</option>
-        <option value="Land" selected={filters.propertyType === "Land"}>Land</option>
+        <option value="">{t("Any property")}</option>
+        <option value="Condo" selected={filters.propertyType === "Condo"}>{t("Condo")}</option>
+        <option value="Villa" selected={filters.propertyType === "Villa"}>{t("Villa")}</option>
+        <option value="Townhouse" selected={filters.propertyType === "Townhouse"}>{t("Townhouse")}</option>
+        <option value="Apartment" selected={filters.propertyType === "Apartment"}>{t("Apartment")}</option>
+        <option value="House" selected={filters.propertyType === "House"}>{t("House")}</option>
+        <option value="Land" selected={filters.propertyType === "Land"}>{t("Land")}</option>
       </select>
     </label>
     <label class="field">
-      <span>Sale mode</span>
+      <span>{t("Sale mode")}</span>
       <select name="saleMode">
-        <option value="">Any mode</option>
-        <option value="private-sale" selected={filters.saleMode === "private-sale"}>Private sale</option>
-        <option value="auction" selected={filters.saleMode === "auction"}>Auction</option>
+        <option value="">{t("Any mode")}</option>
+        <option value="private-sale" selected={filters.saleMode === "private-sale"}>{t("Private sale")}</option>
+        <option value="auction" selected={filters.saleMode === "auction"}>{t("Auction")}</option>
       </select>
     </label>
     <label class="field">
-      <span>Minimum beds</span>
+      <span>{t("Minimum beds")}</span>
       <select name="minBeds">
-        <option value="">Any beds</option>
+        <option value="">{t("Any beds")}</option>
         <option value="1" selected={filters.minBeds === 1}>1+</option>
         <option value="2" selected={filters.minBeds === 2}>2+</option>
         <option value="3" selected={filters.minBeds === 3}>3+</option>
@@ -73,35 +82,35 @@ const selectedSort = filters.sort || "newest";
       </select>
     </label>
     <label class="field">
-      <span>Minimum price</span>
+      <span>{t("Minimum price")}</span>
       <input type="number" min="0" step="0.01" name="minPrice" value={filters.minPrice ?? ""} placeholder="0" />
     </label>
     <label class="field">
-      <span>Maximum price</span>
+      <span>{t("Maximum price")}</span>
       <input type="number" min="0" step="0.01" name="maxPrice" value={filters.maxPrice ?? ""} placeholder="10" />
     </label>
     <label class="field">
-      <span>Sort</span>
+      <span>{t("Sort")}</span>
       <select name="sort">
-        <option value="newest" selected={selectedSort === "newest"}>Newest</option>
-        <option value="price-asc" selected={selectedSort === "price-asc"}>Price: low to high</option>
-        <option value="price-desc" selected={selectedSort === "price-desc"}>Price: high to low</option>
-        <option value="beds-desc" selected={selectedSort === "beds-desc"}>Beds</option>
+        <option value="newest" selected={selectedSort === "newest"}>{t("Newest")}</option>
+        <option value="price-asc" selected={selectedSort === "price-asc"}>{t("Price: low to high")}</option>
+        <option value="price-desc" selected={selectedSort === "price-desc"}>{t("Price: high to low")}</option>
+        <option value="beds-desc" selected={selectedSort === "beds-desc"}>{t("Beds")}</option>
       </select>
     </label>
     <div class="filter-actions">
-      <button class="button-dark" type="submit">Search</button>
-      <a class="button-secondary" href="/listings/">Clear</a>
+      <button class="button-dark" type="submit">{t("Search")}</button>
+      <a class="button-secondary" href="/listings/">{t("Clear")}</a>
     </div>
   </div>
 
   <div class="utility-row">
     <div class="filter-chips">
-      {activeFilters.length > 0 ? activeFilters.map((filter) => <span>{filter}</span>) : <span>All live inventory</span>}
+      {activeFilters.length > 0 ? activeFilters.map((filter) => <span>{filter}</span>) : <span>{t("All live inventory")}</span>}
     </div>
     <div class="utility-links">
-      <a href={dashboardHref}>{owner?.role === "buyer" ? "Saved searches" : "Track enquiries"}</a>
-      <a href={owner?.role === "buyer" ? "/signup?role=owner" : "/submit-listing/"}>{owner?.role === "buyer" ? "Create owner account" : "Post listing"}</a>
+      <a href={dashboardHref}>{owner?.role === "buyer" ? t("Saved searches") : t("Track enquiries")}</a>
+      <a href={owner?.role === "buyer" ? "/signup?role=owner" : "/submit-listing/"}>{owner?.role === "buyer" ? t("Create owner account") : t("Post listing")}</a>
     </div>
   </div>
 </form>

@@ -5,9 +5,10 @@ export interface Props {
   listing: Listing;
   mapHref: string;
   mapEmbedHref?: string;
+  t?: (value: string) => string;
 }
 
-const { listing, mapHref, mapEmbedHref } = Astro.props;
+const { listing, mapHref, mapEmbedHref, t = (value: string) => value } = Astro.props;
 const neighborhood = listing.neighborhood;
 const location = listing.location;
 const isAuction = listing.saleMode === "auction";
@@ -17,23 +18,23 @@ const isAuction = listing.saleMode === "auction";
   {isAuction && listing.auction && (
     <div class="panel-section">
       <span class="section-kicker">Auction structure</span>
-      <h2>How this auction works</h2>
+      <h2>{t("How this auction works")}</h2>
       <div class="auction-grid">
         <article>
-          <strong>Status</strong>
-          <p>{listing.auction.phase === "live" ? "Bidding is live now." : listing.auction.phase === "ended" ? "This auction has ended." : "Auction is scheduled."}</p>
+          <strong>{t("Status")}</strong>
+          <p>{listing.auction.phase === "live" ? t("Bidding is live now.") : listing.auction.phase === "ended" ? t("This auction has ended.") : t("Auction is scheduled.")}</p>
         </article>
         <article>
-          <strong>Opening bid</strong>
+          <strong>{t("Opening bid")}</strong>
           <p>{listing.auction.startingPriceLabel || listing.priceLabel}</p>
         </article>
         <article>
-          <strong>Reserve</strong>
-          <p>{listing.auction.reservePriceLabel || "Reserve not published"}</p>
+          <strong>{t("Reserve")}</strong>
+          <p>{listing.auction.reservePriceLabel || t("Reserve not published")}</p>
         </article>
         <article>
-          <strong>Window</strong>
-          <p>{listing.auction.startsAt || "Start to be announced"} to {listing.auction.endsAt || "end to be announced"}</p>
+          <strong>{t("Window")}</strong>
+          <p>{listing.auction.startsAt || t("Start to be announced")} {t("to")} {listing.auction.endsAt || t("end to be announced")}</p>
         </article>
       </div>
       {listing.auction.terms && <p class="auction-terms">{listing.auction.terms}</p>}
@@ -41,30 +42,30 @@ const isAuction = listing.saleMode === "auction";
   )}
 
   <div class="panel-section">
-    <span class="section-kicker">Overview</span>
-    <h2>Property overview</h2>
+    <span class="section-kicker">{t("Overview")}</span>
+    <h2>{t("Property overview")}</h2>
     <p>{listing.description}</p>
     <div class="overview-grid">
       <article>
-        <strong>Best suited for</strong>
-        <p>{listing.intent === "rent" ? "Renters who want a settled move-in experience, not another generic short-stay unit." : "Buyers who want location confidence and a layout that can hold long-term value."}</p>
+        <strong>{t("Best suited for")}</strong>
+        <p>{listing.intent === "rent" ? t("Renters who want a settled move-in experience, not another generic short-stay unit.") : t("Buyers who want location confidence and a layout that can hold long-term value.")}</p>
       </article>
       <article>
-        <strong>Why this listing stands out</strong>
+        <strong>{t("Why this listing stands out")}</strong>
         <p>{listing.summary}</p>
       </article>
     </div>
   </div>
 
   <div class="panel-section">
-    <span class="section-kicker">Highlights</span>
+    <span class="section-kicker">{t("Highlights")}</span>
     <div class="tag-row">
       {listing.tags.map((tag) => <span>{tag}</span>)}
     </div>
   </div>
 
   <div class="panel-section">
-    <span class="section-kicker">Included features</span>
+    <span class="section-kicker">{t("Included features")}</span>
     <div class="feature-grid">
       {listing.features.map((feature) => (
         <div class="feature-item">
@@ -78,21 +79,21 @@ const isAuction = listing.saleMode === "auction";
   {neighborhood && (
     <div class="panel-section">
       <span class="section-kicker">Neighborhood context</span>
-      <h2>What this location adds beyond the unit itself</h2>
+      <h2>{t("What this location adds beyond the unit itself")}</h2>
       <p>{neighborhood.headline}</p>
       <div class="context-grid">
         <article>
-          <strong>Commute and access</strong>
+          <strong>{t("Commute and access")}</strong>
           <p>{neighborhood.commute}</p>
         </article>
         <article>
-          <strong>Nearby anchors</strong>
+          <strong>{t("Nearby anchors")}</strong>
           <ul>
             {neighborhood.nearby.map((item) => <li>{item}</li>)}
           </ul>
         </article>
         <article>
-          <strong>Trust signals</strong>
+          <strong>{t("Trust signals")}</strong>
           <ul>
             {neighborhood.trustSignals.map((item) => <li>{item}</li>)}
           </ul>
@@ -102,11 +103,10 @@ const isAuction = listing.saleMode === "auction";
   )}
 
   <div class="panel-section">
-    <span class="section-kicker">Map and access</span>
-    <h2>Location view</h2>
+    <span class="section-kicker">{t("Map and access")}</span>
+    <h2>{t("Location view")}</h2>
     <p>
-      Use the map as orientation, not as a promise of exact door-level precision. For marketplace trust, approximate
-      neighborhood placement is usually the right balance until the owner chooses to reveal more.
+      {t("Use the map as orientation, not as a promise of exact door-level precision. For marketplace trust, approximate neighborhood placement is usually the right balance until the owner chooses to reveal more.")}
     </p>
     <div class="map-panel">
       {mapEmbedHref ? (
@@ -119,14 +119,14 @@ const isAuction = listing.saleMode === "auction";
       ) : (
         <div class="map-fallback">
           <strong>{listing.ward}, {listing.district}</strong>
-          <span>{listing.city}</span>
+          <span>{listing.city}, {listing.country}</span>
         </div>
       )}
       <div class="map-meta">
-        <strong>{location?.precisionLabel || "Approximate neighborhood view"}</strong>
-        <span>{listing.ward}, {listing.district}, {listing.city}</span>
+        <strong>{location?.precisionLabel || t("Approximate neighborhood view")}</strong>
+        <span>{listing.ward}, {listing.district}, {listing.city}, {listing.country}</span>
         <div class="map-actions">
-          <a class="button-dark" href={mapHref} target="_blank" rel="noreferrer">Open map</a>
+          <a class="button-dark" href={mapHref} target="_blank" rel="noreferrer">{t("Open map")}</a>
         </div>
       </div>
     </div>
@@ -134,7 +134,7 @@ const isAuction = listing.saleMode === "auction";
 
   {listing.imageUrls && listing.imageUrls.length > 0 && (
     <div class="panel-section">
-      <span class="section-kicker">Photo gallery</span>
+      <span class="section-kicker">{t("Photo gallery")}</span>
       <div class="gallery-editorial">
         <div class="gallery-primary" style={`background-image:url(${listing.imageUrls[0]})`}></div>
         <div class="gallery-rail">

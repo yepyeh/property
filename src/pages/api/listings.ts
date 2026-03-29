@@ -23,6 +23,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const form = await request.formData();
     const slug = await createListing(db, {
       title: readText(form, "title", { required: true, maxLength: 160 }),
+      country: readText(form, "country", { required: true, maxLength: 120 }),
       city: readText(form, "city", { required: true, maxLength: 120 }),
       district: readText(form, "district", { required: true, maxLength: 120 }),
       ward: readText(form, "ward", { required: true, maxLength: 120 }),

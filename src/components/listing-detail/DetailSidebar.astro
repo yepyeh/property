@@ -9,9 +9,10 @@ export interface Props {
   isBuyer?: boolean;
   reportSent?: boolean;
   protectedFlow?: boolean;
+  t?: (value: string) => string;
 }
 
-const { listing, ownerTrustLabel, enquirySent, isBuyer = false, reportSent = false, protectedFlow = false } = Astro.props;
+const { listing, ownerTrustLabel, enquirySent, isBuyer = false, reportSent = false, protectedFlow = false, t = (value: string) => value } = Astro.props;
 const defaultDownPayment = 20;
 const defaultRate = 7.5;
 const defaultYears = 20;
@@ -22,115 +23,114 @@ const defaultMonthlyEstimate = formatVndAmount(
 
 <aside class="sidebar-stack">
   <section class="enquiry-panel card" id="enquiry-panel">
-    <span class="section-kicker">Enquiry panel</span>
-    <h2>Contact the owner</h2>
+    <span class="section-kicker">{t("Enquiry panel")}</span>
+    <h2>{t("Contact the owner")}</h2>
     <p class="enquiry-copy">
-      Structured enquiries are the conversion layer. Buyers should know who they are contacting and owners should
-      receive clean intent data, not vague messages.
+      {t("Structured enquiries are the conversion layer. Buyers should know who they are contacting and owners should receive clean intent data, not vague messages.")}
     </p>
-    {enquirySent && <p class="success-banner">Enquiry sent successfully. The owner can now see it in the dashboard.</p>}
-    {protectedFlow && <p class="info-banner">Your enquiry stays inside the platform flow first. That gives both sides a cleaner history and a safer follow-up path.</p>}
+    {enquirySent && <p class="success-banner">{t("Enquiry sent successfully. The owner can now see it in the dashboard.")}</p>}
+    {protectedFlow && <p class="info-banner">{t("Your enquiry stays inside the platform flow first. That gives both sides a cleaner history and a safer follow-up path.")}</p>}
 
     <div class="owner-card">
       <strong>{listing.owner.name}</strong>
       <span>{listing.owner.role}</span>
-      <span>{ownerTrustLabel} · Replies in {listing.owner.responseTime}</span>
+      <span>{ownerTrustLabel} · {t("Replies in")} {listing.owner.responseTime}</span>
     </div>
 
     <div class="expectation-row">
       <article>
-        <strong>Best first message</strong>
-        <span>Ask about availability, viewings, and any building or ownership conditions.</span>
+        <strong>{t("Best first message")}</strong>
+        <span>{t("Ask about availability, viewings, and any building or ownership conditions.")}</span>
       </article>
       <article>
-        <strong>Typical response</strong>
-        <span>{listing.owner.responseTime} when the listing is actively managed.</span>
+        <strong>{t("Typical response")}</strong>
+        <span>{listing.owner.responseTime} {t("when the listing is actively managed.")}</span>
       </article>
     </div>
 
     {isBuyer && (
       <div class="buyer-guide">
-        <strong>Not sure yet?</strong>
-        <p>Save this to your shortlist first. Add it to a collection if you are planning by area or trip. Then compare it against two or three other places. If it still looks strongest, mark it as a finalist and come back here to enquire.</p>
-        <a class="guide-link" href="/help/buyer-shortlist-and-compare/">Open buyer guide</a>
+        <strong>{t("Not sure yet?")}</strong>
+        <p>{t("Save this to your shortlist first. Add it to a collection if you are planning by area or trip. Then compare it against two or three other places. If it still looks strongest, mark it as a finalist and come back here to enquire.")}</p>
+        <a class="guide-link" href="/help/buyer-shortlist-and-compare/">{t("Open buyer guide")}</a>
       </div>
     )}
 
-    {isBuyer && <a class="button-secondary full-width" href="/buyer/compare/">Compare against saved homes</a>}
-    {listing.saleMode === "auction" && <a class="button-secondary full-width" href="#enquiry-panel">Register auction interest</a>}
+    {isBuyer && <a class="button-secondary full-width" href="/buyer/compare/">{t("Compare against saved homes")}</a>}
+    {listing.saleMode === "auction" && <a class="button-secondary full-width" href="#enquiry-panel">{t("Register auction interest")}</a>}
 
     <form class="enquiry-form" method="POST" action="/api/enquiries">
       <input type="hidden" name="listingSlug" value={listing.slug} />
       <input type="hidden" name="listingTitle" value={listing.title} />
       <label>
-        <span>Your name</span>
-        <input type="text" name="applicantName" required placeholder="Enter your name" />
+        <span>{t("Your name")}</span>
+        <input type="text" name="applicantName" required placeholder={t("Enter your name")} />
       </label>
       <label>
-        <span>Contact</span>
-        <input type="text" name="contact" required placeholder="Email, WhatsApp, or phone number" />
+        <span>{t("Contact")}</span>
+        <input type="text" name="contact" required placeholder={t("Email, WhatsApp, or phone number")} />
       </label>
       <label>
-        <span>Preferred viewing time</span>
-        <input type="text" name="preferredTime" placeholder="Saturday morning" />
+        <span>{t("Preferred viewing time")}</span>
+        <input type="text" name="preferredTime" placeholder={t("Saturday morning")} />
       </label>
       <label>
-        <span>Message</span>
-        <textarea name="message" rows="5" required placeholder={`Hi, I'm interested in ${listing.title}. Is it still available?`}></textarea>
+        <span>{t("Message")}</span>
+        <textarea name="message" rows="5" required placeholder={`${t("Hi, I'm interested in")} ${listing.title}. ${t("Is it still available?")}`}></textarea>
       </label>
-      <button type="submit" class="button-dark full-width">Send enquiry</button>
+      <button type="submit" class="button-dark full-width">{t("Send enquiry")}</button>
     </form>
   </section>
 
   <section class="stats-panel card">
-    <span class="section-kicker">Demand signals</span>
+    <span class="section-kicker">{t("Demand signals")}</span>
     <div class="stats-grid">
       <article>
         <strong>{listing.stats.views24h}</strong>
-        <span>Views in the last 24 hours</span>
+        <span>{t("Views in the last 24 hours")}</span>
       </article>
       <article>
         <strong>{listing.stats.saves}</strong>
-        <span>Buyers saved this listing</span>
+        <span>{t("Buyers saved this listing")}</span>
       </article>
       <article>
         <strong>{listing.stats.enquiries}</strong>
-        <span>Open conversations</span>
+        <span>{t("Open conversations")}</span>
       </article>
     </div>
   </section>
 
   <section class="report-panel card">
-    <span class="section-kicker">Protection</span>
-    <h2>Need to flag this listing?</h2>
-    <p class="enquiry-copy">Report listings that look misleading, duplicated, suspicious, or unsafe. This creates a moderation record for admin review.</p>
-    {reportSent && <p class="success-banner">Report submitted. The moderation queue now includes this listing.</p>}
+    <span class="section-kicker">{t("Protection")}</span>
+    <h2>{t("Need to flag this listing?")}</h2>
+    <p class="enquiry-copy">{t("Report listings that look misleading, duplicated, suspicious, or unsafe. This creates a moderation record for admin review.")}</p>
+    {reportSent && <p class="success-banner">{t("Report submitted. The moderation queue now includes this listing.")}</p>}
     <form class="report-form" method="POST" action="/api/listings/report">
       <input type="hidden" name="listingSlug" value={listing.slug} />
       <input type="hidden" name="redirectTo" value={`/listings/${listing.slug}/`} />
       <label>
-        <span>Reason</span>
+        <span>{t("Reason")}</span>
         <select name="reason">
-          <option value="misleading information">Misleading information</option>
-          <option value="duplicate listing">Duplicate listing</option>
-          <option value="suspicious contact">Suspicious contact</option>
-          <option value="pricing issue">Pricing issue</option>
-          <option value="other safety concern">Other safety concern</option>
+          <option value="misleading information">{t("Misleading information")}</option>
+          <option value="duplicate listing">{t("Duplicate listing")}</option>
+          <option value="suspicious contact">{t("Suspicious contact")}</option>
+          <option value="pricing issue">{t("Pricing issue")}</option>
+          <option value="other safety concern">{t("Other safety concern")}</option>
         </select>
       </label>
       <label>
-        <span>Your name</span>
-        <input type="text" name="reporterName" placeholder="Optional" />
+        <span>{t("Your name")}</span>
+        <input type="text" name="reporterName" placeholder={t("Optional")} />
       </label>
       <label>
-        <span>Contact</span>
-        <input type="text" name="reporterContact" placeholder="Optional email or phone" />
+        <span>{t("Contact")}</span>
+        <input type="text" name="reporterContact" placeholder={t("Optional email or phone")} />
       </label>
       <label>
-        <span>Details</span>
-        <textarea name="details" rows="4" placeholder="What looks wrong or unsafe?"></textarea>
+        <span>{t("Details")}</span>
+        <textarea name="details" rows="4" placeholder={t("What looks wrong or unsafe?")}></textarea>
       </label>
-      <button type="submit" class="button-secondary full-width">Report listing</button>
+      <button type="submit" class="button-secondary full-width">{t("Report listing")}</button>
     </form>
   </section>
 
@@ -140,24 +140,24 @@ const defaultMonthlyEstimate = formatVndAmount(
       data-affordability-card
       data-price={listing.numericPrice}
     >
-      <span class="section-kicker">Budget guide</span>
-      <h2>Estimate the monthly cost</h2>
-      <p class="enquiry-copy">A quick financing check before you contact. Major portals push this because buyers use it constantly during shortlisting.</p>
+      <span class="section-kicker">{t("Budget guide")}</span>
+      <h2>{t("Estimate the monthly cost")}</h2>
+      <p class="enquiry-copy">{t("A quick financing check before you contact. Major portals push this because buyers use it constantly during shortlisting.")}</p>
       <div class="budget-output">
         <strong data-monthly-output>{defaultMonthlyEstimate} VND / month</strong>
         <span data-financed-output>Loan amount: {formatVndAmount(listing.numericPrice * 0.8)} VND</span>
       </div>
       <div class="budget-grid">
         <label>
-          <span>Down payment %</span>
+          <span>{t("Down payment %")}</span>
           <input data-down-input type="number" min="0" max="90" step="1" value={defaultDownPayment} />
         </label>
         <label>
-          <span>Interest %</span>
+          <span>{t("Interest %")}</span>
           <input data-rate-input type="number" min="0" max="25" step="0.1" value={defaultRate} />
         </label>
         <label>
-          <span>Years</span>
+          <span>{t("Years")}</span>
           <input data-years-input type="number" min="1" max="35" step="1" value={defaultYears} />
         </label>
       </div>

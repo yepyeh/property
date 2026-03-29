@@ -7,6 +7,7 @@ import SimilarListingsSection from "../../components/listing-detail/SimilarListi
 import { getAllListings, getListingBySlug, isListingSavedByUser, recordRecentlyViewedListing } from "../../lib/listings";
 import { getDB } from "../../lib/runtime";
 
+const t = Astro.locals.t || ((value: string) => value);
 const { slug } = Astro.params;
 const db = getDB(Astro.locals.runtime);
 const viewer = Astro.locals.owner;
@@ -36,10 +37,10 @@ const similarListings = allListings
   })
   .slice(0, 3);
 
-const intentLabel = listing.saleMode === "auction" ? "Auction" : listing.intent === "buy" ? "For sale" : "For rent";
-const ownerTrustLabel = listing.owner.verified ? "Verified owner" : "Owner listed";
+const intentLabel = listing.saleMode === "auction" ? t("Auction") : listing.intent === "buy" ? t("For sale") : t("For rent");
+const ownerTrustLabel = listing.owner.verified ? t("Verified owner") : t("Owner listed");
 const location = listing.location;
-const mapQuery = encodeURIComponent(`${listing.ward}, ${listing.district}, ${listing.city}`);
+const mapQuery = encodeURIComponent(`${listing.ward}, ${listing.district}, ${listing.city}, ${listing.country}`);
 const mapHref = location
   ? `https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}`
   : `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
@@ -56,14 +57,15 @@ const mapEmbedHref = location
     isBuyer={isBuyer}
     isSaved={isSaved}
     savedListing={savedListing}
+    t={t}
   />
 
   <section class="detail-grid">
-    <DetailContent listing={listing} mapHref={mapHref} mapEmbedHref={mapEmbedHref} />
-    <DetailSidebar listing={listing} ownerTrustLabel={ownerTrustLabel} enquirySent={enquirySent} isBuyer={isBuyer} reportSent={reportSent} protectedFlow={protectedFlow} />
+    <DetailContent listing={listing} mapHref={mapHref} mapEmbedHref={mapEmbedHref} t={t} />
+    <DetailSidebar listing={listing} ownerTrustLabel={ownerTrustLabel} enquirySent={enquirySent} isBuyer={isBuyer} reportSent={reportSent} protectedFlow={protectedFlow} t={t} />
   </section>
 
-  <SimilarListingsSection similarListings={similarListings} />
+  <SimilarListingsSection similarListings={similarListings} t={t} />
 
   <style is:inline>
     .detail-grid {

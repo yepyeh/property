@@ -31,6 +31,7 @@ function normalizeSort(value?: string) {
 function normalizeListingFilters(filters: ListingFilters) {
   return {
     intent: filters.intent === "rent" ? "rent" : "buy",
+    country: filters.country?.trim() || "",
     city: filters.city?.trim() || "",
     district: filters.district?.trim() || "",
     propertyType: filters.propertyType?.trim() || "",
@@ -57,6 +58,11 @@ function buildDynamicListingWhere(filters: ListingFilters, options: { createdAft
   if (filters.city) {
     clauses.push("LOWER(city) LIKE ?");
     values.push(`%${normalizeTextFilter(filters.city)}%`);
+  }
+
+  if (filters.country) {
+    clauses.push("LOWER(country) LIKE ?");
+    values.push(`%${normalizeTextFilter(filters.country)}%`);
   }
 
   if (filters.district) {
@@ -102,6 +108,7 @@ export function buildSavedSearchQuery(filters: ListingFilters) {
   const params = new URLSearchParams();
 
   params.set("intent", normalized.intent || "buy");
+  if (normalized.country) params.set("country", normalized.country);
   if (normalized.city) params.set("city", normalized.city);
   if (normalized.district) params.set("district", normalized.district);
   if (normalized.propertyType) params.set("propertyType", normalized.propertyType);
@@ -118,6 +125,7 @@ function buildSavedSearchName(filters: ListingFilters) {
   const normalized = normalizeListingFilters(filters);
   const parts = [
     normalized.intent === "rent" ? "Rent" : "Buy",
+    normalized.country || "All countries",
     normalized.propertyType || "Any type",
     normalized.city || "All cities",
   ];
@@ -143,6 +151,7 @@ function mapRowToListing(row: ListingRow): Listing {
   const listing: Listing = {
     slug: row.slug,
     title: row.title,
+    country: row.country,
     city: row.city,
     district: row.district,
     ward: row.ward,
@@ -302,12 +311,14 @@ async function countNewListingsForSavedSearch(db: D1Like, search: SavedSearchRec
 }
 
 function applyListingFilters(listings: Listing[], filters: ListingFilters) {
+  const country = normalizeTextFilter(filters.country);
   const city = normalizeTextFilter(filters.city);
   const district = normalizeTextFilter(filters.district);
   const sort = normalizeSort(filters.sort);
 
   const filtered = listings.filter((listing) => {
     if ((filters.intent === "buy" || filters.intent === "rent") && listing.intent !== filters.intent) return false;
+    if (country && !listing.country.toLowerCase().includes(country)) return false;
     if (city && !listing.city.toLowerCase().includes(city)) return false;
     if (district && !listing.district.toLowerCase().includes(district)) return false;
     if (filters.propertyType && listing.type !== filters.propertyType) return false;
@@ -373,7 +384,7 @@ export async function createListing(db: D1Like, input: ListingInput) {
   await db
     .prepare(
       `INSERT INTO listings (
-        slug, title, city, district, ward, property_type, intent,
+        slug, title, country, city, district, ward, property_type, intent,
         price_label, numeric_price, price_unit, beds, baths, area,
         status, tone, summary, description,
         tags, features, image_keys,
@@ -383,11 +394,12 @@ export async function createListing(db: D1Like, input: ListingInput) {
         owner_user_id, plan_type, trial_ends_at,
         owner_name, owner_email, owner_phone, owner_role, owner_response_time, owner_verified,
         views_24h, saves, enquiries, published
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now', '+7 days'), ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now', '+7 days'), ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`
     )
     .bind(
       slug,
       input.title,
+      input.country,
       input.city,
       input.district,
       input.ward,
