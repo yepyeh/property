@@ -1,0 +1,258 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const sent = Astro.url.searchParams.get("sent");
+const error = Astro.url.searchParams.get("error");
+const owner = Astro.locals.owner;
+---
+
+<Layout title="Property Concierge | Property App 2026" description="A high-touch service layer for buyers, renters, owners, and auction sellers who need help beyond standard listings.">
+  <section class="concierge-hero card">
+    <div class="hero-copy">
+      <span class="pill">Property concierge</span>
+      <h1>If the right place is not advertised yet, or the right listing strategy is not obvious, our team can help.</h1>
+      <p>
+        We want the product to run smoothly with as much automation as possible, but we also want the service layer to feel personal. If you need help sourcing, narrowing, preparing, or positioning something that the standard workflow does not fully cover, send a request and we will pick it up.
+      </p>
+      <div class="hero-signals">
+        <span>Buyer sourcing help beyond current inventory</span>
+        <span>Owner listing strategy and launch support</span>
+        <span>Auction and high-attention inventory coordination</span>
+        <span>High-touch service layered on top of structured workflows</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="concierge-grid section-gap">
+    <article class="card service-card">
+      <strong>For buyers and renters</strong>
+      <ul>
+        <li>Help narrowing the shortlist when inventory feels noisy.</li>
+        <li>Help sourcing options that are not yet clearly represented in the public inventory.</li>
+        <li>Help making sense of trade-offs across price, location, timing, and trust.</li>
+      </ul>
+    </article>
+    <article class="card service-card">
+      <strong>For owners and landlords</strong>
+      <ul>
+        <li>Help improving listing quality before paying for visibility.</li>
+        <li>Help deciding whether a listing should run as standard, promoted, or auction inventory.</li>
+        <li>Help coordinating a stronger listing launch and follow-through path.</li>
+      </ul>
+    </article>
+  </section>
+
+  {(sent || error) && (
+    <section class={`card flash ${error ? "error-flash" : ""}`}>
+      {sent ? "Your service request was submitted. The team can now review it from the admin queue." : "The request could not be submitted. Check the form and try again."}
+    </section>
+  )}
+
+  <section class="request-shell card">
+    <div class="request-copy">
+      <span class="pill">Request support</span>
+      <h2>Ask for human help where the standard workflow stops.</h2>
+      <p>
+        This is for cases where the product should still feel personal: off-market sourcing, listing strategy, auction preparation, or a buyer journey that needs more guidance than a standard search form can provide.
+      </p>
+    </div>
+
+    <form class="request-form" method="POST" action="/api/service-request">
+      <div class="grid two">
+        <label class="field">
+          <span>Name</span>
+          <input name="name" required placeholder="Nguyen Anh" value={owner?.full_name ?? ""} />
+        </label>
+        <label class="field">
+          <span>Email</span>
+          <input type="email" name="email" required placeholder="name@example.com" value={owner?.email ?? ""} />
+        </label>
+      </div>
+
+      <div class="grid three">
+        <label class="field">
+          <span>Phone</span>
+          <input name="phone" placeholder="+84 ..." value={owner?.phone ?? ""} />
+        </label>
+        <label class="field">
+          <span>You are</span>
+          <select name="role">
+            <option value="buyer">Buyer</option>
+            <option value="renter">Renter</option>
+            <option value="owner">Owner</option>
+            <option value="landlord">Landlord</option>
+            <option value="developer">Developer</option>
+            <option value="agent">Agent</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Request type</span>
+          <select name="requestType">
+            <option value="sourcing-help">Find me options</option>
+            <option value="listing-strategy">Help with listing strategy</option>
+            <option value="auction-support">Auction support</option>
+            <option value="pricing-guidance">Pricing guidance</option>
+            <option value="general-support">General support</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="grid three">
+        <label class="field">
+          <span>Market intent</span>
+          <select name="marketIntent">
+            <option value="">Not sure yet</option>
+            <option value="buy">Buy</option>
+            <option value="rent">Rent</option>
+            <option value="sell">Sell</option>
+            <option value="let">Let</option>
+            <option value="auction">Auction</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>City or area</span>
+          <input name="city" placeholder="Ho Chi Minh City, Binh Thanh, Da Nang..." />
+        </label>
+        <label class="field">
+          <span>Budget or price context</span>
+          <input name="budgetLabel" placeholder="Up to 6B VND, 45M VND / month, reserve not fixed..." />
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Timeline</span>
+        <input name="timelineLabel" placeholder="Need options this month, launch in two weeks, auction next quarter..." />
+      </label>
+
+      <label class="field">
+        <span>What do you need help with?</span>
+        <textarea name="message" rows="6" required placeholder="Explain what is missing from the normal workflow, what you have already seen, and where you want human help from the team."></textarea>
+      </label>
+
+      <button type="submit">Send request</button>
+    </form>
+  </section>
+
+  <style is:inline>
+    .concierge-hero,
+    .service-card,
+    .request-shell,
+    .flash {
+      padding: 1.4rem;
+    }
+    .concierge-hero {
+      background:
+        radial-gradient(circle at top left, rgba(16, 185, 129, 0.12), transparent 28rem),
+        linear-gradient(180deg, rgba(255,255,255,0.92), rgba(248,250,252,0.95));
+    }
+    .hero-copy,
+    .request-shell,
+    .request-copy {
+      display: grid;
+      gap: 0.9rem;
+    }
+    .concierge-hero h1,
+    .request-copy h2 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      line-height: 0.95;
+      letter-spacing: -0.08em;
+      max-width: 14ch;
+    }
+    .concierge-hero p,
+    .service-card li,
+    .request-copy p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.72;
+    }
+    .hero-signals {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+    }
+    .hero-signals span {
+      padding: 0.7rem 0.95rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .concierge-grid,
+    .grid {
+      display: grid;
+      gap: 1rem;
+    }
+    .concierge-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .service-card ul {
+      margin: 0.8rem 0 0;
+      padding-left: 1.1rem;
+    }
+    .request-shell {
+      background: rgba(255,255,255,0.94);
+    }
+    .request-form {
+      display: grid;
+      gap: 1rem;
+    }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .field {
+      display: grid;
+      gap: 0.45rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 1rem 1rem;
+      border-radius: 1.1rem;
+      border: 1px solid var(--line);
+      background: rgba(248, 250, 252, 0.95);
+      font: inherit;
+      color: var(--text);
+    }
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: rgba(15, 23, 42, 0.25);
+      box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.06);
+    }
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 1.2rem;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 18px 30px rgba(15, 23, 42, 0.14);
+    }
+    .flash {
+      margin-top: 1rem;
+    }
+    .error-flash {
+      background: rgba(185, 28, 28, 0.08);
+      color: #991b1b;
+      border: 1px solid rgba(185, 28, 28, 0.12);
+    }
+    @media (max-width: 900px) {
+      .concierge-grid,
+      .grid.two,
+      .grid.three {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</Layout>

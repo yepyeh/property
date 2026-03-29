@@ -13,6 +13,7 @@ import {
   getUnreadInboxNotificationCount,
   upsertInboxNotification,
 } from "./notifications";
+import { getRecentConciergeRequests } from "./service";
 import type { D1Like } from "./runtime";
 
 async function getInboxState(db: D1Like, userId: number, enabled: boolean) {
@@ -188,7 +189,7 @@ export async function getBuyerDashboardData(userId: number, db?: D1Like) {
 }
 
 export async function getAdminBillingData(db?: D1Like) {
-  if (!db) return { listings: [], payments: [], emailDeliveries: [], performanceSeries: [], verificationRequests: [], listingReports: [] };
+  if (!db) return { listings: [], payments: [], emailDeliveries: [], performanceSeries: [], verificationRequests: [], listingReports: [], conciergeRequests: [] };
   await normalizeExpiredListingPlans(db);
 
   const listingsResult = await db
@@ -302,6 +303,7 @@ export async function getAdminBillingData(db?: D1Like) {
     performanceSeries,
     verificationRequests: verificationRequestsResult.results,
     listingReports: listingReportsResult.results,
+    conciergeRequests: await getRecentConciergeRequests(db),
   };
 }
 

@@ -224,3 +224,20 @@ export interface ExpiryEmailCandidate extends ExpiryNotification {
   ownerUserId: number | null;
   ownerEmail: string;
 }
+
+export interface ConciergeRequestRecord {
+  id: number;
+  requester_user_id?: number | null;
+  name: string;
+  email: string;
+  phone?: string | null;
+  role: string;
+  request_type: string;
+  market_intent?: string | null;
+  city?: string | null;
+  budget_label?: string | null;
+  timeline_label?: string | null;
+  message: string;
+  status: string;
+  created_at: string;
+}

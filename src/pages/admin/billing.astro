@@ -10,7 +10,7 @@ if (!owner || owner.role !== "admin") {
   return Astro.redirect("/owner/dashboard/");
 }
 
-const { listings, payments, emailDeliveries, performanceSeries, verificationRequests, listingReports } = await getAdminBillingData(getDB(Astro.locals.runtime));
+const { listings, payments, emailDeliveries, performanceSeries, verificationRequests, listingReports, conciergeRequests } = await getAdminBillingData(getDB(Astro.locals.runtime));
 const updated = Astro.url.searchParams.get("updated");
 const emailed = Number(Astro.url.searchParams.get("emailed") || 0);
 const skipped = Number(Astro.url.searchParams.get("skipped") || 0);
@@ -34,6 +34,7 @@ const analytics = {
   paymentCount: payments.length,
   verificationPending: verificationRequests.filter((request) => request.status === "pending").length,
   openReports: listingReports.filter((report) => report.status === "open").length,
+  openConcierge: conciergeRequests.filter((request) => request.status === "open").length,
   emailSentCount: emailDeliveries.filter((delivery) => delivery.status === "sent").length,
   emailFailedCount: emailDeliveries.filter((delivery) => delivery.status === "failed").length,
   revenueVnd: payments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
@@ -92,6 +93,7 @@ const conversionRate = analytics.totalListings > 0
     <article class="card stat"><strong>{analytics.paymentCount}</strong><span>recorded payments</span></article>
     <article class="card stat"><strong>{analytics.verificationPending}</strong><span>pending verification requests</span></article>
     <article class="card stat"><strong>{analytics.openReports}</strong><span>open listing reports</span></article>
+    <article class="card stat"><strong>{analytics.openConcierge}</strong><span>open concierge requests</span></article>
     <article class="card stat"><strong>{analytics.emailSentCount}</strong><span>expiry emails sent</span></article>
     <article class="card stat"><strong>{analytics.emailFailedCount}</strong><span>expiry email failures</span></article>
   </section>
@@ -107,7 +109,31 @@ const conversionRate = analytics.totalListings > 0
         <strong>{analytics.openReports}</strong>
         <span>open listing reports from users</span>
       </div>
+      <div>
+        <strong>{analytics.openConcierge}</strong>
+        <span>open high-touch service requests</span>
+      </div>
     </div>
+  </section>
+
+  <section class="card panel payment-panel">
+    <h2>Concierge requests</h2>
+    {conciergeRequests.length === 0 ? <p>No concierge requests recorded yet.</p> : (
+      <ul class="listing-grid">
+        {conciergeRequests.map((request) => (
+          <li>
+            <strong>{request.request_type} · {request.status}</strong>
+            <span>{request.name} · {request.email}{request.phone ? ` · ${request.phone}` : ""}</span>
+            <span>{request.role}{request.market_intent ? ` · ${request.market_intent}` : ""}{request.city ? ` · ${request.city}` : ""}</span>
+            {(request.budget_label || request.timeline_label) && (
+              <span>{request.budget_label ?? "No budget"}{request.timeline_label ? ` · ${request.timeline_label}` : ""}</span>
+            )}
+            <span>{request.message}</span>
+            <span>Created: {request.created_at}</span>
+          </li>
+        ))}
+      </ul>
+    )}
   </section>
 
   <section class="card panel payment-panel">

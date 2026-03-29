@@ -14,6 +14,10 @@ const ownerBenefits = [
     title: "Monetize visibility intentionally",
     body: "Start with a 7-day free listing, then extend or promote only when the inventory deserves more visibility.",
   },
+  {
+    title: "Get hands-on support when needed",
+    body: "If a listing needs more than standard self-serve tools, concierge support can help with launch quality, positioning, and auction preparation.",
+  },
 ];
 
 const workflowSteps = [
@@ -39,6 +43,7 @@ const workflowSteps = [
       <div class="hero-actions">
         <a class="button-primary" href="/signup?role=owner">Create owner account</a>
         <a class="button-secondary" href="/submit-listing/">Post a listing</a>
+        <a class="button-secondary" href="/concierge">Talk to the team</a>
       </div>
     </div>
     <div class="hero-panel">
@@ -47,6 +52,7 @@ const workflowSteps = [
         {workflowSteps.map((step) => <li>{step}</li>)}
       </ol>
       <a href="/pricing">See pricing</a>
+      <a href="/concierge">Concierge support</a>
     </div>
   </section>
 
