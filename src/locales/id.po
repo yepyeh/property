@@ -1,0 +1,134 @@
+msgid "Buy"
+msgstr "Beli"
+
+msgid "Rent"
+msgstr "Sewa"
+
+msgid "For buyers"
+msgstr "Untuk pembeli"
+
+msgid "For owners"
+msgstr "Untuk pemilik"
+
+msgid "Pricing"
+msgstr "Harga"
+
+msgid "Help"
+msgstr "Bantuan"
+
+msgid "Post"
+msgstr "Pasang"
+
+msgid "Inbox"
+msgstr "Kotak masuk"
+
+msgid "Settings"
+msgstr "Pengaturan"
+
+msgid "Compare"
+msgstr "Bandingkan"
+
+msgid "Dashboard"
+msgstr "Dasbor"
+
+msgid "Billing"
+msgstr "Pembayaran"
+
+msgid "Sign in"
+msgstr "Masuk"
+
+msgid "Create account"
+msgstr "Buat akun"
+
+msgid "Search"
+msgstr "Cari"
+
+msgid "Account"
+msgstr "Akun"
+
+msgid "Dark mode"
+msgstr "Mode gelap"
+
+msgid "Light mode"
+msgstr "Mode terang"
+
+msgid "Browse homes"
+msgstr "Jelajahi rumah"
+
+msgid "Open help centre"
+msgstr "Buka pusat bantuan"
+
+msgid "Explore"
+msgstr "Jelajahi"
+
+msgid "Trust"
+msgstr "Kepercayaan"
+
+msgid "Trust and safety"
+msgstr "Kepercayaan dan keamanan"
+
+msgid "About us"
+msgstr "Tentang kami"
+
+msgid "What makes us different"
+msgstr "Apa yang membuat kami berbeda"
+
+msgid "Getting started"
+msgstr "Memulai"
+
+msgid "Shortlist and compare"
+msgstr "Simpan dan bandingkan"
+
+msgid "Posting listings"
+msgstr "Pasang listing"
+
+msgid "Support"
+msgstr "Dukungan"
+
+msgid "Notifications"
+msgstr "Notifikasi"
+
+msgid "Why Property App"
+msgstr "Mengapa Property App"
+
+msgid "Concierge"
+msgstr "Concierge"
+
+msgid "Concierge support"
+msgstr "Dukungan concierge"
+
+msgid "Create buyer account"
+msgstr "Buat akun pembeli"
+
+msgid "Create owner account"
+msgstr "Buat akun pemilik"
+
+msgid "How it works"
+msgstr "Cara kerja"
+
+msgid "Buyer dashboard"
+msgstr "Dasbor pembeli"
+
+msgid "Owner dashboard"
+msgstr "Dasbor pemilik"
+
+msgid "Billing admin"
+msgstr "Admin pembayaran"
+
+msgid "Search clearly. Decide faster. Move with context."
+msgstr "Cari dengan jelas. Putuskan lebih cepat. Bergerak dengan konteks."
+
+msgid "Built for listing discovery, buyer decision-making, owner-side follow-through, and a stronger trust standard."
+msgstr "Dibangun untuk penemuan listing, keputusan pembeli, tindak lanjut pemilik, dan standar kepercayaan yang lebih kuat."
+
+msgid "Help centre"
+msgstr "Pusat bantuan"
+
+msgid "Language"
+msgstr "Bahasa"
+
+msgid "Suggested"
+msgstr "Disarankan"
+
+msgid "English-first, with your local language available."
+msgstr "Utamakan bahasa Inggris, dengan bahasa lokal Anda tersedia."

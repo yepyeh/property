@@ -1,0 +1,134 @@
+msgid "Buy"
+msgstr "ซื้อ"
+
+msgid "Rent"
+msgstr "เช่า"
+
+msgid "For buyers"
+msgstr "สำหรับผู้ซื้อ"
+
+msgid "For owners"
+msgstr "สำหรับเจ้าของ"
+
+msgid "Pricing"
+msgstr "ราคา"
+
+msgid "Help"
+msgstr "ช่วยเหลือ"
+
+msgid "Post"
+msgstr "ลงประกาศ"
+
+msgid "Inbox"
+msgstr "กล่องข้อความ"
+
+msgid "Settings"
+msgstr "การตั้งค่า"
+
+msgid "Compare"
+msgstr "เปรียบเทียบ"
+
+msgid "Dashboard"
+msgstr "แดชบอร์ด"
+
+msgid "Billing"
+msgstr "การชำระเงิน"
+
+msgid "Sign in"
+msgstr "เข้าสู่ระบบ"
+
+msgid "Create account"
+msgstr "สร้างบัญชี"
+
+msgid "Search"
+msgstr "ค้นหา"
+
+msgid "Account"
+msgstr "บัญชี"
+
+msgid "Dark mode"
+msgstr "โหมดมืด"
+
+msgid "Light mode"
+msgstr "โหมดสว่าง"
+
+msgid "Browse homes"
+msgstr "ดูบ้าน"
+
+msgid "Open help centre"
+msgstr "เปิดศูนย์ช่วยเหลือ"
+
+msgid "Explore"
+msgstr "สำรวจ"
+
+msgid "Trust"
+msgstr "ความน่าเชื่อถือ"
+
+msgid "Trust and safety"
+msgstr "ความน่าเชื่อถือและความปลอดภัย"
+
+msgid "About us"
+msgstr "เกี่ยวกับเรา"
+
+msgid "What makes us different"
+msgstr "อะไรทำให้เราแตกต่าง"
+
+msgid "Getting started"
+msgstr "เริ่มต้น"
+
+msgid "Shortlist and compare"
+msgstr "คัดเลือกและเปรียบเทียบ"
+
+msgid "Posting listings"
+msgstr "ลงประกาศ"
+
+msgid "Support"
+msgstr "ฝ่ายสนับสนุน"
+
+msgid "Notifications"
+msgstr "การแจ้งเตือน"
+
+msgid "Why Property App"
+msgstr "ทำไมต้อง Property App"
+
+msgid "Concierge"
+msgstr "คอนเซียร์จ"
+
+msgid "Concierge support"
+msgstr "บริการคอนเซียร์จ"
+
+msgid "Create buyer account"
+msgstr "สร้างบัญชีผู้ซื้อ"
+
+msgid "Create owner account"
+msgstr "สร้างบัญชีเจ้าของ"
+
+msgid "How it works"
+msgstr "วิธีการทำงาน"
+
+msgid "Buyer dashboard"
+msgstr "แดชบอร์ดผู้ซื้อ"
+
+msgid "Owner dashboard"
+msgstr "แดชบอร์ดเจ้าของ"
+
+msgid "Billing admin"
+msgstr "ผู้ดูแลการชำระเงิน"
+
+msgid "Search clearly. Decide faster. Move with context."
+msgstr "ค้นหาให้ชัด ตัดสินใจได้เร็วขึ้น พร้อมบริบทที่ครบกว่า"
+
+msgid "Built for listing discovery, buyer decision-making, owner-side follow-through, and a stronger trust standard."
+msgstr "สร้างมาเพื่อการค้นหาประกาศ การตัดสินใจของผู้ซื้อ การติดตามของเจ้าของ และมาตรฐานความน่าเชื่อถือที่สูงขึ้น"
+
+msgid "Help centre"
+msgstr "ศูนย์ช่วยเหลือ"
+
+msgid "Language"
+msgstr "ภาษา"
+
+msgid "Suggested"
+msgstr "แนะนำ"
+
+msgid "English-first, with your local language available."
+msgstr "ใช้ภาษาอังกฤษเป็นหลัก พร้อมตัวเลือกภาษาท้องถิ่นของคุณ"

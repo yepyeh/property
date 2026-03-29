@@ -1,0 +1,134 @@
+msgid "Buy"
+msgstr "Beli"
+
+msgid "Rent"
+msgstr "Sewa"
+
+msgid "For buyers"
+msgstr "Untuk pembeli"
+
+msgid "For owners"
+msgstr "Untuk pemilik"
+
+msgid "Pricing"
+msgstr "Harga"
+
+msgid "Help"
+msgstr "Bantuan"
+
+msgid "Post"
+msgstr "Siar"
+
+msgid "Inbox"
+msgstr "Peti masuk"
+
+msgid "Settings"
+msgstr "Tetapan"
+
+msgid "Compare"
+msgstr "Bandingkan"
+
+msgid "Dashboard"
+msgstr "Papan pemuka"
+
+msgid "Billing"
+msgstr "Bil"
+
+msgid "Sign in"
+msgstr "Log masuk"
+
+msgid "Create account"
+msgstr "Cipta akaun"
+
+msgid "Search"
+msgstr "Cari"
+
+msgid "Account"
+msgstr "Akaun"
+
+msgid "Dark mode"
+msgstr "Mod gelap"
+
+msgid "Light mode"
+msgstr "Mod terang"
+
+msgid "Browse homes"
+msgstr "Lihat rumah"
+
+msgid "Open help centre"
+msgstr "Buka pusat bantuan"
+
+msgid "Explore"
+msgstr "Teroka"
+
+msgid "Trust"
+msgstr "Kepercayaan"
+
+msgid "Trust and safety"
+msgstr "Kepercayaan dan keselamatan"
+
+msgid "About us"
+msgstr "Tentang kami"
+
+msgid "What makes us different"
+msgstr "Apa yang membezakan kami"
+
+msgid "Getting started"
+msgstr "Bermula"
+
+msgid "Shortlist and compare"
+msgstr "Senarai pendek dan bandingkan"
+
+msgid "Posting listings"
+msgstr "Siar penyenaraian"
+
+msgid "Support"
+msgstr "Sokongan"
+
+msgid "Notifications"
+msgstr "Pemberitahuan"
+
+msgid "Why Property App"
+msgstr "Mengapa Property App"
+
+msgid "Concierge"
+msgstr "Concierge"
+
+msgid "Concierge support"
+msgstr "Sokongan concierge"
+
+msgid "Create buyer account"
+msgstr "Cipta akaun pembeli"
+
+msgid "Create owner account"
+msgstr "Cipta akaun pemilik"
+
+msgid "How it works"
+msgstr "Cara ia berfungsi"
+
+msgid "Buyer dashboard"
+msgstr "Papan pemuka pembeli"
+
+msgid "Owner dashboard"
+msgstr "Papan pemuka pemilik"
+
+msgid "Billing admin"
+msgstr "Admin bil"
+
+msgid "Search clearly. Decide faster. Move with context."
+msgstr "Cari dengan jelas. Buat keputusan lebih cepat. Bergerak dengan konteks."
+
+msgid "Built for listing discovery, buyer decision-making, owner-side follow-through, and a stronger trust standard."
+msgstr "Dibina untuk penemuan penyenaraian, keputusan pembeli, susulan pemilik, dan standard kepercayaan yang lebih kukuh."
+
+msgid "Help centre"
+msgstr "Pusat bantuan"
+
+msgid "Language"
+msgstr "Bahasa"
+
+msgid "Suggested"
+msgstr "Dicadangkan"
+
+msgid "English-first, with your local language available."
+msgstr "Utamakan bahasa Inggeris, dengan bahasa tempatan anda tersedia."

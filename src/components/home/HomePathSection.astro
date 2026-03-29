@@ -11,19 +11,24 @@ interface EntryPath {
 
 export interface Props {
   entryPaths: EntryPath[];
+  sectionKicker?: string;
+  sectionTitle?: string;
+  sectionBody?: string;
 }
 
-const { entryPaths } = Astro.props;
+const {
+  entryPaths,
+  sectionKicker = "Choose your path",
+  sectionTitle = "This homepage should route users, not make them interpret the product structure themselves.",
+  sectionBody = "Most users arrive with one clear job. The public site should acknowledge that immediately instead of pushing everyone through the same generic surface.",
+} = Astro.props;
 ---
 
 <section class="path-section">
   <div class="section-heading narrow">
-    <span class="section-kicker">Choose your path</span>
-    <h2>This homepage should route users, not make them interpret the product structure themselves.</h2>
-    <p>
-      Most users arrive with one clear job. The public site should acknowledge that immediately instead of pushing
-      everyone through the same generic surface.
-    </p>
+    <span class="section-kicker">{sectionKicker}</span>
+    <h2>{sectionTitle}</h2>
+    <p>{sectionBody}</p>
   </div>
 
   <div class="path-grid">

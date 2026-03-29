@@ -1,0 +1,134 @@
+msgid "Buy"
+msgstr "ဝယ်ရန်"
+
+msgid "Rent"
+msgstr "ငှားရန်"
+
+msgid "For buyers"
+msgstr "ဝယ်ယူသူများအတွက်"
+
+msgid "For owners"
+msgstr "ပိုင်ရှင်များအတွက်"
+
+msgid "Pricing"
+msgstr "ဈေးနှုန်း"
+
+msgid "Help"
+msgstr "အကူအညီ"
+
+msgid "Post"
+msgstr "တင်ရန်"
+
+msgid "Inbox"
+msgstr "အဝင်စာ"
+
+msgid "Settings"
+msgstr "ဆက်တင်များ"
+
+msgid "Compare"
+msgstr "နှိုင်းယှဉ်ရန်"
+
+msgid "Dashboard"
+msgstr "ဒက်ရှ်ဘုတ်"
+
+msgid "Billing"
+msgstr "ငွေတောင်းခံခြင်း"
+
+msgid "Sign in"
+msgstr "အကောင့်ဝင်ရန်"
+
+msgid "Create account"
+msgstr "အကောင့်ဖန်တီးရန်"
+
+msgid "Search"
+msgstr "ရှာဖွေရန်"
+
+msgid "Account"
+msgstr "အကောင့်"
+
+msgid "Dark mode"
+msgstr "အမှောင်ပုံစံ"
+
+msgid "Light mode"
+msgstr "အလင်းပုံစံ"
+
+msgid "Browse homes"
+msgstr "အိမ်များကြည့်ရန်"
+
+msgid "Open help centre"
+msgstr "အကူအညီစင်တာဖွင့်ရန်"
+
+msgid "Explore"
+msgstr "လေ့လာရန်"
+
+msgid "Trust"
+msgstr "ယုံကြည်မှု"
+
+msgid "Trust and safety"
+msgstr "ယုံကြည်မှုနှင့် လုံခြုံမှု"
+
+msgid "About us"
+msgstr "ကျွန်ုပ်တို့အကြောင်း"
+
+msgid "What makes us different"
+msgstr "ကျွန်ုပ်တို့ကို ကွဲပြားစေသည်များ"
+
+msgid "Getting started"
+msgstr "စတင်အသုံးပြုခြင်း"
+
+msgid "Shortlist and compare"
+msgstr "စာရင်းတိုလုပ်ပြီး နှိုင်းယှဉ်ရန်"
+
+msgid "Posting listings"
+msgstr "စာရင်းတင်ခြင်း"
+
+msgid "Support"
+msgstr "ပံ့ပိုးမှု"
+
+msgid "Notifications"
+msgstr "အသိပေးချက်များ"
+
+msgid "Why Property App"
+msgstr "Property App ကို ဘာကြောင့် ရွေးချယ်သင့်သလဲ"
+
+msgid "Concierge"
+msgstr "အထူးဝန်ဆောင်မှု"
+
+msgid "Concierge support"
+msgstr "Concierge အထောက်အပံ့"
+
+msgid "Create buyer account"
+msgstr "ဝယ်သူအကောင့်ဖန်တီးရန်"
+
+msgid "Create owner account"
+msgstr "ပိုင်ရှင်အကောင့်ဖန်တီးရန်"
+
+msgid "How it works"
+msgstr "ဘယ်လိုအလုပ်လုပ်သလဲ"
+
+msgid "Buyer dashboard"
+msgstr "ဝယ်သူ ဒက်ရှ်ဘုတ်"
+
+msgid "Owner dashboard"
+msgstr "ပိုင်ရှင် ဒက်ရှ်ဘုတ်"
+
+msgid "Billing admin"
+msgstr "ငွေတောင်းခံခြင်း စီမံခန့်ခွဲမှု"
+
+msgid "Search clearly. Decide faster. Move with context."
+msgstr "ရှင်းရှင်းလင်းလင်း ရှာပါ။ မြန်မြန်ဆုံးဖြတ်ပါ။ အခြေအနေနှင့်အတူ ရွှေ့ပါ။"
+
+msgid "Built for listing discovery, buyer decision-making, owner-side follow-through, and a stronger trust standard."
+msgstr "စာရင်းရှာဖွေမှု၊ ဝယ်သူဆုံးဖြတ်ချက်၊ ပိုင်ရှင်ဘက် လုပ်ဆောင်မှုနှင့် ပိုမိုအားကောင်းသော ယုံကြည်မှုစံနှုန်းအတွက် တည်ဆောက်ထားသည်။"
+
+msgid "Help centre"
+msgstr "အကူအညီစင်တာ"
+
+msgid "Language"
+msgstr "ဘာသာစကား"
+
+msgid "Suggested"
+msgstr "အကြံပြုထားသည်"
+
+msgid "English-first, with your local language available."
+msgstr "အင်္ဂလိပ်ကို အဓိကထားပြီး သင့်ဒေသဘာသာစကားကိုလည်း အသုံးပြုနိုင်ပါသည်။"

@@ -3,10 +3,20 @@ import BrandLink from "./BrandLink.astro";
 import AccountMenu from "./AccountMenu.astro";
 
 interface NavItem {
+  key?: string;
   label: string;
   href: string;
   active?: boolean;
   count?: number;
+}
+
+interface LocaleOption {
+  code: string;
+  label: string;
+  nativeLabel: string;
+  href: string;
+  current: boolean;
+  suggested: boolean;
 }
 
 export interface Props {
@@ -16,9 +26,40 @@ export interface Props {
   viewerRoleLabel: string;
   viewerInitials: string;
   accountMenu: NavItem[];
+  localeMeta: { code: string; nativeLabel: string };
+  localeOptions: LocaleOption[];
+  localeLabel: string;
+  suggestedLabel: string;
+  darkModeLabel: string;
+  lightModeLabel: string;
+  signInLabel: string;
+  createAccountLabel: string;
+  accountLabel: string;
+  navigationLabel: string;
+  shortcutsLabel: string;
+  logOutLabel: string;
 }
 
-const { primaryNav, viewer, viewerLabel, viewerRoleLabel, viewerInitials, accountMenu } = Astro.props;
+const {
+  primaryNav,
+  viewer,
+  viewerLabel,
+  viewerRoleLabel,
+  viewerInitials,
+  accountMenu,
+  localeMeta,
+  localeOptions,
+  localeLabel,
+  suggestedLabel,
+  darkModeLabel,
+  lightModeLabel,
+  signInLabel,
+  createAccountLabel,
+  accountLabel,
+  navigationLabel,
+  shortcutsLabel,
+  logOutLabel,
+} = Astro.props;
 ---
 
 <header class="global-nav card">
@@ -35,9 +76,32 @@ const { primaryNav, viewer, viewerLabel, viewerRoleLabel, viewerInitials, accoun
     </nav>
 
     <div class="utility-links">
-      <button class="theme-toggle" type="button" data-theme-toggle>
+      <details class="locale-menu">
+        <summary class="locale-summary">
+          <span class="locale-label">{localeLabel}</span>
+          <strong>{localeMeta.nativeLabel}</strong>
+          <span class="chevron">▾</span>
+        </summary>
+        <div class="locale-panel">
+          {localeOptions.map((option) => (
+            <a class:list={["locale-item", option.current && "active"]} href={option.href}>
+              <span>
+                {option.nativeLabel}
+                {option.code !== "en" ? <small>{option.label}</small> : null}
+              </span>
+              {option.suggested ? <em>{suggestedLabel}</em> : null}
+            </a>
+          ))}
+        </div>
+      </details>
+
+      <button
+        class="theme-toggle"
+        type="button"
+        data-theme-toggle
+      >
         <span class="theme-toggle-icon" data-theme-icon>◐</span>
-        <span data-theme-label>Dark mode</span>
+        <span data-theme-label data-theme-dark-label={darkModeLabel} data-theme-light-label={lightModeLabel}>{darkModeLabel}</span>
       </button>
       {viewer ? (
         <AccountMenu
@@ -45,11 +109,15 @@ const { primaryNav, viewer, viewerLabel, viewerRoleLabel, viewerInitials, accoun
           viewerRoleLabel={viewerRoleLabel}
           viewerInitials={viewerInitials}
           accountMenu={accountMenu}
+          accountLabel={accountLabel}
+          navigationLabel={navigationLabel}
+          shortcutsLabel={shortcutsLabel}
+          logOutLabel={logOutLabel}
         />
       ) : (
         <>
-          <a class="auth-link" href="/login">Sign in</a>
-          <a class="auth-link primary" href="/signup?role=buyer">Create account</a>
+          <a class="auth-link" href="/login">{signInLabel}</a>
+          <a class="auth-link primary" href="/signup?role=buyer">{createAccountLabel}</a>
         </>
       )}
     </div>

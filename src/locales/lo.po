@@ -1,0 +1,134 @@
+msgid "Buy"
+msgstr "ຊື້"
+
+msgid "Rent"
+msgstr "ເຊົ່າ"
+
+msgid "For buyers"
+msgstr "ສໍາລັບຜູ້ຊື້"
+
+msgid "For owners"
+msgstr "ສໍາລັບເຈົ້າຂອງ"
+
+msgid "Pricing"
+msgstr "ລາຄາ"
+
+msgid "Help"
+msgstr "ຊ່ວຍເຫຼືອ"
+
+msgid "Post"
+msgstr "ລົງປະກາດ"
+
+msgid "Inbox"
+msgstr "ກ່ອງຂໍ້ຄວາມ"
+
+msgid "Settings"
+msgstr "ການຕັ້ງຄ່າ"
+
+msgid "Compare"
+msgstr "ປຽບທຽບ"
+
+msgid "Dashboard"
+msgstr "ແດຊບອດ"
+
+msgid "Billing"
+msgstr "ການຊໍາລະເງິນ"
+
+msgid "Sign in"
+msgstr "ເຂົ້າລະບົບ"
+
+msgid "Create account"
+msgstr "ສ້າງບັນຊີ"
+
+msgid "Search"
+msgstr "ຄົ້ນຫາ"
+
+msgid "Account"
+msgstr "ບັນຊີ"
+
+msgid "Dark mode"
+msgstr "ໂໝດມືດ"
+
+msgid "Light mode"
+msgstr "ໂໝດສະຫວ່າງ"
+
+msgid "Browse homes"
+msgstr "ເບິ່ງບ້ານ"
+
+msgid "Open help centre"
+msgstr "ເປີດສູນຊ່ວຍເຫຼືອ"
+
+msgid "Explore"
+msgstr "ສໍາຫຼວດ"
+
+msgid "Trust"
+msgstr "ຄວາມເຊື່ອຖື"
+
+msgid "Trust and safety"
+msgstr "ຄວາມເຊື່ອຖື ແລະ ຄວາມປອດໄພ"
+
+msgid "About us"
+msgstr "ກ່ຽວກັບພວກເຮົາ"
+
+msgid "What makes us different"
+msgstr "ສິ່ງທີ່ເຮັດໃຫ້ພວກເຮົາແຕກຕ່າງ"
+
+msgid "Getting started"
+msgstr "ເລີ່ມຕົ້ນ"
+
+msgid "Shortlist and compare"
+msgstr "ຄັດເລືອກ ແລະ ປຽບທຽບ"
+
+msgid "Posting listings"
+msgstr "ການລົງປະກາດ"
+
+msgid "Support"
+msgstr "ການສະໜັບສະໜູນ"
+
+msgid "Notifications"
+msgstr "ການແຈ້ງເຕືອນ"
+
+msgid "Why Property App"
+msgstr "ເປັນຫຍັງເລືອກ Property App"
+
+msgid "Concierge"
+msgstr "ບໍລິການພິເສດ"
+
+msgid "Concierge support"
+msgstr "ການຊ່ວຍເຫຼືອ Concierge"
+
+msgid "Create buyer account"
+msgstr "ສ້າງບັນຊີຜູ້ຊື້"
+
+msgid "Create owner account"
+msgstr "ສ້າງບັນຊີເຈົ້າຂອງ"
+
+msgid "How it works"
+msgstr "ມັນເຮັດວຽກແນວໃດ"
+
+msgid "Buyer dashboard"
+msgstr "ແດຊບອດຜູ້ຊື້"
+
+msgid "Owner dashboard"
+msgstr "ແດຊບອດເຈົ້າຂອງ"
+
+msgid "Billing admin"
+msgstr "ຜູ້ຈັດການການເງິນ"
+
+msgid "Search clearly. Decide faster. Move with context."
+msgstr "ຄົ້ນຫາໃຫ້ຊັດເຈນ. ຕັດສິນໃຈໃຫ້ໄວ. ດໍາເນີນຕໍ່ດ້ວຍບໍລິບົດ."
+
+msgid "Built for listing discovery, buyer decision-making, owner-side follow-through, and a stronger trust standard."
+msgstr "ສ້າງມາເພື່ອການຄົ້ນພົບປະກາດ, ການຕັດສິນໃຈຂອງຜູ້ຊື້, ການຕິດຕາມຂອງເຈົ້າຂອງ, ແລະ ມາດຕະຖານຄວາມເຊື່ອຖືທີ່ແຂງແຮງກວ່າ."
+
+msgid "Help centre"
+msgstr "ສູນຊ່ວຍເຫຼືອ"
+
+msgid "Language"
+msgstr "ພາສາ"
+
+msgid "Suggested"
+msgstr "ແນະນໍາ"
+
+msgid "English-first, with your local language available."
+msgstr "ໃຊ້ພາສາອັງກິດເປັນຫຼັກ ແລະ ມີພາສາທ້ອງຖິ່ນຂອງທ່ານໃຫ້ເລືອກ."

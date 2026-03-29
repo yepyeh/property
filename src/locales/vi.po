@@ -1,0 +1,134 @@
+msgid "Buy"
+msgstr "Mua"
+
+msgid "Rent"
+msgstr "Thuê"
+
+msgid "For buyers"
+msgstr "Dành cho người mua"
+
+msgid "For owners"
+msgstr "Dành cho chủ sở hữu"
+
+msgid "Pricing"
+msgstr "Bảng giá"
+
+msgid "Help"
+msgstr "Trợ giúp"
+
+msgid "Post"
+msgstr "Đăng tin"
+
+msgid "Inbox"
+msgstr "Hộp thư"
+
+msgid "Settings"
+msgstr "Cài đặt"
+
+msgid "Compare"
+msgstr "So sánh"
+
+msgid "Dashboard"
+msgstr "Bảng điều khiển"
+
+msgid "Billing"
+msgstr "Thanh toán"
+
+msgid "Sign in"
+msgstr "Đăng nhập"
+
+msgid "Create account"
+msgstr "Tạo tài khoản"
+
+msgid "Search"
+msgstr "Tìm kiếm"
+
+msgid "Account"
+msgstr "Tài khoản"
+
+msgid "Dark mode"
+msgstr "Chế độ tối"
+
+msgid "Light mode"
+msgstr "Chế độ sáng"
+
+msgid "Browse homes"
+msgstr "Xem nhà ở"
+
+msgid "Open help centre"
+msgstr "Mở trung tâm trợ giúp"
+
+msgid "Explore"
+msgstr "Khám phá"
+
+msgid "Trust"
+msgstr "Tin cậy"
+
+msgid "Trust and safety"
+msgstr "Tin cậy và an toàn"
+
+msgid "About us"
+msgstr "Về chúng tôi"
+
+msgid "What makes us different"
+msgstr "Điều làm chúng tôi khác biệt"
+
+msgid "Getting started"
+msgstr "Bắt đầu"
+
+msgid "Shortlist and compare"
+msgstr "Lưu và so sánh"
+
+msgid "Posting listings"
+msgstr "Đăng tin"
+
+msgid "Support"
+msgstr "Hỗ trợ"
+
+msgid "Notifications"
+msgstr "Thông báo"
+
+msgid "Why Property App"
+msgstr "Vì sao chọn Property App"
+
+msgid "Concierge"
+msgstr "Concierge"
+
+msgid "Concierge support"
+msgstr "Hỗ trợ concierge"
+
+msgid "Create buyer account"
+msgstr "Tạo tài khoản người mua"
+
+msgid "Create owner account"
+msgstr "Tạo tài khoản chủ sở hữu"
+
+msgid "How it works"
+msgstr "Cách hoạt động"
+
+msgid "Buyer dashboard"
+msgstr "Bảng điều khiển người mua"
+
+msgid "Owner dashboard"
+msgstr "Bảng điều khiển chủ sở hữu"
+
+msgid "Billing admin"
+msgstr "Quản trị thanh toán"
+
+msgid "Search clearly. Decide faster. Move with context."
+msgstr "Tìm kiếm rõ ràng. Quyết định nhanh hơn. Hành động với đủ ngữ cảnh."
+
+msgid "Built for listing discovery, buyer decision-making, owner-side follow-through, and a stronger trust standard."
+msgstr "Được xây dựng cho việc khám phá tin đăng, ra quyết định của người mua, theo dõi của chủ sở hữu và tiêu chuẩn tin cậy cao hơn."
+
+msgid "Help centre"
+msgstr "Trung tâm trợ giúp"
+
+msgid "Language"
+msgstr "Ngôn ngữ"
+
+msgid "Suggested"
+msgstr "Đề xuất"
+
+msgid "English-first, with your local language available."
+msgstr "Ưu tiên tiếng Anh, đồng thời có sẵn ngôn ngữ địa phương của bạn."

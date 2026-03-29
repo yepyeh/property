@@ -1,0 +1,134 @@
+msgid "Buy"
+msgstr "Bumili"
+
+msgid "Rent"
+msgstr "Umupa"
+
+msgid "For buyers"
+msgstr "Para sa mga buyer"
+
+msgid "For owners"
+msgstr "Para sa mga owner"
+
+msgid "Pricing"
+msgstr "Presyo"
+
+msgid "Help"
+msgstr "Tulong"
+
+msgid "Post"
+msgstr "Mag-post"
+
+msgid "Inbox"
+msgstr "Inbox"
+
+msgid "Settings"
+msgstr "Mga setting"
+
+msgid "Compare"
+msgstr "Ihambing"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Billing"
+msgstr "Pagsingil"
+
+msgid "Sign in"
+msgstr "Mag-sign in"
+
+msgid "Create account"
+msgstr "Gumawa ng account"
+
+msgid "Search"
+msgstr "Maghanap"
+
+msgid "Account"
+msgstr "Account"
+
+msgid "Dark mode"
+msgstr "Dark mode"
+
+msgid "Light mode"
+msgstr "Light mode"
+
+msgid "Browse homes"
+msgstr "Tingnan ang mga bahay"
+
+msgid "Open help centre"
+msgstr "Buksan ang help centre"
+
+msgid "Explore"
+msgstr "Tuklasin"
+
+msgid "Trust"
+msgstr "Tiwala"
+
+msgid "Trust and safety"
+msgstr "Tiwala at kaligtasan"
+
+msgid "About us"
+msgstr "Tungkol sa amin"
+
+msgid "What makes us different"
+msgstr "Ano ang pinagkaiba namin"
+
+msgid "Getting started"
+msgstr "Pagsisimula"
+
+msgid "Shortlist and compare"
+msgstr "I-shortlist at ihambing"
+
+msgid "Posting listings"
+msgstr "Pag-post ng listing"
+
+msgid "Support"
+msgstr "Suporta"
+
+msgid "Notifications"
+msgstr "Mga notification"
+
+msgid "Why Property App"
+msgstr "Bakit Property App"
+
+msgid "Concierge"
+msgstr "Concierge"
+
+msgid "Concierge support"
+msgstr "Suportang concierge"
+
+msgid "Create buyer account"
+msgstr "Gumawa ng buyer account"
+
+msgid "Create owner account"
+msgstr "Gumawa ng owner account"
+
+msgid "How it works"
+msgstr "Paano ito gumagana"
+
+msgid "Buyer dashboard"
+msgstr "Buyer dashboard"
+
+msgid "Owner dashboard"
+msgstr "Owner dashboard"
+
+msgid "Billing admin"
+msgstr "Billing admin"
+
+msgid "Search clearly. Decide faster. Move with context."
+msgstr "Maghanap nang malinaw. Magpasya nang mas mabilis. Kumilos nang may konteksto."
+
+msgid "Built for listing discovery, buyer decision-making, owner-side follow-through, and a stronger trust standard."
+msgstr "Ginawa para sa pagtuklas ng listing, pagdedesisyon ng buyer, follow-through ng owner, at mas matibay na pamantayan ng tiwala."
+
+msgid "Help centre"
+msgstr "Help centre"
+
+msgid "Language"
+msgstr "Wika"
+
+msgid "Suggested"
+msgstr "Iminumungkahi"
+
+msgid "English-first, with your local language available."
+msgstr "English muna, na may available na lokal mong wika."

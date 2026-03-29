@@ -1,82 +1,108 @@
 ---
-const { viewer } = Astro.props;
+interface LocaleOption {
+  code: string;
+  label: string;
+  nativeLabel: string;
+  href: string;
+  current: boolean;
+  suggested: boolean;
+}
+
+const {
+  viewer,
+  t = (value: string) => value,
+  currentLocale = "en",
+  localeOptions = [],
+} = Astro.props;
 
 const isBuyer = viewer?.role === "buyer";
 const isOwner = viewer?.role === "owner" || viewer?.role === "admin";
 const isAdmin = viewer?.role === "admin";
+const footerLocales = (localeOptions as LocaleOption[]).filter((option) => option.code === "en" || option.suggested || option.code === currentLocale).slice(0, 3);
 ---
 
 <footer class="app-footer card">
   <div class="footer-grid">
     <div class="footer-brand">
       <span class="pill">Property App 2026</span>
-      <h2>Search clearly. Decide faster. Move with context.</h2>
+      <h2>{t("Search clearly. Decide faster. Move with context.")}</h2>
       <p>
-        A property workflow for buyers and owners across Southeast Asia. Browse with confidence signals,
-        shortlist intelligently, and manage listings with real feedback.
+        {t("Built for listing discovery, buyer decision-making, owner-side follow-through, and a stronger trust standard.")}
       </p>
       <div class="footer-cta-row">
-        <a class="footer-cta primary" href="/listings/?intent=buy">Browse homes</a>
-        <a class="footer-cta" href="/help/">Open help centre</a>
+        <a class="footer-cta primary" href="/listings/?intent=buy">{t("Browse homes")}</a>
+        <a class="footer-cta" href="/help/">{t("Open help centre")}</a>
+      </div>
+      <div class="footer-locale-note">
+        <strong>{t("Language")}</strong>
+        <p>{t("English-first, with your local language available.")}</p>
+        <div class="footer-locale-links">
+          {footerLocales.map((option) => (
+            <a class:list={[option.current && "active"]} href={option.href}>
+              {option.nativeLabel}
+              {option.suggested ? <span>{t("Suggested")}</span> : null}
+            </a>
+          ))}
+        </div>
       </div>
     </div>
 
     <div class="footer-column">
-      <strong>Explore</strong>
-      <a href="/listings/?intent=buy">Buy property</a>
-      <a href="/listings/?intent=rent">Rent homes</a>
+      <strong>{t("Explore")}</strong>
+      <a href="/listings/?intent=buy">{t("Buy")}</a>
+      <a href="/listings/?intent=rent">{t("Rent")}</a>
       <a href="/auctions">Auctions</a>
-      <a href="/why-property-app">Why Property App</a>
-      <a href="/concierge">Concierge</a>
-      <a href="/for-buyers">For buyers</a>
-      <a href="/for-owners">For owners</a>
-      <a href="/pricing">Pricing</a>
+      <a href="/why-property-app">{t("Why Property App")}</a>
+      <a href="/concierge">{t("Concierge")}</a>
+      <a href="/for-buyers">{t("For buyers")}</a>
+      <a href="/for-owners">{t("For owners")}</a>
+      <a href="/pricing">{t("Pricing")}</a>
     </div>
 
     <div class="footer-column">
-      <strong>Trust</strong>
-      <a href="/help/">Help centre</a>
-      <a href="/trust">Trust and safety</a>
-      <a href="/about">About us</a>
-      <a href="/why-property-app">What makes us different</a>
-      <a href="/concierge">Concierge support</a>
-      <a href="/help/getting-started/">Getting started</a>
-      <a href="/help/buyer-shortlist-and-compare/">Shortlist and compare</a>
-      <a href="/help/posting-and-managing-listings/">Posting listings</a>
+      <strong>{t("Trust")}</strong>
+      <a href="/help/">{t("Help centre")}</a>
+      <a href="/trust">{t("Trust and safety")}</a>
+      <a href="/about">{t("About us")}</a>
+      <a href="/why-property-app">{t("What makes us different")}</a>
+      <a href="/concierge">{t("Concierge support")}</a>
+      <a href="/help/getting-started/">{t("Getting started")}</a>
+      <a href="/help/buyer-shortlist-and-compare/">{t("Shortlist and compare")}</a>
+      <a href="/help/posting-and-managing-listings/">{t("Posting listings")}</a>
     </div>
 
     <div class="footer-column">
-      <strong>Account</strong>
+      <strong>{t("Account")}</strong>
       {viewer ? (
         <>
-          <a href={isBuyer ? "/buyer/dashboard/" : "/owner/dashboard/"}>{isBuyer ? "Buyer dashboard" : "Owner dashboard"}</a>
-          {isBuyer && <a href="/buyer/compare/">Compare shortlist</a>}
-          {isOwner && <a href="/submit-listing/">Post a listing</a>}
-          <a href="/account/inbox">Inbox</a>
-          <a href="/account/notifications">Notifications</a>
-          {isAdmin && <a href="/admin/billing/">Billing admin</a>}
+          <a href={isBuyer ? "/buyer/dashboard/" : "/owner/dashboard/"}>{isBuyer ? t("Buyer dashboard") : t("Owner dashboard")}</a>
+          {isBuyer && <a href="/buyer/compare/">{t("Compare")}</a>}
+          {isOwner && <a href="/submit-listing/">{t("Post")}</a>}
+          <a href="/account/inbox">{t("Inbox")}</a>
+          <a href="/account/notifications">{t("Notifications")}</a>
+          {isAdmin && <a href="/admin/billing/">{t("Billing admin")}</a>}
         </>
       ) : (
         <>
-          <a href="/login">Sign in</a>
-          <a href="/signup?role=buyer">Create buyer account</a>
-          <a href="/signup?role=owner">Create owner account</a>
-          <a href="/help/getting-started/">How it works</a>
+          <a href="/login">{t("Sign in")}</a>
+          <a href="/signup?role=buyer">{t("Create buyer account")}</a>
+          <a href="/signup?role=owner">{t("Create owner account")}</a>
+          <a href="/help/getting-started/">{t("How it works")}</a>
         </>
       )}
     </div>
   </div>
 
   <div class="footer-bottom">
-    <p>Built for listing discovery, buyer decision-making, owner-side follow-through, and a stronger trust standard.</p>
+    <p>{t("Built for listing discovery, buyer decision-making, owner-side follow-through, and a stronger trust standard.")}</p>
     <div class="footer-bottom-links">
-      <a href="/about">About</a>
-      <a href="/why-property-app">Why us</a>
-      <a href="/trust">Trust</a>
-      <a href="/concierge">Concierge</a>
-      <a href="/help/notifications-and-inbox/">Notifications</a>
-      <a href="/help/billing-and-promoted-listings/">Billing</a>
-      <a href="/help/">Support</a>
+      <a href="/about">{t("About us")}</a>
+      <a href="/why-property-app">{t("Why Property App")}</a>
+      <a href="/trust">{t("Trust")}</a>
+      <a href="/concierge">{t("Concierge")}</a>
+      <a href="/help/notifications-and-inbox/">{t("Notifications")}</a>
+      <a href="/help/billing-and-promoted-listings/">{t("Billing")}</a>
+      <a href="/help/">{t("Support")}</a>
     </div>
   </div>
 </footer>

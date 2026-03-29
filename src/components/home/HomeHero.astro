@@ -7,19 +7,19 @@ interface QuickFilter {
 export interface Props {
   quickFilters: QuickFilter[];
   trustSignals: string[];
+  t?: (key: string) => string;
 }
 
-const { quickFilters, trustSignals } = Astro.props;
+const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props;
 ---
 
 <section class="hero-shell" id="top">
   <div class="hero-grid card">
     <div class="hero-copy">
-      <span class="section-label">Search-first property marketplace</span>
-      <h1>Find the right place faster, then follow through with confidence.</h1>
+      <span class="section-label">{t("Search-first property marketplace")}</span>
+      <h1>{t("Find the right place faster, then follow through with confidence.")}</h1>
       <p class="hero-text">
-        Search, shortlist, save, and enquire from one calmer interface. Built for buyers, owners, and teams that need
-        cleaner property workflows in Southeast Asia.
+        {t("Search, shortlist, save, and enquire from one calmer interface. Built for buyers, owners, and teams that need cleaner property workflows in Southeast Asia.")}
       </p>
 
       <div class="hero-signals">
@@ -32,39 +32,39 @@ const { quickFilters, trustSignals } = Astro.props;
       </div>
 
       <div class="hero-actions">
-        <a class="button-dark" href="/for-buyers">Start your search</a>
-        <a class="button-light" href="/for-owners">Post a property</a>
+        <a class="button-dark" href="/for-buyers">{t("Start your search")}</a>
+        <a class="button-light" href="/for-owners">{t("Post a property")}</a>
       </div>
     </div>
 
     <div class="hero-side">
       <form class="search-card" method="GET" action="/listings/">
         <div class="search-head">
-          <strong>Search</strong>
-          <span>Active inventory</span>
+          <strong>{t("Search")}</strong>
+          <span>{t("Active inventory")}</span>
         </div>
 
         <div class="toggle-row">
           <label class="toggle-pill active">
             <input type="radio" name="intent" value="buy" checked />
-            <span>Buy</span>
+            <span>{t("Buy")}</span>
           </label>
           <label class="toggle-pill">
             <input type="radio" name="intent" value="rent" />
-            <span>Rent</span>
+            <span>{t("Rent")}</span>
           </label>
         </div>
 
         <label class="field field-wide">
-          <span>Location</span>
-          <input type="text" name="city" value="Ho Chi Minh City" placeholder="City or district" />
+          <span>{t("Location")}</span>
+          <input type="text" name="city" value="Ho Chi Minh City" placeholder={t("City or district")} />
         </label>
 
         <div class="field-grid">
           <label class="field">
-            <span>Property type</span>
+            <span>{t("Property type")}</span>
             <select name="propertyType">
-              <option value="">Any property</option>
+              <option value="">{t("Any property")}</option>
               <option value="Condo">Condo</option>
               <option value="Villa">Villa</option>
               <option value="Townhouse">Townhouse</option>
@@ -74,9 +74,9 @@ const { quickFilters, trustSignals } = Astro.props;
             </select>
           </label>
           <label class="field">
-            <span>Budget ceiling</span>
+            <span>{t("Budget ceiling")}</span>
             <select name="maxPrice">
-              <option value="">Any budget</option>
+              <option value="">{t("Any budget")}</option>
               <option value="5">Up to 5B VND</option>
               <option value="10">Up to 10B VND</option>
               <option value="20">Up to 20B VND</option>
@@ -86,29 +86,29 @@ const { quickFilters, trustSignals } = Astro.props;
 
         <div class="field-grid compact-grid">
           <label class="field">
-            <span>Any beds</span>
+            <span>{t("Any beds")}</span>
             <select name="minBeds">
-              <option value="">Any beds</option>
+              <option value="">{t("Any beds")}</option>
               <option value="1">1+</option>
               <option value="2">2+</option>
               <option value="3">3+</option>
               <option value="4">4+</option>
             </select>
           </label>
-          <button class="submit-button" type="submit">Search inventory</button>
+          <button class="submit-button" type="submit">{t("Search inventory")}</button>
         </div>
       </form>
 
       <div class="side-metrics">
         <div class="metric-card">
-          <span class="metric-kicker">Live search</span>
-          <strong>Query-driven inventory</strong>
-          <span>Buyer and rent intent</span>
+          <span class="metric-kicker">{t("Live search")}</span>
+          <strong>{t("Query-driven inventory")}</strong>
+          <span>{t("Buyer and rent intent")}</span>
         </div>
         <div class="metric-card">
-          <span class="metric-kicker">Owner workflow</span>
-          <strong>Leads, billing, renewals</strong>
-          <span>Supply-side operations</span>
+          <span class="metric-kicker">{t("Owner workflow")}</span>
+          <strong>{t("Leads, billing, renewals")}</strong>
+          <span>{t("Supply-side operations")}</span>
         </div>
       </div>
     </div>
@@ -117,17 +117,17 @@ const { quickFilters, trustSignals } = Astro.props;
   <div class="hero-foot">
     <div class="quick-links card">
       <div class="quick-head">
-        <span class="metric-kicker">Fast routes</span>
-        <strong>Start from the most common searches</strong>
+        <span class="metric-kicker">{t("Fast routes")}</span>
+        <strong>{t("Start from the most common searches")}</strong>
       </div>
       <div class="quick-grid">
         {quickFilters.map((filter) => <a href={filter.href}>{filter.label}</a>)}
       </div>
     </div>
     <div class="metric-banner card">
-      <span class="metric-kicker">PWA-ready</span>
-      <strong>Mobile-first shell</strong>
-      <span>Installable, app-like behavior with a cleaner browsing flow on smaller screens.</span>
+      <span class="metric-kicker">{t("PWA-ready")}</span>
+      <strong>{t("Mobile-first shell")}</strong>
+      <span>{t("Installable, app-like behavior with a cleaner browsing flow on smaller screens.")}</span>
     </div>
   </div>
 </section>

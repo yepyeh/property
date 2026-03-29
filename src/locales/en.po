@@ -1,0 +1,212 @@
+msgid "Buy"
+msgstr "Buy"
+
+msgid "Rent"
+msgstr "Rent"
+
+msgid "For buyers"
+msgstr "For buyers"
+
+msgid "For owners"
+msgstr "For owners"
+
+msgid "Pricing"
+msgstr "Pricing"
+
+msgid "Help"
+msgstr "Help"
+
+msgid "Post"
+msgstr "Post"
+
+msgid "Inbox"
+msgstr "Inbox"
+
+msgid "Settings"
+msgstr "Settings"
+
+msgid "Compare"
+msgstr "Compare"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Billing"
+msgstr "Billing"
+
+msgid "Sign in"
+msgstr "Sign in"
+
+msgid "Create account"
+msgstr "Create account"
+
+msgid "Search"
+msgstr "Search"
+
+msgid "Account"
+msgstr "Account"
+
+msgid "Dark mode"
+msgstr "Dark mode"
+
+msgid "Light mode"
+msgstr "Light mode"
+
+msgid "Browse homes"
+msgstr "Browse homes"
+
+msgid "Open help centre"
+msgstr "Open help centre"
+
+msgid "Explore"
+msgstr "Explore"
+
+msgid "Trust"
+msgstr "Trust"
+
+msgid "Trust and safety"
+msgstr "Trust and safety"
+
+msgid "About us"
+msgstr "About us"
+
+msgid "What makes us different"
+msgstr "What makes us different"
+
+msgid "Getting started"
+msgstr "Getting started"
+
+msgid "Shortlist and compare"
+msgstr "Shortlist and compare"
+
+msgid "Posting listings"
+msgstr "Posting listings"
+
+msgid "Support"
+msgstr "Support"
+
+msgid "Notifications"
+msgstr "Notifications"
+
+msgid "Why Property App"
+msgstr "Why Property App"
+
+msgid "Concierge"
+msgstr "Concierge"
+
+msgid "Concierge support"
+msgstr "Concierge support"
+
+msgid "Create buyer account"
+msgstr "Create buyer account"
+
+msgid "Create owner account"
+msgstr "Create owner account"
+
+msgid "How it works"
+msgstr "How it works"
+
+msgid "Buyer dashboard"
+msgstr "Buyer dashboard"
+
+msgid "Owner dashboard"
+msgstr "Owner dashboard"
+
+msgid "Billing admin"
+msgstr "Billing admin"
+
+msgid "Search clearly. Decide faster. Move with context."
+msgstr "Search clearly. Decide faster. Move with context."
+
+msgid "Built for listing discovery, buyer decision-making, owner-side follow-through, and a stronger trust standard."
+msgstr "Built for listing discovery, buyer decision-making, owner-side follow-through, and a stronger trust standard."
+
+msgid "Help centre"
+msgstr "Help centre"
+
+msgid "Language"
+msgstr "Language"
+
+msgid "Suggested"
+msgstr "Suggested"
+
+msgid "English-first, with your local language available."
+msgstr "English-first, with your local language available."
+
+msgid "Search-first property marketplace"
+msgstr "Search-first property marketplace"
+
+msgid "Find the right place faster, then follow through with confidence."
+msgstr "Find the right place faster, then follow through with confidence."
+
+msgid "Start your search"
+msgstr "Start your search"
+
+msgid "Post a property"
+msgstr "Post a property"
+
+msgid "Active inventory"
+msgstr "Active inventory"
+
+msgid "Location"
+msgstr "Location"
+
+msgid "Property type"
+msgstr "Property type"
+
+msgid "Any property"
+msgstr "Any property"
+
+msgid "Budget ceiling"
+msgstr "Budget ceiling"
+
+msgid "Any budget"
+msgstr "Any budget"
+
+msgid "Any beds"
+msgstr "Any beds"
+
+msgid "Search inventory"
+msgstr "Search inventory"
+
+msgid "Live search"
+msgstr "Live search"
+
+msgid "Query-driven inventory"
+msgstr "Query-driven inventory"
+
+msgid "Buyer and rent intent"
+msgstr "Buyer and rent intent"
+
+msgid "Owner workflow"
+msgstr "Owner workflow"
+
+msgid "Leads, billing, renewals"
+msgstr "Leads, billing, renewals"
+
+msgid "Supply-side operations"
+msgstr "Supply-side operations"
+
+msgid "Fast routes"
+msgstr "Fast routes"
+
+msgid "Start from the most common searches"
+msgstr "Start from the most common searches"
+
+msgid "PWA-ready"
+msgstr "PWA-ready"
+
+msgid "Mobile-first shell"
+msgstr "Mobile-first shell"
+
+msgid "Choose your path"
+msgstr "Choose your path"
+
+msgid "Need something beyond what is already advertised?"
+msgstr "Need something beyond what is already advertised?"
+
+msgid "Request concierge help"
+msgstr "Request concierge help"
+
+msgid "See trust approach"
+msgstr "See trust approach"

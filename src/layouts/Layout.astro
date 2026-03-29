@@ -3,6 +3,7 @@ import appShellCss from "../styles/app-shell.css?raw";
 import AppFooter from "../components/shell/AppFooter.astro";
 import GlobalNav from "../components/shell/GlobalNav.astro";
 import MobileNav from "../components/shell/MobileNav.astro";
+import { getLocaleMeta, getLocaleOptions } from "../lib/i18n";
 import { getUnreadInboxNotificationCount } from "../lib/notifications";
 import { getDB } from "../lib/runtime";
 
@@ -19,7 +20,12 @@ const {
 } = Astro.props;
 
 const viewer = Astro.locals.owner;
+const t = Astro.locals.t || ((value: string) => value);
+const currentLocale = Astro.locals.locale || "en";
+const suggestedLocale = Astro.locals.suggestedLocale || "en";
 const pathname = Astro.url.pathname;
+const localeMeta = getLocaleMeta(currentLocale);
+const localeOptions = getLocaleOptions(currentLocale, suggestedLocale, Astro.url.pathname, Astro.url.search);
 const isBuyer = viewer?.role === "buyer";
 const isOwner = viewer?.role === "owner" || viewer?.role === "admin";
 const isAdmin = viewer?.role === "admin";
@@ -39,26 +45,26 @@ function getInitials(value?: string) {
 const viewerInitials = getInitials(viewer?.full_name || viewer?.email);
 
 const primaryNav = [
-  { label: "Buy", href: "/listings/?intent=buy", active: pathname === "/listings/" || pathname.startsWith("/listings/") },
-  { label: "Rent", href: "/listings/?intent=rent", active: pathname === "/listings/" || pathname.startsWith("/listings/") },
-  { label: "For buyers", href: "/for-buyers", active: pathname === "/for-buyers" },
-  { label: "For owners", href: "/for-owners", active: pathname === "/for-owners" },
-  { label: "Pricing", href: "/pricing", active: pathname === "/pricing" },
-  { label: "Help", href: "/help/", active: pathname === "/help/" || pathname.startsWith("/help/") },
-  ...(isOwner ? [{ label: "Post", href: "/submit-listing/", active: pathname === "/submit-listing/" }] : []),
-  ...(viewer ? [{ label: "Inbox", href: "/account/inbox", active: pathname.startsWith("/account/inbox"), count: unreadCount }] : []),
+  { label: t("Buy"), href: "/listings/?intent=buy", active: pathname === "/listings/" || pathname.startsWith("/listings/") },
+  { label: t("Rent"), href: "/listings/?intent=rent", active: pathname === "/listings/" || pathname.startsWith("/listings/") },
+  { label: t("For buyers"), href: "/for-buyers", active: pathname === "/for-buyers" },
+  { label: t("For owners"), href: "/for-owners", active: pathname === "/for-owners" },
+  { label: t("Pricing"), href: "/pricing", active: pathname === "/pricing" },
+  { label: t("Help"), href: "/help/", active: pathname === "/help/" || pathname.startsWith("/help/") },
+  ...(isOwner ? [{ label: t("Post"), href: "/submit-listing/", active: pathname === "/submit-listing/" }] : []),
+  ...(viewer ? [{ label: t("Inbox"), href: "/account/inbox", active: pathname.startsWith("/account/inbox"), count: unreadCount }] : []),
 ];
 
 const accountMenu = [
-  ...(viewer ? [{ label: "Settings", href: "/account/notifications", active: pathname.startsWith("/account/notifications") }] : []),
-  ...(isBuyer ? [{ label: "Compare", href: compareHref, active: pathname.startsWith("/buyer/compare/") }] : []),
-  ...(viewer ? [{ label: isBuyer ? "Buyer" : "Dashboard", href: dashboardHref, active: pathname.startsWith("/buyer/") || pathname.startsWith("/owner/") }] : []),
-  ...(isAdmin ? [{ label: "Billing", href: "/admin/billing/", active: pathname.startsWith("/admin/") }] : []),
+  ...(viewer ? [{ key: "settings", label: t("Settings"), href: "/account/notifications", active: pathname.startsWith("/account/notifications") }] : []),
+  ...(isBuyer ? [{ key: "compare", label: t("Compare"), href: compareHref, active: pathname.startsWith("/buyer/compare/") }] : []),
+  ...(viewer ? [{ key: "dashboard", label: isBuyer ? t("Buyer dashboard") : t("Dashboard"), href: dashboardHref, active: pathname.startsWith("/buyer/") || pathname.startsWith("/owner/") }] : []),
+  ...(isAdmin ? [{ key: "billing", label: t("Billing"), href: "/admin/billing/", active: pathname.startsWith("/admin/") }] : []),
 ];
 ---
 
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang={currentLocale} data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -96,14 +102,37 @@ const accountMenu = [
         viewerRoleLabel={viewerRoleLabel}
         viewerInitials={viewerInitials}
         accountMenu={accountMenu}
+        localeMeta={localeMeta}
+        localeOptions={localeOptions}
+        localeLabel={t("Language")}
+        suggestedLabel={t("Suggested")}
+        darkModeLabel={t("Dark mode")}
+        lightModeLabel={t("Light mode")}
+        signInLabel={t("Sign in")}
+        createAccountLabel={t("Create account")}
+        accountLabel={t("Account")}
+        navigationLabel={t("Explore")}
+        shortcutsLabel={t("Settings")}
+        logOutLabel="Log out"
       />
     </div>
     <main>
       <slot />
-      <AppFooter viewer={viewer} />
+      <AppFooter viewer={viewer} t={t} currentLocale={currentLocale} suggestedLocale={suggestedLocale} localeOptions={localeOptions} />
       <div class="mobile-spacer"></div>
     </main>
-    <MobileNav pathname={pathname} viewer={viewer} unreadCount={unreadCount} dashboardHref={dashboardHref} />
+    <MobileNav
+      pathname={pathname}
+      viewer={viewer}
+      unreadCount={unreadCount}
+      dashboardHref={dashboardHref}
+      t={t}
+      localeMeta={localeMeta}
+      localeOptions={localeOptions}
+      suggestedLabel={t("Suggested")}
+      darkModeLabel={t("Dark mode")}
+      lightModeLabel={t("Light mode")}
+    />
     <script is:inline>
       (() => {
         const root = document.documentElement;
@@ -111,7 +140,9 @@ const accountMenu = [
           root.dataset.theme = theme;
           root.style.colorScheme = theme;
           document.querySelectorAll("[data-theme-label]").forEach((node) => {
-            node.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+            const darkLabel = node.getAttribute("data-theme-dark-label") || "Dark mode";
+            const lightLabel = node.getAttribute("data-theme-light-label") || "Light mode";
+            node.textContent = theme === "dark" ? lightLabel : darkLabel;
           });
           document.querySelectorAll("[data-theme-icon]").forEach((node) => {
             node.textContent = theme === "dark" ? "☀" : "◐";

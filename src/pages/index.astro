@@ -9,13 +9,15 @@ import HomeProductBand from "../components/home/HomeProductBand.astro";
 import { getAllListings } from "../lib/listings";
 import { getDB } from "../lib/runtime";
 
+const t = Astro.locals.t || ((value: string) => value);
+
 const quickFilters = [
-  { label: "Buy in HCMC", href: "/listings/?intent=buy&city=Ho%20Chi%20Minh%20City" },
-  { label: "Rent in Hanoi", href: "/listings/?intent=rent&city=Hanoi" },
-  { label: "Under 5B VND", href: "/listings/?intent=buy&maxPrice=5" },
-  { label: "Family homes", href: "/listings/?intent=buy&minBeds=3" },
-  { label: "Live auctions", href: "/listings/?intent=buy&saleMode=auction" },
-  { label: "Newest listings", href: "/listings/?sort=newest" },
+  { label: t("Buy in HCMC"), href: "/listings/?intent=buy&city=Ho%20Chi%20Minh%20City" },
+  { label: t("Rent in Hanoi"), href: "/listings/?intent=rent&city=Hanoi" },
+  { label: t("Under 5B VND"), href: "/listings/?intent=buy&maxPrice=5" },
+  { label: t("Family homes"), href: "/listings/?intent=buy&minBeds=3" },
+  { label: t("Live auctions"), href: "/listings/?intent=buy&saleMode=auction" },
+  { label: t("Newest listings"), href: "/listings/?sort=newest" },
 ];
 const featuredListings = (await getAllListings(getDB(Astro.locals.runtime))).slice(0, 6);
 const browseCities = [
@@ -25,10 +27,10 @@ const browseCities = [
   { name: "Thu Duc City", note: "Growth corridor, education hubs, and condo supply", href: "/listings/?intent=buy&district=Thu%20Duc%20City" },
 ];
 const trustSignals = [
-  "Verified owners and agent-facing listing controls",
-  "Saved searches, favorites, and inquiry tracking in one account system",
-  "Auction-ready property flow for houses, land, and high-attention inventory",
-  "Search-first mobile experience designed to behave like a lightweight property app",
+  t("Verified owners and agent-facing listing controls"),
+  t("Saved searches, favorites, and inquiry tracking in one account system"),
+  t("Auction-ready property flow for houses, land, and high-attention inventory"),
+  t("Search-first mobile experience designed to behave like a lightweight property app"),
 ];
 const ownerSteps = [
   {
@@ -89,9 +91,14 @@ const entryPaths = [
   description="A modern property marketplace for browsing listings, posting homes, and managing enquiries on mobile and desktop."
   inlineShellCss={true}
 >
-    <HomeHero quickFilters={quickFilters} trustSignals={trustSignals} />
+    <HomeHero quickFilters={quickFilters} trustSignals={trustSignals} t={t} />
 
-  <HomePathSection entryPaths={entryPaths} />
+  <HomePathSection
+    entryPaths={entryPaths}
+    sectionKicker={t("Choose your path")}
+    sectionTitle={t("This homepage should route users, not make them interpret the product structure themselves.")}
+    sectionBody={t("Most users arrive with one clear job. The public site should acknowledge that immediately instead of pushing everyone through the same generic surface.")}
+  />
 
   <HomeCitySection browseCities={browseCities} />
 

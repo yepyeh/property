@@ -1,0 +1,134 @@
+msgid "Buy"
+msgstr "购买"
+
+msgid "Rent"
+msgstr "租赁"
+
+msgid "For buyers"
+msgstr "面向买家"
+
+msgid "For owners"
+msgstr "面向业主"
+
+msgid "Pricing"
+msgstr "价格"
+
+msgid "Help"
+msgstr "帮助"
+
+msgid "Post"
+msgstr "发布"
+
+msgid "Inbox"
+msgstr "收件箱"
+
+msgid "Settings"
+msgstr "设置"
+
+msgid "Compare"
+msgstr "对比"
+
+msgid "Dashboard"
+msgstr "仪表盘"
+
+msgid "Billing"
+msgstr "账单"
+
+msgid "Sign in"
+msgstr "登录"
+
+msgid "Create account"
+msgstr "创建账户"
+
+msgid "Search"
+msgstr "搜索"
+
+msgid "Account"
+msgstr "账户"
+
+msgid "Dark mode"
+msgstr "深色模式"
+
+msgid "Light mode"
+msgstr "浅色模式"
+
+msgid "Browse homes"
+msgstr "浏览房源"
+
+msgid "Open help centre"
+msgstr "打开帮助中心"
+
+msgid "Explore"
+msgstr "探索"
+
+msgid "Trust"
+msgstr "信任"
+
+msgid "Trust and safety"
+msgstr "信任与安全"
+
+msgid "About us"
+msgstr "关于我们"
+
+msgid "What makes us different"
+msgstr "我们的不同之处"
+
+msgid "Getting started"
+msgstr "开始使用"
+
+msgid "Shortlist and compare"
+msgstr "加入候选并对比"
+
+msgid "Posting listings"
+msgstr "发布房源"
+
+msgid "Support"
+msgstr "支持"
+
+msgid "Notifications"
+msgstr "通知"
+
+msgid "Why Property App"
+msgstr "为什么选择 Property App"
+
+msgid "Concierge"
+msgstr "礼宾服务"
+
+msgid "Concierge support"
+msgstr "礼宾支持"
+
+msgid "Create buyer account"
+msgstr "创建买家账户"
+
+msgid "Create owner account"
+msgstr "创建业主账户"
+
+msgid "How it works"
+msgstr "运作方式"
+
+msgid "Buyer dashboard"
+msgstr "买家仪表盘"
+
+msgid "Owner dashboard"
+msgstr "业主仪表盘"
+
+msgid "Billing admin"
+msgstr "账单管理"
+
+msgid "Search clearly. Decide faster. Move with context."
+msgstr "搜索更清晰。决策更迅速。带着背景信息行动。"
+
+msgid "Built for listing discovery, buyer decision-making, owner-side follow-through, and a stronger trust standard."
+msgstr "为房源发现、买家决策、业主跟进以及更强的信任标准而打造。"
+
+msgid "Help centre"
+msgstr "帮助中心"
+
+msgid "Language"
+msgstr "语言"
+
+msgid "Suggested"
+msgstr "推荐"
+
+msgid "English-first, with your local language available."
+msgstr "默认使用英语，同时提供你的本地语言选项。"
