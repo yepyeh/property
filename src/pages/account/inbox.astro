@@ -1,5 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import WorkspaceHero from "../../components/workspace/WorkspaceHero.astro";
+import FlashBanner from "../../components/workspace/FlashBanner.astro";
 import { getInboxNotifications } from "../../lib/notifications";
 import { getDB } from "../../lib/runtime";
 
@@ -16,28 +18,21 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
 ---
 
 <Layout title="Notification Inbox | Property App 2026" description="Review and manage in-app notifications across buyer and owner workflows.">
-  <section class="page-hero card">
-    <div class="hero-copy">
-      <p class="eyebrow">Notification inbox</p>
-      <h1 class="hero-title">One feed for account activity.</h1>
-      <p class="hero-text">
-        Expiry reminders, enquiries, billing events, and buyer-side activity all land here so important state changes
-        stay easy to scan and easy to clear.
-      </p>
-    </div>
-    <div class="hero-actions">
-      <a class="button-secondary" href={returnHref}>Back to dashboard</a>
-      <a class="button-secondary" href="/account/notifications">Settings</a>
-      <form method="POST" action="/api/account/inbox/read-all">
-        <button class="button-primary" type="submit">Mark all read</button>
-      </form>
-    </div>
-  </section>
+  <style is:global>@import "../../styles/workspace.css";</style>
+
+  <WorkspaceHero
+    eyebrow="Notification inbox"
+    title="One feed for account activity."
+    text="Expiry reminders, enquiries, billing events, and buyer-side activity all land here so important state changes stay easy to scan and easy to clear."
+    actions={[
+      { href: returnHref, label: "Back to dashboard", kind: "secondary" },
+      { href: "/account/notifications", label: "Settings", kind: "secondary" },
+      { formAction: "/api/account/inbox/read-all", label: "Mark all read" },
+    ]}
+  />
 
   {(read || allRead) && (
-    <div class="card flash-banner">
-      {allRead ? "All notifications marked as read." : "Notification marked as read."}
-    </div>
+    <FlashBanner message={allRead ? "All notifications marked as read." : "Notification marked as read."} />
   )}
 
   <section class="card panel section-gap">
@@ -79,101 +74,6 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
   </section>
 
   <style>
-    .page-hero,
-    .panel,
-    .flash-banner {
-      padding: 1.5rem;
-    }
-
-    .page-hero,
-    .panel,
-    .flash-banner {
-      background: rgba(255, 255, 255, 0.88);
-      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 40px rgba(16, 24, 40, 0.06);
-    }
-
-    .page-hero,
-    .hero-actions,
-    .panel-head,
-    .item-head,
-    .item-actions,
-    .action-row {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .section-gap,
-    .flash-banner {
-      margin-top: 1rem;
-    }
-
-    .hero-copy {
-      max-width: 44rem;
-    }
-
-    .hero-title {
-      margin: 0;
-      font-size: clamp(2rem, 4vw, 3rem);
-      line-height: 1;
-      letter-spacing: -0.06em;
-    }
-
-    .hero-text,
-    .panel-copy,
-    .inbox-item p,
-    .empty-copy,
-    .timestamp {
-      color: var(--muted);
-    }
-
-    .hero-text,
-    .panel-copy,
-    .inbox-item p,
-    .empty-copy {
-      margin: 0;
-      line-height: 1.65;
-    }
-
-    .eyebrow {
-      margin: 0 0 0.45rem;
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-    }
-
-    .panel h2 {
-      margin: 0;
-      font-size: 1.3rem;
-      letter-spacing: -0.03em;
-    }
-
-    .inbox-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      gap: 0.9rem;
-    }
-
-    .inbox-item {
-      display: grid;
-      gap: 0.65rem;
-      padding: 1rem;
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.95));
-    }
-
-    .list-unread {
-      border-color: rgba(127, 86, 217, 0.22);
-      background: linear-gradient(180deg, rgba(245,243,255,0.92), rgba(255,255,255,0.98));
-    }
-
     .category-chip {
       display: inline-flex;
       align-items: center;
@@ -189,73 +89,9 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
       text-transform: capitalize;
     }
 
-    .button-primary,
-    .button-secondary,
-    .button-tertiary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 2.75rem;
-      border-radius: 999px;
-      padding: 0.82rem 1.05rem;
-      font: inherit;
-      font-weight: 700;
-      text-decoration: none;
-      cursor: pointer;
-      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
-    }
-
-    .small {
-      min-height: 2.45rem;
-      padding: 0.7rem 0.92rem;
-    }
-
-    .button-primary:hover,
-    .button-secondary:hover,
-    .button-tertiary:hover {
-      transform: translateY(-1px);
-    }
-
-    .button-primary {
-      border: none;
-      background: linear-gradient(135deg, #12b76a, #079455);
-      color: white;
-      box-shadow: 0 12px 24px rgba(18, 183, 106, 0.2);
-    }
-
-    .button-secondary {
-      border: 1px solid var(--line-strong);
-      background: white;
-      color: var(--text);
-      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-    }
-
-    .button-tertiary {
-      border: 1px solid rgba(127, 86, 217, 0.18);
-      background: rgba(127, 86, 217, 0.06);
-      color: var(--accent-strong);
-    }
-
-    .flash-banner {
-      border-left: 4px solid rgba(18, 183, 106, 0.35);
-      color: #067647;
-      font-weight: 700;
-    }
-
-    @media (max-width: 760px) {
-      .page-hero,
-      .hero-actions,
-      .item-head,
-      .item-actions,
-      .action-row {
-        display: grid;
-      }
-
-      .button-primary,
-      .button-secondary,
-      .button-tertiary {
-        width: 100%;
-      }
+    .list-unread {
+      border-color: rgba(127, 86, 217, 0.22);
+      background: linear-gradient(180deg, rgba(245, 243, 255, 0.92), rgba(255, 255, 255, 0.98));
     }
   </style>
 </Layout>

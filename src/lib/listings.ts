@@ -278,28 +278,14 @@ function applyListingFilters(listings: Listing[], filters: ListingFilters) {
 }
 
 export async function getAllListings(db?: D1Like) {
-  const dynamicListings = await getDynamicListings(db);
-  const merged = [...dynamicListings, ...seededListings];
-  const bySlug = new Map<string, Listing>();
-
-  for (const listing of merged) {
-    if (!bySlug.has(listing.slug)) bySlug.set(listing.slug, listing);
-  }
-
-  return Array.from(bySlug.values());
+  if (!db) return seededListings;
+  return getDynamicListings(db);
 }
 
 export async function searchListings(filters: ListingFilters, db?: D1Like) {
-  const dynamicListings = await getFilteredDynamicListings(filters, db);
-  const filteredSeededListings = applyListingFilters(seededListings, filters);
-  const merged = [...dynamicListings, ...filteredSeededListings];
-  const bySlug = new Map<string, Listing>();
+  if (!db) return applyListingFilters(seededListings, filters);
 
-  for (const listing of merged) {
-    if (!bySlug.has(listing.slug)) bySlug.set(listing.slug, listing);
-  }
-
-  const result = Array.from(bySlug.values());
+  const result = await getFilteredDynamicListings(filters, db);
 
   if (normalizeSort(filters.sort) === "newest") {
     return result;
@@ -309,17 +295,15 @@ export async function searchListings(filters: ListingFilters, db?: D1Like) {
 }
 
 export async function getListingBySlug(slug: string, db?: D1Like) {
-  if (db) {
-    await normalizeExpiredListingPlans(db);
-    const row = await db
-      .prepare(`SELECT * FROM listings WHERE slug = ? LIMIT 1`)
-      .bind(slug)
-      .first<ListingRow>();
+  if (!db) return getSeededListingBySlug(slug);
 
-    if (row) return mapRowToListing(row);
-  }
+  await normalizeExpiredListingPlans(db);
+  const row = await db
+    .prepare(`SELECT * FROM listings WHERE slug = ? LIMIT 1`)
+    .bind(slug)
+    .first<ListingRow>();
 
-  return getSeededListingBySlug(slug);
+  return row ? mapRowToListing(row) : undefined;
 }
 
 export async function createListing(db: D1Like, input: ListingInput) {

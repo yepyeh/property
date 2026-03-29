@@ -1,0 +1,111 @@
+---
+export interface Action {
+  href?: string;
+  label: string;
+  kind?: "primary" | "secondary";
+  formAction?: string;
+}
+
+export interface Props {
+  eyebrow: string;
+  title: string;
+  text: string;
+  actions?: Action[];
+}
+
+const { eyebrow, title, text, actions = [] } = Astro.props;
+---
+
+<section class="page-hero card">
+  <div class="hero-copy">
+    <p class="eyebrow">{eyebrow}</p>
+    <h1 class="hero-title">{title}</h1>
+    <p class="hero-text">{text}</p>
+  </div>
+  {actions.length > 0 && (
+    <div class="hero-actions">
+      {actions.map((action) =>
+        action.formAction ? (
+          <form method="POST" action={action.formAction}>
+            <button class={action.kind === "secondary" ? "button-secondary" : "button-primary"} type="submit">{action.label}</button>
+          </form>
+        ) : (
+          <a class={action.kind === "secondary" ? "button-secondary" : "button-primary"} href={action.href}>{action.label}</a>
+        )
+      )}
+    </div>
+  )}
+</section>
+
+<style>
+  .page-hero {
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 40px rgba(16, 24, 40, 0.06);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .hero-copy { max-width: 46rem; }
+  .eyebrow {
+    margin: 0 0 0.45rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .hero-title {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 3.1rem);
+    letter-spacing: -0.06em;
+    line-height: 1;
+  }
+  .hero-text {
+    margin: 0;
+    line-height: 1.65;
+    color: var(--muted);
+  }
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .button-primary,
+  .button-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    border-radius: 999px;
+    padding: 0.82rem 1.05rem;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+  }
+  .button-primary:hover,
+  .button-secondary:hover { transform: translateY(-1px); }
+  .button-primary {
+    border: none;
+    background: linear-gradient(135deg, #12b76a, #079455);
+    color: white;
+    box-shadow: 0 12px 24px rgba(18, 183, 106, 0.2);
+  }
+  .button-secondary {
+    border: 1px solid var(--line-strong);
+    background: white;
+    color: var(--text);
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+  }
+  @media (max-width: 760px) {
+    .page-hero,
+    .hero-actions { display: grid; }
+    .button-primary,
+    .button-secondary { width: 100%; }
+  }
+</style>

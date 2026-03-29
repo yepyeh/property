@@ -1,0 +1,19 @@
+---
+export interface Props {
+  pathname: string;
+  viewer?: { role?: string } | null;
+  unreadCount: number;
+  dashboardHref: string;
+}
+
+const { pathname, viewer, unreadCount, dashboardHref } = Astro.props;
+---
+
+<nav class="mobile-utility" aria-label="Mobile navigation">
+  <a class:list={[pathname.startsWith("/listings") || pathname === "/" ? "active" : ""]} href="/listings/?intent=buy">Search</a>
+  <a class:list={[pathname.startsWith("/account/inbox") ? "active" : ""]} href={viewer ? "/account/inbox" : "/login"}>
+    {viewer && unreadCount > 0 ? `Inbox (${unreadCount > 9 ? "9+" : unreadCount})` : "Inbox"}
+  </a>
+  <a class:list={[pathname.startsWith("/account/notifications") ? "active" : ""]} href={viewer ? "/account/notifications" : "/login"}>Settings</a>
+  <a class:list={[pathname.startsWith("/buyer/") || pathname.startsWith("/owner/") || pathname.startsWith("/admin/") ? "active" : ""]} href={viewer ? dashboardHref : "/login"}>{viewer ? "Account" : "Sign in"}</a>
+</nav>

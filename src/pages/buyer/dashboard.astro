@@ -1,5 +1,9 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import WorkspaceHero from "../../components/workspace/WorkspaceHero.astro";
+import WorkspaceStats from "../../components/workspace/WorkspaceStats.astro";
+import AccountSummaryCard from "../../components/workspace/AccountSummaryCard.astro";
+import FlashBanner from "../../components/workspace/FlashBanner.astro";
 import { getBuyerDashboardData } from "../../lib/dashboard";
 import { getDB } from "../../lib/runtime";
 
@@ -15,58 +19,36 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
 ---
 
 <Layout title="Buyer Dashboard | Property App 2026" description="Manage saved searches and buyer-side activity in the marketplace.">
-  <section class="page-hero card">
-    <div class="hero-copy">
-      <p class="eyebrow">Buyer workspace</p>
-      <h1 class="hero-title">Track homes, shortlist areas, and return with context.</h1>
-      <p class="hero-text">
-        Search intent, favorite listings, and in-app notifications belong in one account surface so return visits feel
-        deliberate rather than fragmented.
-      </p>
-    </div>
-    <div class="hero-actions">
-      <a class="button-primary" href="/listings/">Browse listings</a>
-      <a class="button-secondary" href="/account/inbox">Open inbox</a>
-      <a class="button-secondary" href="/account/notifications">Notification settings</a>
-    </div>
-  </section>
+  <style is:global>@import "../../styles/workspace.css";</style>
 
-  {savedSearchDeleted && <div class="card flash-banner">Saved search deleted.</div>}
-  {savedListingDeleted && <div class="card flash-banner">Saved listing removed.</div>}
+  <WorkspaceHero
+    eyebrow="Buyer workspace"
+    title="Track homes, shortlist areas, and return with context."
+    text="Search intent, favorite listings, and in-app notifications belong in one account surface so return visits feel deliberate rather than fragmented."
+    actions={[
+      { href: "/listings/", label: "Browse listings" },
+      { href: "/account/inbox", label: "Open inbox", kind: "secondary" },
+      { href: "/account/notifications", label: "Notification settings", kind: "secondary" },
+    ]}
+  />
 
-  <section class="stats-grid">
-    <article class="card stat-card">
-      <span class="stat-label">Searches</span>
-      <strong>{savedSearches.length}</strong>
-      <span class="stat-copy">Saved searches</span>
-    </article>
-    <article class="card stat-card">
-      <span class="stat-label">Favorites</span>
-      <strong>{savedListings.length}</strong>
-      <span class="stat-copy">Saved listings</span>
-    </article>
-    <article class="card stat-card">
-      <span class="stat-label">Inbox</span>
-      <strong>{unreadNotificationCount}</strong>
-      <span class="stat-copy">Unread notifications</span>
-    </article>
-  </section>
+  {savedSearchDeleted && <FlashBanner message="Saved search deleted." />}
+  {savedListingDeleted && <FlashBanner message="Saved listing removed." />}
 
-  <section class="card profile-panel">
-    <div class="profile-block">
-      <p class="eyebrow">Signed in as</p>
-      <strong>{owner.full_name}</strong>
-      <span>{owner.email}</span>
-    </div>
-    <div class="profile-block">
-      <p class="eyebrow">Account role</p>
-      <strong>{owner.role}</strong>
-      <span>Browse, save, compare, and return to high-intent searches</span>
-    </div>
-    <form method="POST" action="/api/auth/logout" class="profile-actions">
-      <button class="button-secondary" type="submit">Log out</button>
-    </form>
-  </section>
+  <WorkspaceStats
+    items={[
+      { label: "Searches", value: savedSearches.length, copy: "Saved searches" },
+      { label: "Favorites", value: savedListings.length, copy: "Saved listings" },
+      { label: "Inbox", value: unreadNotificationCount, copy: "Unread notifications" },
+    ]}
+  />
+
+  <AccountSummaryCard
+    blocks={[
+      { eyebrow: "Signed in as", title: owner.full_name, copy: owner.email },
+      { eyebrow: "Account role", title: owner.role, copy: "Browse, save, compare, and return to high-intent searches" },
+    ]}
+  />
 
   <section class="split-grid section-gap">
     <article class="card panel">
@@ -161,221 +143,16 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
   </section>
 
   <style>
-    .page-hero,
-    .profile-panel,
-    .panel,
-    .stat-card,
-    .flash-banner {
-      padding: 1.5rem;
-    }
-
-    .page-hero,
-    .profile-panel,
-    .panel,
-    .stat-card,
-    .flash-banner {
-      background: rgba(255, 255, 255, 0.88);
-      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 40px rgba(16, 24, 40, 0.06);
-    }
-
-    .page-hero,
-    .profile-panel,
-    .panel-head,
-    .hero-actions,
-    .action-row,
-    .meta-row {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .section-gap,
-    .profile-panel,
-    .flash-banner {
-      margin-top: 1rem;
-    }
-
-    .hero-copy {
-      max-width: 44rem;
-    }
-
-    .hero-title {
-      margin: 0;
-      font-size: clamp(2rem, 4vw, 3rem);
-      letter-spacing: -0.06em;
-      line-height: 1;
-    }
-
-    .hero-text,
-    .panel-copy,
-    .list-item p,
-    .empty-copy,
-    .profile-block span,
-    .meta-row,
-    .stat-copy {
-      color: var(--muted);
-    }
-
-    .hero-text,
-    .panel-copy,
-    .list-item p,
-    .empty-copy {
-      margin: 0;
-      line-height: 1.65;
-    }
-
-    .eyebrow,
-    .stat-label {
-      margin: 0 0 0.45rem;
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-    }
-
-    .hero-actions,
-    .action-row {
-      align-items: center;
-    }
-
-    .stats-grid,
     .split-grid {
       display: grid;
       gap: 1rem;
       margin-top: 1rem;
-    }
-
-    .stats-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .split-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .stat-card strong {
-      display: block;
-      margin-bottom: 0.35rem;
-      font-size: 2.25rem;
-      line-height: 1;
-      letter-spacing: -0.06em;
-    }
-
-    .profile-panel {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1rem;
-      align-items: end;
-    }
-
-    .panel h2 {
-      margin: 0;
-      font-size: 1.3rem;
-      letter-spacing: -0.03em;
-    }
-
-    .panel-link {
-      text-decoration: none;
-      font-weight: 700;
-      color: var(--accent-strong);
-    }
-
-    .stack-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      gap: 0.85rem;
-    }
-
-    .list-item {
-      display: grid;
-      gap: 0.45rem;
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 1rem;
-      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.95));
-    }
-
-    .button-primary,
-    .button-secondary,
-    .button-tertiary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 2.75rem;
-      border-radius: 999px;
-      padding: 0.82rem 1.05rem;
-      font: inherit;
-      font-weight: 700;
-      text-decoration: none;
-      cursor: pointer;
-      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
-    }
-
-    .button-primary:hover,
-    .button-secondary:hover,
-    .button-tertiary:hover {
-      transform: translateY(-1px);
-    }
-
-    .button-primary {
-      border: none;
-      background: linear-gradient(135deg, #12b76a, #079455);
-      color: white;
-      box-shadow: 0 12px 24px rgba(18, 183, 106, 0.2);
-    }
-
-    .button-secondary {
-      border: 1px solid var(--line-strong);
-      background: white;
-      color: var(--text);
-      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-    }
-
-    .button-tertiary {
-      border: 1px solid rgba(127, 86, 217, 0.18);
-      background: rgba(127, 86, 217, 0.06);
-      color: var(--accent-strong);
-    }
-
-    .flash-banner {
-      border-left: 4px solid rgba(18, 183, 106, 0.35);
-      color: #067647;
-      font-weight: 700;
-    }
-
-    .list-item strong,
-    .profile-block strong {
-      display: block;
-      margin-bottom: 0.2rem;
-    }
-
     @media (max-width: 960px) {
-      .split-grid,
-      .stats-grid,
-      .profile-panel {
+      .split-grid {
         grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 760px) {
-      .page-hero,
-      .profile-panel,
-      .panel-head,
-      .hero-actions,
-      .action-row,
-      .meta-row {
-        display: grid;
-      }
-
-      .button-primary,
-      .button-secondary,
-      .button-tertiary {
-        width: 100%;
       }
     }
   </style>

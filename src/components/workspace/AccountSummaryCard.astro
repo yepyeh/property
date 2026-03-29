@@ -1,0 +1,68 @@
+---
+export interface Block {
+  eyebrow: string;
+  title: string;
+  copy: string;
+}
+
+export interface Props {
+  blocks: Block[];
+}
+
+const { blocks } = Astro.props;
+---
+
+<section class="card profile-panel">
+  {blocks.map((block) => (
+    <div class="profile-block">
+      <p class="eyebrow">{block.eyebrow}</p>
+      <strong>{block.title}</strong>
+      <span>{block.copy}</span>
+    </div>
+  ))}
+  <form method="POST" action="/api/auth/logout" class="profile-actions">
+    <button class="button-secondary" type="submit">Log out</button>
+  </form>
+</section>
+
+<style>
+  .profile-panel {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    align-items: end;
+    margin-top: 1rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 40px rgba(16, 24, 40, 0.06);
+  }
+  .eyebrow {
+    margin: 0 0 0.45rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .profile-block span { color: var(--muted); }
+  .profile-block strong { display: block; margin-bottom: 0.2rem; }
+  .button-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    border-radius: 999px;
+    padding: 0.82rem 1.05rem;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid var(--line-strong);
+    background: white;
+    color: var(--text);
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+  }
+  @media (max-width: 820px) {
+    .profile-panel { grid-template-columns: 1fr; }
+  }
+</style>

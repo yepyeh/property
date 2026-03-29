@@ -1,0 +1,53 @@
+---
+import BrandLink from "./BrandLink.astro";
+import AccountMenu from "./AccountMenu.astro";
+
+interface NavItem {
+  label: string;
+  href: string;
+  active?: boolean;
+  count?: number;
+}
+
+export interface Props {
+  primaryNav: NavItem[];
+  viewer?: unknown;
+  viewerLabel: string;
+  viewerRoleLabel: string;
+  viewerInitials: string;
+  accountMenu: NavItem[];
+}
+
+const { primaryNav, viewer, viewerLabel, viewerRoleLabel, viewerInitials, accountMenu } = Astro.props;
+---
+
+<header class="global-nav card">
+  <BrandLink />
+
+  <div class="nav-cluster">
+    <nav class="nav-links">
+      {primaryNav.map((item) => (
+        <a class:list={["nav-link", "link-with-count", item.active && "active"]} href={item.href}>
+          <span>{item.label}</span>
+          {item.count ? <span class="count-badge">{item.count > 9 ? "9+" : item.count}</span> : null}
+        </a>
+      ))}
+    </nav>
+
+    <div class="utility-links">
+      {viewer ? (
+        <AccountMenu
+          viewerLabel={viewerLabel}
+          viewerRoleLabel={viewerRoleLabel}
+          viewerInitials={viewerInitials}
+          accountMenu={accountMenu}
+        />
+      ) : (
+        <>
+          <a class="auth-link" href="/login">Sign in</a>
+          <a class="auth-link primary" href="/signup?role=buyer">Create account</a>
+        </>
+      )}
+    </div>
+  </div>
+</header>

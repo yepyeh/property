@@ -1,5 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import WorkspaceHero from "../../components/workspace/WorkspaceHero.astro";
+import FlashBanner from "../../components/workspace/FlashBanner.astro";
 import { getNotificationPreferences } from "../../lib/notifications";
 import { getDB } from "../../lib/runtime";
 
@@ -15,22 +17,19 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
 ---
 
 <Layout title="Notification Settings | Property App 2026" description="Manage email and in-app notification preferences for your marketplace account.">
-  <section class="page-hero card">
-    <div class="hero-copy">
-      <p class="eyebrow">Notification settings</p>
-      <h1 class="hero-title">Choose what reaches you and how often.</h1>
-      <p class="hero-text">
-        Delivery channels, digest cadence, and category-level preferences should be controlled from one clear settings
-        surface rather than scattered across dashboards.
-      </p>
-    </div>
-    <div class="hero-actions">
-      <a class="button-secondary" href={returnHref}>Back to dashboard</a>
-      <a class="button-secondary" href="/account/inbox">Open inbox</a>
-    </div>
-  </section>
+  <style is:global>@import "../../styles/workspace.css";</style>
 
-  {updated && <div class="card flash-banner">Notification preferences updated.</div>}
+  <WorkspaceHero
+    eyebrow="Notification settings"
+    title="Choose what reaches you and how often."
+    text="Delivery channels, digest cadence, and category-level preferences should be controlled from one clear settings surface rather than scattered across dashboards."
+    actions={[
+      { href: returnHref, label: "Back to dashboard", kind: "secondary" },
+      { href: "/account/inbox", label: "Open inbox", kind: "secondary" },
+    ]}
+  />
+
+  {updated && <FlashBanner message="Notification preferences updated." />}
 
   <form class="settings-grid section-gap" method="POST" action="/api/account/notifications">
     <section class="card panel">
@@ -99,92 +98,16 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
   </form>
 
   <style>
-    .page-hero,
-    .panel,
-    .flash-banner {
-      padding: 1.5rem;
-    }
-
-    .page-hero,
-    .panel,
-    .flash-banner {
-      background: rgba(255, 255, 255, 0.88);
-      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 40px rgba(16, 24, 40, 0.06);
-    }
-
-    .page-hero,
-    .hero-actions,
-    .panel-head,
-    .setting-row {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .section-gap,
-    .flash-banner {
-      margin-top: 1rem;
-    }
-
-    .hero-copy {
-      max-width: 44rem;
-    }
-
-    .hero-title {
-      margin: 0;
-      font-size: clamp(2rem, 4vw, 3rem);
-      line-height: 1;
-      letter-spacing: -0.06em;
-    }
-
-    .hero-text,
-    .panel-copy,
-    .setting-row p,
-    .choice-copy {
-      color: var(--muted);
-    }
-
-    .hero-text,
-    .panel-copy,
-    .setting-row p,
-    .choice-copy {
-      margin: 0;
-      line-height: 1.65;
-    }
-
-    .eyebrow {
-      margin: 0 0 0.45rem;
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-    }
-
     .settings-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 1rem;
     }
 
-    .panel h2 {
-      margin: 0;
-      font-size: 1.3rem;
-      letter-spacing: -0.03em;
-    }
-
-    .stack-group {
+    .stack-group,
+    .cadence-block {
       display: grid;
       gap: 0.8rem;
-    }
-
-    .setting-row,
-    .choice-card {
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.95));
     }
 
     .setting-row {
@@ -202,11 +125,6 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
       width: auto;
       margin: 0;
       accent-color: var(--accent-strong);
-    }
-
-    .cadence-block {
-      display: grid;
-      gap: 0.8rem;
     }
 
     .choice-grid {
@@ -227,63 +145,10 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
       color: var(--text);
     }
 
-    .button-primary,
-    .button-secondary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 2.75rem;
-      border-radius: 999px;
-      padding: 0.82rem 1.05rem;
-      font: inherit;
-      font-weight: 700;
-      text-decoration: none;
-      cursor: pointer;
-      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
-    }
-
-    .button-primary:hover,
-    .button-secondary:hover {
-      transform: translateY(-1px);
-    }
-
-    .button-primary {
-      border: none;
-      background: linear-gradient(135deg, #12b76a, #079455);
-      color: white;
-      box-shadow: 0 12px 24px rgba(18, 183, 106, 0.2);
-    }
-
-    .button-secondary {
-      border: 1px solid var(--line-strong);
-      background: white;
-      color: var(--text);
-      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-    }
-
-    .flash-banner {
-      border-left: 4px solid rgba(18, 183, 106, 0.35);
-      color: #067647;
-      font-weight: 700;
-    }
-
     @media (max-width: 960px) {
       .settings-grid,
       .choice-grid {
         grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 760px) {
-      .page-hero,
-      .hero-actions,
-      .setting-row {
-        display: grid;
-      }
-
-      .button-primary,
-      .button-secondary {
-        width: 100%;
       }
     }
   </style>

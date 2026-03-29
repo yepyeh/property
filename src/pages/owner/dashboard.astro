@@ -1,5 +1,9 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import WorkspaceHero from "../../components/workspace/WorkspaceHero.astro";
+import WorkspaceStats from "../../components/workspace/WorkspaceStats.astro";
+import AccountSummaryCard from "../../components/workspace/AccountSummaryCard.astro";
+import FlashBanner from "../../components/workspace/FlashBanner.astro";
 import { isBillingEnabled } from "../../lib/billing";
 import { getOwnerDashboardData } from "../../lib/dashboard";
 import { getDB } from "../../lib/runtime";
@@ -50,59 +54,37 @@ function getImageCount(value: unknown) {
 ---
 
 <Layout title="Owner Dashboard | Property App 2026" description="Review submitted listings and enquiries from the marketplace backend.">
-  <section class="page-hero card">
-    <div class="hero-copy">
-      <p class="eyebrow">Owner workspace</p>
-      <h1 class="hero-title">Operate listings, billing, and follow-up from one surface.</h1>
-      <p class="hero-text">
-        Inventory health, enquiry flow, and monetization should stay visible without bouncing across scattered tools.
-        This dashboard keeps the supply-side loop legible.
-      </p>
-    </div>
-    <div class="hero-actions">
-      <a class="button-primary" href="/submit-listing/">Post a listing</a>
-      <a class="button-secondary" href="/account/inbox">Open inbox</a>
-      <a class="button-secondary" href="/account/notifications">Notification settings</a>
-    </div>
-  </section>
+  <style is:global>@import "../../styles/workspace.css";</style>
 
-  <section class="stats-grid">
-    <article class="card stat-card">
-      <span class="stat-label">Inventory</span>
-      <strong>{listings.length}</strong>
-      <span class="stat-copy">Database listings</span>
-    </article>
-    <article class="card stat-card">
-      <span class="stat-label">Pipeline</span>
-      <strong>{enquiries.length}</strong>
-      <span class="stat-copy">Enquiries received</span>
-    </article>
-    <article class="card stat-card">
-      <span class="stat-label">Inbox</span>
-      <strong>{unreadNotificationCount}</strong>
-      <span class="stat-copy">Unread notifications</span>
-    </article>
-  </section>
+  <WorkspaceHero
+    eyebrow="Owner workspace"
+    title="Operate listings, billing, and follow-up from one surface."
+    text="Inventory health, enquiry flow, and monetization should stay visible without bouncing across scattered tools. This dashboard keeps the supply-side loop legible."
+    actions={[
+      { href: "/submit-listing/", label: "Post a listing" },
+      { href: "/account/inbox", label: "Open inbox", kind: "secondary" },
+      { href: "/account/notifications", label: "Notification settings", kind: "secondary" },
+    ]}
+  />
 
-  <section class="card profile-panel">
-    <div class="profile-block">
-      <p class="eyebrow">Signed in as</p>
-      <strong>{owner?.full_name}</strong>
-      <span>{owner?.email}</span>
-    </div>
-    <div class="profile-block">
-      <p class="eyebrow">Plan tier</p>
-      <strong>{owner?.plan_tier ?? "starter"}</strong>
-      <span>7-day free trial, paid listing upgrades, promoted placement</span>
-    </div>
-    <form method="POST" action="/api/auth/logout" class="profile-actions">
-      <button class="button-secondary" type="submit">Log out</button>
-    </form>
-  </section>
+  <WorkspaceStats
+    items={[
+      { label: "Inventory", value: listings.length, copy: "Database listings" },
+      { label: "Pipeline", value: enquiries.length, copy: "Enquiries received" },
+      { label: "Inbox", value: unreadNotificationCount, copy: "Unread notifications" },
+    ]}
+  />
 
-  {uploaded && <div class="card flash-banner">Image uploaded for <code>{uploaded}</code>.</div>}
-  {updated && <div class="card flash-banner">Billing state updated for <code>{updated}</code>.</div>}
-  {savedSearchDeleted && <div class="card flash-banner">Saved search deleted.</div>}
+  <AccountSummaryCard
+    blocks={[
+      { eyebrow: "Signed in as", title: owner?.full_name ?? "Owner account", copy: owner?.email ?? "" },
+      { eyebrow: "Plan tier", title: owner?.plan_tier ?? "starter", copy: "7-day free trial, paid listing upgrades, promoted placement" },
+    ]}
+  />
+
+  {uploaded && <FlashBanner message={`Image uploaded for ${uploaded}.`} />}
+  {updated && <FlashBanner message={`Billing state updated for ${updated}.`} />}
+  {savedSearchDeleted && <FlashBanner message="Saved search deleted." />}
 
   <section class="split-grid split-grid-top">
     <article class="card panel">
@@ -302,104 +284,10 @@ function getImageCount(value: unknown) {
   </section>
 
   <style>
-    .page-hero,
-    .profile-panel,
-    .panel,
-    .stat-card,
-    .flash-banner {
-      padding: 1.5rem;
-    }
-
-    .page-hero,
-    .profile-panel,
-    .panel,
-    .stat-card,
-    .flash-banner {
-      background: rgba(255, 255, 255, 0.88);
-      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 40px rgba(16, 24, 40, 0.06);
-    }
-
-    .page-hero,
-    .profile-panel,
-    .panel-head,
-    .hero-actions,
-    .action-row,
-    .alert-head,
-    .meta-row,
-    .listing-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .section-gap,
-    .profile-panel,
-    .flash-banner {
-      margin-top: 1rem;
-    }
-
-    .hero-copy {
-      max-width: 46rem;
-    }
-
-    .hero-title {
-      margin: 0;
-      font-size: clamp(2rem, 4vw, 3.1rem);
-      letter-spacing: -0.06em;
-      line-height: 1;
-    }
-
-    .hero-text,
-    .panel-copy,
-    .list-item p,
-    .listing-item p,
-    .helper-copy,
-    .empty-copy,
-    .profile-block span,
-    .meta-row,
-    .stat-copy {
-      color: var(--muted);
-    }
-
-    .hero-text,
-    .panel-copy,
-    .list-item p,
-    .listing-item p,
-    .helper-copy,
-    .empty-copy {
-      margin: 0;
-      line-height: 1.65;
-    }
-
-    .eyebrow,
-    .stat-label {
-      margin: 0 0 0.45rem;
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-    }
-
-    .hero-actions,
-    .action-row {
-      align-items: center;
-    }
-
-    .stats-grid,
     .split-grid {
       display: grid;
       gap: 1rem;
       margin-top: 1rem;
-    }
-
-    .stats-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .split-grid {
       grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
     }
 
@@ -412,64 +300,14 @@ function getImageCount(value: unknown) {
       gap: 1rem;
     }
 
-    .stat-card strong {
-      display: block;
-      margin-bottom: 0.35rem;
-      font-size: 2.25rem;
-      line-height: 1;
-      letter-spacing: -0.06em;
-    }
-
-    .profile-panel {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+    .action-row-wrap,
+    .alert-head,
+    .listing-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
       gap: 1rem;
-      align-items: end;
-    }
-
-    .profile-block,
-    .profile-actions {
-      min-width: 0;
-    }
-
-    .panel h2 {
-      margin: 0;
-      font-size: 1.3rem;
-      letter-spacing: -0.03em;
-    }
-
-    .panel-link {
-      text-decoration: none;
-      font-weight: 700;
-      color: var(--accent-strong);
-    }
-
-    .stack-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      gap: 0.85rem;
-    }
-
-    .list-item,
-    .listing-item,
-    .alert-item {
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 1rem;
-      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.95));
-    }
-
-    .list-item,
-    .alert-item {
-      display: grid;
-      gap: 0.45rem;
-    }
-
-    .listing-item {
-      display: grid;
-      gap: 0.85rem;
+      flex-wrap: wrap;
     }
 
     .badge-text,
@@ -518,113 +356,32 @@ function getImageCount(value: unknown) {
 
     .upload-label {
       font-weight: 700;
-      color: var(--text);
     }
 
     .upload-form input[type="file"] {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: white;
-      padding: 0.9rem 1rem;
+      font: inherit;
       color: var(--muted);
     }
 
-    .button-primary,
-    .button-secondary,
-    .button-tertiary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 2.75rem;
-      border-radius: 999px;
-      padding: 0.82rem 1.05rem;
-      font: inherit;
-      font-weight: 700;
-      text-decoration: none;
-      cursor: pointer;
-      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+    .helper-copy {
+      font-size: 0.95rem;
     }
 
-    .button-primary:hover,
-    .button-secondary:hover,
-    .button-tertiary:hover {
-      transform: translateY(-1px);
-    }
-
-    .button-primary {
-      border: none;
-      background: linear-gradient(135deg, #12b76a, #079455);
-      color: white;
-      box-shadow: 0 12px 24px rgba(18, 183, 106, 0.2);
-    }
-
-    .button-secondary {
-      border: 1px solid var(--line-strong);
-      background: white;
-      color: var(--text);
-      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-    }
-
-    .button-tertiary {
-      border: 1px solid rgba(127, 86, 217, 0.18);
-      background: rgba(127, 86, 217, 0.06);
-      color: var(--accent-strong);
-    }
-
-    .flash-banner {
-      border-left: 4px solid rgba(18, 183, 106, 0.35);
-      color: #067647;
-      font-weight: 700;
-    }
-
-    .listing-head strong,
-    .list-item strong,
-    .alert-item strong,
-    .profile-block strong {
-      display: block;
-      margin-bottom: 0.2rem;
-    }
-
-    .action-row-wrap {
-      align-items: stretch;
-    }
-
-    @media (max-width: 1100px) {
+    @media (max-width: 960px) {
       .split-grid {
         grid-template-columns: 1fr;
       }
-    }
 
-    @media (max-width: 820px) {
-      .stats-grid,
-      .profile-panel,
       .meta-grid {
         grid-template-columns: 1fr;
       }
     }
 
     @media (max-width: 760px) {
-      .page-hero,
-      .profile-panel,
-      .panel-head,
-      .hero-actions,
-      .action-row,
-      .listing-head,
-      .meta-row {
+      .action-row-wrap,
+      .alert-head,
+      .listing-head {
         display: grid;
-      }
-
-      .hero-actions,
-      .action-row,
-      .profile-actions {
-        width: 100%;
-      }
-
-      .button-primary,
-      .button-secondary,
-      .button-tertiary {
-        width: 100%;
       }
     }
   </style>
