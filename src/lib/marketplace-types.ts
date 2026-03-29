@@ -170,6 +170,10 @@ export interface SavedListingRecord {
   id: number;
   listing_slug: string;
   created_at: string;
+  updated_at?: string;
+  buyer_state?: "saved" | "contacted" | "follow_up";
+  follow_up_on?: string | null;
+  buyer_note?: string | null;
   listing?: Listing | null;
 }
 

@@ -440,6 +440,7 @@ export async function getBuyerEnquiryRecords(db: D1Like, userId: number) {
   const enquiries = await db
     .prepare(
       `SELECT e.listing_slug, e.listing_title, e.applicant_name, e.contact, e.message, e.preferred_time, e.created_at,
+              e.response_status, e.owner_note, e.responded_at,
               l.city, l.district, l.ward, l.price_label
        FROM enquiries e
        LEFT JOIN listings l ON l.slug = e.listing_slug
@@ -455,6 +456,9 @@ export async function getBuyerEnquiryRecords(db: D1Like, userId: number) {
       message: string;
       preferred_time: string | null;
       created_at: string;
+      response_status: string | null;
+      owner_note: string | null;
+      responded_at: string | null;
       city: string | null;
       district: string | null;
       ward: string | null;
@@ -600,7 +604,7 @@ export async function saveListingForBuyer(db: D1Like, userId: number, listingSlu
   }
 
   await db
-    .prepare(`INSERT INTO saved_listings (user_id, listing_slug) VALUES (?, ?)`)
+    .prepare(`INSERT INTO saved_listings (user_id, listing_slug, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP)`)
     .bind(userId, listingSlug)
     .run();
 
@@ -652,6 +656,53 @@ export async function removeSavedListingForBuyer(db: D1Like, userId: number, lis
     .run();
 
   return { ok: true as const, removed: true };
+}
+
+export async function updateSavedListingForBuyer(
+  db: D1Like,
+  userId: number,
+  input: {
+    listingSlug: string;
+    buyerState: "saved" | "contacted" | "follow_up";
+    followUpOn?: string | null;
+    buyerNote?: string | null;
+  }
+) {
+  const existing = await db
+    .prepare(
+      `SELECT id
+       FROM saved_listings
+       WHERE user_id = ?
+         AND listing_slug = ?
+       LIMIT 1`
+    )
+    .bind(userId, input.listingSlug)
+    .first<{ id: number }>();
+
+  if (!existing) {
+    return { ok: false as const, reason: "missing" };
+  }
+
+  await db
+    .prepare(
+      `UPDATE saved_listings
+       SET buyer_state = ?,
+           follow_up_on = ?,
+           buyer_note = ?,
+           updated_at = CURRENT_TIMESTAMP
+       WHERE user_id = ?
+         AND listing_slug = ?`
+    )
+    .bind(
+      input.buyerState,
+      input.followUpOn ?? null,
+      input.buyerNote?.trim() || null,
+      userId,
+      input.listingSlug
+    )
+    .run();
+
+  return { ok: true as const };
 }
 
 export async function isListingSavedByUser(db: D1Like | undefined, userId: number | undefined, listingSlug: string) {
@@ -728,10 +779,16 @@ export async function markSavedSearchVisited(db: D1Like, userId: number, id: num
 export async function getSavedListingRecords(db: D1Like, userId: number) {
   const savedListingsResult = await db
     .prepare(
-      `SELECT id, listing_slug, created_at
+      `SELECT id, listing_slug, created_at, updated_at, buyer_state, follow_up_on, buyer_note
        FROM saved_listings
        WHERE user_id = ?
-       ORDER BY created_at DESC`
+       ORDER BY
+         CASE buyer_state
+           WHEN 'follow_up' THEN 0
+           WHEN 'contacted' THEN 1
+           ELSE 2
+         END,
+         COALESCE(follow_up_on, updated_at, created_at) DESC`
     )
     .bind(userId)
     .all<SavedListingRecord>();

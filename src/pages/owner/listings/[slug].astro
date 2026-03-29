@@ -1,0 +1,217 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import WorkspaceHero from "../../../components/workspace/WorkspaceHero.astro";
+import WorkspaceStats from "../../../components/workspace/WorkspaceStats.astro";
+import { getOwnerListingDetail } from "../../../lib/dashboard";
+import { getDB } from "../../../lib/runtime";
+
+const owner = Astro.locals.owner;
+
+if (!owner || !["owner", "admin"].includes(owner.role)) {
+  return Astro.redirect("/login");
+}
+
+const slug = Astro.params.slug || "";
+const { listing, enquiries, payments } = await getOwnerListingDetail(owner.id, slug, getDB(Astro.locals.runtime));
+
+if (!listing) {
+  return Astro.redirect("/owner/dashboard/");
+}
+
+function getImageUrls(value: unknown) {
+  if (typeof value !== "string" || !value) return [] as string[];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed.map((key) => `/media/${key}`) : [];
+  } catch {
+    return [] as string[];
+  }
+}
+
+const imageUrls = getImageUrls(listing.image_keys);
+---
+
+<Layout title={`${listing.title} | Owner Listing`} description="Review listing-specific demand, media, and payments.">
+  <WorkspaceHero
+    eyebrow="Listing drilldown"
+    title={listing.title}
+    text="Use this view to evaluate one listing instead of scanning the whole dashboard. Demand, media, and paid visibility are easier to judge at listing scope."
+    actions={[
+      { href: "/owner/dashboard/", label: "Back to dashboard", kind: "secondary" },
+      { href: `/listings/${listing.slug}/`, label: "Open public page", kind: "secondary" },
+    ]}
+  />
+
+  <WorkspaceStats
+    items={[
+      { label: "Views", value: listing.views_24h ?? 0, copy: "Last 24 hours" },
+      { label: "Saves", value: listing.saves ?? 0, copy: "Buyer shortlists" },
+      { label: "Enquiries", value: listing.enquiries ?? 0, copy: "Total enquiries" },
+      { label: "Payments", value: payments.length, copy: "Recorded upgrades" },
+    ]}
+  />
+
+  <section class="split-grid section-gap">
+    <article class="card panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Listing health</p>
+          <h2>Visibility snapshot</h2>
+          <p class="panel-copy">This is the fastest way to judge whether the listing is presentation-ready and commercially active.</p>
+        </div>
+      </div>
+      <div class="meta-grid">
+        <span>Plan: {listing.plan_type}</span>
+        <span>Status: {listing.status}</span>
+        <span>{listing.city} · {listing.district} · {listing.ward}</span>
+        <span>{listing.intent}</span>
+        {listing.trial_ends_at && <span>Trial ends: {listing.trial_ends_at}</span>}
+        {listing.paid_until && <span>Paid until: {listing.paid_until}</span>}
+        {listing.promoted_until && <span>Promoted until: {listing.promoted_until}</span>}
+      </div>
+      <div class="performance-strip">
+        <div class="performance-chip"><strong>{imageUrls.length}</strong><span>Gallery images</span></div>
+        <div class="performance-chip"><strong>{listing.views_24h ?? 0}</strong><span>Views / 24h</span></div>
+        <div class="performance-chip"><strong>{listing.saves ?? 0}</strong><span>Saves</span></div>
+        <div class="performance-chip"><strong>{listing.enquiries ?? 0}</strong><span>Enquiries</span></div>
+      </div>
+      {imageUrls.length === 0 ? <p class="empty-copy">No images uploaded yet.</p> : (
+        <div class="gallery-grid">
+          {imageUrls.map((imageUrl) => (
+            <div class="gallery-tile" style={`background-image:url(${imageUrl})`}></div>
+          ))}
+        </div>
+      )}
+    </article>
+
+    <div class="right-stack">
+      <article class="card panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Demand</p>
+            <h2>Enquiry thread</h2>
+            <p class="panel-copy">Keep one listing’s pipeline visible instead of mixing it into the full owner inbox.</p>
+          </div>
+        </div>
+        {enquiries.length === 0 ? <p class="empty-copy">No enquiries for this listing yet.</p> : (
+          <ul class="stack-list compact-list">
+            {enquiries.map((enquiry) => (
+              <li class="list-item">
+                <strong>{enquiry.applicant_name}</strong>
+                <div class="meta-row">
+                  <span>{enquiry.contact}</span>
+                  <span>Status: {enquiry.response_status ?? "new"}</span>
+                </div>
+                <p>{enquiry.message}</p>
+                {enquiry.owner_note && <p class="inline-note">Owner note: {enquiry.owner_note}</p>}
+                <div class="meta-row">
+                  <span>{enquiry.preferred_time || "No preferred time"}</span>
+                  <span>{enquiry.responded_at ? `Updated ${enquiry.responded_at}` : enquiry.created_at}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </article>
+
+      <article class="card panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Billing</p>
+            <h2>Upgrade history</h2>
+            <p class="panel-copy">Recorded plan changes tied to this one listing.</p>
+          </div>
+        </div>
+        {payments.length === 0 ? <p class="empty-copy">No payments recorded for this listing yet.</p> : (
+          <ul class="stack-list compact-list">
+            {payments.map((payment) => (
+              <li class="list-item">
+                <strong>{payment.plan_type} · {payment.amount} {String(payment.currency).toUpperCase()}</strong>
+                <div class="meta-row">
+                  <span>Status: {payment.status}</span>
+                  <span>{payment.paid_at ? `Paid at ${payment.paid_at}` : payment.created_at}</span>
+                </div>
+                <p>{payment.stripe_session_id}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </article>
+    </div>
+  </section>
+
+  <style is:inline>
+    .split-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 1rem;
+    }
+    .right-stack {
+      display: grid;
+      gap: 1rem;
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .meta-grid span {
+      padding: 0.85rem 0.95rem;
+      border-radius: 16px;
+      background: rgba(15, 23, 42, 0.05);
+      color: var(--muted-strong);
+      font-weight: 600;
+    }
+    .performance-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .performance-chip {
+      display: grid;
+      gap: 0.2rem;
+      padding: 0.95rem;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.65);
+      border: 1px solid var(--line);
+    }
+    .performance-chip strong {
+      font-size: 1.15rem;
+      letter-spacing: -0.03em;
+    }
+    .performance-chip span,
+    .panel-copy,
+    .list-item p,
+    .inline-note {
+      color: var(--muted);
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+    .gallery-tile {
+      min-height: 12rem;
+      border-radius: 20px;
+      background-size: cover;
+      background-position: center;
+      background-color: rgba(15, 23, 42, 0.06);
+    }
+    .list-item {
+      padding: 1rem;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid var(--line);
+    }
+    @media (max-width: 920px) {
+      .split-grid,
+      .meta-grid,
+      .performance-strip,
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</Layout>

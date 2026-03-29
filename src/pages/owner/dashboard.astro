@@ -295,12 +295,13 @@ function getImageUrls(value: unknown) {
                 </div>
               </div>
               <div class="action-row action-row-wrap">
+                <a class="button-secondary" href={`/owner/listings/${listing.slug}/`}>Open drilldown</a>
                 {billingEnabled ? (
                   <>
                     <form method="POST" action="/api/billing/checkout">
                       <input type="hidden" name="listingSlug" value={listing.slug} />
                       <input type="hidden" name="planType" value="paid" />
-                      <button type="submit" class="button-secondary">{getStandardActionLabel(listing)}</button>
+                      <button type="submit" class="button-tertiary">{getStandardActionLabel(listing)}</button>
                     </form>
                     <form method="POST" action="/api/billing/checkout">
                       <input type="hidden" name="listingSlug" value={listing.slug} />

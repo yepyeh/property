@@ -273,3 +273,71 @@ export async function getAdminBillingData(db?: D1Like) {
     performanceSeries,
   };
 }
+
+export async function getOwnerListingDetail(ownerUserId: number, listingSlug: string, db?: D1Like) {
+  if (!db) {
+    return { listing: null, enquiries: [], payments: [] };
+  }
+
+  await normalizeExpiredListingPlans(db);
+
+  const listing = await db
+    .prepare(
+      `SELECT slug, title, city, district, ward, intent, status, created_at, enquiries,
+              image_keys, plan_type, trial_ends_at, paid_until, promoted_until, views_24h, saves
+       FROM listings
+       WHERE owner_user_id = ?
+         AND slug = ?
+       LIMIT 1`
+    )
+    .bind(ownerUserId, listingSlug)
+    .first<{
+      slug: string;
+      title: string;
+      city: string;
+      district: string;
+      ward: string;
+      intent: string;
+      status: string;
+      created_at: string;
+      enquiries: number;
+      image_keys: string;
+      plan_type: string;
+      trial_ends_at?: string | null;
+      paid_until?: string | null;
+      promoted_until?: string | null;
+      views_24h?: number;
+      saves?: number;
+    }>();
+
+  if (!listing) {
+    return { listing: null, enquiries: [], payments: [] };
+  }
+
+  const enquiriesResult = await db
+    .prepare(
+      `SELECT applicant_name, contact, message, preferred_time, created_at, response_status, owner_note, responded_at
+       FROM enquiries
+       WHERE listing_slug = ?
+       ORDER BY created_at DESC`
+    )
+    .bind(listingSlug)
+    .all();
+
+  const paymentsResult = await db
+    .prepare(
+      `SELECT stripe_session_id, plan_type, amount, currency, status, created_at, paid_at
+       FROM payments
+       WHERE owner_user_id = ?
+         AND listing_slug = ?
+       ORDER BY created_at DESC`
+    )
+    .bind(ownerUserId, listingSlug)
+    .all();
+
+  return {
+    listing,
+    enquiries: enquiriesResult.results,
+    payments: paymentsResult.results,
+  };
+}
