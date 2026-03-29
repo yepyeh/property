@@ -19,6 +19,21 @@ const buyerBenefits = [
     body: "If the right option is not visible yet, or you need help narrowing a serious shortlist, the concierge flow gives you a direct path to the team.",
   },
 ];
+
+const buyerComparison = [
+  {
+    title: "What typical portals do",
+    body: "Large operators in the region usually do breadth well: lots of listings, lots of categories, and basic search controls.",
+  },
+  {
+    title: "Where they often fall short",
+    body: "The buyer still has to do too much alone: compare manually, remember what they saw, and manage follow-up outside the product.",
+  },
+  {
+    title: "What we do better",
+    body: "Shortlist state, collections, compare, finalists, enquiry history, market insights, and concierge support all work together as one decision flow.",
+  },
+];
 ---
 
 <Layout
@@ -56,6 +71,16 @@ const buyerBenefits = [
         <span class="section-kicker">Buyer benefit</span>
         <h2>{benefit.title}</h2>
         <p>{benefit.body}</p>
+      </article>
+    ))}
+  </section>
+
+  <section class="benefits-grid">
+    {buyerComparison.map((item) => (
+      <article class="benefit-card card">
+        <span class="section-kicker">Buyer comparison</span>
+        <h2>{item.title}</h2>
+        <p>{item.body}</p>
       </article>
     ))}
   </section>

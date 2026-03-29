@@ -34,6 +34,34 @@ import Layout from "../layouts/Layout.astro";
     </article>
   </section>
 
+  <section class="market-band card section-gap">
+    <div>
+      <span class="pill">Market context</span>
+      <h2>This market already has strong operators. The opportunity is to be more useful than they are.</h2>
+      <p>
+        Southeast Asia already has large portals, brokerage brands, and premium advisers. Users know names like Dot Property, Batdongsan, PropertyGuru, 99.co, and Savills. The gap is not awareness. The gap is experience quality, trust design, and the workflow between discovery and action.
+      </p>
+    </div>
+    <div class="difference-grid">
+      <article>
+        <strong>Large portals</strong>
+        <span>They are strong on inventory breadth, categories, and search coverage. They are often weaker on decision support, trust, and workflow continuity.</span>
+      </article>
+      <article>
+        <strong>Brokerage-led operators</strong>
+        <span>They are strong on advisory depth and high-end inventory. They are often weaker on self-serve product experience and broad buyer tooling.</span>
+      </article>
+      <article>
+        <strong>What we do differently</strong>
+        <span>We combine cleaner buyer UX, owner operations, trust systems, concierge escalation, and auction infrastructure in one product model.</span>
+      </article>
+      <article>
+        <strong>How we should win</strong>
+        <span>Not by being noisier. By helping buyers decide better, helping owners operate better, and making trust visible before risk appears.</span>
+      </article>
+    </div>
+  </section>
+
   <section class="difference-band card section-gap">
     <div>
       <span class="pill">What should stand out</span>
@@ -59,6 +87,29 @@ import Layout from "../layouts/Layout.astro";
     </div>
   </section>
 
+  <section class="comparison-grid section-gap">
+    <article class="card compare-card">
+      <span class="pill">How others do it</span>
+      <strong>Broad search, directory depth, and lots of inventory pages</strong>
+      <ul>
+        <li>Good category coverage</li>
+        <li>Useful search basics</li>
+        <li>Often cluttered and portal-heavy</li>
+        <li>Decision support usually remains shallow</li>
+      </ul>
+    </article>
+    <article class="card compare-card">
+      <span class="pill">How we do it better</span>
+      <strong>Fewer dead ends, more guided outcomes</strong>
+      <ul>
+        <li>Shortlist, compare, finalist, and follow-up states</li>
+        <li>Owner dashboards with listing performance and enquiry response flow</li>
+        <li>Trust centre, reporting, verification, and safer structured enquiries</li>
+        <li>Concierge and auction paths when standard search is not enough</li>
+      </ul>
+    </article>
+  </section>
+
   <section class="cta-grid section-gap">
     <a class="card cta-card" href="/for-buyers">
       <span class="pill">For buyers</span>
@@ -74,8 +125,10 @@ import Layout from "../layouts/Layout.astro";
 
   <style is:inline>
     .why-hero,
+    .market-band,
     .why-card,
     .difference-band,
+    .compare-card,
     .cta-card {
       padding: 1.4rem;
     }
@@ -85,12 +138,14 @@ import Layout from "../layouts/Layout.astro";
         linear-gradient(180deg, var(--surface-overlay-strong), var(--surface-panel-muted));
     }
     .hero-copy,
-    .difference-band {
+    .difference-band,
+    .market-band {
       display: grid;
       gap: 0.9rem;
     }
     .why-hero h1,
-    .difference-band h2 {
+    .difference-band h2,
+    .market-band h2 {
       margin: 0;
       font-size: clamp(2rem, 5vw, 3.45rem);
       line-height: 0.95;
@@ -100,6 +155,8 @@ import Layout from "../layouts/Layout.astro";
     .why-hero p,
     .why-card li,
     .difference-grid span,
+    .market-band p,
+    .compare-card li,
     .cta-card p {
       margin: 0;
       color: var(--muted);
@@ -107,6 +164,7 @@ import Layout from "../layouts/Layout.astro";
     }
     .why-grid,
     .difference-grid,
+    .comparison-grid,
     .cta-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -118,6 +176,7 @@ import Layout from "../layouts/Layout.astro";
     }
     .why-card,
     .difference-grid article,
+    .compare-card,
     .cta-card {
       display: grid;
       gap: 0.4rem;
@@ -128,13 +187,21 @@ import Layout from "../layouts/Layout.astro";
     }
     .why-card strong,
     .difference-grid strong,
+    .compare-card strong,
     .cta-card strong {
       font-size: 1rem;
       letter-spacing: -0.03em;
     }
+    .compare-card ul {
+      margin: 0.8rem 0 0;
+      padding-left: 1.1rem;
+      display: grid;
+      gap: 0.35rem;
+    }
     @media (max-width: 860px) {
       .why-grid,
       .difference-grid,
+      .comparison-grid,
       .cta-grid {
         grid-template-columns: 1fr;
       }

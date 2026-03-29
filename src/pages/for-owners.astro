@@ -26,6 +26,21 @@ const workflowSteps = [
   "Receive structured enquiries",
   "Upgrade to paid or promoted placement when needed",
 ];
+
+const ownerComparison = [
+  {
+    title: "What typical operators do",
+    body: "Many large property operators are still optimized around publishing volume first: post the listing, hope for leads, then manage the rest across different tools.",
+  },
+  {
+    title: "Where that breaks down",
+    body: "Owners lose continuity between listing quality, lead quality, follow-up, billing, and renewal. The portal is live, but the workflow around it is weak.",
+  },
+  {
+    title: "What we do better",
+    body: "Publishing, gallery management, listing insights, enquiry response state, trust tools, billing, concierge support, and auctions live inside one operating flow.",
+  },
+];
 ---
 
 <Layout
@@ -62,6 +77,16 @@ const workflowSteps = [
         <span class="section-kicker">Owner benefit</span>
         <h2>{benefit.title}</h2>
         <p>{benefit.body}</p>
+      </article>
+    ))}
+  </section>
+
+  <section class="benefits-grid">
+    {ownerComparison.map((item) => (
+      <article class="benefit-card card">
+        <span class="section-kicker">Owner comparison</span>
+        <h2>{item.title}</h2>
+        <p>{item.body}</p>
       </article>
     ))}
   </section>

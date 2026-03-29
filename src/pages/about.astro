@@ -28,6 +28,34 @@ import Layout from "../layouts/Layout.astro";
     </article>
   </section>
 
+  <section class="market-band card section-gap">
+    <div>
+      <span class="pill">Where we operate</span>
+      <h2>We are building for the Southeast Asian property market, where large portals and large advisory brands already prove the demand exists.</h2>
+      <p>
+        The region already supports broad search operators, local classifieds-style portals, and premium sales advisers. That matters because the market is large. It also matters because users already know what the old model feels like, and many of those products still feel heavier, older, or more fragmented than they should.
+      </p>
+    </div>
+    <div class="belief-grid">
+      <article>
+        <strong>Portal operators</strong>
+        <span>Examples in-market show strong search breadth, directory depth, and localisation basics. They prove inventory demand, but often still feel cluttered and operationally thin.</span>
+      </article>
+      <article>
+        <strong>Premium advisers</strong>
+        <span>Brands like Savills show there is real premium demand and serious supply in the region. They prove the high-end market exists, but they do not solve the broader product workflow problem on their own.</span>
+      </article>
+      <article>
+        <strong>What this means for us</strong>
+        <span>We should serve both everyday and premium users without falling back to either a noisy portal or a purely brokerage-led experience.</span>
+      </article>
+      <article>
+        <strong>The standard we are building toward</strong>
+        <span>Search that feels modern, operations that feel responsive, trust that feels visible, and personal support when automation is not enough.</span>
+      </article>
+    </div>
+  </section>
+
   <section class="mission-band card section-gap">
     <div>
       <span class="pill">What we believe</span>
@@ -68,6 +96,7 @@ import Layout from "../layouts/Layout.astro";
 
   <style is:inline>
     .about-hero,
+    .market-band,
     .about-card,
     .mission-band,
     .cta-card {
@@ -79,12 +108,14 @@ import Layout from "../layouts/Layout.astro";
         linear-gradient(180deg, var(--surface-overlay-strong), var(--surface-panel-muted));
     }
     .hero-copy,
-    .mission-band {
+    .mission-band,
+    .market-band {
       display: grid;
       gap: 0.9rem;
     }
     .about-hero h1,
-    .mission-band h2 {
+    .mission-band h2,
+    .market-band h2 {
       margin: 0;
       font-size: clamp(2rem, 5vw, 3.5rem);
       line-height: 0.95;
@@ -93,6 +124,7 @@ import Layout from "../layouts/Layout.astro";
     }
     .about-hero p,
     .about-card p,
+    .market-band p,
     .belief-grid span,
     .cta-card p {
       margin: 0;
