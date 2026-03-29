@@ -25,6 +25,7 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
     text="This should feel like a clean buyer workspace, not a storage page. Saved searches, favorite listings, and new activity stay in one place so revisits feel deliberate."
     actions={[
       { href: "/listings/", label: "Browse listings" },
+      ...(savedListings.length > 1 ? [{ href: "/buyer/compare/", label: "Compare saved homes", kind: "secondary" as const }] : []),
       { href: "/account/inbox", label: "Open inbox", kind: "secondary" },
       { href: "/account/notifications", label: "Notification settings", kind: "secondary" },
     ]}
@@ -121,6 +122,29 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
   <section class="card panel section-gap">
     <div class="panel-head">
       <div>
+        <p class="eyebrow">Decision</p>
+        <h2>Shortlist comparison</h2>
+        <p class="panel-copy">Use your saved listings as a working shortlist. Comparison is where price, trust, and location start competing directly.</p>
+      </div>
+      {savedListings.length > 1 && <a class="panel-link" href="/buyer/compare/">Open compare view</a>}
+    </div>
+    {savedListings.length > 1 ? (
+      <div class="compare-preview">
+        {savedListings.slice(0, 3).map((savedListing) => (
+          <div class="compare-chip">
+            <strong>{savedListing.listing?.title ?? savedListing.listing_slug}</strong>
+            <span>{savedListing.listing?.priceLabel ?? "No price"}</span>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p class="empty-copy">Save at least two listings to use the compare view.</p>
+    )}
+  </section>
+
+  <section class="card panel section-gap">
+    <div class="panel-head">
+      <div>
         <p class="eyebrow">Search intent</p>
         <h2>Saved searches</h2>
         <p class="panel-copy">Reusable routes back into the market when you are tracking one area, budget, or housing type over time.</p>
@@ -206,11 +230,31 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
       line-height: 1.65;
     }
 
+    .compare-preview {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.8rem;
+    }
+
+    .compare-chip {
+      display: grid;
+      gap: 0.35rem;
+      padding: 1rem;
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92));
+      border: 1px solid var(--line);
+    }
+
+    .compare-chip span {
+      color: var(--muted);
+    }
+
     @media (max-width: 960px) {
       .split-grid {
         grid-template-columns: 1fr;
       }
 
+      .compare-preview,
       .saved-property-card {
         grid-template-columns: 1fr;
       }

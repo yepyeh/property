@@ -98,6 +98,7 @@ p { margin: 0; }
   z-index: 20;
   background: rgba(251, 248, 243, 0.9);
   box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(16px);
 }
 
 .brand-link {
@@ -156,6 +157,7 @@ p { margin: 0; }
   background: rgba(255, 255, 255, 0.92);
   border-color: var(--line);
   color: var(--text);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35);
 }
 
 .auth-link {
@@ -167,6 +169,7 @@ p { margin: 0; }
   background: var(--brand);
   border-color: var(--brand);
   color: white;
+  box-shadow: 0 12px 24px rgba(17, 17, 17, 0.12);
 }
 
 .link-with-count { gap: 0.45rem; }
@@ -198,6 +201,7 @@ p { margin: 0; }
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.92);
   cursor: pointer;
+  box-shadow: 0 10px 22px rgba(17,17,17,0.05);
 }
 .account-summary::-webkit-details-marker { display: none; }
 .account-summary::marker { content: ""; }

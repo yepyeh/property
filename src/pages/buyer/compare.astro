@@ -1,0 +1,165 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import WorkspaceHero from "../../components/workspace/WorkspaceHero.astro";
+import { getBuyerDashboardData } from "../../lib/dashboard";
+import { getDB } from "../../lib/runtime";
+
+const viewer = Astro.locals.owner;
+
+if (!viewer || (viewer.role !== "buyer" && viewer.role !== "admin")) {
+  return Astro.redirect("/login");
+}
+
+const { savedListings } = await getBuyerDashboardData(viewer.id, getDB(Astro.locals.runtime));
+const compareListings = savedListings
+  .map((entry) => entry.listing)
+  .filter(Boolean)
+  .slice(0, 3);
+---
+
+<Layout title="Compare Saved Listings | Property App 2026" description="Compare shortlisted homes side by side across price, location, trust signals, and key facts.">
+  <WorkspaceHero
+    eyebrow="Buyer comparison"
+    title="Compare shortlisted homes side by side."
+    text="This is the point where a shortlist becomes a decision. Compare price, area, trust signals, and location fit without bouncing between detail pages."
+    actions={[
+      { href: "/buyer/dashboard/", label: "Back to dashboard", kind: "secondary" },
+      { href: "/listings/", label: "Browse listings", kind: "secondary" },
+    ]}
+  />
+
+  {compareListings.length < 2 ? (
+    <section class="card compare-empty section-gap">
+      <strong>Save at least two listings to compare them.</strong>
+      <p>Use the buyer dashboard or any listing detail page to build a shortlist first.</p>
+      <a class="button-secondary" href="/listings/">Browse listings</a>
+    </section>
+  ) : (
+    <section class="card compare-table section-gap">
+      <div class="compare-grid compare-head">
+        <div class="compare-label">Compare</div>
+        {compareListings.map((listing) => (
+          <article class="compare-property">
+            {listing.imageUrls?.[0] ? (
+              <div class="compare-media" style={`background-image:url(${listing.imageUrls[0]})`}></div>
+            ) : (
+              <div class="compare-media compare-fallback">No gallery</div>
+            )}
+            <strong>{listing.title}</strong>
+            <p>{listing.ward}, {listing.district}</p>
+            <a class="button-secondary small" href={`/listings/${listing.slug}/`}>Open listing</a>
+          </article>
+        ))}
+      </div>
+
+      {[
+        { label: "Price", values: compareListings.map((listing) => listing.priceLabel) },
+        { label: "Property type", values: compareListings.map((listing) => listing.type) },
+        { label: "Bedrooms", values: compareListings.map((listing) => `${listing.beds}`) },
+        { label: "Bathrooms", values: compareListings.map((listing) => `${listing.baths}`) },
+        { label: "Area", values: compareListings.map((listing) => `${listing.area} m2`) },
+        { label: "Status", values: compareListings.map((listing) => listing.status) },
+        { label: "Trust", values: compareListings.map((listing) => listing.owner.verified ? "Verified contact" : "Owner listed") },
+        { label: "Response time", values: compareListings.map((listing) => listing.owner.responseTime) },
+        { label: "Location context", values: compareListings.map((listing) => listing.neighborhood?.headline || `${listing.ward}, ${listing.district}`) },
+      ].map((row) => (
+        <div class="compare-grid compare-row">
+          <div class="compare-label">{row.label}</div>
+          {row.values.map((value) => (
+            <div class="compare-cell">{value}</div>
+          ))}
+        </div>
+      ))}
+    </section>
+  )}
+
+  <style is:inline>
+    .compare-empty {
+      padding: 1.4rem;
+      display: grid;
+      gap: 0.75rem;
+      justify-items: start;
+    }
+
+    .compare-empty p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .compare-table {
+      padding: 1rem;
+      overflow-x: auto;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: minmax(10rem, 13rem) repeat(3, minmax(15rem, 1fr));
+      gap: 0.8rem;
+      align-items: stretch;
+    }
+
+    .compare-head {
+      margin-bottom: 0.8rem;
+    }
+
+    .compare-row {
+      padding-top: 0.8rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .compare-label,
+    .compare-cell,
+    .compare-property {
+      padding: 0.95rem 1rem;
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92));
+      border: 1px solid var(--line);
+    }
+
+    .compare-label {
+      font-weight: 800;
+      color: var(--muted-strong);
+    }
+
+    .compare-property {
+      display: grid;
+      gap: 0.6rem;
+      align-content: start;
+    }
+
+    .compare-property p,
+    .compare-cell {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .compare-property strong {
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .compare-media {
+      min-height: 9rem;
+      border-radius: 16px;
+      background-size: cover;
+      background-position: center;
+      background-color: rgba(15, 23, 42, 0.06);
+    }
+
+    .compare-fallback {
+      display: grid;
+      place-items: center;
+      color: var(--muted-strong);
+      font-weight: 700;
+      background-image: linear-gradient(135deg, rgba(205, 215, 228, 0.8), rgba(239, 244, 249, 0.98));
+    }
+
+    @media (max-width: 960px) {
+      .compare-grid {
+        grid-template-columns: minmax(8rem, 10rem) repeat(3, minmax(13rem, 1fr));
+      }
+    }
+  </style>
+</Layout>

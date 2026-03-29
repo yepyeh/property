@@ -23,6 +23,7 @@ const isBuyer = viewer?.role === "buyer";
 const isOwner = viewer?.role === "owner" || viewer?.role === "admin";
 const isAdmin = viewer?.role === "admin";
 const dashboardHref = isBuyer ? "/buyer/dashboard/" : "/owner/dashboard/";
+const compareHref = isBuyer ? "/buyer/compare/" : "";
 const unreadCount = viewer ? await getUnreadInboxNotificationCount(getDB(Astro.locals.runtime), viewer.id) : 0;
 const viewerLabel = viewer?.full_name || viewer?.email || "Account";
 const viewerRoleLabel = isAdmin ? "Platform admin" : isBuyer ? "Buyer account" : viewer ? "Owner account" : "";
@@ -48,6 +49,7 @@ const primaryNav = [
 
 const accountMenu = [
   ...(viewer ? [{ label: "Settings", href: "/account/notifications", active: pathname.startsWith("/account/notifications") }] : []),
+  ...(isBuyer ? [{ label: "Compare", href: compareHref, active: pathname.startsWith("/buyer/compare/") }] : []),
   ...(viewer ? [{ label: isBuyer ? "Buyer" : "Dashboard", href: dashboardHref, active: pathname.startsWith("/buyer/") || pathname.startsWith("/owner/") }] : []),
   ...(isAdmin ? [{ label: "Billing", href: "/admin/billing/", active: pathname.startsWith("/admin/") }] : []),
 ];
