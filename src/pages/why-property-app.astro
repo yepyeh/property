@@ -1,0 +1,143 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Why Property App | Property App 2026" description="What should make Property App stand out against typical property portals in Southeast Asia.">
+  <section class="why-hero card">
+    <div class="hero-copy">
+      <span class="pill">Why Property App</span>
+      <h1>The goal is not to be louder than competitors. It is to be more usable and more trustworthy.</h1>
+      <p>
+        Many portals compete on volume alone. We think the better product is the one that helps buyers decide well and helps owners operate well. That means cleaner search, stronger trust, clearer workflows, and less dead-end friction.
+      </p>
+    </div>
+  </section>
+
+  <section class="why-grid section-gap">
+    <article class="card why-card">
+      <strong>What buyers should feel</strong>
+      <ul>
+        <li>Search is narrower and more intentional, not just wider.</li>
+        <li>Shortlist, compare, collections, and finalist states support real decisions.</li>
+        <li>Trust signals and reporting are visible before users have to take risk.</li>
+        <li>Affordability, map context, and enquiry history create continuity.</li>
+      </ul>
+    </article>
+    <article class="card why-card">
+      <strong>What owners should feel</strong>
+      <ul>
+        <li>Publishing is a guided workflow, not a raw admin form.</li>
+        <li>Enquiry tracking, performance signals, and billing are in one place.</li>
+        <li>Promotion is tied to listing quality, not separated from it.</li>
+        <li>Auction inventory and trust controls expand beyond a standard portal model.</li>
+      </ul>
+    </article>
+  </section>
+
+  <section class="difference-band card section-gap">
+    <div>
+      <span class="pill">What should stand out</span>
+      <h2>We are trying to outperform the usual portal in the moments that actually matter.</h2>
+    </div>
+    <div class="difference-grid">
+      <article>
+        <strong>Cleaner decision flow</strong>
+        <span>Save, compare, collections, finalists, and follow-up turn browsing into a usable buyer journey.</span>
+      </article>
+      <article>
+        <strong>Owner operations, not just posting</strong>
+        <span>Publishing, media, trust, enquiries, billing, and performance sit inside one workflow.</span>
+      </article>
+      <article>
+        <strong>Protection as product design</strong>
+        <span>Verification requests, listing reports, trust centre, and structured enquiries are part of the core system.</span>
+      </article>
+      <article>
+        <strong>New inventory models</strong>
+        <span>Auctions and guided promotion create room for stronger listing types than a flat classifieds model.</span>
+      </article>
+    </div>
+  </section>
+
+  <section class="cta-grid section-gap">
+    <a class="card cta-card" href="/for-buyers">
+      <span class="pill">For buyers</span>
+      <strong>See the buyer workflow</strong>
+      <p>Understand how search, shortlist, compare, and decision support fit together.</p>
+    </a>
+    <a class="card cta-card" href="/for-owners">
+      <span class="pill">For owners</span>
+      <strong>See the owner workflow</strong>
+      <p>Understand how listings, enquiries, media, and billing fit together.</p>
+    </a>
+  </section>
+
+  <style is:inline>
+    .why-hero,
+    .why-card,
+    .difference-band,
+    .cta-card {
+      padding: 1.4rem;
+    }
+    .why-hero {
+      background:
+        radial-gradient(circle at top left, rgba(245, 158, 11, 0.12), transparent 28rem),
+        linear-gradient(180deg, rgba(255,255,255,0.9), rgba(248,250,252,0.95));
+    }
+    .hero-copy,
+    .difference-band {
+      display: grid;
+      gap: 0.9rem;
+    }
+    .why-hero h1,
+    .difference-band h2 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.45rem);
+      line-height: 0.95;
+      letter-spacing: -0.08em;
+      max-width: 14ch;
+    }
+    .why-hero p,
+    .why-card li,
+    .difference-grid span,
+    .cta-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.72;
+    }
+    .why-grid,
+    .difference-grid,
+    .cta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+    .why-card ul {
+      margin: 0.8rem 0 0;
+      padding-left: 1.1rem;
+    }
+    .why-card,
+    .difference-grid article,
+    .cta-card {
+      display: grid;
+      gap: 0.4rem;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      text-decoration: none;
+      color: inherit;
+    }
+    .why-card strong,
+    .difference-grid strong,
+    .cta-card strong {
+      font-size: 1rem;
+      letter-spacing: -0.03em;
+    }
+    @media (max-width: 860px) {
+      .why-grid,
+      .difference-grid,
+      .cta-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</Layout>

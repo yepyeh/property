@@ -4,14 +4,18 @@ import Layout from "../layouts/Layout.astro";
 
 <Layout title="Trust and Safety | Property App 2026" description="How Property App protects buyers, renters, owners, and listing quality.">
   <section class="trust-hero card">
-    <div>
+    <div class="hero-copy">
       <span class="pill">Trust and safety</span>
-      <h1>Trust needs product rules, not just marketing copy.</h1>
+      <h1>Trust needs system design, moderation, and visible protection.</h1>
       <p>
-        Buyers and renters need credible listings, clear enquiry pathways, and a way to flag problems. Owners need a
-        fair verification path and cleaner lead quality. This page explains the protection layer we are building into
-        the marketplace.
+        Property marketplaces fail when listings are noisy, contact pathways are opaque, and users are pushed into rushed decisions. We are building the protection layer directly into search, enquiry, verification, reporting, and account workflows.
       </p>
+      <div class="hero-signals">
+        <span>Structured enquiries instead of contact scraping</span>
+        <span>Verification pathways for owner credibility</span>
+        <span>Listing reports and moderation visibility</span>
+        <span>Shortlist, compare, and trust context before commitment</span>
+      </div>
     </div>
   </section>
 
@@ -19,66 +23,162 @@ import Layout from "../layouts/Layout.astro";
     <article class="card trust-card">
       <strong>For buyers and renters</strong>
       <ul>
-        <li>Verified-owner signals on listings where identity has been reviewed.</li>
-        <li>Structured enquiries instead of free-form contact scraping.</li>
-        <li>Report-listing flow for suspicious, inaccurate, or duplicate inventory.</li>
-        <li>Shortlist, compare, and budget tools so rushed decisions are less likely.</li>
+        <li>Verified-owner signals appear where identity or ownership status has been reviewed.</li>
+        <li>Structured enquiries reduce the need to hand over information blindly.</li>
+        <li>Shortlist, compare, and affordability tools slow down rushed decisions.</li>
+        <li>Listing reporting exists for suspicious, inaccurate, or duplicated inventory.</li>
       </ul>
     </article>
     <article class="card trust-card">
       <strong>For owners and landlords</strong>
       <ul>
-        <li>Verification request path directly from the owner workspace.</li>
-        <li>Owner-side enquiry tracking with response status and notes.</li>
-        <li>Time-bounded visibility so stale inventory does not crowd out credible supply.</li>
-        <li>Photo, location, and trust guidance before promotion is encouraged.</li>
+        <li>Verification request flow sits inside the owner workspace, not outside it.</li>
+        <li>Owner-side enquiry tracking, response states, and notes keep leads accountable.</li>
+        <li>Time-bounded visibility reduces stale inventory and protects credible supply.</li>
+        <li>Photo, location, and trust guidance come before promotion is encouraged.</li>
       </ul>
     </article>
   </section>
 
+  <section class="protection-band card section-gap">
+    <div>
+      <span class="pill">Security principles</span>
+      <h2>Security is not a separate feature. It shapes the product.</h2>
+      <p>
+        We are designing around protected account access, moderated listing quality, structured user actions, and clearer signals before money or contact details move. The goal is a marketplace that feels safer because the workflows are safer.
+      </p>
+    </div>
+    <div class="principles-grid">
+      <article>
+        <strong>Protected account flows</strong>
+        <span>Buyer, owner, and admin actions sit behind role-aware account controls instead of ad hoc access paths.</span>
+      </article>
+      <article>
+        <strong>Moderated trust signals</strong>
+        <span>Verification and reporting are operational workflows, not decorative badges.</span>
+      </article>
+      <article>
+        <strong>Decision support before contact</strong>
+        <span>Shortlist, compare, collections, and trust context help users decide before they commit.</span>
+      </article>
+      <article>
+        <strong>Clear owner accountability</strong>
+        <span>Owners manage galleries, response states, listing quality, and visibility in one accountable workspace.</span>
+      </article>
+    </div>
+  </section>
+
   <section class="card trust-card section-gap">
-    <strong>Safety checklist</strong>
+    <strong>Practical safety checklist</strong>
     <ul>
-      <li>Never send deposits before confirming identity and viewing conditions.</li>
-      <li>Use shortlist and compare before contacting when you are unsure.</li>
-      <li>Flag listings that look duplicated, misleading, or suspicious.</li>
-      <li>Owners should keep contact details, gallery quality, and listing status current.</li>
+      <li>Do not send deposits before identity, viewing conditions, and listing credibility are clear.</li>
+      <li>Use shortlist and compare before contacting if you are not yet sure which listing is strongest.</li>
+      <li>Report listings that look duplicated, misleading, or suspicious.</li>
+      <li>Owners should keep gallery quality, contact details, and listing status current.</li>
+      <li>Auction inventory should always include terms, timeline, and registration conditions before serious buyer engagement.</li>
     </ul>
+  </section>
+
+  <section class="cta-grid section-gap">
+    <a class="card cta-card" href="/about">
+      <span class="pill">About us</span>
+      <strong>Understand what we are building and why</strong>
+      <p>Read the company view behind the product, the market problem we care about, and the standard we are trying to raise.</p>
+    </a>
+    <a class="card cta-card" href="/why-property-app">
+      <span class="pill">Why us</span>
+      <strong>See what should make this better than the usual portal</strong>
+      <p>Our difference is not just more listings. It is clearer workflows, better decision support, and stronger trust signals.</p>
+    </a>
   </section>
 
   <style is:inline>
     .trust-hero,
-    .trust-card {
+    .trust-card,
+    .protection-band,
+    .cta-card {
       padding: 1.4rem;
     }
-
-    .trust-hero h1 {
-      margin: 0.75rem 0 0;
-      font-size: clamp(2rem, 5vw, 3.4rem);
+    .trust-hero {
+      background:
+        radial-gradient(circle at top left, rgba(14, 165, 233, 0.13), transparent 26rem),
+        linear-gradient(180deg, rgba(255,255,255,0.9), rgba(248,250,252,0.94));
+    }
+    .hero-copy {
+      display: grid;
+      gap: 0.95rem;
+      max-width: 60rem;
+    }
+    .trust-hero h1,
+    .protection-band h2 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.5rem);
       line-height: 0.94;
       letter-spacing: -0.08em;
       max-width: 12ch;
     }
-
     .trust-hero p,
-    .trust-card li {
+    .trust-card li,
+    .protection-band p,
+    .principles-grid span,
+    .cta-card p {
       color: var(--muted);
       line-height: 1.72;
     }
-
-    .trust-grid {
+    .hero-signals {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+    }
+    .hero-signals span {
+      padding: 0.7rem 0.95rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .trust-grid,
+    .cta-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 1rem;
     }
-
     .trust-card ul {
       margin: 0.8rem 0 0;
       padding-left: 1.1rem;
     }
-
+    .protection-band {
+      display: grid;
+      gap: 1rem;
+      background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(248,250,252,0.96));
+    }
+    .principles-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+    .principles-grid article,
+    .cta-card {
+      display: grid;
+      gap: 0.4rem;
+      border-radius: 1.3rem;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      text-decoration: none;
+      color: inherit;
+    }
+    .principles-grid strong,
+    .trust-card strong,
+    .cta-card strong {
+      font-size: 1rem;
+      letter-spacing: -0.03em;
+    }
     @media (max-width: 860px) {
-      .trust-grid {
+      .trust-grid,
+      .principles-grid,
+      .cta-grid {
         grid-template-columns: 1fr;
       }
     }
