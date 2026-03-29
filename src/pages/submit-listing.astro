@@ -11,8 +11,8 @@ const owner = Astro.locals.owner;
       <span class="pill">Owner flow</span>
       <h1 class="section-title">Post a listing</h1>
       <p class="section-copy">
-        Listings are now tied to real owner accounts. Every new listing starts with a 7-day free trial, after which it
-        can be converted into a paid or promoted placement.
+        Build the listing with enough trust, location context, and media intent that a buyer can decide whether it is
+        worth enquiring. Every new listing starts on a 7-day free trial, then can be upgraded into paid or promoted visibility.
       </p>
     </div>
     <div class="actions">
@@ -29,49 +29,78 @@ const owner = Astro.locals.owner;
     </div>
   )}
 
-  <div class="pricing card">
-    <strong>Monetization path</strong>
-    <ul>
-      <li>Free: every listing is visible for 7 days.</li>
-      <li>Paid: keep a listing live after the free-trial window.</li>
-      <li>Promoted: push the listing above standard inventory.</li>
-    </ul>
-  </div>
+  <section class="prep-grid">
+    <div class="pricing card">
+      <strong>Monetization path</strong>
+      <ul>
+        <li>Free: every listing is visible for 7 days.</li>
+        <li>Paid: keep a listing live after the free-trial window.</li>
+        <li>Promoted: push the listing above standard inventory.</li>
+      </ul>
+    </div>
+
+    <div class="pricing card">
+      <strong>What makes a listing perform</strong>
+      <ul>
+        <li>Specific headline and summary, not generic sales language.</li>
+        <li>Real neighborhood context: commute, landmarks, buyer trust signals.</li>
+        <li>Clear ownership identity and realistic response expectations.</li>
+      </ul>
+    </div>
+  </section>
 
   <form class="form-shell card" method="POST" action="/api/listings">
-    <div class="grid two">
-      <label>Listing title<input name="title" required placeholder="Modern 3BR condo in Thu Duc" /></label>
-      <label>Intent<select name="intent"><option value="buy">Buy</option><option value="rent">Rent</option></select></label>
+    <div class="section-block">
+      <div class="section-intro">
+        <strong>1. Core listing details</strong>
+        <p>These fields define the searchable market route, price, and main housing facts.</p>
+      </div>
+
+      <div class="grid two">
+        <label>Listing title<input name="title" required placeholder="Modern 3BR condo in Thu Duc" /></label>
+        <label>Intent<select name="intent"><option value="buy">Buy</option><option value="rent">Rent</option></select></label>
+      </div>
+
+      <div class="grid three">
+        <label>City<input name="city" required placeholder="Ho Chi Minh City" /></label>
+        <label>District<input name="district" required placeholder="Thu Duc City" /></label>
+        <label>Ward<input name="ward" required placeholder="An Khanh" /></label>
+      </div>
+
+      <div class="grid four">
+        <label>Property type<select name="propertyType"><option>Condo</option><option>Villa</option><option>Townhouse</option><option>Apartment</option><option>House</option><option>Land</option></select></label>
+        <label>Price label<input name="priceLabel" required placeholder="9.5B VND" /></label>
+        <label>Numeric price<input name="numericPrice" type="number" min="0" step="0.01" required placeholder="9.5" /></label>
+        <label>Price unit<select name="priceUnit"><option value="VND">VND</option><option value="VND / month">VND / month</option></select></label>
+      </div>
+
+      <div class="grid three">
+        <label>Beds<input name="beds" type="number" min="0" required value="2" /></label>
+        <label>Baths<input name="baths" type="number" min="0" required value="2" /></label>
+        <label>Area (m2)<input name="area" type="number" min="1" required value="90" /></label>
+      </div>
     </div>
 
-    <div class="grid three">
-      <label>City<input name="city" required placeholder="Ho Chi Minh City" /></label>
-      <label>District<input name="district" required placeholder="Thu Duc City" /></label>
-      <label>Ward<input name="ward" required placeholder="An Khanh" /></label>
+    <div class="section-block">
+      <div class="section-intro">
+        <strong>2. Position the listing</strong>
+        <p>Write this as if a buyer is deciding whether to open the detail page, save it, or enquire.</p>
+      </div>
+      <div class="grid three">
+        <label>Status label<input name="statusLabel" placeholder="Signature listing, New release, Move-in ready" /></label>
+        <label>Visual tone<select name="tone"><option value="sea">Sea</option><option value="sun">Sun</option><option value="forest">Forest</option><option value="night">Night</option><option value="clay">Clay</option><option value="sky">Sky</option></select></label>
+        <label>Tags<input name="tags" placeholder="River-facing, School-run ready, Investor-safe" /></label>
+      </div>
+      <label>Short summary<textarea name="summary" rows="3" required placeholder="High-floor condo with clean finish quality, direct bridge access into the core, and a layout that feels stronger than typical investor stock."></textarea></label>
+      <label>Full description<textarea name="description" rows="6" required placeholder="Describe the home, location, condition, buyer fit, and why it stands out against nearby alternatives."></textarea></label>
+      <label>Included features<input name="features" placeholder="Private garden, Home office, Pool deck, Covered parking" /></label>
     </div>
 
-    <div class="grid four">
-      <label>Property type<select name="propertyType"><option>Condo</option><option>Villa</option><option>Townhouse</option><option>Apartment</option><option>House</option><option>Land</option></select></label>
-      <label>Price label<input name="priceLabel" required placeholder="9.5B VND" /></label>
-      <label>Numeric price<input name="numericPrice" type="number" min="0" step="0.01" required placeholder="9.5" /></label>
-      <label>Price unit<select name="priceUnit"><option value="VND">VND</option><option value="VND / month">VND / month</option></select></label>
-    </div>
-
-    <div class="grid three">
-      <label>Beds<input name="beds" type="number" min="0" required value="2" /></label>
-      <label>Baths<input name="baths" type="number" min="0" required value="2" /></label>
-      <label>Area (m2)<input name="area" type="number" min="1" required value="90" /></label>
-    </div>
-
-    <label>Short summary<textarea name="summary" rows="3" required placeholder="High-floor condo with strong owner response and easy metro access."></textarea></label>
-    <label>Full description<textarea name="description" rows="6" required placeholder="Describe the home, location, condition, and why it stands out."></textarea></label>
-
-    <div class="location-context card-inset">
-      <strong>Location context</strong>
-      <p>
-        This matters more than generic marketing copy. Add the commute, landmarks, and neighborhood cues a buyer would
-        actually use to decide whether to enquire.
-      </p>
+    <div class="section-block card-inset">
+      <div class="section-intro">
+        <strong>3. Location and trust context</strong>
+        <p>This matters more than generic marketing copy. Add the commute, landmarks, and buyer signals people actually use to decide whether to enquire.</p>
+      </div>
       <label>Neighborhood headline<textarea name="neighborhoodHeadline" rows="3" placeholder="A calmer family pocket in Thu Duc with strong access to international schools and riverfront services."></textarea></label>
       <label>Commute and access<textarea name="commuteNotes" rows="3" placeholder="About 15 to 20 minutes to Thu Thiem, 25 minutes to District 1 outside peak traffic."></textarea></label>
       <div class="grid two">
@@ -85,13 +114,27 @@ const owner = Astro.locals.owner;
       </div>
     </div>
 
-    <div class="grid three">
-      <label>Owner name<input name="ownerName" required placeholder="Nguyen Anh" value={owner?.full_name ?? ""} /></label>
-      <label>Owner email<input name="ownerEmail" type="email" required placeholder="owner@example.com" value={owner?.email ?? ""} /></label>
-      <label>Owner phone<input name="ownerPhone" required placeholder="+84 ..." value={owner?.phone ?? ""} /></label>
+    <div class="section-block">
+      <div class="section-intro">
+        <strong>4. Contact identity</strong>
+        <p>Buyers need to know who they are contacting and how quickly they should expect a reply.</p>
+      </div>
+      <div class="grid four">
+        <label>Owner name<input name="ownerName" required placeholder="Nguyen Anh" value={owner?.full_name ?? ""} /></label>
+        <label>Owner email<input name="ownerEmail" type="email" required placeholder="owner@example.com" value={owner?.email ?? ""} /></label>
+        <label>Owner phone<input name="ownerPhone" required placeholder="+84 ..." value={owner?.phone ?? ""} /></label>
+        <label>Contact role<input name="ownerRole" placeholder="Owner, Developer team, Exclusive seller" /></label>
+      </div>
+      <div class="grid two">
+        <label>Expected response time<input name="ownerResponseTime" placeholder="~15 minutes" /></label>
+        <label class="check-field"><input type="checkbox" name="ownerVerified" /> <span>Show as verified contact</span></label>
+      </div>
     </div>
 
-    <button type="submit">Publish listing</button>
+    <div class="submit-row">
+      <p class="submit-copy">After publishing, add photos from the owner dashboard to complete the card and detail page presentation.</p>
+      <button type="submit">Publish listing</button>
+    </div>
   </form>
 
   <style is:inline>
@@ -100,6 +143,12 @@ const owner = Astro.locals.owner;
     .notice,
     .pricing {
       padding: 1.4rem;
+      margin-bottom: 1rem;
+    }
+    .prep-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
       margin-bottom: 1rem;
     }
     .pricing ul {
@@ -136,6 +185,28 @@ const owner = Astro.locals.owner;
     .form-shell {
       display: grid;
       gap: 1rem;
+    }
+    .section-block {
+      display: grid;
+      gap: 1rem;
+      padding: 1.15rem;
+      border-radius: 1.6rem;
+      background: rgba(255,255,255,0.55);
+      border: 1px solid var(--line);
+    }
+    .section-intro {
+      display: grid;
+      gap: 0.3rem;
+    }
+    .section-intro strong {
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+    }
+    .section-intro p,
+    .submit-copy {
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 0;
     }
     .grid {
       display: grid;
@@ -176,6 +247,24 @@ const owner = Astro.locals.owner;
       background: rgba(255,255,255,0.8);
       font: inherit;
     }
+    .check-field {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      min-height: 100%;
+      padding-top: 1.95rem;
+    }
+    .check-field input {
+      width: auto;
+      margin: 0;
+    }
+    .submit-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
     button {
       border: none;
       background: linear-gradient(135deg, var(--accent), var(--accent-strong));
@@ -184,7 +273,8 @@ const owner = Astro.locals.owner;
     }
     code { font-family: monospace; }
     @media (max-width: 960px) {
-      .grid.two, .grid.three, .grid.four, .page-head { grid-template-columns: 1fr; display:grid; }
+      .prep-grid, .grid.two, .grid.three, .grid.four, .page-head, .submit-row { grid-template-columns: 1fr; display:grid; }
+      .check-field { padding-top: 0; }
     }
   </style>
 </Layout>

@@ -73,8 +73,12 @@ export interface ListingInput {
   beds: number;
   baths: number;
   area: number;
+  statusLabel?: string;
+  tone?: string;
   summary: string;
   description: string;
+  tags?: string[];
+  features?: string[];
   neighborhoodHeadline?: string;
   commuteNotes?: string;
   nearbyPlaces?: string[];
@@ -85,6 +89,9 @@ export interface ListingInput {
   ownerName: string;
   ownerEmail: string;
   ownerPhone: string;
+  ownerRole?: string;
+  ownerResponseTime?: string;
+  ownerVerified?: number;
   ownerUserId?: number | null;
 }
 

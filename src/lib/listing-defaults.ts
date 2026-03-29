@@ -1,11 +1,11 @@
 export function buildInitialListingPresentation(intent: string) {
   return {
-    status: "Owner submitted",
+    status: intent === "rent" ? "Move-in ready" : "New to market",
     tone: "sea",
-    tags: ["Owner submitted", intent === "rent" ? "Rent" : "For sale"],
-    features: ["Photos pending", "Direct owner contact", "Dashboard managed", "7-day free trial"],
+    tags: [intent === "rent" ? "Rental listing" : "For sale", "Direct owner listing"],
+    features: ["Direct owner contact", "Dashboard managed", "7-day free trial"],
     ownerRole: "Owner",
-    ownerResponseTime: "~30 minutes",
+    ownerResponseTime: "~20 minutes",
     ownerVerified: 0,
   };
 }

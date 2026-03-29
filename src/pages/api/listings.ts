@@ -34,8 +34,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
       beds: readNumber(form, "beds", { required: true, min: 0, max: 99 }) ?? 0,
       baths: readNumber(form, "baths", { required: true, min: 0, max: 99 }) ?? 0,
       area: readNumber(form, "area", { required: true, min: 0 }) ?? 0,
+      statusLabel: readOptionalText(form, "statusLabel", { maxLength: 120 }),
+      tone: readEnum(form, "tone", ["sea", "sun", "forest", "night", "clay", "sky"], "sea"),
       summary: readText(form, "summary", { required: true, maxLength: 400 }),
       description: readText(form, "description", { required: true, maxLength: 5000 }),
+      tags: parseCommaSeparatedList(form.get("tags")),
+      features: parseCommaSeparatedList(form.get("features")),
       neighborhoodHeadline: readOptionalText(form, "neighborhoodHeadline", { maxLength: 400 }),
       commuteNotes: readOptionalText(form, "commuteNotes", { maxLength: 400 }),
       nearbyPlaces: parseCommaSeparatedList(form.get("nearbyPlaces")),
@@ -46,6 +50,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
       ownerName: readText(form, "ownerName", { required: true, maxLength: 120 }),
       ownerEmail: readText(form, "ownerEmail", { required: true, maxLength: 160 }),
       ownerPhone: readText(form, "ownerPhone", { required: true, maxLength: 60 }),
+      ownerRole: readOptionalText(form, "ownerRole", { maxLength: 80 }),
+      ownerResponseTime: readOptionalText(form, "ownerResponseTime", { maxLength: 80 }),
+      ownerVerified: form.get("ownerVerified") ? 1 : 0,
       ownerUserId: locals.owner.id,
     });
 

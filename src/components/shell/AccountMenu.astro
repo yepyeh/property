@@ -30,6 +30,17 @@ const { viewerLabel, viewerRoleLabel, viewerInitials, accountMenu } = Astro.prop
       <small>{viewerRoleLabel}</small>
     </div>
 
+    <div class="account-quick-grid">
+      <div>
+        <strong>Account</strong>
+        <span>{viewerRoleLabel}</span>
+      </div>
+      <div>
+        <strong>Navigation</strong>
+        <span>Shortcuts and settings</span>
+      </div>
+    </div>
+
     {accountMenu.map((item) => (
       <a class:list={["account-item", item.active && "active"]} href={item.href}>
         <span class="account-icon" aria-hidden="true">

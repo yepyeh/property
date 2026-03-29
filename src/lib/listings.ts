@@ -310,6 +310,13 @@ export async function createListing(db: D1Like, input: ListingInput) {
   const baseSlug = slugify(`${input.title}-${input.city}-${input.district}`);
   const slug = await ensureUniqueListingSlug(db, baseSlug || `listing-${Date.now()}`);
   const presentation = buildInitialListingPresentation(input.intent);
+  const status = input.statusLabel?.trim() || presentation.status;
+  const tone = input.tone?.trim() || presentation.tone;
+  const tags = input.tags?.length ? input.tags : presentation.tags;
+  const features = input.features?.length ? input.features : presentation.features;
+  const ownerRole = input.ownerRole?.trim() || presentation.ownerRole;
+  const ownerResponseTime = input.ownerResponseTime?.trim() || presentation.ownerResponseTime;
+  const ownerVerified = input.ownerVerified ? 1 : presentation.ownerVerified;
 
   await db
     .prepare(
@@ -339,12 +346,12 @@ export async function createListing(db: D1Like, input: ListingInput) {
       input.beds,
       input.baths,
       input.area,
-      presentation.status,
-      presentation.tone,
+      status,
+      tone,
       input.summary,
       input.description,
-      JSON.stringify(presentation.tags),
-      JSON.stringify(presentation.features),
+      JSON.stringify(tags),
+      JSON.stringify(features),
       JSON.stringify([]),
       input.neighborhoodHeadline?.trim() || null,
       input.commuteNotes?.trim() || null,
@@ -358,9 +365,9 @@ export async function createListing(db: D1Like, input: ListingInput) {
       input.ownerName,
       input.ownerEmail,
       input.ownerPhone,
-      presentation.ownerRole,
-      presentation.ownerResponseTime,
-      presentation.ownerVerified,
+      ownerRole,
+      ownerResponseTime,
+      ownerVerified,
       0,
       0,
       0

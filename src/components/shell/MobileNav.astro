@@ -10,10 +10,20 @@ const { pathname, viewer, unreadCount, dashboardHref } = Astro.props;
 ---
 
 <nav class="mobile-utility" aria-label="Mobile navigation">
-  <a class:list={[pathname.startsWith("/listings") || pathname === "/" ? "active" : ""]} href="/listings/?intent=buy">Search</a>
-  <a class:list={[pathname.startsWith("/account/inbox") ? "active" : ""]} href={viewer ? "/account/inbox" : "/login"}>
-    {viewer && unreadCount > 0 ? `Inbox (${unreadCount > 9 ? "9+" : unreadCount})` : "Inbox"}
+  <a class:list={["mobile-link", pathname.startsWith("/listings") || pathname === "/" ? "active" : ""]} href="/listings/?intent=buy">
+    <span class="mobile-icon" aria-hidden="true">⌕</span>
+    <span>Search</span>
   </a>
-  <a class:list={[pathname.startsWith("/account/notifications") ? "active" : ""]} href={viewer ? "/account/notifications" : "/login"}>Settings</a>
-  <a class:list={[pathname.startsWith("/buyer/") || pathname.startsWith("/owner/") || pathname.startsWith("/admin/") ? "active" : ""]} href={viewer ? dashboardHref : "/login"}>{viewer ? "Account" : "Sign in"}</a>
+  <a class:list={[pathname.startsWith("/account/inbox") ? "active" : ""]} href={viewer ? "/account/inbox" : "/login"}>
+    <span class="mobile-icon" aria-hidden="true">◔</span>
+    <span>{viewer && unreadCount > 0 ? `Inbox (${unreadCount > 9 ? "9+" : unreadCount})` : "Inbox"}</span>
+  </a>
+  <a class:list={["mobile-link", pathname.startsWith("/account/notifications") ? "active" : ""]} href={viewer ? "/account/notifications" : "/login"}>
+    <span class="mobile-icon" aria-hidden="true">⚙</span>
+    <span>Settings</span>
+  </a>
+  <a class:list={["mobile-link", pathname.startsWith("/buyer/") || pathname.startsWith("/owner/") || pathname.startsWith("/admin/") ? "active" : ""]} href={viewer ? dashboardHref : "/login"}>
+    <span class="mobile-icon" aria-hidden="true">{viewer ? "◉" : "→"}</span>
+    <span>{viewer ? "Account" : "Sign in"}</span>
+  </a>
 </nav>
