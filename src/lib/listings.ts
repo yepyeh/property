@@ -9,6 +9,7 @@ import {
 import { buildInitialListingPresentation } from "./listing-defaults";
 import { normalizeExpiredListingPlans } from "./listing-lifecycle";
 import type {
+  AuctionWatchRecord,
   EnquiryInput,
   ListingFilters,
   ListingInput,
@@ -848,4 +849,105 @@ export async function getSavedListingRecords(db: D1Like, userId: number) {
       listing: await getListingBySlug(savedListing.listing_slug, db),
     }))
   );
+}
+
+export async function getAuctionWatchRecord(db: D1Like | undefined, userId: number | undefined, listingSlug: string) {
+  if (!db || !userId || !listingSlug) return null;
+
+  return db
+    .prepare(
+      `SELECT id, listing_slug, max_bid_amount, notify_outbid, notify_over_max_bid, notify_unsold_under,
+              notify_starting_soon, notify_ending_soon, created_at, updated_at
+       FROM auction_watchers
+       WHERE user_id = ?
+         AND listing_slug = ?
+       LIMIT 1`
+    )
+    .bind(userId, listingSlug)
+    .first<AuctionWatchRecord>();
+}
+
+export async function getAuctionWatchRecords(db: D1Like, userId: number) {
+  const result = await db
+    .prepare(
+      `SELECT id, listing_slug, max_bid_amount, notify_outbid, notify_over_max_bid, notify_unsold_under,
+              notify_starting_soon, notify_ending_soon, created_at, updated_at
+       FROM auction_watchers
+       WHERE user_id = ?
+       ORDER BY updated_at DESC, created_at DESC`
+    )
+    .bind(userId)
+    .all<AuctionWatchRecord>();
+
+  return Promise.all(
+    result.results.map(async (watch) => ({
+      ...watch,
+      listing: await getListingBySlug(watch.listing_slug, db),
+    }))
+  );
+}
+
+export async function saveAuctionWatchForBuyer(
+  db: D1Like,
+  userId: number,
+  input: {
+    listingSlug: string;
+    maxBidAmount?: number | null;
+    notifyOutbid: boolean;
+    notifyOverMaxBid: boolean;
+    notifyUnsoldUnder?: number | null;
+    notifyStartingSoon: boolean;
+    notifyEndingSoon: boolean;
+  }
+) {
+  await db
+    .prepare(
+      `INSERT INTO auction_watchers (
+         user_id, listing_slug, max_bid_amount, notify_outbid, notify_over_max_bid, notify_unsold_under,
+         notify_starting_soon, notify_ending_soon, updated_at
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+       ON CONFLICT(user_id, listing_slug) DO UPDATE SET
+         max_bid_amount = excluded.max_bid_amount,
+         notify_outbid = excluded.notify_outbid,
+         notify_over_max_bid = excluded.notify_over_max_bid,
+         notify_unsold_under = excluded.notify_unsold_under,
+         notify_starting_soon = excluded.notify_starting_soon,
+         notify_ending_soon = excluded.notify_ending_soon,
+         updated_at = CURRENT_TIMESTAMP`
+    )
+    .bind(
+      userId,
+      input.listingSlug,
+      input.maxBidAmount ?? null,
+      input.notifyOutbid ? 1 : 0,
+      input.notifyOverMaxBid ? 1 : 0,
+      input.notifyUnsoldUnder ?? null,
+      input.notifyStartingSoon ? 1 : 0,
+      input.notifyEndingSoon ? 1 : 0
+    )
+    .run();
+
+  const listing = await getListingBySlug(input.listingSlug, db);
+  if (listing) {
+    await upsertInboxNotification(db, {
+      eventKey: buildInboxEventKey(["auction-watch", userId, input.listingSlug]),
+      userId,
+      category: "saved_listing_updates",
+      title: "Auction watch updated",
+      message: `${listing.title} is now on your auction watchlist with refined alerts.`,
+      href: `/listings/${input.listingSlug}/`,
+      level: "info",
+    });
+  }
+
+  return { ok: true as const };
+}
+
+export async function removeAuctionWatchForBuyer(db: D1Like, userId: number, listingSlug: string) {
+  await db
+    .prepare(`DELETE FROM auction_watchers WHERE user_id = ? AND listing_slug = ?`)
+    .bind(userId, listingSlug)
+    .run();
+
+  return { ok: true as const };
 }

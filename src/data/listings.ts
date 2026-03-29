@@ -81,6 +81,41 @@ export function getAuctionPhase(auction?: Listing["auction"]) {
   return "ended" as const;
 }
 
+function formatRelativeCountdown(targetTime: number, now = Date.now()) {
+  const diffMs = Math.max(0, targetTime - now);
+  const diffHours = Math.ceil(diffMs / (1000 * 60 * 60));
+
+  if (diffHours < 24) {
+    return `${diffHours} hour${diffHours === 1 ? "" : "s"}`;
+  }
+
+  const diffDays = Math.ceil(diffHours / 24);
+  return `${diffDays} day${diffDays === 1 ? "" : "s"}`;
+}
+
+export function getAuctionTimingLabel(auction?: Listing["auction"]) {
+  if (!auction) return null;
+
+  const now = Date.now();
+  const startsAt = auction.startsAt ? new Date(auction.startsAt).getTime() : null;
+  const endsAt = auction.endsAt ? new Date(auction.endsAt).getTime() : null;
+  const phase = getAuctionPhase(auction);
+
+  if (phase === "ended") {
+    return "Auction ended";
+  }
+
+  if (phase === "scheduled" && startsAt) {
+    return `Auction starts in ${formatRelativeCountdown(startsAt, now)}`;
+  }
+
+  if (phase === "live" && endsAt) {
+    return `Auction ends in ${formatRelativeCountdown(endsAt, now)}`;
+  }
+
+  return phase === "live" ? "Auction live" : "Auction scheduled";
+}
+
 export const listings: Listing[] = generatedSeaListings as Listing[];
 
 export function getListingBySlug(slug: string) {

@@ -13,10 +13,12 @@ if (!owner || (owner.role !== "buyer" && owner.role !== "admin")) {
   return Astro.redirect("/login");
 }
 
-const { savedSearches, savedListings, enquiries, recentlyViewed, inboxNotifications, unreadNotificationCount } = await getBuyerDashboardData(owner.id, getDB(Astro.locals.runtime));
+const { savedSearches, savedListings, enquiries, recentlyViewed, watchedAuctions, inboxNotifications, unreadNotificationCount } = await getBuyerDashboardData(owner.id, getDB(Astro.locals.runtime));
 const savedSearchDeleted = Astro.url.searchParams.get("savedSearchDeleted");
 const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
 const savedListingUpdated = Astro.url.searchParams.get("savedListingUpdated");
+const auctionWatchUpdated = Astro.url.searchParams.get("auctionWatchUpdated");
+const auctionWatchRemoved = Astro.url.searchParams.get("auctionWatchRemoved");
 const finalistCount = savedListings.filter((listing) => listing.buyer_state === "finalist").length;
 const collectionGroups = Array.from(
   savedListings.reduce((map, savedListing) => {
@@ -48,6 +50,8 @@ const enquiryStatusCounts = {
   {savedSearchDeleted && <FlashBanner message="Saved search deleted." />}
   {savedListingDeleted && <FlashBanner message="Saved listing removed." />}
   {savedListingUpdated && <FlashBanner message="Shortlist state updated." />}
+  {auctionWatchUpdated && <FlashBanner message="Auction watch updated." />}
+  {auctionWatchRemoved && <FlashBanner message="Auction watch removed." />}
 
   <WorkspaceStats
     items={[
@@ -55,6 +59,7 @@ const enquiryStatusCounts = {
       { label: "Favorites", value: savedListings.length, copy: "Saved listings" },
       { label: "Finalists", value: finalistCount, copy: "Decision-ready homes" },
       { label: "Enquiries", value: enquiries.length, copy: "Sent enquiries" },
+      { label: "Watching", value: watchedAuctions.length, copy: "Auction alerts" },
       { label: "Recent", value: recentlyViewed.length, copy: "Recently viewed" },
       { label: "Inbox", value: unreadNotificationCount, copy: "Unread notifications" },
     ]}
@@ -194,6 +199,38 @@ const enquiryStatusCounts = {
         </ul>
       )}
     </article>
+  </section>
+
+  <section class="card panel section-gap">
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">Auction watchlist</p>
+        <h2>Watched auctions</h2>
+        <p class="panel-copy">Use this when timing matters. Watch auctions before bidding starts, keep your maximum in view, and let the system tell you when the window is changing.</p>
+      </div>
+    </div>
+    {watchedAuctions.length === 0 ? <p class="empty-copy">No watched auctions yet. Open an auction listing and set your alert preferences.</p> : (
+      <ul class="stack-list compact-list">
+        {watchedAuctions.map((watch) => (
+          <li class="list-item">
+            <strong>{watch.listing?.title ?? watch.listing_slug}</strong>
+            <p>{watch.listing?.priceLabel ?? "Price unavailable"} · {watch.listing?.district ?? "Unknown district"} · {watch.listing?.city ?? "Unknown city"}</p>
+            <div class="meta-row">
+              {watch.max_bid_amount && <span>Max bid {watch.max_bid_amount}</span>}
+              {watch.notify_unsold_under && <span>Unsold below {watch.notify_unsold_under}</span>}
+              <span>{watch.notify_outbid ? "Outbid alerts on" : "Outbid alerts off"}</span>
+            </div>
+            <div class="meta-row">
+              <span>{watch.notify_starting_soon ? "Start alerts on" : "Start alerts off"}</span>
+              <span>{watch.notify_ending_soon ? "Ending-soon alerts on" : "Ending-soon alerts off"}</span>
+            </div>
+            <div class="action-row">
+              <a class="button-secondary" href={`/listings/${watch.listing_slug}/`}>Open auction</a>
+            </div>
+          </li>
+        ))}
+      </ul>
+    )}
   </section>
 
   <section class="card panel section-gap">

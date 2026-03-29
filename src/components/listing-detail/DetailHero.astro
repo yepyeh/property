@@ -1,5 +1,5 @@
 ---
-import type { Listing } from "../../data/listings";
+import { getAuctionTimingLabel, type Listing } from "../../data/listings";
 
 export interface Props {
   listing: Listing;
@@ -15,6 +15,7 @@ const { listing, intentLabel, ownerTrustLabel, isBuyer, isSaved, savedListing, t
 const heroImage = listing.imageUrls?.[0];
 const galleryImages = listing.imageUrls || [];
 const isAuction = listing.saleMode === "auction";
+const auctionTimingLabel = isAuction ? getAuctionTimingLabel(listing.auction) : null;
 ---
 
 <section class="detail-hero card">
@@ -51,7 +52,7 @@ const isAuction = listing.saleMode === "auction";
       <div class="auction-summary">
         <span>{listing.auction.phase === "live" ? t("Bidding is live") : listing.auction.phase === "ended" ? t("Auction closed") : t("Auction scheduled")}</span>
         {listing.auction.startingPriceLabel && <span>{t("Opening bid")} {listing.auction.startingPriceLabel}</span>}
-        {listing.auction.endsAt && <span>{t("Ends")} {listing.auction.endsAt}</span>}
+        {auctionTimingLabel && <span>{t(auctionTimingLabel)}</span>}
       </div>
     )}
     <p class="summary">{listing.summary}</p>

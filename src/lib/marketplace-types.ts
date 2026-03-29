@@ -194,6 +194,20 @@ export interface SavedListingRecord {
   listing?: Listing | null;
 }
 
+export interface AuctionWatchRecord {
+  id: number;
+  listing_slug: string;
+  max_bid_amount?: number | null;
+  notify_outbid: number;
+  notify_over_max_bid: number;
+  notify_unsold_under?: number | null;
+  notify_starting_soon: number;
+  notify_ending_soon: number;
+  created_at: string;
+  updated_at?: string;
+  listing?: Listing | null;
+}
+
 export interface ExpiryEmailDeliveryRecord {
   event_key: string;
   owner_email: string;

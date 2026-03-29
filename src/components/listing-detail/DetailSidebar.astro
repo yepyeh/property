@@ -1,6 +1,7 @@
 ---
 import { estimateMonthlyPayment, formatVndAmount } from "../../lib/affordability";
 import type { Listing } from "../../data/listings";
+import type { AuctionWatchRecord } from "../../lib/marketplace-types";
 
 export interface Props {
   listing: Listing;
@@ -9,10 +10,24 @@ export interface Props {
   isBuyer?: boolean;
   reportSent?: boolean;
   protectedFlow?: boolean;
+  auctionWatch?: AuctionWatchRecord | null;
+  auctionWatchUpdated?: boolean;
+  auctionWatchRemoved?: boolean;
   t?: (value: string) => string;
 }
 
-const { listing, ownerTrustLabel, enquirySent, isBuyer = false, reportSent = false, protectedFlow = false, t = (value: string) => value } = Astro.props;
+const {
+  listing,
+  ownerTrustLabel,
+  enquirySent,
+  isBuyer = false,
+  reportSent = false,
+  protectedFlow = false,
+  auctionWatch = null,
+  auctionWatchUpdated = false,
+  auctionWatchRemoved = false,
+  t = (value: string) => value,
+} = Astro.props;
 const defaultDownPayment = 20;
 const defaultRate = 7.5;
 const defaultYears = 20;
@@ -30,6 +45,8 @@ const defaultMonthlyEstimate = formatVndAmount(
     </p>
     {enquirySent && <p class="success-banner">{t("Enquiry sent successfully. The owner can now see it in the dashboard.")}</p>}
     {protectedFlow && <p class="info-banner">{t("Your enquiry stays inside the platform flow first. That gives both sides a cleaner history and a safer follow-up path.")}</p>}
+    {auctionWatchUpdated && <p class="success-banner">{t("Auction watch updated. You will now get the alerts you asked for on this listing.")}</p>}
+    {auctionWatchRemoved && <p class="info-banner">{t("Auction watch removed. This listing is no longer being tracked for your auction alerts.")}</p>}
 
     <div class="owner-card">
       <strong>{listing.owner.name}</strong>
@@ -57,7 +74,57 @@ const defaultMonthlyEstimate = formatVndAmount(
     )}
 
     {isBuyer && <a class="button-secondary full-width" href="/buyer/compare/">{t("Compare against saved homes")}</a>}
-    {listing.saleMode === "auction" && <a class="button-secondary full-width" href="#enquiry-panel">{t("Register auction interest")}</a>}
+
+    {listing.saleMode === "auction" && (
+      <section class="auction-watch-panel">
+        <div class="watch-head">
+          <strong>{t("Watch auction")}</strong>
+          <span>{auctionWatch ? t("Watching with refined alerts") : t("Save alert rules before bidding starts")}</span>
+        </div>
+        {isBuyer ? (
+          <>
+            <form class="auction-watch-form" method="POST" action="/api/account/auction-watch">
+              <input type="hidden" name="listingSlug" value={listing.slug} />
+              <input type="hidden" name="redirectTo" value={`/listings/${listing.slug}/`} />
+              <label>
+                <span>{t("My maximum bid")}</span>
+                <input type="number" min="0" step="0.01" name="maxBidAmount" value={auctionWatch?.max_bid_amount ?? ""} placeholder={t("Optional bidding ceiling")} />
+              </label>
+              <label>
+                <span>{t("Notify me if this does not sell below")}</span>
+                <input type="number" min="0" step="0.01" name="notifyUnsoldUnder" value={auctionWatch?.notify_unsold_under ?? ""} placeholder={t("Optional fallback price")} />
+              </label>
+              <label class="check-row">
+                <input type="checkbox" name="notifyOutbid" checked={auctionWatch ? Boolean(auctionWatch.notify_outbid) : true} />
+                <span>{t("Notify me if someone beats my bid")}</span>
+              </label>
+              <label class="check-row">
+                <input type="checkbox" name="notifyOverMaxBid" checked={auctionWatch ? Boolean(auctionWatch.notify_over_max_bid) : true} />
+                <span>{t("Notify me if the auction goes over my maximum bid")}</span>
+              </label>
+              <label class="check-row">
+                <input type="checkbox" name="notifyStartingSoon" checked={auctionWatch ? Boolean(auctionWatch.notify_starting_soon) : true} />
+                <span>{t("Notify me before bidding starts")}</span>
+              </label>
+              <label class="check-row">
+                <input type="checkbox" name="notifyEndingSoon" checked={auctionWatch ? Boolean(auctionWatch.notify_ending_soon) : true} />
+                <span>{t("Notify me when the auction is ending soon")}</span>
+              </label>
+              <button type="submit" class="button-secondary full-width">{auctionWatch ? t("Update auction alerts") : t("Watch this auction")}</button>
+            </form>
+            {auctionWatch && (
+              <form method="POST" action="/api/account/auction-watch/delete">
+                <input type="hidden" name="listingSlug" value={listing.slug} />
+                <input type="hidden" name="redirectTo" value={`/listings/${listing.slug}/`} />
+                <button type="submit" class="button-tertiary full-width">{t("Stop watching this auction")}</button>
+              </form>
+            )}
+          </>
+        ) : (
+          <a class="button-secondary full-width" href={`/login?redirect=${encodeURIComponent(`/listings/${listing.slug}/`)}`}>{t("Sign in to watch this auction")}</a>
+        )}
+      </section>
+    )}
 
     <form class="enquiry-form" method="POST" action="/api/enquiries">
       <input type="hidden" name="listingSlug" value={listing.slug} />
@@ -307,6 +374,49 @@ const defaultMonthlyEstimate = formatVndAmount(
     border-radius: 18px;
     background: rgba(15, 23, 42, 0.05);
     border: 1px solid var(--line);
+  }
+
+  .auction-watch-panel {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 20px;
+    background: rgba(15, 23, 42, 0.05);
+    border: 1px solid var(--line);
+  }
+
+  .watch-head {
+    display: grid;
+    gap: 0.2rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .watch-head strong {
+    font-size: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .watch-head span {
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .auction-watch-form {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .check-row {
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    padding: 0.8rem 0.9rem;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.72);
+    border: 1px solid var(--line);
+  }
+
+  .check-row input {
+    margin-top: 0.15rem;
   }
 
   .buyer-guide p {

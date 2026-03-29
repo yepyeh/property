@@ -1,5 +1,5 @@
 ---
-import type { Listing } from "../data/listings";
+import { getAuctionTimingLabel, type Listing } from "../data/listings";
 
 export interface Props {
   listing: Listing;
@@ -14,6 +14,7 @@ const neighborhood = listing.neighborhood;
 const imageCount = listing.imageUrls?.length || 0;
 const isAuction = listing.saleMode === "auction";
 const auctionLabel = listing.auction?.phase === "live" ? t("Live auction") : listing.auction?.phase === "ended" ? t("Auction ended") : t("Auction");
+const auctionTimingLabel = isAuction ? getAuctionTimingLabel(listing.auction) : null;
 ---
 
 <article class={`listing-card card ${listing.tone}`}>
@@ -57,7 +58,7 @@ const auctionLabel = listing.auction?.phase === "live" ? t("Live auction") : lis
     {isAuction && listing.auction && (
       <div class="auction-strip">
         <strong>{listing.auction.startingPriceLabel || listing.priceLabel}</strong>
-        {listing.auction.endsAt && <span>{t("Ends")} {listing.auction.endsAt}</span>}
+        {auctionTimingLabel && <span>{t(auctionTimingLabel)}</span>}
       </div>
     )}
     {neighborhood && (

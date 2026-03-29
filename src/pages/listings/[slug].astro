@@ -4,7 +4,7 @@ import DetailHero from "../../components/listing-detail/DetailHero.astro";
 import DetailContent from "../../components/listing-detail/DetailContent.astro";
 import DetailSidebar from "../../components/listing-detail/DetailSidebar.astro";
 import SimilarListingsSection from "../../components/listing-detail/SimilarListingsSection.astro";
-import { getAllListings, getListingBySlug, isListingSavedByUser, recordRecentlyViewedListing } from "../../lib/listings";
+import { getAllListings, getAuctionWatchRecord, getListingBySlug, isListingSavedByUser, recordRecentlyViewedListing } from "../../lib/listings";
 import { getDB } from "../../lib/runtime";
 
 const t = Astro.locals.t || ((value: string) => value);
@@ -16,6 +16,8 @@ const enquirySent = Astro.url.searchParams.get("enquiry") === "sent";
 const savedListing = Astro.url.searchParams.get("savedListing") === "1";
 const reportSent = Astro.url.searchParams.get("report") === "sent";
 const protectedFlow = Astro.url.searchParams.get("protected") === "1";
+const auctionWatchUpdated = Astro.url.searchParams.get("auctionWatchUpdated") === "1";
+const auctionWatchRemoved = Astro.url.searchParams.get("auctionWatchRemoved") === "1";
 const isBuyer = viewer?.role === "buyer" || viewer?.role === "admin";
 const isSaved = listing ? await isListingSavedByUser(db, viewer?.id, listing.slug) : false;
 
@@ -47,6 +49,7 @@ const mapHref = location
 const mapEmbedHref = location
   ? `https://www.openstreetmap.org/export/embed.html?bbox=${location.lng - 0.01}%2C${location.lat - 0.01}%2C${location.lng + 0.01}%2C${location.lat + 0.01}&layer=mapnik&marker=${location.lat}%2C${location.lng}`
   : undefined;
+const auctionWatch = listing.saleMode === "auction" ? await getAuctionWatchRecord(db, viewer?.id, listing.slug) : null;
 ---
 
 <Layout title={`${listing.title} | Property App 2026`} description={listing.summary}>
@@ -62,7 +65,18 @@ const mapEmbedHref = location
 
   <section class="detail-grid">
     <DetailContent listing={listing} mapHref={mapHref} mapEmbedHref={mapEmbedHref} t={t} />
-    <DetailSidebar listing={listing} ownerTrustLabel={ownerTrustLabel} enquirySent={enquirySent} isBuyer={isBuyer} reportSent={reportSent} protectedFlow={protectedFlow} t={t} />
+    <DetailSidebar
+      listing={listing}
+      ownerTrustLabel={ownerTrustLabel}
+      enquirySent={enquirySent}
+      isBuyer={isBuyer}
+      reportSent={reportSent}
+      protectedFlow={protectedFlow}
+      auctionWatch={auctionWatch}
+      auctionWatchUpdated={auctionWatchUpdated}
+      auctionWatchRemoved={auctionWatchRemoved}
+      t={t}
+    />
   </section>
 
   <SimilarListingsSection similarListings={similarListings} t={t} />
