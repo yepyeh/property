@@ -27,9 +27,12 @@ const { entryPaths } = Astro.props;
   </div>
 
   <div class="path-grid">
-    {entryPaths.map((path) => (
+    {entryPaths.map((path, index) => (
       <article class="path-card card">
-        <span class="mini-kicker">{path.kicker}</span>
+        <div class="path-head">
+          <span class="mini-kicker">{path.kicker}</span>
+          <span class="path-index">0{index + 1}</span>
+        </div>
         <h3>{path.title}</h3>
         <p>{path.body}</p>
         <div class="path-actions">
@@ -43,27 +46,28 @@ const { entryPaths } = Astro.props;
 
 <style>
   .path-section {
-    margin-top: 2.35rem;
+    margin-top: 2.75rem;
   }
 
   .section-heading {
-    max-width: 46rem;
-    margin-bottom: 1.15rem;
+    max-width: 48rem;
+    margin-bottom: 1.2rem;
   }
 
   .section-heading.narrow {
-    max-width: 44rem;
+    max-width: 45rem;
   }
 
   .section-kicker,
-  .mini-kicker {
+  .mini-kicker,
+  .path-index {
     display: inline-flex;
     align-items: center;
     min-height: 2rem;
     padding: 0.35rem 0.82rem;
     border-radius: 999px;
     border: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.72);
+    background: rgba(255, 255, 255, 0.76);
     color: var(--muted-strong);
     font-size: 0.72rem;
     font-weight: 700;
@@ -71,9 +75,13 @@ const { entryPaths } = Astro.props;
     text-transform: uppercase;
   }
 
+  .path-index {
+    background: var(--bg-soft);
+  }
+
   .section-heading h2 {
-    margin: 0.65rem 0 0;
-    font-size: clamp(2.5rem, 5vw, 4.75rem);
+    margin: 0.7rem 0 0;
+    font-size: clamp(2.7rem, 5vw, 4.9rem);
     line-height: 0.9;
     letter-spacing: -0.1em;
   }
@@ -81,7 +89,7 @@ const { entryPaths } = Astro.props;
   .section-heading p,
   .path-card p {
     color: var(--muted);
-    line-height: 1.72;
+    line-height: 1.76;
   }
 
   .path-grid {
@@ -92,17 +100,25 @@ const { entryPaths } = Astro.props;
 
   .path-card {
     display: grid;
-    gap: 0.85rem;
-    padding: 1.3rem;
-    border-radius: 1.75rem;
-    background: rgba(255, 255, 255, 0.72);
+    gap: 0.95rem;
+    padding: 1.35rem;
+    border-radius: 1.8rem;
+    background: rgba(255, 255, 255, 0.78);
     box-shadow: var(--shadow-soft);
+  }
+
+  .path-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.8rem;
+    align-items: center;
+    flex-wrap: wrap;
   }
 
   .path-card h3 {
     margin: 0;
-    font-size: 1.24rem;
-    line-height: 1.15;
+    font-size: 1.28rem;
+    line-height: 1.12;
     letter-spacing: -0.05em;
   }
 
@@ -110,15 +126,15 @@ const { entryPaths } = Astro.props;
     display: flex;
     gap: 0.7rem;
     flex-wrap: wrap;
-    margin-top: 0.2rem;
+    margin-top: 0.15rem;
   }
 
   .path-link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 2.6rem;
-    padding: 0.72rem 0.95rem;
+    min-height: 2.7rem;
+    padding: 0.75rem 0.98rem;
     border-radius: 999px;
     border: 1px solid var(--line);
     background: white;

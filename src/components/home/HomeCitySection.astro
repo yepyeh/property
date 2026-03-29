@@ -35,12 +35,12 @@ const { browseCities } = Astro.props;
 
 <style>
   .city-section {
-    margin-top: 2.35rem;
+    margin-top: 2.75rem;
   }
 
   .section-heading {
-    max-width: 46rem;
-    margin-bottom: 1.15rem;
+    max-width: 48rem;
+    margin-bottom: 1.2rem;
   }
 
   .section-kicker,
@@ -51,7 +51,7 @@ const { browseCities } = Astro.props;
     padding: 0.35rem 0.82rem;
     border-radius: 999px;
     border: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.72);
+    background: rgba(255, 255, 255, 0.76);
     color: var(--muted-strong);
     font-size: 0.72rem;
     font-weight: 700;
@@ -60,8 +60,8 @@ const { browseCities } = Astro.props;
   }
 
   .section-heading h2 {
-    margin: 0.65rem 0 0;
-    font-size: clamp(2.5rem, 5vw, 4.75rem);
+    margin: 0.7rem 0 0;
+    font-size: clamp(2.7rem, 5vw, 4.9rem);
     line-height: 0.9;
     letter-spacing: -0.1em;
   }
@@ -69,33 +69,35 @@ const { browseCities } = Astro.props;
   .section-heading p,
   .city-card span:last-child {
     color: var(--muted);
-    line-height: 1.72;
+    line-height: 1.76;
   }
 
   .city-grid {
     display: grid;
-    grid-template-columns: 1.1fr repeat(3, minmax(0, 1fr));
-    gap: 0.95rem;
+    grid-template-columns: 1.2fr repeat(3, minmax(0, 1fr));
+    gap: 1rem;
   }
 
   .city-card {
     display: grid;
-    gap: 0.6rem;
-    padding: 1.2rem;
-    border-radius: 1.75rem;
+    align-content: start;
+    gap: 0.75rem;
+    min-height: 12rem;
+    padding: 1.25rem;
+    border-radius: 1.8rem;
     border: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.72);
+    background: rgba(255, 255, 255, 0.76);
     text-decoration: none;
     box-shadow: var(--shadow-soft);
   }
 
   .city-card strong {
-    font-size: 1.08rem;
+    font-size: 1.16rem;
     letter-spacing: -0.05em;
   }
 
   .city-card.featured {
-    background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.76));
+    background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.78));
   }
 
   @media (max-width: 1080px) {

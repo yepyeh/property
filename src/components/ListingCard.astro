@@ -13,7 +13,7 @@ const neighborhood = listing.neighborhood;
 
 <article class={`listing-card card ${listing.tone}`}>
   <a class="photo-wrap" href={`/listings/${listing.slug}/`}>
-    <div class="photo" style={heroImage ? `background-image: linear-gradient(180deg, rgba(17, 17, 17, 0.06), rgba(17, 17, 17, 0.32)), url(${heroImage})` : undefined}>
+    <div class="photo" style={heroImage ? `background-image: linear-gradient(180deg, rgba(17, 17, 17, 0.08), rgba(17, 17, 17, 0.34)), url(${heroImage})` : undefined}>
       <div class="photo-top">
         <div class="chip-row">
           <span class="intent-chip">{intentLabel}</span>
@@ -30,6 +30,7 @@ const neighborhood = listing.neighborhood;
         <p class="price">{listing.priceLabel}</p>
         <h3><a href={`/listings/${listing.slug}/`}>{listing.title}</a></h3>
       </div>
+      <span class="meta-label">{listing.intent === "rent" ? "Rental" : "Sale"}</span>
     </div>
 
     <p class="meta">{listing.ward}, {listing.district}, {listing.city}</p>
@@ -63,15 +64,15 @@ const neighborhood = listing.neighborhood;
 <style>
   .listing-card {
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.94);
-    border-radius: 1.9rem;
-    box-shadow: 0 24px 52px rgba(17, 17, 17, 0.08);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 1.95rem;
+    box-shadow: 0 24px 54px rgba(17, 17, 17, 0.08);
     transition: transform 180ms ease, box-shadow 180ms ease;
   }
 
   .listing-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 32px 64px rgba(17, 17, 17, 0.1);
+    box-shadow: 0 32px 68px rgba(17, 17, 17, 0.11);
   }
 
   .photo-wrap {
@@ -80,7 +81,7 @@ const neighborhood = listing.neighborhood;
   }
 
   .photo {
-    min-height: 13.5rem;
+    min-height: 15rem;
     padding: 1rem;
     display: flex;
     align-items: flex-start;
@@ -97,12 +98,12 @@ const neighborhood = listing.neighborhood;
     flex-wrap: wrap;
   }
 
-  .sea .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.05), rgba(17,17,17,0.28)), linear-gradient(135deg, #c9e2da, #8eb8b0); }
-  .sun .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.05), rgba(17,17,17,0.3)), linear-gradient(135deg, #efd3af, #d19a66); }
-  .forest .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.05), rgba(17,17,17,0.3)), linear-gradient(135deg, #cadcc7, #93af96); }
-  .night .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.05), rgba(17,17,17,0.34)), linear-gradient(135deg, #d5d7e2, #868da3); }
-  .clay .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.05), rgba(17,17,17,0.32)), linear-gradient(135deg, #e8d1c1, #ba907a); }
-  .sky .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.05), rgba(17,17,17,0.32)), linear-gradient(135deg, #d9e7ee, #9fb4c0); }
+  .sea .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.06), rgba(17,17,17,0.26)), linear-gradient(135deg, #c7ddd7, #95bcb4); }
+  .sun .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.06), rgba(17,17,17,0.3)), linear-gradient(135deg, #edd1ab, #d29b67); }
+  .forest .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.06), rgba(17,17,17,0.3)), linear-gradient(135deg, #c9d9c7, #92ac96); }
+  .night .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.06), rgba(17,17,17,0.34)), linear-gradient(135deg, #d2d7e1, #8890a6); }
+  .clay .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.06), rgba(17,17,17,0.3)), linear-gradient(135deg, #e8d0bf, #ba917c); }
+  .sky .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.06), rgba(17,17,17,0.3)), linear-gradient(135deg, #d9e6ee, #9db2be); }
 
   .chip-row {
     display: flex;
@@ -112,30 +113,31 @@ const neighborhood = listing.neighborhood;
 
   .intent-chip,
   .status-chip,
-  .save-count {
+  .save-count,
+  .meta-label {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 1.9rem;
-    padding: 0.22rem 0.7rem;
+    min-height: 1.95rem;
+    padding: 0.22rem 0.72rem;
     border-radius: 999px;
     font-size: 0.72rem;
     font-weight: 800;
-    backdrop-filter: blur(10px);
   }
 
   .intent-chip,
   .status-chip,
   .save-count {
-    background: rgba(255, 255, 255, 0.88);
+    background: rgba(255, 255, 255, 0.9);
     color: #111;
     border: 1px solid rgba(17, 17, 17, 0.06);
+    backdrop-filter: blur(10px);
   }
 
   .listing-body {
     display: grid;
-    gap: 0.85rem;
-    padding: 1.1rem;
+    gap: 0.9rem;
+    padding: 1.15rem;
   }
 
   .listing-top,
@@ -152,20 +154,26 @@ const neighborhood = listing.neighborhood;
 
   .price {
     margin: 0;
-    font-size: 1.45rem;
+    font-size: 1.5rem;
     font-weight: 800;
     letter-spacing: -0.06em;
   }
 
   h3 {
     margin: 0.25rem 0 0;
-    font-size: 1.12rem;
-    line-height: 1.2;
+    font-size: 1.16rem;
+    line-height: 1.18;
     letter-spacing: -0.05em;
   }
 
   h3 a {
     text-decoration: none;
+  }
+
+  .meta-label {
+    border: 1px solid var(--line);
+    background: var(--bg-soft);
+    color: var(--muted-strong);
   }
 
   .meta,
@@ -181,7 +189,7 @@ const neighborhood = listing.neighborhood;
   .summary,
   .context-headline {
     margin: 0;
-    line-height: 1.65;
+    line-height: 1.68;
   }
 
   .fact-row,
@@ -190,12 +198,18 @@ const neighborhood = listing.neighborhood;
     font-size: 0.88rem;
   }
 
+  .fact-row {
+    padding: 0.75rem 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
   .context-panel {
     display: grid;
     gap: 0.58rem;
-    padding: 0.9rem;
-    border-radius: 1.2rem;
-    background: rgba(244, 240, 232, 0.72);
+    padding: 0.92rem;
+    border-radius: 1.25rem;
+    background: rgba(243, 239, 231, 0.78);
     border: 1px solid var(--line);
   }
 
@@ -203,8 +217,8 @@ const neighborhood = listing.neighborhood;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 2.6rem;
-    padding: 0.76rem 0.98rem;
+    min-height: 2.7rem;
+    padding: 0.78rem 1rem;
     border-radius: 999px;
     background: var(--brand);
     color: white;
