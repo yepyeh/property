@@ -20,7 +20,7 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
   <WorkspaceHero
     eyebrow="Notification settings"
     title="Choose what reaches you and how often."
-    text="Delivery channels, digest cadence, and category-level preferences should be controlled from one clear settings surface rather than scattered across dashboards."
+    text="Delivery channels, digest cadence, and category-level preferences should live in one clear settings surface rather than being scattered across dashboards."
     actions={[
       { href: returnHref, label: "Back to dashboard", kind: "secondary" },
       { href: "/account/inbox", label: "Open inbox", kind: "secondary" },
@@ -35,7 +35,7 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
         <div>
           <p class="eyebrow">Delivery</p>
           <h2>Channels and cadence</h2>
-          <p class="panel-copy">Control which channels are active before deciding how often they should deliver.</p>
+          <p class="panel-copy">Turn channels on first, then control how much of the account rhythm should come to you by email or stay inside the product.</p>
         </div>
       </div>
 
@@ -79,7 +79,7 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
         <div>
           <p class="eyebrow">Categories</p>
           <h2>Notification types</h2>
-          <p class="panel-copy">Turn categories on or off without affecting the rest of your account activity.</p>
+          <p class="panel-copy">Control categories individually so urgent account activity can stay on even if lower-value reminders are turned down.</p>
         </div>
       </div>
 
@@ -111,6 +111,9 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
     .setting-row {
       padding: 1rem;
       align-items: center;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92));
+      border: 1px solid var(--line);
     }
 
     .setting-row strong {
@@ -136,6 +139,9 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
       gap: 0.45rem;
       padding: 1rem;
       cursor: pointer;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92));
+      border: 1px solid var(--line);
     }
 
     .choice-title {

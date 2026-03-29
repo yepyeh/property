@@ -21,7 +21,7 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
   <WorkspaceHero
     eyebrow="Notification inbox"
     title="One feed for account activity."
-    text="Expiry reminders, enquiries, billing events, and buyer-side activity all land here so important state changes stay easy to scan and easy to clear."
+    text="Expiry reminders, enquiries, billing events, and buyer-side activity land in one timeline so important state changes stay easy to scan and easy to clear."
     actions={[
       { href: returnHref, label: "Back to dashboard", kind: "secondary" },
       { href: "/account/notifications", label: "Settings", kind: "secondary" },
@@ -38,7 +38,7 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
       <div>
         <p class="eyebrow">Feed</p>
         <h2>Recent notifications</h2>
-        <p class="panel-copy">Unread items stay highlighted until you clear them.</p>
+        <p class="panel-copy">Unread items stay elevated until you clear them, so the feed works more like a task list than a passive log.</p>
       </div>
     </div>
 
@@ -72,6 +72,45 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
   </section>
 
   <style is:inline>
+    .inbox-list {
+      display: grid;
+      gap: 1rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .inbox-item {
+      padding: 1.1rem;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92));
+      border: 1px solid var(--line);
+    }
+
+    .item-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .item-head strong {
+      display: block;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .timestamp,
+    .inbox-item p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .inbox-item p {
+      margin: 0.75rem 0 0;
+    }
+
     .category-chip {
       display: inline-flex;
       align-items: center;
@@ -80,7 +119,7 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
       margin-top: 0.45rem;
       padding: 0.2rem 0.65rem;
       border-radius: 999px;
-      background: rgba(127, 86, 217, 0.12);
+      background: rgba(17, 17, 17, 0.06);
       color: var(--accent-strong);
       font-size: 0.78rem;
       font-weight: 700;
@@ -88,8 +127,18 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
     }
 
     .list-unread {
-      border-color: rgba(127, 86, 217, 0.22);
+      border-color: rgba(17, 17, 17, 0.14);
       background: linear-gradient(180deg, rgba(245, 243, 255, 0.92), rgba(255, 255, 255, 0.98));
+    }
+
+    .item-actions {
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 760px) {
+      .item-head {
+        display: grid;
+      }
     }
   </style>
 </Layout>
