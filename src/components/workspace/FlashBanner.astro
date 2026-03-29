@@ -5,7 +5,7 @@ export interface Props {
 const { message } = Astro.props;
 ---
 <div class="card flash-banner">{message}</div>
-<style>
+<style is:inline>
   .flash-banner {
     margin-top: 1rem;
     padding: 1.5rem;

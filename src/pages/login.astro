@@ -28,7 +28,7 @@ const redirectTo = sanitizeInternalRedirect(Astro.url.searchParams.get("redirect
     <p class="switch-link">Need an account? <a href="/signup?role=owner">Create an owner account</a> or <a href="/signup?role=buyer">create a buyer account</a>.</p>
   </section>
 
-  <style>
+  <style is:inline>
     .login-shell {
       max-width: 34rem;
       margin: 4rem auto 0;
