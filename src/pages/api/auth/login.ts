@@ -2,6 +2,18 @@ import type { APIRoute } from "astro";
 import { authenticateOwner, buildSessionCookie, createSession, ensureBootstrapAdmin, getDefaultRedirectForRole } from "../../../lib/auth";
 import { sanitizeInternalRedirect } from "../../../lib/http";
 
+export const GET: APIRoute = async ({ url }) => {
+  const redirectTo = sanitizeInternalRedirect(url.searchParams.get("redirect"), "");
+  const location = redirectTo ? `/login?redirect=${encodeURIComponent(redirectTo)}` : "/login";
+
+  return new Response(null, {
+    status: 303,
+    headers: {
+      Location: location,
+    },
+  });
+};
+
 export const POST: APIRoute = async ({ request, locals }) => {
   const form = await request.formData();
   const email = String(form.get("email") || "").trim();
