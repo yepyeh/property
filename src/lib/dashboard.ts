@@ -4,6 +4,7 @@ import type {
   ExpiryEmailDeliveryRecord,
   NotificationPreferences,
 } from "./marketplace-types";
+import { getOwnerVerificationStatus } from "./trust";
 import {
   buildExpiryNotifications,
   buildInboxEventKey,
@@ -63,9 +64,10 @@ export async function getOwnerDashboardData(ownerUserId: number, db?: D1Like) {
       notifications: [],
       savedSearches: [],
       savedListings: [],
-      notificationPreferences: null,
-      inboxNotifications: [],
-      unreadNotificationCount: 0,
+    notificationPreferences: null,
+    inboxNotifications: [],
+    unreadNotificationCount: 0,
+      verificationStatus: null,
     };
   }
   await normalizeExpiredListingPlans(db);
@@ -132,6 +134,7 @@ export async function getOwnerDashboardData(ownerUserId: number, db?: D1Like) {
     notificationPreferences,
     inboxNotifications,
     unreadNotificationCount,
+    verificationStatus: await getOwnerVerificationStatus(db, ownerUserId),
   };
 }
 
@@ -185,7 +188,7 @@ export async function getBuyerDashboardData(userId: number, db?: D1Like) {
 }
 
 export async function getAdminBillingData(db?: D1Like) {
-  if (!db) return { listings: [], payments: [], emailDeliveries: [], performanceSeries: [] };
+  if (!db) return { listings: [], payments: [], emailDeliveries: [], performanceSeries: [], verificationRequests: [], listingReports: [] };
   await normalizeExpiredListingPlans(db);
 
   const listingsResult = await db
@@ -219,6 +222,32 @@ export async function getAdminBillingData(db?: D1Like) {
     )
     .bind()
     .all<ExpiryEmailDeliveryRecord>();
+
+  const verificationRequestsResult = await db
+    .prepare(
+      `SELECT vr.id, vr.user_id, vr.status, vr.owner_note, vr.reviewed_note, vr.submitted_at, vr.reviewed_at,
+              u.full_name, u.email
+       FROM owner_verification_requests vr
+       JOIN users u ON u.id = vr.user_id
+       ORDER BY
+         CASE vr.status WHEN 'pending' THEN 0 ELSE 1 END,
+         vr.submitted_at DESC
+       LIMIT 100`
+    )
+    .bind()
+    .all();
+
+  const listingReportsResult = await db
+    .prepare(
+      `SELECT id, listing_slug, reporter_name, reporter_contact, reason, details, status, created_at
+       FROM listing_reports
+       ORDER BY
+         CASE status WHEN 'open' THEN 0 ELSE 1 END,
+         created_at DESC
+       LIMIT 100`
+    )
+    .bind()
+    .all();
 
   const [listingSeriesResult, enquirySeriesResult, paymentSeriesResult] = await Promise.all([
     db.prepare(
@@ -271,6 +300,8 @@ export async function getAdminBillingData(db?: D1Like) {
     payments: paymentsResult.results,
     emailDeliveries: emailDeliveriesResult.results,
     performanceSeries,
+    verificationRequests: verificationRequestsResult.results,
+    listingReports: listingReportsResult.results,
   };
 }
 

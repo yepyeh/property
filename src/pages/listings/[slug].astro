@@ -13,6 +13,8 @@ const viewer = Astro.locals.owner;
 const listing = await getListingBySlug(slug ?? "", db);
 const enquirySent = Astro.url.searchParams.get("enquiry") === "sent";
 const savedListing = Astro.url.searchParams.get("savedListing") === "1";
+const reportSent = Astro.url.searchParams.get("report") === "sent";
+const protectedFlow = Astro.url.searchParams.get("protected") === "1";
 const isBuyer = viewer?.role === "buyer" || viewer?.role === "admin";
 const isSaved = listing ? await isListingSavedByUser(db, viewer?.id, listing.slug) : false;
 
@@ -58,7 +60,7 @@ const mapEmbedHref = location
 
   <section class="detail-grid">
     <DetailContent listing={listing} mapHref={mapHref} mapEmbedHref={mapEmbedHref} />
-    <DetailSidebar listing={listing} ownerTrustLabel={ownerTrustLabel} enquirySent={enquirySent} isBuyer={isBuyer} />
+    <DetailSidebar listing={listing} ownerTrustLabel={ownerTrustLabel} enquirySent={enquirySent} isBuyer={isBuyer} reportSent={reportSent} protectedFlow={protectedFlow} />
   </section>
 
   <SimilarListingsSection similarListings={similarListings} />

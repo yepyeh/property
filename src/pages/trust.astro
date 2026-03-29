@@ -1,0 +1,86 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Trust and Safety | Property App 2026" description="How Property App protects buyers, renters, owners, and listing quality.">
+  <section class="trust-hero card">
+    <div>
+      <span class="pill">Trust and safety</span>
+      <h1>Trust needs product rules, not just marketing copy.</h1>
+      <p>
+        Buyers and renters need credible listings, clear enquiry pathways, and a way to flag problems. Owners need a
+        fair verification path and cleaner lead quality. This page explains the protection layer we are building into
+        the marketplace.
+      </p>
+    </div>
+  </section>
+
+  <section class="trust-grid section-gap">
+    <article class="card trust-card">
+      <strong>For buyers and renters</strong>
+      <ul>
+        <li>Verified-owner signals on listings where identity has been reviewed.</li>
+        <li>Structured enquiries instead of free-form contact scraping.</li>
+        <li>Report-listing flow for suspicious, inaccurate, or duplicate inventory.</li>
+        <li>Shortlist, compare, and budget tools so rushed decisions are less likely.</li>
+      </ul>
+    </article>
+    <article class="card trust-card">
+      <strong>For owners and landlords</strong>
+      <ul>
+        <li>Verification request path directly from the owner workspace.</li>
+        <li>Owner-side enquiry tracking with response status and notes.</li>
+        <li>Time-bounded visibility so stale inventory does not crowd out credible supply.</li>
+        <li>Photo, location, and trust guidance before promotion is encouraged.</li>
+      </ul>
+    </article>
+  </section>
+
+  <section class="card trust-card section-gap">
+    <strong>Safety checklist</strong>
+    <ul>
+      <li>Never send deposits before confirming identity and viewing conditions.</li>
+      <li>Use shortlist and compare before contacting when you are unsure.</li>
+      <li>Flag listings that look duplicated, misleading, or suspicious.</li>
+      <li>Owners should keep contact details, gallery quality, and listing status current.</li>
+    </ul>
+  </section>
+
+  <style is:inline>
+    .trust-hero,
+    .trust-card {
+      padding: 1.4rem;
+    }
+
+    .trust-hero h1 {
+      margin: 0.75rem 0 0;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 0.94;
+      letter-spacing: -0.08em;
+      max-width: 12ch;
+    }
+
+    .trust-hero p,
+    .trust-card li {
+      color: var(--muted);
+      line-height: 1.72;
+    }
+
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .trust-card ul {
+      margin: 0.8rem 0 0;
+      padding-left: 1.1rem;
+    }
+
+    @media (max-width: 860px) {
+      .trust-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</Layout>

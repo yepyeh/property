@@ -9,9 +9,9 @@ import { getOwnerDashboardData } from "../../lib/dashboard";
 import { getDB } from "../../lib/runtime";
 
 const owner = Astro.locals.owner;
-const { listings, enquiries, payments, notifications, savedSearches, inboxNotifications, unreadNotificationCount } = owner
+const { listings, enquiries, payments, notifications, savedSearches, inboxNotifications, unreadNotificationCount, verificationStatus } = owner
   ? await getOwnerDashboardData(owner.id, getDB(Astro.locals.runtime))
-  : { listings: [], enquiries: [], payments: [], notifications: [], savedSearches: [], inboxNotifications: [], unreadNotificationCount: 0 };
+  : { listings: [], enquiries: [], payments: [], notifications: [], savedSearches: [], inboxNotifications: [], unreadNotificationCount: 0, verificationStatus: null };
 const uploaded = Astro.url.searchParams.get("uploaded");
 const uploadCount = Astro.url.searchParams.get("uploadCount");
 const updated = Astro.url.searchParams.get("updated");
@@ -119,6 +119,8 @@ function getImageUrls(value: unknown) {
   )}
   {updated && !action && <FlashBanner message={`Listing state updated for ${updated}.`} />}
   {savedSearchDeleted && <FlashBanner message="Saved search deleted." />}
+  {action === "verification-requested" && <FlashBanner tone="info" message="Verification request submitted. Admin review is now required before trust status changes." />}
+  {action === "verification-pending" && <FlashBanner tone="info" message="A verification request is already pending review." />}
 
   <section class="card panel section-gap">
     <div class="panel-head">
@@ -149,6 +151,26 @@ function getImageUrls(value: unknown) {
   </section>
 
   <section class="split-grid split-grid-top">
+    <article class="card panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Trust status</p>
+          <h2>Owner verification</h2>
+          <p class="panel-copy">Verification is the platform-level signal that contact identity has been submitted for review, not just self-declared in a listing form.</p>
+        </div>
+      </div>
+      <div class="compare-preview">
+        <article class="compare-chip">
+          <strong>{verificationStatus?.status ?? "not requested"}</strong>
+          <span>{verificationStatus?.submitted_at ? `Submitted ${verificationStatus.submitted_at}` : "No verification request yet"}</span>
+        </article>
+      </div>
+      <form class="verification-form" method="POST" action="/api/owner/verification/request">
+        <input type="text" name="ownerNote" placeholder="Optional note for admin review" />
+        <button type="submit" class="button-secondary" disabled={verificationStatus?.status === "pending"}>{verificationStatus?.status === "pending" ? "Verification pending" : "Request verification"}</button>
+      </form>
+    </article>
+
     <article class="card panel">
       <div class="panel-head">
         <div>
@@ -490,6 +512,22 @@ function getImageUrls(value: unknown) {
       color: var(--muted);
     }
 
+    .verification-form {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.65rem;
+      margin-top: 1rem;
+    }
+
+    .verification-form input {
+      width: 100%;
+      padding: 0.8rem 0.9rem;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      font: inherit;
+      background: rgba(255,255,255,0.92);
+    }
+
     .status-preview {
       margin-bottom: 1rem;
     }
@@ -775,7 +813,8 @@ function getImageUrls(value: unknown) {
       }
 
       .listing-layout,
-      .meta-grid {
+      .meta-grid,
+      .verification-form {
         grid-template-columns: 1fr;
       }
 

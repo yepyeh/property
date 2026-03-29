@@ -7,9 +7,11 @@ export interface Props {
   ownerTrustLabel: string;
   enquirySent: boolean;
   isBuyer?: boolean;
+  reportSent?: boolean;
+  protectedFlow?: boolean;
 }
 
-const { listing, ownerTrustLabel, enquirySent, isBuyer = false } = Astro.props;
+const { listing, ownerTrustLabel, enquirySent, isBuyer = false, reportSent = false, protectedFlow = false } = Astro.props;
 const defaultDownPayment = 20;
 const defaultRate = 7.5;
 const defaultYears = 20;
@@ -27,6 +29,7 @@ const defaultMonthlyEstimate = formatVndAmount(
       receive clean intent data, not vague messages.
     </p>
     {enquirySent && <p class="success-banner">Enquiry sent successfully. The owner can now see it in the dashboard.</p>}
+    {protectedFlow && <p class="info-banner">Your enquiry stays inside the platform flow first. That gives both sides a cleaner history and a safer follow-up path.</p>}
 
     <div class="owner-card">
       <strong>{listing.owner.name}</strong>
@@ -94,6 +97,40 @@ const defaultMonthlyEstimate = formatVndAmount(
         <span>Open conversations</span>
       </article>
     </div>
+  </section>
+
+  <section class="report-panel card">
+    <span class="section-kicker">Protection</span>
+    <h2>Need to flag this listing?</h2>
+    <p class="enquiry-copy">Report listings that look misleading, duplicated, suspicious, or unsafe. This creates a moderation record for admin review.</p>
+    {reportSent && <p class="success-banner">Report submitted. The moderation queue now includes this listing.</p>}
+    <form class="report-form" method="POST" action="/api/listings/report">
+      <input type="hidden" name="listingSlug" value={listing.slug} />
+      <input type="hidden" name="redirectTo" value={`/listings/${listing.slug}/`} />
+      <label>
+        <span>Reason</span>
+        <select name="reason">
+          <option value="misleading information">Misleading information</option>
+          <option value="duplicate listing">Duplicate listing</option>
+          <option value="suspicious contact">Suspicious contact</option>
+          <option value="pricing issue">Pricing issue</option>
+          <option value="other safety concern">Other safety concern</option>
+        </select>
+      </label>
+      <label>
+        <span>Your name</span>
+        <input type="text" name="reporterName" placeholder="Optional" />
+      </label>
+      <label>
+        <span>Contact</span>
+        <input type="text" name="reporterContact" placeholder="Optional email or phone" />
+      </label>
+      <label>
+        <span>Details</span>
+        <textarea name="details" rows="4" placeholder="What looks wrong or unsafe?"></textarea>
+      </label>
+      <button type="submit" class="button-secondary full-width">Report listing</button>
+    </form>
   </section>
 
   {listing.intent === "buy" && (
@@ -214,6 +251,14 @@ const defaultMonthlyEstimate = formatVndAmount(
     font-weight: 700;
   }
 
+  .info-banner {
+    padding: 0.9rem 1rem;
+    border-radius: 18px;
+    background: rgba(30, 64, 175, 0.08);
+    color: #1e40af;
+    font-weight: 700;
+  }
+
   .budget-output {
     display: grid;
     gap: 0.18rem;
@@ -283,6 +328,12 @@ const defaultMonthlyEstimate = formatVndAmount(
     margin-top: 1rem;
   }
 
+  .report-form {
+    display: grid;
+    gap: 0.85rem;
+    margin-top: 1rem;
+  }
+
   .expectation-row {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -317,6 +368,11 @@ const defaultMonthlyEstimate = formatVndAmount(
     gap: 0.4rem;
   }
 
+  .report-form label {
+    display: grid;
+    gap: 0.4rem;
+  }
+
   .budget-grid label {
     display: grid;
     gap: 0.4rem;
@@ -331,6 +387,9 @@ const defaultMonthlyEstimate = formatVndAmount(
 
   .enquiry-form input,
   .enquiry-form textarea,
+  .report-form input,
+  .report-form textarea,
+  .report-form select,
   .budget-grid input {
     width: 100%;
     border: 1px solid var(--line);

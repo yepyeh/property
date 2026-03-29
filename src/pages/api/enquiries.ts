@@ -26,7 +26,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response(null, {
       status: 303,
       headers: {
-        Location: `/listings/${listingSlug}/?enquiry=sent`,
+        Location: `/listings/${listingSlug}/?enquiry=sent&protected=1`,
       },
     });
   } catch (error) {

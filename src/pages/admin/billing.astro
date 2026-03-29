@@ -10,7 +10,7 @@ if (!owner || owner.role !== "admin") {
   return Astro.redirect("/owner/dashboard/");
 }
 
-const { listings, payments, emailDeliveries, performanceSeries } = await getAdminBillingData(getDB(Astro.locals.runtime));
+const { listings, payments, emailDeliveries, performanceSeries, verificationRequests, listingReports } = await getAdminBillingData(getDB(Astro.locals.runtime));
 const updated = Astro.url.searchParams.get("updated");
 const emailed = Number(Astro.url.searchParams.get("emailed") || 0);
 const skipped = Number(Astro.url.searchParams.get("skipped") || 0);
@@ -32,6 +32,8 @@ const analytics = {
     return paid <= threshold || promoted <= threshold || trial <= threshold;
   }).length,
   paymentCount: payments.length,
+  verificationPending: verificationRequests.filter((request) => request.status === "pending").length,
+  openReports: listingReports.filter((report) => report.status === "open").length,
   emailSentCount: emailDeliveries.filter((delivery) => delivery.status === "sent").length,
   emailFailedCount: emailDeliveries.filter((delivery) => delivery.status === "failed").length,
   revenueVnd: payments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
@@ -88,8 +90,58 @@ const conversionRate = analytics.totalListings > 0
     <article class="card stat"><strong>{analytics.expiredListings}</strong><span>expired listings</span></article>
     <article class="card stat"><strong>{analytics.expiringSoon}</strong><span>expiring within 3 days</span></article>
     <article class="card stat"><strong>{analytics.paymentCount}</strong><span>recorded payments</span></article>
+    <article class="card stat"><strong>{analytics.verificationPending}</strong><span>pending verification requests</span></article>
+    <article class="card stat"><strong>{analytics.openReports}</strong><span>open listing reports</span></article>
     <article class="card stat"><strong>{analytics.emailSentCount}</strong><span>expiry emails sent</span></article>
     <article class="card stat"><strong>{analytics.emailFailedCount}</strong><span>expiry email failures</span></article>
+  </section>
+
+  <section class="card panel summary-panel">
+    <h2>Trust queue</h2>
+    <div class="summary-grid">
+      <div>
+        <strong>{analytics.verificationPending}</strong>
+        <span>pending owner verification requests</span>
+      </div>
+      <div>
+        <strong>{analytics.openReports}</strong>
+        <span>open listing reports from users</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="card panel payment-panel">
+    <h2>Owner verification requests</h2>
+    {verificationRequests.length === 0 ? <p>No verification requests recorded yet.</p> : (
+      <ul class="listing-grid">
+        {verificationRequests.map((request) => (
+          <li>
+            <strong>{request.status} · {request.full_name}</strong>
+            <span>{request.email}</span>
+            <span>Submitted: {request.submitted_at}</span>
+            {request.owner_note && <span>Owner note: {request.owner_note}</span>}
+            {request.reviewed_note && <span>Reviewed note: {request.reviewed_note}</span>}
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+
+  <section class="card panel payment-panel">
+    <h2>Listing reports</h2>
+    {listingReports.length === 0 ? <p>No listing reports recorded yet.</p> : (
+      <ul class="listing-grid">
+        {listingReports.map((report) => (
+          <li>
+            <strong>{report.reason} · {report.status}</strong>
+            <span>{report.listing_slug}</span>
+            <span>{report.reporter_name || "Anonymous reporter"}{report.reporter_contact ? ` · ${report.reporter_contact}` : ""}</span>
+            {report.details && <span>{report.details}</span>}
+            <span>Created: {report.created_at}</span>
+          </li>
+        ))}
+      </ul>
+    )}
   </section>
 
   <section class="card panel summary-panel">
