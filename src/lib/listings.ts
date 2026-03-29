@@ -438,6 +438,40 @@ export async function getBuyerEnquiryRecords(db: D1Like, userId: number) {
   return enquiries.results;
 }
 
+export async function recordRecentlyViewedListing(db: D1Like | undefined, userId: number | undefined, listingSlug: string) {
+  if (!db || !userId || !listingSlug) return;
+
+  await db
+    .prepare(
+      `INSERT INTO recent_views (user_id, listing_slug, created_at, updated_at)
+       VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+       ON CONFLICT(user_id, listing_slug)
+       DO UPDATE SET updated_at = CURRENT_TIMESTAMP`
+    )
+    .bind(userId, listingSlug)
+    .run();
+}
+
+export async function getRecentlyViewedRecords(db: D1Like, userId: number) {
+  const recentViews = await db
+    .prepare(
+      `SELECT listing_slug, updated_at
+       FROM recent_views
+       WHERE user_id = ?
+       ORDER BY updated_at DESC
+       LIMIT 6`
+    )
+    .bind(userId)
+    .all<{ listing_slug: string; updated_at: string }>();
+
+  return Promise.all(
+    recentViews.results.map(async (recentView) => ({
+      ...recentView,
+      listing: await getListingBySlug(recentView.listing_slug, db),
+    }))
+  );
+}
+
 export async function saveSearch(db: D1Like, input: SavedSearchInput) {
   const filters = normalizeListingFilters(input.filters);
   const routeQuery = buildSavedSearchQuery(filters);

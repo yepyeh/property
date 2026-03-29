@@ -4,7 +4,7 @@ import DetailHero from "../../components/listing-detail/DetailHero.astro";
 import DetailContent from "../../components/listing-detail/DetailContent.astro";
 import DetailSidebar from "../../components/listing-detail/DetailSidebar.astro";
 import SimilarListingsSection from "../../components/listing-detail/SimilarListingsSection.astro";
-import { getAllListings, getListingBySlug, isListingSavedByUser } from "../../lib/listings";
+import { getAllListings, getListingBySlug, isListingSavedByUser, recordRecentlyViewedListing } from "../../lib/listings";
 import { getDB } from "../../lib/runtime";
 
 const { slug } = Astro.params;
@@ -18,6 +18,10 @@ const isSaved = listing ? await isListingSavedByUser(db, viewer?.id, listing.slu
 
 if (!listing) {
   throw new Error(`Listing not found: ${slug}`);
+}
+
+if ((viewer?.role === "buyer" || viewer?.role === "admin") && db) {
+  await recordRecentlyViewedListing(db, viewer.id, listing.slug);
 }
 
 const allListings = await getAllListings(db);

@@ -1,7 +1,7 @@
 import { defineMiddleware } from "astro:middleware";
 import { AUTH_COOKIE, getOwnerFromSession } from "./lib/auth";
 
-const protectedPrefixes = ["/owner", "/buyer", "/admin", "/account", "/submit-listing", "/api/admin", "/api/account", "/api/listings", "/api/upload-image", "/api/billing/checkout", "/api/saved-searches", "/api/saved-listings"];
+const protectedPrefixes = ["/owner", "/buyer", "/admin", "/account", "/submit-listing", "/api/admin", "/api/account", "/api/owner", "/api/listings", "/api/upload-image", "/api/billing/checkout", "/api/saved-searches", "/api/saved-listings"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const { pathname, search } = context.url;
@@ -17,7 +17,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
       const redirectTarget = encodeURIComponent(`${pathname}${search}`);
       response = context.redirect(`/login?redirect=${redirectTarget}`);
     } else {
-      const isOwnerOnly = pathname.startsWith("/owner") || pathname.startsWith("/submit-listing") || pathname.startsWith("/api/listings") || pathname.startsWith("/api/upload-image") || pathname.startsWith("/api/billing/checkout");
+      const isOwnerOnly = pathname.startsWith("/owner") || pathname.startsWith("/submit-listing") || pathname.startsWith("/api/owner") || pathname.startsWith("/api/listings") || pathname.startsWith("/api/upload-image") || pathname.startsWith("/api/billing/checkout");
       const isBuyerOnly = pathname.startsWith("/buyer");
       const isAdminOnly = pathname.startsWith("/admin") || pathname.startsWith("/api/admin");
 

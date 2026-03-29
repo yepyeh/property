@@ -13,7 +13,7 @@ if (!owner || (owner.role !== "buyer" && owner.role !== "admin")) {
   return Astro.redirect("/login");
 }
 
-const { savedSearches, savedListings, enquiries, inboxNotifications, unreadNotificationCount } = await getBuyerDashboardData(owner.id, getDB(Astro.locals.runtime));
+const { savedSearches, savedListings, enquiries, recentlyViewed, inboxNotifications, unreadNotificationCount } = await getBuyerDashboardData(owner.id, getDB(Astro.locals.runtime));
 const savedSearchDeleted = Astro.url.searchParams.get("savedSearchDeleted");
 const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
 ---
@@ -39,6 +39,7 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
       { label: "Searches", value: savedSearches.length, copy: "Saved searches" },
       { label: "Favorites", value: savedListings.length, copy: "Saved listings" },
       { label: "Enquiries", value: enquiries.length, copy: "Sent enquiries" },
+      { label: "Recent", value: recentlyViewed.length, copy: "Recently viewed" },
       { label: "Inbox", value: unreadNotificationCount, copy: "Unread notifications" },
     ]}
   />
@@ -164,6 +165,33 @@ const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
             <p class="enquiry-snippet">{enquiry.message}</p>
             <div class="action-row">
               <a class="button-secondary" href={`/listings/${enquiry.listing_slug}/`}>Open listing</a>
+            </div>
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+
+  <section class="card panel section-gap">
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">Return path</p>
+        <h2>Recently viewed</h2>
+        <p class="panel-copy">This keeps your browse trail intact before a listing is important enough to save or compare.</p>
+      </div>
+    </div>
+    {recentlyViewed.length === 0 ? <p class="empty-copy">No recent listing views yet.</p> : (
+      <ul class="stack-list compact-list">
+        {recentlyViewed.map((view) => (
+          <li class="list-item">
+            <strong>{view.listing?.title ?? view.listing_slug}</strong>
+            <p>{view.listing?.ward ?? "Unknown ward"} · {view.listing?.district ?? "Unknown district"} · {view.listing?.city ?? "Unknown city"}</p>
+            <div class="meta-row">
+              <span>{view.listing?.priceLabel ?? "Price unavailable"}</span>
+              <span>Viewed {view.updated_at}</span>
+            </div>
+            <div class="action-row">
+              <a class="button-secondary" href={`/listings/${view.listing_slug}/`}>Open listing</a>
             </div>
           </li>
         ))}

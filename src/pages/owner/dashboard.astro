@@ -93,8 +93,8 @@ function getImageUrls(value: unknown) {
     ]}
   />
 
-  {uploaded && <FlashBanner message={`${uploadCount || "1"} image${uploadCount === "1" ? "" : "s"} uploaded for ${uploaded}.`} />}
-  {updated && <FlashBanner message={`${mediaAction === "deleted" ? "Gallery updated. Removed one image from" : mediaAction === "reordered" ? "Gallery order updated for" : "Billing state updated for"} ${updated}.`} />}
+      {uploaded && <FlashBanner message={`${uploadCount || "1"} image${uploadCount === "1" ? "" : "s"} uploaded for ${uploaded}.`} />}
+  {updated && <FlashBanner message={`${mediaAction === "deleted" ? "Gallery updated. Removed one image from" : mediaAction === "reordered" ? "Gallery order updated for" : "Listing state updated for"} ${updated}.`} />}
   {savedSearchDeleted && <FlashBanner message="Saved search deleted." />}
 
   <section class="split-grid split-grid-top">
@@ -319,7 +319,22 @@ function getImageUrls(value: unknown) {
               <li class="list-item">
                 <strong>{enquiry.applicant_name}</strong>
                 <p>{enquiry.listing_title}</p>
-                <div class="meta-row"><span>{enquiry.contact}</span></div>
+                <div class="meta-row">
+                  <span>{enquiry.contact}</span>
+                  <span>Status: {enquiry.response_status ?? "new"}</span>
+                </div>
+                {enquiry.owner_note && <p class="inline-note">Owner note: {enquiry.owner_note}</p>}
+                <form class="enquiry-status-form" method="POST" action="/api/owner/enquiries/respond">
+                  <input type="hidden" name="listingSlug" value={enquiry.listing_slug} />
+                  <input type="hidden" name="contact" value={enquiry.contact} />
+                  <select name="responseStatus">
+                    <option value="new" selected={(enquiry.response_status ?? "new") === "new"}>New</option>
+                    <option value="responded" selected={enquiry.response_status === "responded"}>Responded</option>
+                    <option value="archived" selected={enquiry.response_status === "archived"}>Archived</option>
+                  </select>
+                  <input type="text" name="ownerNote" value={enquiry.owner_note ?? ""} placeholder="Add owner note" />
+                  <button type="submit" class="button-tertiary">Update</button>
+                </form>
               </li>
             ))}
           </ul>
@@ -578,6 +593,29 @@ function getImageUrls(value: unknown) {
       font-size: 0.95rem;
     }
 
+    .enquiry-status-form {
+      display: grid;
+      grid-template-columns: minmax(8rem, 10rem) minmax(0, 1fr) auto;
+      gap: 0.6rem;
+      margin-top: 0.8rem;
+    }
+
+    .enquiry-status-form select,
+    .enquiry-status-form input {
+      width: 100%;
+      padding: 0.8rem 0.9rem;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      font: inherit;
+      background: rgba(255,255,255,0.92);
+    }
+
+    .inline-note {
+      margin-top: 0.55rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
     @media (max-width: 960px) {
       .split-grid {
         grid-template-columns: 1fr;
@@ -585,6 +623,10 @@ function getImageUrls(value: unknown) {
 
       .listing-layout,
       .meta-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .enquiry-status-form {
         grid-template-columns: 1fr;
       }
     }

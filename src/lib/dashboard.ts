@@ -1,5 +1,5 @@
 import { normalizeExpiredListingPlans } from "./listing-lifecycle";
-import { getBuyerEnquiryRecords, getSavedListingRecords, getSavedSearchRecords } from "./listings";
+import { getBuyerEnquiryRecords, getRecentlyViewedRecords, getSavedListingRecords, getSavedSearchRecords } from "./listings";
 import type {
   ExpiryEmailDeliveryRecord,
   NotificationPreferences,
@@ -84,7 +84,8 @@ export async function getOwnerDashboardData(ownerUserId: number, db?: D1Like) {
 
   const enquiriesResult = await db
     .prepare(
-      `SELECT e.listing_slug, e.listing_title, e.applicant_name, e.contact, e.preferred_time, e.created_at
+      `SELECT e.listing_slug, e.listing_title, e.applicant_name, e.contact, e.preferred_time, e.created_at,
+              e.response_status, e.owner_note, e.responded_at
        FROM enquiries e
        JOIN listings l ON l.slug = e.listing_slug
        WHERE l.owner_user_id = ?
@@ -140,6 +141,7 @@ export async function getBuyerDashboardData(userId: number, db?: D1Like) {
       savedSearches: [],
       savedListings: [],
       enquiries: [],
+      recentlyViewed: [],
       notificationPreferences: null,
       inboxNotifications: [],
       unreadNotificationCount: 0,
@@ -157,6 +159,7 @@ export async function getBuyerDashboardData(userId: number, db?: D1Like) {
     savedSearches: await getSavedSearchRecords(db, userId),
     savedListings: await getSavedListingRecords(db, userId),
     enquiries: await getBuyerEnquiryRecords(db, userId),
+    recentlyViewed: await getRecentlyViewedRecords(db, userId),
     notificationPreferences,
     inboxNotifications,
     unreadNotificationCount,
