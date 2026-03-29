@@ -36,7 +36,7 @@ const similarListings = allListings
   })
   .slice(0, 3);
 
-const intentLabel = listing.intent === "buy" ? "For sale" : "For rent";
+const intentLabel = listing.saleMode === "auction" ? "Auction" : listing.intent === "buy" ? "For sale" : "For rent";
 const ownerTrustLabel = listing.owner.verified ? "Verified owner" : "Owner listed";
 const location = listing.location;
 const mapQuery = encodeURIComponent(`${listing.ward}, ${listing.district}, ${listing.city}`);

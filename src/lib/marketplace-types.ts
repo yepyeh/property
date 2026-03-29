@@ -41,6 +41,12 @@ export interface ListingRow {
   owner_role: string;
   owner_response_time: string;
   owner_verified: number;
+  sale_mode: string | null;
+  auction_starts_at: string | null;
+  auction_ends_at: string | null;
+  auction_starting_price_label: string | null;
+  auction_reserve_price_label: string | null;
+  auction_terms: string | null;
   owner_user_id: number | null;
   plan_type: string;
   trial_ends_at: string | null;
@@ -86,6 +92,12 @@ export interface ListingInput {
   lat?: number | null;
   lng?: number | null;
   locationPrecisionLabel?: string;
+  saleMode?: "private-sale" | "auction";
+  auctionStartsAt?: string | null;
+  auctionEndsAt?: string | null;
+  auctionStartingPriceLabel?: string | null;
+  auctionReservePriceLabel?: string | null;
+  auctionTerms?: string | null;
   ownerName: string;
   ownerEmail: string;
   ownerPhone: string;
@@ -113,6 +125,7 @@ export interface ListingFilters {
   minPrice?: number;
   maxPrice?: number;
   minBeds?: number;
+  saleMode?: string;
   sort?: string;
 }
 

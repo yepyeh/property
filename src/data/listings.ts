@@ -1,6 +1,7 @@
 export type ListingIntent = "buy" | "rent";
 export type ListingType = "Villa" | "Condo" | "Townhouse" | "Apartment" | "Land" | "House";
 export type ListingTone = "sea" | "sun" | "forest" | "night" | "clay" | "sky";
+export type ListingSaleMode = "private-sale" | "auction";
 
 export interface ListingNeighborhood {
   headline: string;
@@ -56,6 +57,25 @@ export interface Listing {
     paidUntil?: string | null;
     promotedUntil?: string | null;
   };
+  saleMode?: ListingSaleMode;
+  auction?: {
+    startsAt?: string | null;
+    endsAt?: string | null;
+    startingPriceLabel?: string | null;
+    reservePriceLabel?: string | null;
+    terms?: string | null;
+    phase: "scheduled" | "live" | "ended";
+  };
+}
+
+export function getAuctionPhase(auction?: Listing["auction"]) {
+  if (!auction) return undefined;
+  const now = Date.now();
+  const startsAt = auction.startsAt ? new Date(auction.startsAt).getTime() : Number.NEGATIVE_INFINITY;
+  const endsAt = auction.endsAt ? new Date(auction.endsAt).getTime() : Number.POSITIVE_INFINITY;
+  if (startsAt > now) return "scheduled" as const;
+  if (endsAt > now) return "live" as const;
+  return "ended" as const;
 }
 
 export const listings: Listing[] = [
@@ -277,6 +297,59 @@ export const listings: Listing[] = [
       commute: "Typical trips toward Ba Dinh and inner Hanoi are straightforward, while West Lake amenities stay close to home.",
       nearby: ["West Lake dining", "International school access", "Embassy and expat services"],
       trustSignals: ["Quiet residential lanes", "Consistent premium demand", "Family-oriented micro-location"],
+    },
+  },
+  {
+    slug: "binh-thanh-riverside-house-auction",
+    title: "Binh Thanh riverside house auction",
+    city: "Ho Chi Minh City",
+    district: "Binh Thanh",
+    ward: "Ward 22",
+    type: "House",
+    intent: "buy",
+    priceLabel: "Starting bid 11.2B VND",
+    numericPrice: 11.2,
+    priceUnit: "VND",
+    beds: 5,
+    baths: 4,
+    area: 340,
+    status: "Auction inventory",
+    tone: "night",
+    summary: "River-adjacent Binh Thanh house headed to a timed auction with inspection-ready positioning and investor-owner appeal.",
+    description:
+      "This property is positioned for an auction route rather than a normal negotiated sale. Buyers get clearer timing, a visible starting bid, and stronger decision pressure around inspection, financing, and reserve expectations before the auction window opens.",
+    tags: ["Auction", "Inspection-ready", "Riverside access"],
+    features: ["Timed auction", "Pre-auction inspection", "Reserve set by seller", "Buyer due diligence window"],
+    owner: {
+      name: "Auction Desk",
+      role: "Seller representative",
+      responseTime: "~10 minutes",
+      verified: true,
+    },
+    stats: {
+      views24h: 187,
+      saves: 26,
+      enquiries: 9,
+    },
+    saleMode: "auction",
+    auction: {
+      startsAt: "2026-04-03T02:00:00.000Z",
+      endsAt: "2026-04-05T09:00:00.000Z",
+      startingPriceLabel: "11.2B VND",
+      reservePriceLabel: "Reserve on request",
+      terms: "Register interest before auction start, review pack, inspect first, and confirm funding path before bidding.",
+      phase: "scheduled",
+    },
+    location: {
+      lat: 10.7941,
+      lng: 106.7201,
+      precisionLabel: "Approximate area in Binh Thanh riverside belt",
+    },
+    neighborhood: {
+      headline: "This Binh Thanh pocket attracts buyers who want riverside access with faster reach into the core than more suburban villa districts.",
+      commute: "Typical trips into District 1 and Thu Thiem are shorter than deeper residential zones, especially outside traffic peaks.",
+      nearby: ["Saigon River access", "Urban dining and services", "Bridge connections into the core"],
+      trustSignals: ["Auction route", "Seller representative", "Inspection-ready positioning"],
     },
   },
   {

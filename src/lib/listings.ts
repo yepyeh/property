@@ -1,6 +1,7 @@
 import {
   buildListingLocationContext,
   buildListingNeighborhoodContext,
+  getAuctionPhase,
   getListingBySlug as getSeededListingBySlug,
   listings as seededListings,
   type Listing,
@@ -33,6 +34,7 @@ function normalizeListingFilters(filters: ListingFilters) {
     city: filters.city?.trim() || "",
     district: filters.district?.trim() || "",
     propertyType: filters.propertyType?.trim() || "",
+    saleMode: filters.saleMode === "auction" ? "auction" : filters.saleMode === "private-sale" ? "private-sale" : "",
     minPrice: typeof filters.minPrice === "number" && Number.isFinite(filters.minPrice) ? filters.minPrice : undefined,
     maxPrice: typeof filters.maxPrice === "number" && Number.isFinite(filters.maxPrice) ? filters.maxPrice : undefined,
     minBeds: typeof filters.minBeds === "number" && Number.isFinite(filters.minBeds) ? filters.minBeds : undefined,
@@ -67,6 +69,11 @@ function buildDynamicListingWhere(filters: ListingFilters, options: { createdAft
     values.push(filters.propertyType);
   }
 
+  if (filters.saleMode === "auction" || filters.saleMode === "private-sale") {
+    clauses.push("COALESCE(sale_mode, 'private-sale') = ?");
+    values.push(filters.saleMode);
+  }
+
   if (typeof filters.minPrice === "number" && Number.isFinite(filters.minPrice)) {
     clauses.push("numeric_price >= ?");
     values.push(filters.minPrice);
@@ -98,6 +105,7 @@ export function buildSavedSearchQuery(filters: ListingFilters) {
   if (normalized.city) params.set("city", normalized.city);
   if (normalized.district) params.set("district", normalized.district);
   if (normalized.propertyType) params.set("propertyType", normalized.propertyType);
+  if (normalized.saleMode) params.set("saleMode", normalized.saleMode);
   if (typeof normalized.minPrice === "number") params.set("minPrice", String(normalized.minPrice));
   if (typeof normalized.maxPrice === "number") params.set("maxPrice", String(normalized.maxPrice));
   if (typeof normalized.minBeds === "number") params.set("minBeds", String(normalized.minBeds));
@@ -188,6 +196,22 @@ function mapRowToListing(row: ListingRow): Listing {
       paidUntil: row.paid_until,
       promotedUntil: row.promoted_until,
     },
+    saleMode: (row.sale_mode as Listing["saleMode"]) || "private-sale",
+    auction:
+      (row.sale_mode || "private-sale") === "auction"
+        ? {
+            startsAt: row.auction_starts_at,
+            endsAt: row.auction_ends_at,
+            startingPriceLabel: row.auction_starting_price_label,
+            reservePriceLabel: row.auction_reserve_price_label,
+            terms: row.auction_terms,
+            phase:
+              getAuctionPhase({
+                startsAt: row.auction_starts_at,
+                endsAt: row.auction_ends_at,
+              }) || "scheduled",
+          }
+        : undefined,
   };
 
   return {
@@ -287,6 +311,7 @@ function applyListingFilters(listings: Listing[], filters: ListingFilters) {
     if (city && !listing.city.toLowerCase().includes(city)) return false;
     if (district && !listing.district.toLowerCase().includes(district)) return false;
     if (filters.propertyType && listing.type !== filters.propertyType) return false;
+    if (filters.saleMode && (listing.saleMode || "private-sale") !== filters.saleMode) return false;
     if (typeof filters.minPrice === "number" && Number.isFinite(filters.minPrice) && listing.numericPrice < filters.minPrice) return false;
     if (typeof filters.maxPrice === "number" && Number.isFinite(filters.maxPrice) && listing.numericPrice > filters.maxPrice) return false;
     if (typeof filters.minBeds === "number" && Number.isFinite(filters.minBeds) && listing.beds < filters.minBeds) return false;
@@ -335,7 +360,8 @@ export async function getListingBySlug(slug: string, db?: D1Like) {
 export async function createListing(db: D1Like, input: ListingInput) {
   const baseSlug = slugify(`${input.title}-${input.city}-${input.district}`);
   const slug = await ensureUniqueListingSlug(db, baseSlug || `listing-${Date.now()}`);
-  const presentation = buildInitialListingPresentation(input.intent);
+  const saleMode = input.saleMode === "auction" ? "auction" : "private-sale";
+  const presentation = buildInitialListingPresentation(input.intent, saleMode);
   const status = input.statusLabel?.trim() || presentation.status;
   const tone = input.tone?.trim() || presentation.tone;
   const tags = input.tags?.length ? input.tags : presentation.tags;
@@ -353,10 +379,11 @@ export async function createListing(db: D1Like, input: ListingInput) {
         tags, features, image_keys,
         neighborhood_headline, commute_notes, nearby_places, trust_signals,
         lat, lng, location_precision_label,
+        sale_mode, auction_starts_at, auction_ends_at, auction_starting_price_label, auction_reserve_price_label, auction_terms,
         owner_user_id, plan_type, trial_ends_at,
         owner_name, owner_email, owner_phone, owner_role, owner_response_time, owner_verified,
         views_24h, saves, enquiries, published
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now', '+7 days'), ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now', '+7 days'), ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`
     )
     .bind(
       slug,
@@ -386,6 +413,12 @@ export async function createListing(db: D1Like, input: ListingInput) {
       typeof input.lat === "number" && Number.isFinite(input.lat) ? input.lat : null,
       typeof input.lng === "number" && Number.isFinite(input.lng) ? input.lng : null,
       input.locationPrecisionLabel?.trim() || null,
+      saleMode,
+      input.auctionStartsAt?.trim() || null,
+      input.auctionEndsAt?.trim() || null,
+      input.auctionStartingPriceLabel?.trim() || null,
+      input.auctionReservePriceLabel?.trim() || null,
+      input.auctionTerms?.trim() || null,
       input.ownerUserId ?? null,
       "free_trial",
       input.ownerName,

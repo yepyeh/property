@@ -11,6 +11,8 @@ const heroImage = listing.imageUrls?.[0];
 const intentLabel = listing.intent === "rent" ? "To rent" : "For sale";
 const neighborhood = listing.neighborhood;
 const imageCount = listing.imageUrls?.length || 0;
+const isAuction = listing.saleMode === "auction";
+const auctionLabel = listing.auction?.phase === "live" ? "Live auction" : listing.auction?.phase === "ended" ? "Auction ended" : "Auction";
 ---
 
 <article class={`listing-card card ${listing.tone}`}>
@@ -19,6 +21,7 @@ const imageCount = listing.imageUrls?.length || 0;
       <div class="photo-top">
         <div class="chip-row">
           <span class="intent-chip">{intentLabel}</span>
+          {isAuction && <span class="auction-chip">{auctionLabel}</span>}
           <span class="status-chip">{listing.status}</span>
         </div>
         <div class="media-meta">
@@ -32,7 +35,7 @@ const imageCount = listing.imageUrls?.length || 0;
   <div class="listing-body">
     <div class="listing-label-row">
       <span class="market-chip">{listing.type}</span>
-      <span class="market-chip muted">{listing.intent === "rent" ? "Monthly rental" : "Private sale"}</span>
+      <span class="market-chip muted">{listing.intent === "rent" ? "Monthly rental" : isAuction ? "Auction" : "Private sale"}</span>
     </div>
     <div class="listing-top">
       <div>
@@ -50,6 +53,12 @@ const imageCount = listing.imageUrls?.length || 0;
       <span>{listing.area} m2</span>
     </div>
     <p class="summary">{listing.summary}</p>
+    {isAuction && listing.auction && (
+      <div class="auction-strip">
+        <strong>{listing.auction.startingPriceLabel || listing.priceLabel}</strong>
+        {listing.auction.endsAt && <span>Ends {listing.auction.endsAt}</span>}
+      </div>
+    )}
     {neighborhood && (
       <div class="context-panel">
         <p class="context-headline">{neighborhood.headline}</p>
@@ -131,6 +140,7 @@ const imageCount = listing.imageUrls?.length || 0;
   }
 
   .intent-chip,
+  .auction-chip,
   .status-chip,
   .save-count,
   .meta-label {
@@ -145,12 +155,18 @@ const imageCount = listing.imageUrls?.length || 0;
   }
 
   .intent-chip,
+  .auction-chip,
   .status-chip,
   .save-count {
     background: rgba(255, 255, 255, 0.9);
     color: #111;
     border: 1px solid rgba(17, 17, 17, 0.06);
     backdrop-filter: blur(10px);
+  }
+
+  .auction-chip {
+    background: rgba(17, 17, 17, 0.92);
+    color: white;
   }
 
   .listing-body {
@@ -227,7 +243,8 @@ const imageCount = listing.imageUrls?.length || 0;
   .fact-row,
   .signal-row,
   .context-row,
-  .context-headline {
+  .context-headline,
+  .auction-strip span {
     color: var(--muted);
   }
 
@@ -236,6 +253,23 @@ const imageCount = listing.imageUrls?.length || 0;
   .context-headline {
     margin: 0;
     line-height: 1.68;
+  }
+
+  .auction-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    padding: 0.8rem 0.9rem;
+    border-radius: 18px;
+    background: rgba(15, 23, 42, 0.05);
+    border: 1px solid var(--line);
+  }
+
+  .auction-strip strong {
+    font-size: 0.96rem;
+    letter-spacing: -0.03em;
   }
 
   .summary {

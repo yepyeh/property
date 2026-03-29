@@ -9,6 +9,7 @@ function parseFilters(form: FormData) {
     city: readOptionalText(form, "city", { maxLength: 120 }),
     district: readOptionalText(form, "district", { maxLength: 120 }),
     propertyType: readOptionalText(form, "propertyType", { maxLength: 40 }),
+    saleMode: readOptionalText(form, "saleMode", { maxLength: 40 }),
     minPrice: readNumber(form, "minPrice", { min: 0 }),
     maxPrice: readNumber(form, "maxPrice", { min: 0 }),
     minBeds: readNumber(form, "minBeds", { min: 0, max: 99 }),

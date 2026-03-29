@@ -55,6 +55,14 @@ const selectedSort = filters.sort || "newest";
       </select>
     </label>
     <label class="field">
+      <span>Sale mode</span>
+      <select name="saleMode">
+        <option value="">Any mode</option>
+        <option value="private-sale" selected={filters.saleMode === "private-sale"}>Private sale</option>
+        <option value="auction" selected={filters.saleMode === "auction"}>Auction</option>
+      </select>
+    </label>
+    <label class="field">
       <span>Minimum beds</span>
       <select name="minBeds">
         <option value="">Any beds</option>

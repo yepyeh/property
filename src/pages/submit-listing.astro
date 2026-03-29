@@ -99,6 +99,11 @@ const owner = Astro.locals.owner;
         <label>Intent<select name="intent"><option value="buy">Buy</option><option value="rent">Rent</option></select></label>
       </div>
 
+      <div class="grid two">
+        <label>Sale mode<select name="saleMode"><option value="private-sale">Private sale / standard listing</option><option value="auction">Auction</option></select></label>
+        <label>Property type<select name="propertyType"><option>Condo</option><option>Villa</option><option>Townhouse</option><option>Apartment</option><option>House</option><option>Land</option></select></label>
+      </div>
+
       <div class="grid three">
         <label>City<input name="city" required placeholder="Ho Chi Minh City" /></label>
         <label>District<input name="district" required placeholder="Thu Duc City" /></label>
@@ -106,10 +111,10 @@ const owner = Astro.locals.owner;
       </div>
 
       <div class="grid four">
-        <label>Property type<select name="propertyType"><option>Condo</option><option>Villa</option><option>Townhouse</option><option>Apartment</option><option>House</option><option>Land</option></select></label>
         <label>Price label<input name="priceLabel" required placeholder="9.5B VND" /></label>
         <label>Numeric price<input name="numericPrice" type="number" min="0" step="0.01" required placeholder="9.5" /></label>
         <label>Price unit<select name="priceUnit"><option value="VND">VND</option><option value="VND / month">VND / month</option></select></label>
+        <label>Status label<input name="statusLabel" placeholder="Signature listing, New release, Move-in ready" /></label>
       </div>
 
       <div class="grid three">
@@ -125,13 +130,19 @@ const owner = Astro.locals.owner;
         <p>Write this as if a buyer is deciding whether to open the detail page, save it, or enquire.</p>
       </div>
       <div class="grid three">
-        <label>Status label<input name="statusLabel" placeholder="Signature listing, New release, Move-in ready" /></label>
         <label>Visual tone<select name="tone"><option value="sea">Sea</option><option value="sun">Sun</option><option value="forest">Forest</option><option value="night">Night</option><option value="clay">Clay</option><option value="sky">Sky</option></select></label>
         <label>Tags<input name="tags" placeholder="River-facing, School-run ready, Investor-safe" /></label>
+        <label>Auction starting price<input name="auctionStartingPriceLabel" placeholder="Opening bid 11.2B VND" /></label>
       </div>
       <label>Short summary<textarea name="summary" rows="3" required placeholder="High-floor condo with clean finish quality, direct bridge access into the core, and a layout that feels stronger than typical investor stock."></textarea><span class="field-tip">Three lines. Think listing card, not brochure.</span></label>
       <label>Full description<textarea name="description" rows="6" required placeholder="Describe the home, location, condition, buyer fit, and why it stands out against nearby alternatives."></textarea><span class="field-tip">Write for a buyer deciding whether to enquire today.</span></label>
       <label>Included features<input name="features" placeholder="Private garden, Home office, Pool deck, Covered parking" /></label>
+      <div class="grid three">
+        <label>Auction starts<input name="auctionStartsAt" type="datetime-local" /></label>
+        <label>Auction ends<input name="auctionEndsAt" type="datetime-local" /></label>
+        <label>Reserve price label<input name="auctionReservePriceLabel" placeholder="Reserve on request" /></label>
+      </div>
+      <label>Auction terms<textarea name="auctionTerms" rows="3" placeholder="Explain inspections, registration, reserve conditions, and when bids close."></textarea><span class="field-tip">Only use these fields when the listing is actually running as an auction.</span></label>
     </div>
 
     <div class="section-block card-inset">

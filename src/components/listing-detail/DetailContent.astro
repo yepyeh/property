@@ -10,9 +10,36 @@ export interface Props {
 const { listing, mapHref, mapEmbedHref } = Astro.props;
 const neighborhood = listing.neighborhood;
 const location = listing.location;
+const isAuction = listing.saleMode === "auction";
 ---
 
 <article class="content-panel card">
+  {isAuction && listing.auction && (
+    <div class="panel-section">
+      <span class="section-kicker">Auction structure</span>
+      <h2>How this auction works</h2>
+      <div class="auction-grid">
+        <article>
+          <strong>Status</strong>
+          <p>{listing.auction.phase === "live" ? "Bidding is live now." : listing.auction.phase === "ended" ? "This auction has ended." : "Auction is scheduled."}</p>
+        </article>
+        <article>
+          <strong>Opening bid</strong>
+          <p>{listing.auction.startingPriceLabel || listing.priceLabel}</p>
+        </article>
+        <article>
+          <strong>Reserve</strong>
+          <p>{listing.auction.reservePriceLabel || "Reserve not published"}</p>
+        </article>
+        <article>
+          <strong>Window</strong>
+          <p>{listing.auction.startsAt || "Start to be announced"} to {listing.auction.endsAt || "end to be announced"}</p>
+        </article>
+      </div>
+      {listing.auction.terms && <p class="auction-terms">{listing.auction.terms}</p>}
+    </div>
+  )}
+
   <div class="panel-section">
     <span class="section-kicker">Overview</span>
     <h2>Property overview</h2>
@@ -171,6 +198,31 @@ const location = listing.location;
     color: var(--muted);
     line-height: 1.7;
     margin: 0;
+  }
+
+  .auction-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .auction-grid article {
+    padding: 1rem;
+    border-radius: 22px;
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    border: 1px solid rgba(208, 213, 221, 0.74);
+  }
+
+  .auction-grid strong {
+    display: block;
+    margin-bottom: 0.55rem;
+    font-size: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .auction-terms {
+    margin-top: 1rem !important;
   }
 
   .tag-row span {
@@ -357,6 +409,7 @@ const location = listing.location;
 
   @media (max-width: 1100px) {
     .overview-grid,
+    .auction-grid,
     .context-grid,
     .map-panel,
     .gallery-editorial {

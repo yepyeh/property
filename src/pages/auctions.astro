@@ -1,0 +1,99 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Property Auctions | Property App 2026" description="Auction-ready property inventory for land, houses, and flats.">
+  <section class="auction-hero card">
+    <div>
+      <span class="pill">Auction inventory</span>
+      <h1>Property auctions without burying the buyer in guesswork.</h1>
+      <p>
+        Use auctions for land, houses, and flats where timing, reserve expectations, and decision pressure matter.
+        This is the structured route into auction-led inventory before a full live bidding engine is introduced.
+      </p>
+      <div class="hero-actions">
+        <a class="button-dark" href="/listings/?intent=buy&saleMode=auction">Browse auction listings</a>
+        <a class="button-secondary" href="/submit-listing/">Post auction inventory</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="auction-grid section-gap">
+    <article class="card auction-card">
+      <strong>For buyers</strong>
+      <p>See the auction window, opening bid, reserve guidance, and terms before you commit to deeper due diligence.</p>
+    </article>
+    <article class="card auction-card">
+      <strong>For owners</strong>
+      <p>Use auction mode when timing and structured demand matter more than slow negotiated back-and-forth.</p>
+    </article>
+    <article class="card auction-card">
+      <strong>For the marketplace</strong>
+      <p>This adds a high-attention inventory route that most regional portals still treat weakly or not at all.</p>
+    </article>
+  </section>
+
+  <style is:inline>
+    .auction-hero,
+    .auction-card {
+      padding: 1.4rem;
+    }
+
+    .auction-hero h1 {
+      margin: 0.75rem 0 0;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      line-height: 0.94;
+      letter-spacing: -0.08em;
+      max-width: 12ch;
+    }
+
+    .auction-hero p,
+    .auction-card p {
+      color: var(--muted);
+      line-height: 1.72;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    .button-dark,
+    .button-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 2.9rem;
+      border-radius: 999px;
+      padding: 0.84rem 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: 1px solid var(--line);
+    }
+
+    .button-dark {
+      background: var(--brand);
+      color: white;
+      border-color: var(--brand);
+    }
+
+    .button-secondary {
+      background: white;
+      color: var(--text);
+    }
+
+    .auction-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    @media (max-width: 860px) {
+      .auction-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</Layout>

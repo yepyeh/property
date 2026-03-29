@@ -14,6 +14,7 @@ const quickFilters = [
   { label: "Rent in Hanoi", href: "/listings/?intent=rent&city=Hanoi" },
   { label: "Under 5B VND", href: "/listings/?intent=buy&maxPrice=5" },
   { label: "Family homes", href: "/listings/?intent=buy&minBeds=3" },
+  { label: "Live auctions", href: "/listings/?intent=buy&saleMode=auction" },
   { label: "Newest listings", href: "/listings/?sort=newest" },
 ];
 const featuredListings = (await getAllListings(getDB(Astro.locals.runtime))).slice(0, 6);
@@ -26,6 +27,7 @@ const browseCities = [
 const trustSignals = [
   "Verified owners and agent-facing listing controls",
   "Saved searches, favorites, and inquiry tracking in one account system",
+  "Auction-ready property flow for houses, land, and high-attention inventory",
   "Search-first mobile experience designed to behave like a lightweight property app",
 ];
 const ownerSteps = [

@@ -6,6 +6,7 @@ export interface Props {
     city?: string;
     district?: string;
     propertyType?: string;
+    saleMode?: string;
     minPrice?: number;
     maxPrice?: number;
     minBeds?: number;
@@ -39,6 +40,7 @@ const { owner, filters, dashboardHref, currentSearchQuery } = Astro.props;
       <input type="hidden" name="city" value={filters.city} />
       <input type="hidden" name="district" value={filters.district} />
       <input type="hidden" name="propertyType" value={filters.propertyType} />
+      <input type="hidden" name="saleMode" value={filters.saleMode} />
       <input type="hidden" name="minPrice" value={filters.minPrice ?? ""} />
       <input type="hidden" name="maxPrice" value={filters.maxPrice ?? ""} />
       <input type="hidden" name="minBeds" value={filters.minBeds ?? ""} />

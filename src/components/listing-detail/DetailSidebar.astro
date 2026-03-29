@@ -57,6 +57,7 @@ const defaultMonthlyEstimate = formatVndAmount(
     )}
 
     {isBuyer && <a class="button-secondary full-width" href="/buyer/compare/">Compare against saved homes</a>}
+    {listing.saleMode === "auction" && <a class="button-secondary full-width" href="#enquiry-panel">Register auction interest</a>}
 
     <form class="enquiry-form" method="POST" action="/api/enquiries">
       <input type="hidden" name="listingSlug" value={listing.slug} />
