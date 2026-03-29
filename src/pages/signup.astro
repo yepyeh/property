@@ -8,82 +8,158 @@ const isBuyer = role === "buyer";
 ---
 
 <Layout title="Create Account | Property App 2026" description="Create an owner or buyer account to use the marketplace with the right workflow.">
-  <section class="signup-shell card">
-    <div>
-      <span class="pill">Marketplace accounts</span>
-      <h1 class="section-title">Create your {isBuyer ? "buyer" : "owner"} account</h1>
-      <p class="section-copy">
+  <section class="auth-shell">
+    <div class="story-panel card">
+      <span class="pill">{isBuyer ? "Buyer onboarding" : "Owner onboarding"}</span>
+      <h1>{isBuyer ? "Create a buyer account that helps you decide, not just browse." : "Create an owner account built to publish, manage, and convert."}</h1>
+      <p>
         {isBuyer
-          ? "Buyer accounts are for search, saved filters, and future alerting. They do not have access to listing publishing or owner billing flows."
-          : "Owner accounts start on a starter plan: every listing gets a 7-day free trial. After that you can convert a listing to a paid placement or pay extra for promoted visibility."}
+          ? "Use one account to shortlist, compare, mark finalists, and track enquiry follow-up without losing context between visits."
+          : "Use one account to publish listings, manage galleries, monitor enquiries, and convert free-trial inventory into paid or promoted visibility."}
       </p>
+
+      <div class="role-switch">
+        <a class:list-active={!isBuyer} href="/signup?role=owner">Owner account</a>
+        <a class:list-active={isBuyer} href="/signup?role=buyer">Buyer account</a>
+      </div>
+
+      <div class="story-stack">
+        <article>
+          <strong>{isBuyer ? "What you unlock" : "What you unlock"}</strong>
+          <ul>
+            {isBuyer ? (
+              <>
+                <li>Save searches and see what is new since your last visit.</li>
+                <li>Shortlist homes into collections, compare them, and mark finalists.</li>
+                <li>Track enquiries, follow-up plans, and buyer-side decisions in one workspace.</li>
+              </>
+            ) : (
+              <>
+                <li>Every listing starts with a 7-day free trial to get live quickly.</li>
+                <li>Upload galleries, respond to enquiries, and manage billing from one dashboard.</li>
+                <li>Run paid, promoted, and auction-ready inventory without leaving the platform.</li>
+              </>
+            )}
+          </ul>
+        </article>
+
+        <article class="soft-card">
+          <strong>{isBuyer ? "How to use it well" : "How to use it well"}</strong>
+          <p>
+            {isBuyer
+              ? "Keep the shortlist tight. Save a few serious options, compare trade-offs, then move the strongest one into finalist state before you enquire."
+              : "Treat publishing like a launch sequence. Strong facts, strong gallery, strong trust context first. Promotion works best once the listing itself is credible."}
+          </p>
+        </article>
+      </div>
     </div>
 
-    <div class="role-switch">
-      <a class:list-active={!isBuyer} href="/signup?role=owner">Owner account</a>
-      <a class:list-active={isBuyer} href="/signup?role=buyer">Buyer account</a>
-    </div>
+    <section class="form-panel card">
+      <div class="panel-head">
+        <div>
+          <span class="eyebrow">Create account</span>
+          <h2>{isBuyer ? "Buyer account" : "Owner account"}</h2>
+        </div>
+        <p>
+          {isBuyer
+            ? "Set up the account once, then keep your search, shortlist, compare, and enquiry workflow attached to it."
+            : "Set up the account once, then keep listings, billing, trust signals, and owner communication attached to it."}
+        </p>
+      </div>
 
-    {(error || exists) && (
-      <p class="error">
-        {exists ? "That email already has an account." : "Use a valid email and a password with at least 8 characters."}
-      </p>
-    )}
+      {(error || exists) && (
+        <p class="error">
+          {exists ? "That email already has an account." : "Use a valid email and a password with at least 8 characters."}
+        </p>
+      )}
 
-    <form class="signup-form" method="POST" action="/api/auth/register">
-      <input type="hidden" name="role" value={role} />
-      <label>Full name<input type="text" name="fullName" required placeholder="Nguyen Anh" /></label>
-      <label>Email<input type="email" name="email" required placeholder="owner@example.com" /></label>
-      <label>Phone<input type="text" name="phone" placeholder="+84 ..." /></label>
-      <label>Password<input type="password" name="password" required minlength="8" placeholder="At least 8 characters" /></label>
-      <button type="submit">Create {isBuyer ? "buyer" : "owner"} account</button>
-    </form>
+      <form class="signup-form" method="POST" action="/api/auth/register">
+        <input type="hidden" name="role" value={role} />
 
-    <div class="plan-card">
-      <strong>{isBuyer ? "Buyer workflow" : "Owner monetization model"}</strong>
-      <ul>
-        {isBuyer ? (
-          <>
-            <li>Save searches from the listings page.</li>
-            <li>Return to your buyer dashboard to reopen them quickly.</li>
-            <li>Future buyer alerts will build on these saved searches.</li>
-          </>
-        ) : (
-          <>
-            <li>Every new listing starts as a 7-day free trial.</li>
-            <li>Paid listings can run beyond the trial window.</li>
-            <li>Promoted listings are prioritized above standard inventory.</li>
-          </>
-        )}
-      </ul>
-    </div>
+        <div class="grid two">
+          <label class="field">
+            <span>Full name</span>
+            <input type="text" name="fullName" required placeholder="Nguyen Anh" />
+          </label>
+          <label class="field">
+            <span>Phone</span>
+            <input type="text" name="phone" placeholder="+84 ..." />
+          </label>
+        </div>
 
-    <p class="switch-link">Already have an account? <a href="/login">Sign in</a>.</p>
+        <label class="field">
+          <span>Email</span>
+          <input type="email" name="email" required placeholder={isBuyer ? "buyer@example.com" : "owner@example.com"} />
+        </label>
+
+        <label class="field">
+          <span>Password</span>
+          <input type="password" name="password" required minlength="8" placeholder="At least 8 characters" />
+        </label>
+
+        <button type="submit">Create {isBuyer ? "buyer" : "owner"} account</button>
+      </form>
+
+      <div class="plan-card">
+        <strong>{isBuyer ? "Buyer workflow" : "Owner monetization model"}</strong>
+        <ul>
+          {isBuyer ? (
+            <>
+              <li>Save promising searches from the results page.</li>
+              <li>Use shortlist state to mark finalists and follow-up plans.</li>
+              <li>Compare a few credible options before you contact the owner.</li>
+            </>
+          ) : (
+            <>
+              <li>Every new listing starts as a 7-day free trial.</li>
+              <li>Paid listings extend visibility beyond the trial window.</li>
+              <li>Promoted and auction-ready listings get stronger presentation and routing.</li>
+            </>
+          )}
+        </ul>
+      </div>
+
+      <p class="switch-link">Already have an account? <a href="/login">Sign in</a>.</p>
+    </section>
   </section>
 
   <style is:inline>
-    .signup-shell {
-      max-width: 38rem;
-      margin: 4rem auto 0;
+    .auth-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(22rem, 0.95fr);
+      gap: 1.15rem;
+      align-items: stretch;
+    }
+    .story-panel,
+    .form-panel {
       padding: 1.5rem;
     }
-    .error {
-      padding: 0.9rem 1rem;
-      border-radius: 18px;
-      background: rgba(185, 28, 28, 0.08);
-      color: #991b1b;
-      font-weight: 600;
-    }
-    .signup-form {
+    .story-panel {
       display: grid;
-      gap: 1rem;
-      margin-top: 1rem;
+      gap: 1.15rem;
+      background:
+        radial-gradient(circle at top left, rgba(14, 165, 233, 0.12), transparent 26rem),
+        linear-gradient(180deg, rgba(255,255,255,0.9), rgba(248,250,252,0.94));
+    }
+    .story-panel h1,
+    .panel-head h2 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.35rem);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+    }
+    .story-panel p,
+    .panel-head p,
+    .soft-card p,
+    .story-stack li {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
     }
     .role-switch {
-      display: flex;
+      display: inline-flex;
       gap: 0.75rem;
       flex-wrap: wrap;
-      margin-top: 1rem;
     }
     .role-switch a {
       display: inline-flex;
@@ -102,53 +178,127 @@ const isBuyer = role === "buyer";
       border-color: var(--bg-deep);
       color: white;
     }
-    label {
-      display: block;
+    .story-stack {
+      display: grid;
+      gap: 0.9rem;
+    }
+    .story-stack article {
+      padding: 1rem 1.05rem;
+      border-radius: 1.3rem;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      display: grid;
+      gap: 0.45rem;
+    }
+    .story-stack strong,
+    .plan-card strong {
+      font-size: 0.97rem;
+      letter-spacing: -0.02em;
+    }
+    .story-stack ul,
+    .plan-card ul {
+      margin: 0;
+      padding-left: 1rem;
+      display: grid;
+      gap: 0.35rem;
+    }
+    .form-panel {
+      display: grid;
+      gap: 1rem;
+      background: rgba(255,255,255,0.94);
+    }
+    .panel-head {
+      display: grid;
+      gap: 0.6rem;
+    }
+    .eyebrow {
+      display: inline-flex;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       color: var(--muted);
-      font-size: 0.92rem;
+    }
+    .error {
+      margin: 0;
+      padding: 0.95rem 1rem;
+      border-radius: 1.1rem;
+      background: rgba(185, 28, 28, 0.08);
+      color: #991b1b;
+      font-weight: 600;
+      border: 1px solid rgba(185, 28, 28, 0.12);
+    }
+    .signup-form {
+      display: grid;
+      gap: 0.95rem;
+    }
+    .grid {
+      display: grid;
+      gap: 0.95rem;
+    }
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .field {
+      display: grid;
+      gap: 0.45rem;
+      color: var(--muted);
+      font-size: 0.9rem;
       font-weight: 600;
     }
     input {
       width: 100%;
-      margin-top: 0.4rem;
-      padding: 0.95rem 1rem;
-      border-radius: 18px;
+      padding: 1rem 1rem;
+      border-radius: 1.1rem;
       border: 1px solid var(--line);
-      background: rgba(255,255,255,0.8);
+      background: rgba(248, 250, 252, 0.95);
       font: inherit;
+      color: var(--text);
+    }
+    input:focus {
+      outline: none;
+      border-color: rgba(15, 23, 42, 0.25);
+      box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.06);
     }
     button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.95rem 1.2rem;
+      padding: 1rem 1.2rem;
       border: none;
       border-radius: 999px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      background: linear-gradient(135deg, #0f172a, #1e293b);
       color: white;
       font-weight: 700;
       cursor: pointer;
+      box-shadow: 0 18px 30px rgba(15, 23, 42, 0.14);
     }
     .plan-card {
-      margin-top: 1rem;
-      padding: 1rem;
-      border-radius: 22px;
+      padding: 1rem 1.05rem;
+      border-radius: 1.3rem;
       background: rgba(15, 118, 110, 0.08);
-    }
-    .plan-card ul {
-      margin: 0.6rem 0 0;
-      padding-left: 1.1rem;
-      color: var(--muted);
-      line-height: 1.7;
+      border: 1px solid rgba(15, 118, 110, 0.12);
+      display: grid;
+      gap: 0.45rem;
     }
     .switch-link {
-      margin: 1rem 0 0;
+      margin: 0;
       color: var(--muted);
     }
     .switch-link a {
       color: var(--accent-strong);
       font-weight: 700;
       text-decoration: none;
+    }
+    @media (max-width: 960px) {
+      .auth-shell,
+      .grid.two {
+        grid-template-columns: 1fr;
+      }
+      .story-panel h1,
+      .panel-head h2 {
+        font-size: clamp(2rem, 10vw, 2.9rem);
+      }
     }
   </style>
 </Layout>
