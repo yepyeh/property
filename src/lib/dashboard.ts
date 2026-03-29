@@ -74,7 +74,7 @@ export async function getOwnerDashboardData(ownerUserId: number, db?: D1Like) {
   const listingsResult = await db
     .prepare(
       `SELECT slug, title, city, district, intent, status, created_at, enquiries,
-              image_keys, plan_type, trial_ends_at, paid_until, promoted_until
+              image_keys, plan_type, trial_ends_at, paid_until, promoted_until, views_24h, saves
        FROM listings
        WHERE owner_user_id = ?
        ORDER BY created_at DESC`
@@ -155,8 +155,26 @@ export async function getBuyerDashboardData(userId: number, db?: D1Like) {
     Boolean(notificationPreferences?.in_app_enabled)
   );
 
+  const savedSearches = await getSavedSearchRecords(db, userId);
+
+  if (notificationPreferences?.in_app_enabled && notificationPreferences?.saved_search_matches) {
+    for (const search of savedSearches) {
+      if ((search.new_result_count || 0) > 0) {
+        await upsertInboxNotification(db, {
+          eventKey: buildInboxEventKey(["saved-search-freshness", userId, search.id, search.updated_at]),
+          userId,
+          category: "saved_search_matches",
+          title: search.name,
+          message: `${search.new_result_count} new listing${search.new_result_count === 1 ? "" : "s"} match this saved search since your last visit.`,
+          href: search.route_query ? `/api/saved-searches/visit?id=${search.id}&redirectTo=${encodeURIComponent(`/listings/?${search.route_query}`)}` : `/api/saved-searches/visit?id=${search.id}&redirectTo=/listings/`,
+          level: search.new_result_count > 3 ? "warning" : "info",
+        });
+      }
+    }
+  }
+
   return {
-    savedSearches: await getSavedSearchRecords(db, userId),
+    savedSearches,
     savedListings: await getSavedListingRecords(db, userId),
     enquiries: await getBuyerEnquiryRecords(db, userId),
     recentlyViewed: await getRecentlyViewedRecords(db, userId),

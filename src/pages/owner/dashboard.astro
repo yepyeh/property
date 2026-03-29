@@ -266,6 +266,8 @@ function getImageUrls(value: unknown) {
                 </div>
                 <div class="listing-main">
               <div class="meta-grid">
+                <span>{listing.views_24h ?? 0} views / 24h</span>
+                <span>{listing.saves ?? 0} saves</span>
                 <span>{listing.enquiries} enquiries</span>
                 <span>{getImageCount(listing.image_keys)} images</span>
                 <span>Status: {listing.status}</span>
@@ -277,6 +279,20 @@ function getImageUrls(value: unknown) {
                 <span>{getImageCount(listing.image_keys) >= 4 ? "Gallery ready" : "Needs more photos"}</span>
                 <span>{listing.enquiries > 0 ? "Buyer demand active" : "Awaiting enquiries"}</span>
                 <a href={`/listings/${listing.slug}/`} class="quality-link">Preview public page</a>
+              </div>
+              <div class="performance-strip">
+                <div class="performance-chip">
+                  <strong>{listing.views_24h ?? 0}</strong>
+                  <span>24h views</span>
+                </div>
+                <div class="performance-chip">
+                  <strong>{listing.saves ?? 0}</strong>
+                  <span>Saves</span>
+                </div>
+                <div class="performance-chip">
+                  <strong>{listing.enquiries ?? 0}</strong>
+                  <span>Enquiries</span>
+                </div>
               </div>
               <div class="action-row action-row-wrap">
                 {billingEnabled ? (
@@ -443,6 +459,32 @@ function getImageUrls(value: unknown) {
 
     .panel-copy {
       max-width: 42rem;
+    }
+
+    .performance-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin: 0.9rem 0 1rem;
+    }
+
+    .performance-chip {
+      display: grid;
+      gap: 0.2rem;
+      padding: 0.85rem 0.9rem;
+      border-radius: 16px;
+      background: rgba(15, 23, 42, 0.05);
+      border: 1px solid rgba(15, 23, 42, 0.07);
+    }
+
+    .performance-chip strong {
+      font-size: 1.1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .performance-chip span {
+      color: var(--muted);
+      font-size: 0.82rem;
     }
 
     .badge-text,
