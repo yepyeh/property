@@ -102,7 +102,7 @@ import Layout from "../layouts/Layout.astro";
     .trust-hero {
       background:
         radial-gradient(circle at top left, rgba(14, 165, 233, 0.13), transparent 26rem),
-        linear-gradient(180deg, rgba(255,255,255,0.9), rgba(248,250,252,0.94));
+        linear-gradient(180deg, var(--surface-overlay-strong), var(--surface-panel-muted));
     }
     .hero-copy {
       display: grid;
@@ -133,8 +133,8 @@ import Layout from "../layouts/Layout.astro";
     .hero-signals span {
       padding: 0.7rem 0.95rem;
       border-radius: 999px;
-      background: rgba(255,255,255,0.82);
-      border: 1px solid rgba(148, 163, 184, 0.18);
+      background: var(--surface-overlay-strong);
+      border: 1px solid var(--line);
       font-size: 0.88rem;
       font-weight: 600;
       color: var(--muted);
@@ -152,7 +152,7 @@ import Layout from "../layouts/Layout.astro";
     .protection-band {
       display: grid;
       gap: 1rem;
-      background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(248,250,252,0.96));
+      background: linear-gradient(180deg, var(--surface-elevated), rgba(248,250,252,0.96));
     }
     .principles-grid {
       display: grid;
@@ -164,8 +164,8 @@ import Layout from "../layouts/Layout.astro";
       display: grid;
       gap: 0.4rem;
       border-radius: 1.3rem;
-      background: rgba(255,255,255,0.72);
-      border: 1px solid rgba(148, 163, 184, 0.18);
+      background: var(--surface-panel-muted);
+      border: 1px solid var(--line);
       text-decoration: none;
       color: inherit;
     }

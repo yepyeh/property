@@ -150,7 +150,7 @@ const isAuction = listing.saleMode === "auction";
 <style is:inline>
   .content-panel {
     padding: 1.1rem;
-    background: rgba(255, 255, 255, 0.92);
+    background: var(--surface-elevated);
     box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 18px 40px rgba(16, 24, 40, 0.06);
   }
 
@@ -210,8 +210,8 @@ const isAuction = listing.saleMode === "auction";
   .auction-grid article {
     padding: 1rem;
     border-radius: 22px;
-    background: linear-gradient(180deg, #ffffff, #f8fafc);
-    border: 1px solid rgba(208, 213, 221, 0.74);
+    background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
+    border: 1px solid var(--line);
   }
 
   .auction-grid strong {
@@ -227,7 +227,7 @@ const isAuction = listing.saleMode === "auction";
 
   .tag-row span {
     background: rgba(248,250,252,0.96);
-    border: 1px solid rgba(208, 213, 221, 0.74);
+    border: 1px solid var(--line);
     color: var(--text);
     font-weight: 700;
   }
@@ -249,8 +249,8 @@ const isAuction = listing.saleMode === "auction";
   .overview-grid article {
     padding: 1rem;
     border-radius: 22px;
-    background: linear-gradient(180deg, #ffffff, #f8fafc);
-    border: 1px solid rgba(208, 213, 221, 0.74);
+    background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
+    border: 1px solid var(--line);
   }
 
   .overview-grid strong {
@@ -266,8 +266,8 @@ const isAuction = listing.saleMode === "auction";
     align-items: center;
     padding: 0.9rem 1rem;
     border-radius: 20px;
-    background: linear-gradient(180deg, #ffffff, #f8fafc);
-    border: 1px solid rgba(208, 213, 221, 0.74);
+    background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
+    border: 1px solid var(--line);
   }
 
   .feature-dot {
@@ -288,8 +288,8 @@ const isAuction = listing.saleMode === "auction";
   .context-grid article {
     padding: 1rem;
     border-radius: 22px;
-    background: linear-gradient(180deg, #ffffff, #f8fafc);
-    border: 1px solid rgba(208, 213, 221, 0.74);
+    background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
+    border: 1px solid var(--line);
   }
 
   .context-grid strong {
@@ -324,7 +324,7 @@ const isAuction = listing.saleMode === "auction";
     border: 0;
     border-radius: 22px;
     background:
-      linear-gradient(180deg, rgba(15, 23, 42, 0.05), rgba(15, 23, 42, 0.12)),
+      linear-gradient(180deg, var(--accent-1), rgba(15, 23, 42, 0.12)),
       radial-gradient(circle at 22% 20%, rgba(15, 118, 110, 0.16), transparent 18%),
       linear-gradient(135deg, #f8fafc, #e5edf6);
   }
@@ -353,8 +353,8 @@ const isAuction = listing.saleMode === "auction";
     align-content: start;
     padding: 1rem;
     border-radius: 24px;
-    background: linear-gradient(180deg, #ffffff, #f8fafc);
-    border: 1px solid rgba(208, 213, 221, 0.74);
+    background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
+    border: 1px solid var(--line);
   }
 
   .map-meta strong {
@@ -375,7 +375,7 @@ const isAuction = listing.saleMode === "auction";
     cursor: pointer;
     border: none;
     background: var(--brand);
-    color: white;
+    color: var(--surface-canvas);
     box-shadow: 0 14px 28px rgba(16, 24, 40, 0.16);
   }
 

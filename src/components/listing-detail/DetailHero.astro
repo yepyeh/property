@@ -118,8 +118,8 @@ const auctionTimingLabel = isAuction ? getAuctionTimingLabel(listing.auction) : 
     padding: 1.1rem;
     background:
       radial-gradient(circle at 14% 14%, rgba(15, 118, 110, 0.08), transparent 22%),
-      linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.9));
-    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 18px 40px rgba(16, 24, 40, 0.06);
+      linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-overlay-strong));
+    box-shadow: 0 1px 2px var(--shadow-soft-color), 0 18px 40px var(--shadow-color);
   }
 
   .hero-media,
@@ -145,7 +145,7 @@ const auctionTimingLabel = isAuction ? getAuctionTimingLabel(listing.auction) : 
     margin-top: auto;
     padding: 0.95rem 1rem;
     border-radius: 18px;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--surface-overlay-strong);
     color: var(--brand);
     backdrop-filter: blur(10px);
   }
@@ -184,8 +184,8 @@ const auctionTimingLabel = isAuction ? getAuctionTimingLabel(listing.auction) : 
     min-height: 2rem;
     padding: 0.2rem 0.75rem;
     border-radius: 999px;
-    background: rgba(15, 23, 42, 0.76);
-    color: white;
+    background: var(--surface-overlay-strong);
+    color: var(--surface-canvas);
     font-size: 0.78rem;
     font-weight: 800;
   }
@@ -209,7 +209,7 @@ const auctionTimingLabel = isAuction ? getAuctionTimingLabel(listing.auction) : 
     min-height: 2rem;
     padding: 0.22rem 0.75rem;
     border-radius: 999px;
-    background: rgba(15, 23, 42, 0.06);
+    background: var(--accent-1);
     color: var(--muted-strong);
     font-size: 0.8rem;
     font-weight: 700;
@@ -218,8 +218,8 @@ const auctionTimingLabel = isAuction ? getAuctionTimingLabel(listing.auction) : 
   .hero-signal-grid article {
     padding: 1rem;
     border-radius: 20px;
-    background: linear-gradient(180deg, #ffffff, #f8fafc);
-    border: 1px solid rgba(208, 213, 221, 0.74);
+    background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
+    border: 1px solid var(--line);
   }
 
   .hero-signal-grid strong {
@@ -251,7 +251,7 @@ const auctionTimingLabel = isAuction ? getAuctionTimingLabel(listing.auction) : 
 
   .badge-primary,
   .badge-secondary {
-    background: rgba(255,255,255,0.92);
+    background: var(--surface-elevated);
     color: var(--brand);
   }
 
@@ -305,8 +305,8 @@ const auctionTimingLabel = isAuction ? getAuctionTimingLabel(listing.auction) : 
   .fact-grid article {
     padding: 1rem;
     border-radius: 22px;
-    background: linear-gradient(180deg, #ffffff, #f8fafc);
-    border: 1px solid rgba(208, 213, 221, 0.74);
+    background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
+    border: 1px solid var(--line);
   }
 
   .fact-grid strong {
@@ -317,8 +317,8 @@ const auctionTimingLabel = isAuction ? getAuctionTimingLabel(listing.auction) : 
   }
 
   .trust-bar span {
-    background: rgba(248,250,252,0.96);
-    border: 1px solid rgba(208, 213, 221, 0.74);
+    background: var(--surface-elevated-strong);
+    border: 1px solid var(--line);
     color: var(--text);
     font-weight: 700;
   }
@@ -340,18 +340,18 @@ const auctionTimingLabel = isAuction ? getAuctionTimingLabel(listing.auction) : 
   .button-dark {
     border: none;
     background: var(--brand);
-    color: white;
-    box-shadow: 0 14px 28px rgba(16, 24, 40, 0.16);
+    color: var(--surface-canvas);
+    box-shadow: 0 14px 28px var(--shadow-color);
   }
 
   .button-secondary {
     border: 1px solid var(--line-strong);
-    background: white;
+    background: var(--surface-elevated-strong);
     color: var(--text);
   }
 
   .flash-inline {
-    color: #067647;
+    color: var(--success-text);
     font-weight: 700;
   }
 
@@ -369,7 +369,7 @@ const auctionTimingLabel = isAuction ? getAuctionTimingLabel(listing.auction) : 
     height: 7.5rem;
     border-radius: 18px;
     object-fit: cover;
-    background: rgba(14, 22, 40, 0.08);
+    background: color-mix(in srgb, var(--brand) 8%, transparent);
   }
 
   .gallery-card span {

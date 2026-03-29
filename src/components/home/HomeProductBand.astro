@@ -29,14 +29,14 @@
     gap: 1rem;
     padding: 1.2rem;
     border-radius: 2rem;
-    background: linear-gradient(180deg, #1a1a1a, #242424);
-    color: white;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--brand) 92%, black), var(--brand))
+    color: var(--surface-canvas);
   }
 
   .section-kicker,
   .panel-label {
     display: inline-flex;
-    color: rgba(255,255,255,0.72);
+    color: var(--surface-panel-muted);
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -54,12 +54,12 @@
     font-size: clamp(2.4rem, 5vw, 4.75rem);
     line-height: 0.9;
     letter-spacing: -0.1em;
-    color: white;
+    color: var(--surface-canvas);
   }
 
   .band-copy p,
   .panel-window span {
-    color: rgba(255,255,255,0.72);
+    color: var(--surface-panel-muted);
     line-height: 1.75;
   }
 
@@ -74,8 +74,8 @@
     gap: 0.28rem;
     padding: 1.05rem;
     border-radius: 1.35rem;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: color-mix(in srgb, var(--surface-canvas) 10%, transparent);
+    border: 1px solid var(--border-strong);
   }
 
   .panel-window strong {
@@ -84,7 +84,7 @@
   }
 
   .panel-window.muted {
-    background: rgba(255,255,255,0.05);
+    background: color-mix(in srgb, var(--surface-canvas) 8%, transparent);
   }
 
   @media (max-width: 1080px) {

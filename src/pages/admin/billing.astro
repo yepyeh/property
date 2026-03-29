@@ -360,7 +360,7 @@ const conversionRate = analytics.totalListings > 0
       font-weight: 700;
     }
     .error-flash {
-      color: #991b1b;
+      color: var(--danger-text);
     }
     .ghost,
     .primary,
@@ -376,13 +376,13 @@ const conversionRate = analytics.totalListings > 0
     .ghost {
       padding: 0.95rem 1.2rem;
       border: 1px solid var(--line);
-      background: rgba(255,255,255,0.72);
+      background: var(--surface-panel-muted);
       color: var(--text);
     }
     .primary, .dark {
       padding: 0.85rem 1rem;
       border: none;
-      color: white;
+      color: var(--surface-canvas);
     }
     .primary {
       background: linear-gradient(135deg, var(--accent), var(--accent-strong));
@@ -406,7 +406,7 @@ const conversionRate = analytics.totalListings > 0
       gap: 0.35rem;
       padding: 1rem;
       border-radius: 18px;
-      background: rgba(255,255,255,0.55);
+      background: var(--surface-panel-subtle);
     }
     .listing-grid span,
     .panel p,
@@ -431,10 +431,10 @@ const conversionRate = analytics.totalListings > 0
       align-items: center;
       padding: 0.9rem 1rem;
       border-radius: 16px;
-      background: rgba(255,255,255,0.58);
+      background: var(--surface-panel-subtle);
     }
     .trend-head {
-      background: rgba(15, 23, 42, 0.08);
+      background: color-mix(in srgb, var(--brand) 8%, transparent);
       font-weight: 700;
       color: var(--muted-strong);
     }
@@ -448,7 +448,7 @@ const conversionRate = analytics.totalListings > 0
       padding: 0.75rem 0.85rem;
       border-radius: 14px;
       border: 1px solid var(--line);
-      background: rgba(255,255,255,0.8);
+      background: var(--surface-overlay);
       font: inherit;
       min-width: 6rem;
     }

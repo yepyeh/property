@@ -82,7 +82,7 @@ import Layout from "../layouts/Layout.astro";
     .why-hero {
       background:
         radial-gradient(circle at top left, rgba(245, 158, 11, 0.12), transparent 28rem),
-        linear-gradient(180deg, rgba(255,255,255,0.9), rgba(248,250,252,0.95));
+        linear-gradient(180deg, var(--surface-overlay-strong), var(--surface-panel-muted));
     }
     .hero-copy,
     .difference-band {
@@ -121,8 +121,8 @@ import Layout from "../layouts/Layout.astro";
     .cta-card {
       display: grid;
       gap: 0.4rem;
-      background: rgba(255,255,255,0.78);
-      border: 1px solid rgba(148, 163, 184, 0.18);
+      background: var(--surface-overlay);
+      border: 1px solid var(--line);
       text-decoration: none;
       color: inherit;
     }

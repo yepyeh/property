@@ -96,7 +96,7 @@ const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareL
     padding: 0.35rem;
     margin-bottom: 1rem;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.92);
+    background: var(--surface-elevated);
     border: 1px solid var(--line);
     box-shadow: var(--shadow-soft);
   }
@@ -126,7 +126,7 @@ const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareL
 
   .toggle-chip.is-active {
     background: var(--brand);
-    color: white;
+    color: var(--surface-canvas);
     border-color: var(--brand);
   }
 
@@ -146,14 +146,14 @@ const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareL
   .market-panel,
   .empty-state {
     padding: 1.4rem;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--surface-overlay-strong);
     box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
   }
 
   .market-panel {
     position: sticky;
     top: 6rem;
-    background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.92));
+    background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-elevated));
   }
 
   .section-kicker {
@@ -190,7 +190,7 @@ const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareL
     margin-top: 1rem;
     border-radius: 24px;
     overflow: hidden;
-    border: 1px solid rgba(208, 213, 221, 0.78);
+    border: 1px solid var(--line);
     background: linear-gradient(180deg, #f8fafc, #e5edf6);
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
   }
@@ -202,7 +202,7 @@ const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareL
     padding: 1rem;
     border-radius: 24px;
     background: linear-gradient(180deg, #ffffff, #f8fafc);
-    border: 1px solid rgba(208, 213, 221, 0.74);
+    border: 1px solid var(--line);
   }
 
   .map-empty strong {
@@ -225,7 +225,7 @@ const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareL
     padding: 0.9rem 1rem;
     border-radius: 20px;
     background: linear-gradient(180deg, #ffffff, #f8fafc);
-    border: 1px solid rgba(208, 213, 221, 0.74);
+    border: 1px solid var(--line);
     font-size: 0.95rem;
   }
 
@@ -288,12 +288,12 @@ const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareL
 
   .button-dark {
     background: var(--brand);
-    color: white;
+    color: var(--surface-canvas);
     border-color: var(--brand);
   }
 
   .button-secondary {
-    background: white;
+    background: var(--surface-elevated-strong);
     color: var(--text);
   }
 

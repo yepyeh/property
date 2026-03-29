@@ -139,7 +139,7 @@ const isBuyer = role === "buyer";
       gap: 1.15rem;
       background:
         radial-gradient(circle at top left, rgba(14, 165, 233, 0.12), transparent 26rem),
-        linear-gradient(180deg, rgba(255,255,255,0.9), rgba(248,250,252,0.94));
+        linear-gradient(180deg, var(--surface-overlay-strong), rgba(248,250,252,0.94));
     }
     .story-panel h1,
     .panel-head h2 {
@@ -171,12 +171,12 @@ const isBuyer = role === "buyer";
       text-decoration: none;
       color: var(--text);
       font-weight: 700;
-      background: rgba(255,255,255,0.72);
+      background: var(--surface-panel-muted);
     }
     .role-switch a.list-active {
       background: var(--bg-deep);
       border-color: var(--bg-deep);
-      color: white;
+      color: var(--surface-canvas);
     }
     .story-stack {
       display: grid;
@@ -185,8 +185,8 @@ const isBuyer = role === "buyer";
     .story-stack article {
       padding: 1rem 1.05rem;
       border-radius: 1.3rem;
-      background: rgba(255,255,255,0.72);
-      border: 1px solid rgba(148, 163, 184, 0.18);
+      background: var(--surface-panel-muted);
+      border: 1px solid var(--line);
       display: grid;
       gap: 0.45rem;
     }
@@ -205,7 +205,7 @@ const isBuyer = role === "buyer";
     .form-panel {
       display: grid;
       gap: 1rem;
-      background: rgba(255,255,255,0.94);
+      background: var(--surface-elevated);
     }
     .panel-head {
       display: grid;
@@ -223,10 +223,10 @@ const isBuyer = role === "buyer";
       margin: 0;
       padding: 0.95rem 1rem;
       border-radius: 1.1rem;
-      background: rgba(185, 28, 28, 0.08);
-      color: #991b1b;
+      background: var(--danger-bg);
+      color: var(--danger-text);
       font-weight: 600;
-      border: 1px solid rgba(185, 28, 28, 0.12);
+      border: 1px solid var(--danger-border);
     }
     .signup-form {
       display: grid;
@@ -251,14 +251,14 @@ const isBuyer = role === "buyer";
       padding: 1rem 1rem;
       border-radius: 1.1rem;
       border: 1px solid var(--line);
-      background: rgba(248, 250, 252, 0.95);
+      background: var(--surface-panel-muted);
       font: inherit;
       color: var(--text);
     }
     input:focus {
       outline: none;
-      border-color: rgba(15, 23, 42, 0.25);
-      box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.06);
+      border-color: var(--line-strong);
+      box-shadow: 0 0 0 4px var(--accent-1);
     }
     button {
       display: inline-flex;
@@ -267,11 +267,11 @@ const isBuyer = role === "buyer";
       padding: 1rem 1.2rem;
       border: none;
       border-radius: 999px;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      color: white;
+      background: linear-gradient(135deg, var(--brand), color-mix(in srgb, var(--brand) 82%, var(--surface-soft)));
+      color: var(--surface-canvas);
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 18px 30px rgba(15, 23, 42, 0.14);
+      box-shadow: 0 18px 30px var(--shadow-color);
     }
     .plan-card {
       padding: 1rem 1.05rem;
