@@ -17,11 +17,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const redirectTo = sanitizeInternalRedirect(String(form.get("redirectTo") || ""), "/buyer/dashboard/");
 
   if (!listingSlug) return new Response("Listing slug required", { status: 400 });
-  if (!["saved", "contacted", "follow_up"].includes(buyerState)) return new Response("Invalid buyer state", { status: 400 });
+  if (!["saved", "finalist", "contacted", "follow_up"].includes(buyerState)) return new Response("Invalid buyer state", { status: 400 });
 
   await updateSavedListingForBuyer(db, owner.id, {
     listingSlug,
-    buyerState: buyerState as "saved" | "contacted" | "follow_up",
+    buyerState: buyerState as "saved" | "finalist" | "contacted" | "follow_up",
     followUpOn: String(form.get("followUpOn") || "").trim() || null,
     buyerNote: String(form.get("buyerNote") || "").trim() || null,
   });

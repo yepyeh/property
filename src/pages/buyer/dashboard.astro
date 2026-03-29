@@ -17,6 +17,7 @@ const { savedSearches, savedListings, enquiries, recentlyViewed, inboxNotificati
 const savedSearchDeleted = Astro.url.searchParams.get("savedSearchDeleted");
 const savedListingDeleted = Astro.url.searchParams.get("savedListingDeleted");
 const savedListingUpdated = Astro.url.searchParams.get("savedListingUpdated");
+const finalistCount = savedListings.filter((listing) => listing.buyer_state === "finalist").length;
 const enquiryStatusCounts = {
   new: enquiries.filter((enquiry) => enquiry.response_status === "new").length,
   responded: enquiries.filter((enquiry) => enquiry.response_status === "responded").length,
@@ -45,6 +46,7 @@ const enquiryStatusCounts = {
     items={[
       { label: "Searches", value: savedSearches.length, copy: "Saved searches" },
       { label: "Favorites", value: savedListings.length, copy: "Saved listings" },
+      { label: "Finalists", value: finalistCount, copy: "Decision-ready homes" },
       { label: "Enquiries", value: enquiries.length, copy: "Sent enquiries" },
       { label: "Recent", value: recentlyViewed.length, copy: "Recently viewed" },
       { label: "Inbox", value: unreadNotificationCount, copy: "Unread notifications" },
@@ -122,6 +124,7 @@ const enquiryStatusCounts = {
                 <input type="hidden" name="redirectTo" value="/buyer/dashboard/" />
                 <select name="buyerState">
                   <option value="saved" selected={(savedListing.buyer_state ?? "saved") === "saved"}>Saved</option>
+                  <option value="finalist" selected={savedListing.buyer_state === "finalist"}>Finalist</option>
                   <option value="contacted" selected={savedListing.buyer_state === "contacted"}>Contacted</option>
                   <option value="follow_up" selected={savedListing.buyer_state === "follow_up"}>Follow up</option>
                 </select>
@@ -366,6 +369,11 @@ const enquiryStatusCounts = {
     .state-contacted {
       background: rgba(30, 64, 175, 0.12);
       color: #1e40af;
+    }
+
+    .state-finalist {
+      background: rgba(6, 95, 70, 0.12);
+      color: #065f46;
     }
 
     .state-follow_up {

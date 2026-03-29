@@ -16,6 +16,9 @@ const uploaded = Astro.url.searchParams.get("uploaded");
 const uploadCount = Astro.url.searchParams.get("uploadCount");
 const updated = Astro.url.searchParams.get("updated");
 const mediaAction = Astro.url.searchParams.get("mediaAction");
+const action = Astro.url.searchParams.get("action");
+const status = Astro.url.searchParams.get("status");
+const planType = Astro.url.searchParams.get("planType");
 const savedSearchDeleted = Astro.url.searchParams.get("savedSearchDeleted");
 const billingEnabled = isBillingEnabled(Astro.locals.runtime);
 const enquiryStatusCounts = {
@@ -98,8 +101,23 @@ function getImageUrls(value: unknown) {
     ]}
   />
 
-      {uploaded && <FlashBanner message={`${uploadCount || "1"} image${uploadCount === "1" ? "" : "s"} uploaded for ${uploaded}.`} />}
-  {updated && <FlashBanner message={`${mediaAction === "deleted" ? "Gallery updated. Removed one image from" : mediaAction === "reordered" ? "Gallery order updated for" : "Listing state updated for"} ${updated}.`} />}
+  {uploaded && <FlashBanner message={`${uploadCount || "1"} image${uploadCount === "1" ? "" : "s"} uploaded for ${uploaded}. Gallery coverage updated immediately.`} />}
+  {updated && action === "gallery-updated" && (
+    <FlashBanner message={`${mediaAction === "deleted" ? "Removed one image from" : "Updated gallery order for"} ${updated}. Listing media state is live now.`} />
+  )}
+  {updated && action === "enquiry-responded" && (
+    <FlashBanner
+      tone="info"
+      message={`Enquiry status for ${updated} moved to ${status || "updated"}. The buyer-facing history will reflect this on their next view.`}
+    />
+  )}
+  {updated && action === "plan-updated" && (
+    <FlashBanner
+      tone="info"
+      message={`Billing state for ${updated} moved to ${planType || "updated"}. Visibility rules are already recalculated.`}
+    />
+  )}
+  {updated && !action && <FlashBanner message={`Listing state updated for ${updated}.`} />}
   {savedSearchDeleted && <FlashBanner message="Saved search deleted." />}
 
   <section class="split-grid split-grid-top">

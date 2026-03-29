@@ -663,7 +663,7 @@ export async function updateSavedListingForBuyer(
   userId: number,
   input: {
     listingSlug: string;
-    buyerState: "saved" | "contacted" | "follow_up";
+    buyerState: "saved" | "finalist" | "contacted" | "follow_up";
     followUpOn?: string | null;
     buyerNote?: string | null;
   }
@@ -784,9 +784,10 @@ export async function getSavedListingRecords(db: D1Like, userId: number) {
        WHERE user_id = ?
        ORDER BY
          CASE buyer_state
+           WHEN 'finalist' THEN 0
            WHEN 'follow_up' THEN 0
            WHEN 'contacted' THEN 1
-           ELSE 2
+           ELSE 3
          END,
          COALESCE(follow_up_on, updated_at, created_at) DESC`
     )

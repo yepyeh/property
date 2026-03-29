@@ -42,7 +42,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response(null, {
       status: 303,
       headers: {
-        Location: `/owner/dashboard/?updated=${encodeURIComponent(listingSlug)}`,
+        Location: `/owner/dashboard/?updated=${encodeURIComponent(listingSlug)}&action=enquiry-responded&status=${encodeURIComponent(responseStatus)}`,
       },
     });
   } catch (error) {

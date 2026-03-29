@@ -44,7 +44,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response(null, {
       status: 303,
       headers: {
-        Location: `/owner/dashboard/?updated=${encodeURIComponent(listingSlug)}&mediaAction=deleted`,
+        Location: `/owner/dashboard/?updated=${encodeURIComponent(listingSlug)}&mediaAction=deleted&action=gallery-updated`,
       },
     });
   } catch (error) {

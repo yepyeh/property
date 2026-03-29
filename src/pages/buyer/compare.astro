@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import WorkspaceHero from "../../components/workspace/WorkspaceHero.astro";
+import FlashBanner from "../../components/workspace/FlashBanner.astro";
 import { getBuyerDashboardData } from "../../lib/dashboard";
 import { getDB } from "../../lib/runtime";
 
@@ -11,10 +12,26 @@ if (!viewer || (viewer.role !== "buyer" && viewer.role !== "admin")) {
 }
 
 const { savedListings } = await getBuyerDashboardData(viewer.id, getDB(Astro.locals.runtime));
-const compareListings = savedListings
-  .map((entry) => entry.listing)
-  .filter(Boolean)
+const savedListingUpdated = Astro.url.searchParams.get("savedListingUpdated");
+const compareEntries = savedListings
+  .filter((entry) => entry.listing)
   .slice(0, 3);
+
+function getPros(listing: NonNullable<(typeof compareEntries)[number]["listing"]>) {
+  return [
+    `${listing.beds} bed / ${listing.baths} bath layout`,
+    listing.owner.verified ? "Verified contact" : "Direct owner flow",
+    listing.neighborhood?.headline || `${listing.ward}, ${listing.district}`,
+  ];
+}
+
+function getCons(listing: NonNullable<(typeof compareEntries)[number]["listing"]>) {
+  return [
+    listing.imageUrls?.length ? `${listing.imageUrls.length} gallery image${listing.imageUrls.length === 1 ? "" : "s"}` : "No gallery yet",
+    listing.owner.responseTime || "Response time unknown",
+    listing.status,
+  ];
+}
 ---
 
 <Layout title="Compare Saved Listings | Property App 2026" description="Compare shortlisted homes side by side across price, location, trust signals, and key facts.">
@@ -28,7 +45,9 @@ const compareListings = savedListings
     ]}
   />
 
-  {compareListings.length < 2 ? (
+  {savedListingUpdated && <FlashBanner message="Shortlist decision updated from compare view." />}
+
+  {compareEntries.length < 2 ? (
     <section class="card compare-empty section-gap">
       <strong>Save at least two listings to compare them.</strong>
       <p>Use the buyer dashboard or any listing detail page to build a shortlist first.</p>
@@ -38,7 +57,9 @@ const compareListings = savedListings
     <section class="card compare-table section-gap">
       <div class="compare-grid compare-head">
         <div class="compare-label">Compare</div>
-        {compareListings.map((listing) => (
+        {compareEntries.map((entry) => {
+          const listing = entry.listing!;
+          return (
           <article class="compare-property">
             {listing.imageUrls?.[0] ? (
               <div class="compare-media" style={`background-image:url(${listing.imageUrls[0]})`}></div>
@@ -47,21 +68,38 @@ const compareListings = savedListings
             )}
             <strong>{listing.title}</strong>
             <p>{listing.ward}, {listing.district}</p>
+            <span class={`state-chip state-${entry.buyer_state ?? "saved"}`}>{entry.buyer_state ?? "saved"}</span>
+            <div class="decision-actions">
+              <form method="POST" action="/api/saved-listings/update">
+                <input type="hidden" name="listingSlug" value={entry.listing_slug} />
+                <input type="hidden" name="buyerState" value="finalist" />
+                <input type="hidden" name="redirectTo" value="/buyer/compare/" />
+                <button type="submit" class="button-primary small">Mark finalist</button>
+              </form>
+              <form method="POST" action="/api/saved-listings/update">
+                <input type="hidden" name="listingSlug" value={entry.listing_slug} />
+                <input type="hidden" name="buyerState" value="contacted" />
+                <input type="hidden" name="redirectTo" value="/buyer/compare/" />
+                <button type="submit" class="button-tertiary small">Ready to contact</button>
+              </form>
+            </div>
             <a class="button-secondary small" href={`/listings/${listing.slug}/`}>Open listing</a>
           </article>
-        ))}
+        )})}
       </div>
 
       {[
-        { label: "Price", values: compareListings.map((listing) => listing.priceLabel) },
-        { label: "Property type", values: compareListings.map((listing) => listing.type) },
-        { label: "Bedrooms", values: compareListings.map((listing) => `${listing.beds}`) },
-        { label: "Bathrooms", values: compareListings.map((listing) => `${listing.baths}`) },
-        { label: "Area", values: compareListings.map((listing) => `${listing.area} m2`) },
-        { label: "Status", values: compareListings.map((listing) => listing.status) },
-        { label: "Trust", values: compareListings.map((listing) => listing.owner.verified ? "Verified contact" : "Owner listed") },
-        { label: "Response time", values: compareListings.map((listing) => listing.owner.responseTime) },
-        { label: "Location context", values: compareListings.map((listing) => listing.neighborhood?.headline || `${listing.ward}, ${listing.district}`) },
+        { label: "Price", values: compareEntries.map((entry) => entry.listing!.priceLabel) },
+        { label: "Property type", values: compareEntries.map((entry) => entry.listing!.type) },
+        { label: "Bedrooms", values: compareEntries.map((entry) => `${entry.listing!.beds}`) },
+        { label: "Bathrooms", values: compareEntries.map((entry) => `${entry.listing!.baths}`) },
+        { label: "Area", values: compareEntries.map((entry) => `${entry.listing!.area} m2`) },
+        { label: "Status", values: compareEntries.map((entry) => entry.listing!.status) },
+        { label: "Trust", values: compareEntries.map((entry) => entry.listing!.owner.verified ? "Verified contact" : "Owner listed") },
+        { label: "Response time", values: compareEntries.map((entry) => entry.listing!.owner.responseTime) },
+        { label: "Location context", values: compareEntries.map((entry) => entry.listing!.neighborhood?.headline || `${entry.listing!.ward}, ${entry.listing!.district}`) },
+        { label: "Pluses", values: compareEntries.map((entry) => getPros(entry.listing!).join(" · ")) },
+        { label: "Watchouts", values: compareEntries.map((entry) => getCons(entry.listing!).join(" · ")) },
       ].map((row) => (
         <div class="compare-grid compare-row">
           <div class="compare-label">{row.label}</div>
@@ -126,6 +164,51 @@ const compareListings = savedListings
       display: grid;
       gap: 0.6rem;
       align-content: start;
+    }
+
+    .decision-actions {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .state-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: fit-content;
+      min-height: 1.8rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: capitalize;
+      background: rgba(15, 23, 42, 0.06);
+      color: var(--muted-strong);
+    }
+
+    .state-finalist {
+      background: rgba(6, 95, 70, 0.12);
+      color: #065f46;
+    }
+
+    .state-contacted {
+      background: rgba(30, 64, 175, 0.12);
+      color: #1e40af;
+    }
+
+    .button-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 2.45rem;
+      padding: 0.7rem 1rem;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
     }
 
     .compare-property p,

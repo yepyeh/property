@@ -43,7 +43,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   return new Response(null, {
     status: 303,
     headers: {
-      Location: `${redirectTo}?updated=${encodeURIComponent(listingSlug)}`,
+      Location: `${redirectTo}?updated=${encodeURIComponent(listingSlug)}&action=plan-updated&planType=${encodeURIComponent(planType)}`,
     },
   });
 };

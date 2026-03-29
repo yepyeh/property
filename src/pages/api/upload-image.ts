@@ -70,7 +70,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response(null, {
       status: 303,
       headers: {
-        Location: `/owner/dashboard/?uploaded=${encodeURIComponent(listingSlug)}&uploadCount=${files.length}`,
+        Location: `/owner/dashboard/?uploaded=${encodeURIComponent(listingSlug)}&uploadCount=${files.length}&action=gallery-uploaded`,
       },
     });
   } catch (error) {
