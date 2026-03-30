@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import { getCollection, getEntry, render } from "astro:content";
 
+const t = Astro.locals.t || ((value: string) => value);
 const slug = Astro.params.slug || "";
 const article = await getEntry("help", slug);
 
@@ -14,16 +15,16 @@ const allArticles = (await getCollection("help")).sort((a, b) => a.data.order - 
 const related = allArticles.filter((entry) => entry.id !== article.id && entry.data.category === article.data.category).slice(0, 3);
 ---
 
-<Layout title={`${article.data.title} | Help Centre`} description={article.data.description}>
+<Layout title={`${article.data.title} | ${t("Help Centre")}`} description={article.data.description}>
   <section class="help-article-hero card">
     <div>
-      <a class="back-link" href="/help/">Back to help centre</a>
+      <a class="back-link" href="/help/">{t("Back to help centre")}</a>
       <span class="pill">{article.data.category}</span>
       <h1>{article.data.title}</h1>
       <p>{article.data.description}</p>
     </div>
     <div class="article-meta">
-      <span>Updated</span>
+      <span>{t("Updated")}</span>
       <strong>{article.data.updatedAt}</strong>
     </div>
   </section>
@@ -34,14 +35,15 @@ const related = allArticles.filter((entry) => entry.id !== article.id && entry.d
     </article>
 
     <aside class="card help-aside">
-      <strong>Related guides</strong>
-      {related.length === 0 ? <p>No related guides yet.</p> : (
+      <strong>{t("Related guides")}</strong>
+      {related.length === 0 ? <p>{t("No related guides yet.")}</p> : (
         <ul>
           {related.map((entry) => (
             <li><a href={`/help/${entry.id}/`}>{entry.data.title}</a></li>
           ))}
         </ul>
       )}
+      <a class="helper-link" href="/search-helper/">{t("Open site helper")}</a>
     </aside>
   </section>
 
@@ -114,6 +116,10 @@ const related = allArticles.filter((entry) => entry.id !== article.id && entry.d
       color: inherit;
       text-decoration: none;
       font-weight: 700;
+    }
+    .help-aside .helper-link {
+      margin-top: 1rem;
+      color: var(--accent-strong);
     }
     .help-body :global(h2) {
       margin-top: 1.6rem;

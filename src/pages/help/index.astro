@@ -2,58 +2,58 @@
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 
+const t = Astro.locals.t || ((value: string) => value);
 const articles = (await getCollection("help")).sort((a, b) => a.data.order - b.data.order);
 const categories = [
-  { key: "getting-started", label: "Getting started" },
-  { key: "buyers", label: "Buyers" },
-  { key: "owners", label: "Owners" },
-  { key: "billing", label: "Billing" },
-  { key: "account", label: "Account" },
-  { key: "updates", label: "Updates" },
+  { key: "getting-started", label: t("Getting started") },
+  { key: "buyers", label: t("Buyers") },
+  { key: "owners", label: t("Owners") },
+  { key: "billing", label: t("Billing") },
+  { key: "account", label: t("Account") },
+  { key: "updates", label: t("Updates") },
 ];
 
 const faqs = [
   {
-    question: "I like a listing, but I am not ready to contact yet. What should I do?",
-    answer: "Save it to your shortlist first. Then save two or three comparable places, open compare, mark a finalist, and only then contact the strongest option.",
+    question: t("I like a listing, but I am not ready to contact yet. What should I do?"),
+    answer: t("Save it to your shortlist first. Then save two or three comparable places, open compare, mark a finalist, and only then contact the strongest option."),
     href: "/help/buyer-shortlist-and-compare/",
   },
   {
-    question: "What does finalist mean?",
-    answer: "Finalist means the listing is currently leading your shortlist after you compared it on price, location, trust, and fit.",
+    question: t("What does finalist mean?"),
+    answer: t("Finalist means the listing is currently leading your shortlist after you compared it on price, location, trust, and fit."),
     href: "/help/buyer-shortlist-and-compare/",
   },
   {
-    question: "How should owners know whether to upgrade a listing?",
-    answer: "Use upgrades after the listing is already credible. If photos, trust signals, and location context are weak, promotion will not fix the underlying problem.",
+    question: t("How should owners know whether to upgrade a listing?"),
+    answer: t("Use upgrades after the listing is already credible. If photos, trust signals, and location context are weak, promotion will not fix the underlying problem."),
     href: "/help/posting-and-managing-listings/",
   },
   {
-    question: "Where do I manage notifications and account alerts?",
-    answer: "Use the inbox for current activity and notification settings to control category, channel, and cadence preferences.",
+    question: t("Where do I manage notifications and account alerts?"),
+    answer: t("Use the inbox for current activity and notification settings to control category, channel, and cadence preferences."),
     href: "/help/notifications-and-inbox/",
   },
   {
-    question: "How do I report a listing or understand trust protections?",
-    answer: "Use the report form on a listing detail page and review the trust and safety guide for how verification and moderation work.",
+    question: t("How do I report a listing or understand trust protections?"),
+    answer: t("Use the report form on a listing detail page and review the trust and safety guide for how verification and moderation work."),
     href: "/help/trust-and-safety/",
   },
 ];
 ---
 
-<Layout title="Help Centre | Property App 2026" description="Guides for buyers, owners, billing, notifications, and core platform workflows.">
+<Layout title={`${t("Help Centre")} | Property App 2026`} description={t("Guides for buyers, owners, billing, notifications, and core platform workflows.")}>
   <section class="help-hero card">
     <div>
-      <span class="pill">Help centre</span>
-      <h1>Help users understand the product as it changes.</h1>
+      <span class="pill">{t("Help centre")}</span>
+      <h1>{t("Help users understand the product as it changes.")}</h1>
       <p>
-        This help centre is content-driven, so product changes can be reflected by updating articles instead of rebuilding
-        page structure. Buyers, owners, and admins should all be able to find the right workflow quickly.
+        {t("This help centre is content-driven, so product changes can be reflected by updating articles instead of rebuilding page structure. Buyers, owners, and admins should all be able to find the right workflow quickly.")}
       </p>
     </div>
     <div class="hero-meta">
       <strong>{articles.length}</strong>
-      <span>Guides live now</span>
+      <span>{t("Guides live now")}</span>
     </div>
   </section>
 
@@ -64,7 +64,7 @@ const faqs = [
         <article class="card category-card">
           <div class="category-head">
             <strong>{category.label}</strong>
-            <span>{categoryArticles.length} article{categoryArticles.length === 1 ? "" : "s"}</span>
+            <span>{categoryArticles.length} {t(categoryArticles.length === 1 ? "article" : "articles")}</span>
           </div>
           <ul class="article-list">
             {categoryArticles.map((article) => (
@@ -82,7 +82,7 @@ const faqs = [
   </section>
 
   <section class="card maintenance-note section-gap">
-    <strong>Recent updates</strong>
+    <strong>{t("Recent updates")}</strong>
     <ul class="update-list">
       {articles
         .filter((article) => article.data.category === "updates")
@@ -99,29 +99,47 @@ const faqs = [
   </section>
 
   <section class="card maintenance-note section-gap">
-    <strong>Quick answers</strong>
-    <p>Use this like a lightweight FAQ until the help centre grows into a larger knowledge base.</p>
+    <div class="quick-answer-head">
+      <div>
+        <strong>{t("Quick answers")}</strong>
+        <p>{t("Use this like a lightweight FAQ until the help centre grows into a larger knowledge base.")}</p>
+      </div>
+      <a class="helper-link" href="/search-helper/">{t("Open site helper")}</a>
+    </div>
     <div class="faq-search">
-      <input id="help-search" type="search" placeholder="Search guides and quick answers" />
+      <input id="help-search" type="search" placeholder={t("Search guides and quick answers")} />
     </div>
     <ul class="faq-list" id="faq-list">
       {faqs.map((faq) => (
         <li data-help-search={`${faq.question} ${faq.answer}`.toLowerCase()}>
           <strong>{faq.question}</strong>
           <p>{faq.answer}</p>
-          <a href={faq.href}>Open related guide</a>
+          <a href={faq.href}>{t("Open related guide")}</a>
         </li>
       ))}
     </ul>
   </section>
 
   <section class="card maintenance-note section-gap">
-    <strong>How to keep this updated</strong>
+    <strong>{t("How to keep this updated")}</strong>
     <p>
-      Each guide lives in `src/content/help/`. When a buyer flow, owner workflow, billing rule, or inbox behavior changes,
-      the right maintenance step is to update the relevant article in that collection as part of the same code change.
+      {t("Each guide lives in `src/content/help/`. When a buyer flow, owner workflow, billing rule, or inbox behavior changes, the right maintenance step is to update the relevant article in that collection as part of the same code change.")}
     </p>
   </section>
+
+  <script is:inline>
+    const searchInput = document.getElementById('help-search');
+    const faqItems = Array.from(document.querySelectorAll('#faq-list li'));
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim().toLowerCase();
+        for (const item of faqItems) {
+          const haystack = item.getAttribute('data-help-search') || '';
+          item.style.display = !query || haystack.includes(query) ? '' : 'none';
+        }
+      });
+    }
+  </script>
 
   <style is:inline>
     .help-hero,
@@ -217,6 +235,18 @@ const faqs = [
       color: var(--muted);
       white-space: nowrap;
     }
+    .quick-answer-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: end;
+    }
+    .helper-link {
+      color: var(--accent-strong);
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
     .faq-search {
       margin-top: 1rem;
     }
@@ -259,23 +289,10 @@ const faqs = [
       .category-grid {
         grid-template-columns: 1fr;
       }
-      .update-list li a {
-        display: grid;
+      .quick-answer-head {
+        flex-direction: column;
+        align-items: start;
       }
     }
   </style>
-  <script is:inline>
-    const searchInput = document.getElementById("help-search");
-    const faqItems = Array.from(document.querySelectorAll("#faq-list li"));
-
-    if (searchInput) {
-      searchInput.addEventListener("input", (event) => {
-        const value = String(event.currentTarget.value || "").trim().toLowerCase();
-        faqItems.forEach((item) => {
-          const haystack = item.getAttribute("data-help-search") || "";
-          item.style.display = !value || haystack.includes(value) ? "" : "none";
-        });
-      });
-    }
-  </script>
 </Layout>

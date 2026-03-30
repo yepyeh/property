@@ -238,6 +238,159 @@ msgstr "Search saved. You can manage it from your dashboard."
 msgid "Refine the shortlist"
 msgstr "Refine the shortlist"
 
+msgid "Guides for buyers, owners, billing, notifications, and core platform workflows."
+msgstr "Guides for buyers, owners, billing, notifications, and core platform workflows."
+
+msgid "Help users understand the product as it changes."
+msgstr "Help users understand the product as it changes."
+
+msgid "This help centre is content-driven, so product changes can be reflected by updating articles instead of rebuilding page structure. Buyers, owners, and admins should all be able to find the right workflow quickly."
+msgstr "This help centre is content-driven, so product changes can be reflected by updating articles instead of rebuilding page structure. Buyers, owners, and admins should all be able to find the right workflow quickly."
+
+msgid "Guides live now"
+msgstr "Guides live now"
+
+msgid "article"
+msgstr "article"
+
+msgid "articles"
+msgstr "articles"
+
+msgid "Recent updates"
+msgstr "Recent updates"
+
+msgid "Buyers"
+msgstr "Buyers"
+
+msgid "Owners"
+msgstr "Owners"
+
+msgid "Updates"
+msgstr "Updates"
+
+msgid "Quick answers"
+msgstr "Quick answers"
+
+msgid "Use this like a lightweight FAQ until the help centre grows into a larger knowledge base."
+msgstr "Use this like a lightweight FAQ until the help centre grows into a larger knowledge base."
+
+msgid "Open site helper"
+msgstr "Open site helper"
+
+msgid "Search guides and quick answers"
+msgstr "Search guides and quick answers"
+
+msgid "Open related guide"
+msgstr "Open related guide"
+
+msgid "How to keep this updated"
+msgstr "How to keep this updated"
+
+msgid "Each guide lives in `src/content/help/`. When a buyer flow, owner workflow, billing rule, or inbox behavior changes, the right maintenance step is to update the relevant article in that collection as part of the same code change."
+msgstr "Each guide lives in `src/content/help/`. When a buyer flow, owner workflow, billing rule, or inbox behavior changes, the right maintenance step is to update the relevant article in that collection as part of the same code change."
+
+msgid "Back to help centre"
+msgstr "Back to help centre"
+
+msgid "Updated"
+msgstr "Updated"
+
+msgid "Related guides"
+msgstr "Related guides"
+
+msgid "No related guides yet."
+msgstr "No related guides yet."
+
+msgid "Site helper"
+msgstr "Site helper"
+
+msgid "Search listings, guides, help articles, and auctions from one structured helper surface."
+msgstr "Search listings, guides, help articles, and auctions from one structured helper surface."
+
+msgid "Search listings, guides, help, and auctions from one place."
+msgstr "Search listings, guides, help, and auctions from one place."
+
+msgid "This helper uses the structured site index, so it can surface inventory, guides, and help content without guessing from page markup."
+msgstr "This helper uses the structured site index, so it can surface inventory, guides, and help content without guessing from page markup."
+
+msgid "results loaded"
+msgstr "results loaded"
+
+msgid "Search listings, guides, help, or auctions"
+msgstr "Search listings, guides, help, or auctions"
+
+msgid "All types"
+msgstr "All types"
+
+msgid "Listings"
+msgstr "Listings"
+
+msgid "Auctions"
+msgstr "Auctions"
+
+msgid "City guides"
+msgstr "City guides"
+
+msgid "District guides"
+msgstr "District guides"
+
+msgid "Help articles"
+msgstr "Help articles"
+
+msgid "Use this as an internal search-helper prototype for now. It is driven by `/api/search-index.json`, which is the right foundation for a future AI or concierge assistant."
+msgstr "Use this as an internal search-helper prototype for now. It is driven by `/api/search-index.json`, which is the right foundation for a future AI or concierge assistant."
+
+msgid "Listing"
+msgstr "Listing"
+
+msgid "Auction"
+msgstr "Auction"
+
+msgid "City guide"
+msgstr "City guide"
+
+msgid "District guide"
+msgstr "District guide"
+
+msgid "Open result"
+msgstr "Open result"
+
+msgid "Search index unavailable"
+msgstr "Search index unavailable"
+
+msgid "The structured search index could not be loaded for this session."
+msgstr "The structured search index could not be loaded for this session."
+
+msgid "I like a listing, but I am not ready to contact yet. What should I do?"
+msgstr "I like a listing, but I am not ready to contact yet. What should I do?"
+
+msgid "Save it to your shortlist first. Then save two or three comparable places, open compare, mark a finalist, and only then contact the strongest option."
+msgstr "Save it to your shortlist first. Then save two or three comparable places, open compare, mark a finalist, and only then contact the strongest option."
+
+msgid "What does finalist mean?"
+msgstr "What does finalist mean?"
+
+msgid "Finalist means the listing is currently leading your shortlist after you compared it on price, location, trust, and fit."
+msgstr "Finalist means the listing is currently leading your shortlist after you compared it on price, location, trust, and fit."
+
+msgid "How should owners know whether to upgrade a listing?"
+msgstr "How should owners know whether to upgrade a listing?"
+
+msgid "Use upgrades after the listing is already credible. If photos, trust signals, and location context are weak, promotion will not fix the underlying problem."
+msgstr "Use upgrades after the listing is already credible. If photos, trust signals, and location context are weak, promotion will not fix the underlying problem."
+
+msgid "Where do I manage notifications and account alerts?"
+msgstr "Where do I manage notifications and account alerts?"
+
+msgid "Use the inbox for current activity and notification settings to control category, channel, and cadence preferences."
+msgstr "Use the inbox for current activity and notification settings to control category, channel, and cadence preferences."
+
+msgid "How do I report a listing or understand trust protections?"
+msgstr "How do I report a listing or understand trust protections?"
+
+msgid "Use the report form on a listing detail page and review the trust and safety guide for how verification and moderation work."
+msgstr "Use the report form on a listing detail page and review the trust and safety guide for how verification and moderation work."
+
 msgid "Search by location, price band, and home type."
 msgstr "Search by location, price band, and home type."
 

@@ -1,0 +1,234 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const t = Astro.locals.t || ((value: string) => value);
+const helperLabels = {
+  listing: t("Listing"),
+  auction: t("Auction"),
+  help: t("Help"),
+  cityGuide: t("City guide"),
+  districtGuide: t("District guide"),
+  openResult: t("Open result"),
+  unavailableTitle: t("Search index unavailable"),
+  unavailableBody: t("The structured search index could not be loaded for this session."),
+};
+---
+
+<Layout title={`${t("Site helper")} | Property App 2026`} description={t("Search listings, guides, help articles, and auctions from one structured helper surface.")}>
+  <section class="helper-hero card">
+    <div>
+      <span class="pill">{t("Site helper")}</span>
+      <h1>{t("Search listings, guides, help, and auctions from one place.")}</h1>
+      <p>{t("This helper uses the structured site index, so it can surface inventory, guides, and help content without guessing from page markup.")}</p>
+    </div>
+    <div class="helper-meta">
+      <strong id="helper-count">0</strong>
+      <span>{t("results loaded")}</span>
+    </div>
+  </section>
+
+  <section class="card helper-controls section-gap">
+    <div class="helper-search-row">
+      <input id="helper-query" type="search" placeholder={t("Search listings, guides, help, or auctions")} />
+      <select id="helper-kind">
+        <option value="all">{t("All types")}</option>
+        <option value="listing">{t("Listings")}</option>
+        <option value="auction">{t("Auctions")}</option>
+        <option value="city-guide">{t("City guides")}</option>
+        <option value="district-guide">{t("District guides")}</option>
+        <option value="help">{t("Help articles")}</option>
+      </select>
+    </div>
+    <p class="helper-note">{t("Use this as an internal search-helper prototype for now. It is driven by `/api/search-index.json`, which is the right foundation for a future AI or concierge assistant.")}</p>
+  </section>
+
+  <section class="helper-results section-gap" id="helper-results"></section>
+
+  <template id="helper-result-template">
+    <article class="card helper-card">
+      <div class="helper-card-head">
+        <span class="pill helper-kind"></span>
+        <span class="helper-locale"></span>
+      </div>
+      <h2 class="helper-title"></h2>
+      <p class="helper-summary"></p>
+      <div class="helper-tags"></div>
+      <a class="helper-link" target="_self"></a>
+    </article>
+  </template>
+
+  <script is:inline define:vars={{ helperLabels }}>
+    const queryInput = document.getElementById('helper-query');
+    const kindInput = document.getElementById('helper-kind');
+    const resultsRoot = document.getElementById('helper-results');
+    const countRoot = document.getElementById('helper-count');
+    const template = document.getElementById('helper-result-template');
+    const kindLabels = {
+      listing: helperLabels.listing,
+      auction: helperLabels.auction,
+      help: helperLabels.help,
+      'city-guide': helperLabels.cityGuide,
+      'district-guide': helperLabels.districtGuide,
+    };
+
+    let entries = [];
+
+    function render() {
+      if (!resultsRoot || !template) return;
+      const query = (queryInput?.value || '').trim().toLowerCase();
+      const kind = kindInput?.value || 'all';
+      const filtered = entries.filter((entry) => {
+        const matchesKind = kind === 'all' || entry.kind === kind;
+        const haystack = [entry.title, entry.summary, entry.body, ...(entry.tags || [])].join(' ').toLowerCase();
+        const matchesQuery = !query || haystack.includes(query);
+        return matchesKind && matchesQuery;
+      }).slice(0, 48);
+
+      resultsRoot.innerHTML = '';
+      countRoot.textContent = String(filtered.length);
+
+      for (const entry of filtered) {
+        const node = template.content.firstElementChild.cloneNode(true);
+        node.querySelector('.helper-kind').textContent = kindLabels[entry.kind] || entry.kind;
+        node.querySelector('.helper-locale').textContent = entry.locale || 'en';
+        node.querySelector('.helper-title').textContent = entry.title;
+        node.querySelector('.helper-summary').textContent = entry.summary;
+        const tagsRoot = node.querySelector('.helper-tags');
+        for (const tag of (entry.tags || []).slice(0, 5)) {
+          const span = document.createElement('span');
+          span.className = 'helper-tag';
+          span.textContent = tag;
+          tagsRoot.appendChild(span);
+        }
+        const link = node.querySelector('.helper-link');
+        link.href = entry.href;
+        link.textContent = helperLabels.openResult;
+        resultsRoot.appendChild(node);
+      }
+    }
+
+    async function init() {
+      try {
+        const response = await fetch('/api/search-index.json', { headers: { accept: 'application/json' } });
+        const data = await response.json();
+        entries = Array.isArray(data.entries) ? data.entries : [];
+        render();
+      } catch (error) {
+        if (resultsRoot) {
+          resultsRoot.innerHTML = `<article class="card helper-card"><h2>${helperLabels.unavailableTitle}</h2><p>${helperLabels.unavailableBody}</p></article>`;
+        }
+      }
+    }
+
+    queryInput?.addEventListener('input', render);
+    kindInput?.addEventListener('change', render);
+    init();
+  </script>
+
+  <style is:inline>
+    .helper-hero,
+    .helper-controls,
+    .helper-card {
+      padding: 1.4rem;
+    }
+    .helper-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 1rem;
+      align-items: start;
+    }
+    .helper-hero h1 {
+      margin: 0.75rem 0 0;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 0.95;
+      letter-spacing: -0.08em;
+      max-width: 12ch;
+    }
+    .helper-hero p,
+    .helper-note,
+    .helper-summary {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .helper-meta {
+      min-width: 10rem;
+      padding: 1rem;
+      border-radius: 22px;
+      background: var(--accent-1);
+      display: grid;
+      gap: 0.25rem;
+    }
+    .helper-meta strong {
+      font-size: 2rem;
+      letter-spacing: -0.06em;
+    }
+    .helper-search-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 14rem;
+      gap: 0.8rem;
+    }
+    .helper-search-row input,
+    .helper-search-row select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface-elevated-strong);
+      padding: 0.95rem 1rem;
+      color: var(--text);
+      font: inherit;
+    }
+    .helper-results {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+    .helper-card {
+      display: grid;
+      gap: 0.85rem;
+    }
+    .helper-card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: center;
+    }
+    .helper-locale {
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+    .helper-title {
+      margin: 0;
+      font-size: 1.3rem;
+      letter-spacing: -0.04em;
+    }
+    .helper-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+    .helper-tag {
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
+      background: var(--surface-panel-muted);
+      border: 1px solid var(--line);
+      font-size: 0.82rem;
+      color: var(--muted-strong);
+    }
+    .helper-link {
+      width: fit-content;
+      color: var(--accent-strong);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    @media (max-width: 900px) {
+      .helper-hero,
+      .helper-search-row,
+      .helper-results {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</Layout>
