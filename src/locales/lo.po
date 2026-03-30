@@ -337,8 +337,14 @@ msgstr "District guides"
 msgid "Help articles"
 msgstr "Help articles"
 
-msgid "Use this as an internal search-helper prototype for now. It is driven by `/api/search-index.json`, which is the right foundation for a future AI or concierge assistant."
-msgstr "Use this as an internal search-helper prototype for now. It is driven by `/api/search-index.json`, which is the right foundation for a future AI or concierge assistant."
+msgid "Use this helper to search structured listings, guides, help articles, and auction inventory from one surface. It is powered by the same site index that future assistant features can build on."
+msgstr "Use this helper to search structured listings, guides, help articles, and auction inventory from one surface. It is powered by the same site index that future assistant features can build on."
+
+msgid "No results yet"
+msgstr "No results yet"
+
+msgid "Try a broader search, switch type, or open one of the help guides to understand how the workflow is structured."
+msgstr "Try a broader search, switch type, or open one of the help guides to understand how the workflow is structured."
 
 msgid "Listing"
 msgstr "Listing"
