@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { BadgeCheck, CircleHelp } from "lucide-react";
+import { CircleHelp, History, ShieldCheck, TrendingUp } from "lucide-react";
 import type { Listing } from "../../data/listings";
 
 interface ConfidenceCardProps {
@@ -14,6 +14,18 @@ function buildConfidenceScore(listing: Listing) {
   return Math.max(42, Math.min(98, base + savesBoost + enquiriesBoost + viewsBoost));
 }
 
+function buildConfidencePillars(listing: Listing) {
+  const legal = Math.max(48, Math.min(99, (listing.owner.verified ? 88 : 56) + Math.min(8, listing.stats.enquiries)));
+  const price = Math.max(44, Math.min(97, 62 + Math.min(14, Math.round(listing.stats.views24h / 4)) + Math.min(8, listing.stats.saves)));
+  const history = Math.max(40, Math.min(96, 58 + Math.min(12, listing.stats.enquiries * 3) + Math.min(10, Math.round(listing.stats.views24h / 6))));
+
+  return {
+    legal,
+    price,
+    history,
+  };
+}
+
 export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
   const safeScore = buildConfidenceScore(listing);
   const highConfidence = safeScore >= 85;
@@ -22,6 +34,7 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
   const dashOffset = circumference - (safeScore / 100) * circumference;
   const heroImage = listing.imageUrls?.[0];
   const coverPosition = listing.coverFocus ? `${listing.coverFocus.x}% ${listing.coverFocus.y}%` : "center";
+  const pillars = buildConfidencePillars(listing);
 
   return (
     <article className="glass-card group overflow-hidden border border-white/5 transition-all duration-300 ease-luxury hover:scale-[1.02] hover:border-white/10">
@@ -90,7 +103,6 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
                 <span className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
                   Confidence
                 </span>
-                <BadgeCheck className={`h-5 w-5 ${highConfidence ? "text-[#98ff98]" : "text-zinc-400"}`} strokeWidth={1.5} />
                 <TooltipInfo />
               </div>
 
@@ -105,6 +117,12 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-3">
+          <ConfidenceMetric icon={ShieldCheck} label="Legal" score={pillars.legal} />
+          <ConfidenceMetric icon={TrendingUp} label="Price" score={pillars.price} />
+          <ConfidenceMetric icon={History} label="History" score={pillars.history} />
         </div>
 
         <p className="text-sm leading-7 text-zinc-400">{listing.summary}</p>
@@ -128,6 +146,26 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
         </div>
       </div>
     </article>
+  );
+}
+
+function ConfidenceMetric({
+  icon: Icon,
+  label,
+  score,
+}: {
+  icon: typeof ShieldCheck;
+  label: string;
+  score: number;
+}) {
+  return (
+    <div className="group/metric grid justify-items-start gap-2 rounded-2xl bg-white/[0.02] p-3">
+      <div className="flex h-10 w-10 items-center justify-center rounded-md border border-white/5 bg-zinc-800/50 transition-all duration-300 ease-luxury group-hover/metric:scale-110 group-hover/metric:bg-zinc-800">
+        <Icon className="h-4 w-4 text-[#98ff98]" strokeWidth={1.5} />
+      </div>
+      <div className="text-xs font-medium text-zinc-500">{label}</div>
+      <div className="text-sm font-semibold tracking-[-0.02em] text-white">{score}%</div>
+    </div>
   );
 }
 
