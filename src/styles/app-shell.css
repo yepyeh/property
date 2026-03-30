@@ -1,23 +1,38 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&display=swap");
 
 :root {
-  font-family: "Manrope", sans-serif;
+  font-family: "Geist", sans-serif;
 
   /* Open Props-inspired semantic token layer */
-  --stone-0: #fcfbf8;
-  --stone-1: #f7f4ee;
-  --stone-2: #f1ece4;
-  --stone-3: #e6ddd0;
-  --stone-4: #c9beae;
-  --stone-7: #756c60;
-  --stone-8: #433d36;
-  --stone-9: #161412;
+  --stone-0: #fcfcfd;
+  --stone-1: #f9fafb;
+  --stone-2: #f3f4f6;
+  --stone-3: #e5e7eb;
+  --stone-4: #d2d6db;
+  --stone-5: #9da4ae;
+  --stone-6: #6c737f;
+  --stone-7: #4d5761;
+  --stone-8: #384250;
+  --stone-9: #111927;
+  --stone-10: #090e15;
 
-  --moss-1: #edf6ef;
-  --moss-2: #dbeee0;
-  --moss-8: #285447;
-  --sky-1: #eaf1fb;
-  --sky-8: #375d89;
+  --teal-25: #f2fbf9;
+  --teal-50: #e7f7f3;
+  --teal-100: #ccefe7;
+  --teal-200: #9fddd1;
+  --teal-300: #74cabb;
+  --teal-400: #3aa997;
+  --teal-500: #1f8a78;
+  --teal-600: #0f766e;
+  --teal-700: #115e59;
+  --teal-800: #134e4a;
+  --teal-900: #123f3d;
+
+  --moss-1: var(--teal-25);
+  --moss-2: var(--teal-100);
+  --moss-8: var(--teal-700);
+  --sky-1: #eef4fb;
+  --sky-8: #315e85;
 
   --surface-canvas: var(--stone-1);
   --surface-elevated: rgba(255, 255, 255, 0.82);
@@ -31,25 +46,25 @@
   --surface-input: rgba(255, 255, 255, 0.72);
   --surface-input-strong: rgba(255, 255, 255, 0.9);
   --surface-rail: rgba(255, 255, 255, 0.5);
-  --text-1: #14110f;
-  --text-2: #6b6257;
-  --text-3: #403a33;
-  --border-subtle: rgba(20, 17, 15, 0.08);
-  --border-strong: rgba(20, 17, 15, 0.15);
+  --text-1: var(--stone-9);
+  --text-2: var(--stone-6);
+  --text-3: var(--stone-7);
+  --border-subtle: rgba(17, 25, 39, 0.08);
+  --border-strong: rgba(17, 25, 39, 0.14);
   --accent-1: var(--moss-2);
   --accent-9: var(--moss-8);
-  --brand-9: #161412;
-  --brand-10: #0c0b0a;
-  --shadow-color: rgba(15, 23, 42, 0.08);
-  --shadow-soft-color: rgba(15, 23, 42, 0.05);
-  --shadow-deep-color: rgba(15, 23, 42, 0.16);
-  --hero-glow: rgba(219, 238, 224, 0.65);
+  --brand-9: var(--teal-600);
+  --brand-10: var(--teal-800);
+  --shadow-color: rgba(17, 25, 39, 0.08);
+  --shadow-soft-color: rgba(17, 25, 39, 0.06);
+  --shadow-deep-color: rgba(17, 25, 39, 0.16);
+  --hero-glow: rgba(204, 239, 231, 0.72);
 
   /* Backwards-compatible app variables */
   color-scheme: light;
   --bg: var(--surface-canvas);
-  --bg-soft: #fbf9f5;
-  --bg-muted: #f3eee6;
+  --bg-soft: var(--stone-0);
+  --bg-muted: var(--stone-2);
   --panel: var(--surface-elevated);
   --panel-strong: var(--surface-elevated-strong);
   --surface-alt: var(--surface-soft);
@@ -63,9 +78,9 @@
   --brand-soft: var(--surface-brand-soft);
   --line: var(--border-subtle);
   --line-strong: var(--border-strong);
-  --shadow: 0 30px 80px -28px var(--shadow-deep-color);
-  --shadow-soft: 0 18px 46px -28px var(--shadow-soft-color);
-  --shadow-panel: 0 18px 42px -26px var(--shadow-color);
+  --shadow: 0 24px 48px -12px rgba(17, 25, 39, 0.18);
+  --shadow-soft: 0 8px 24px -8px rgba(17, 25, 39, 0.1);
+  --shadow-panel: 0 12px 24px -8px rgba(17, 25, 39, 0.08);
   --radius-card: 1.75rem;
   --radius-panel: 1.35rem;
   --radius-input: 1rem;
@@ -86,48 +101,51 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --stone-0: #0c111a;
-  --stone-1: #0f1722;
-  --stone-2: #141d2a;
-  --stone-3: #202b3b;
-  --stone-4: #334055;
-  --stone-7: #96a4ba;
-  --stone-8: #d8e0ec;
-  --stone-9: #fbfdff;
+  --stone-0: #090e15;
+  --stone-1: #111927;
+  --stone-2: #1f2a37;
+  --stone-3: #384250;
+  --stone-4: #4d5761;
+  --stone-5: #6c737f;
+  --stone-6: #9da4ae;
+  --stone-7: #d2d6db;
+  --stone-8: #f3f4f6;
+  --stone-9: #f9fafb;
+  --stone-10: #fcfcfd;
 
-  --moss-1: #132920;
-  --moss-2: #17352b;
-  --moss-8: #9ddbc8;
-  --sky-1: #132031;
-  --sky-8: #9ebee3;
+  --moss-1: rgba(15, 118, 110, 0.18);
+  --moss-2: rgba(31, 138, 120, 0.26);
+  --moss-8: #8cd7c9;
+  --sky-1: #152031;
+  --sky-8: #a8c3df;
 
-  --surface-canvas: #0b111a;
-  --surface-elevated: rgba(17, 24, 39, 0.74);
-  --surface-elevated-strong: rgba(17, 24, 39, 0.88);
-  --surface-soft: #121b28;
+  --surface-canvas: #090e15;
+  --surface-elevated: rgba(17, 25, 39, 0.82);
+  --surface-elevated-strong: rgba(31, 42, 55, 0.92);
+  --surface-soft: #111927;
   --surface-brand-soft: var(--moss-1);
-  --surface-overlay: rgba(17, 24, 39, 0.48);
-  --surface-overlay-strong: rgba(17, 24, 39, 0.72);
-  --surface-panel-muted: rgba(17, 24, 39, 0.66);
-  --surface-panel-subtle: rgba(17, 24, 39, 0.5);
-  --surface-input: rgba(17, 24, 39, 0.74);
-  --surface-input-strong: rgba(20, 29, 42, 0.92);
-  --surface-rail: rgba(17, 24, 39, 0.46);
-  --text-1: #f4f7fb;
-  --text-2: #9dabc0;
-  --text-3: #dbe4ef;
-  --border-subtle: rgba(148, 163, 184, 0.16);
-  --border-strong: rgba(148, 163, 184, 0.28);
-  --accent-1: rgba(40, 84, 71, 0.42);
-  --accent-9: #9ddbc8;
-  --brand-9: #f4f7fb;
-  --brand-10: #ffffff;
-  --shadow-color: rgba(2, 6, 23, 0.52);
-  --shadow-soft-color: rgba(2, 6, 23, 0.34);
-  --shadow-deep-color: rgba(2, 6, 23, 0.62);
-  --hero-glow: rgba(21, 53, 43, 0.46);
-  --bg-soft: #0f1621;
-  --bg-muted: #121b28;
+  --surface-overlay: rgba(17, 25, 39, 0.6);
+  --surface-overlay-strong: rgba(31, 42, 55, 0.8);
+  --surface-panel-muted: rgba(31, 42, 55, 0.72);
+  --surface-panel-subtle: rgba(31, 42, 55, 0.52);
+  --surface-input: rgba(31, 42, 55, 0.78);
+  --surface-input-strong: rgba(31, 42, 55, 0.92);
+  --surface-rail: rgba(31, 42, 55, 0.5);
+  --text-1: var(--stone-9);
+  --text-2: var(--stone-6);
+  --text-3: var(--stone-7);
+  --border-subtle: rgba(210, 214, 219, 0.14);
+  --border-strong: rgba(210, 214, 219, 0.22);
+  --accent-1: rgba(31, 138, 120, 0.22);
+  --accent-9: #8cd7c9;
+  --brand-9: #8cd7c9;
+  --brand-10: #c7f1e8;
+  --shadow-color: rgba(9, 14, 21, 0.38);
+  --shadow-soft-color: rgba(9, 14, 21, 0.22);
+  --shadow-deep-color: rgba(9, 14, 21, 0.48);
+  --hero-glow: rgba(15, 118, 110, 0.3);
+  --bg-soft: #0b111a;
+  --bg-muted: #111927;
   --success-bg: rgba(18, 183, 106, 0.18);
   --success-border: rgba(18, 183, 106, 0.34);
   --success-text: #6ee7b7;
@@ -140,7 +158,7 @@
   --danger-bg: rgba(239, 68, 68, 0.18);
   --danger-border: rgba(239, 68, 68, 0.32);
   --danger-text: #fca5a5;
-  --focus-ring: 0 0 0 4px rgba(148, 163, 184, 0.16);
+  --focus-ring: 0 0 0 4px rgba(140, 215, 201, 0.18);
 }
 
 * { box-sizing: border-box; }
