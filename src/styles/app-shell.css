@@ -160,14 +160,14 @@ button {
 main {
   max-width: 82rem;
   margin: 0 auto;
-  padding: 1.75rem 1.25rem 6rem;
+  padding: var(--space-l) var(--space-l) 6rem;
 }
 
 .shell {
   max-width: 82rem;
   margin: 0 auto;
-  padding: 1rem 1.25rem 0;
-  transition: padding var(--duration-fast) var(--ease-premium);
+  padding: var(--space-l) var(--space-l) 0;
+  transition: padding 0.5s var(--transition-luxury);
 }
 
 .card {
@@ -235,7 +235,7 @@ p { margin: 0; }
 }
 
 :root.is-scrolled .shell {
-  padding-top: 0.5rem;
+  padding-top: var(--space-s);
 }
 
 :root.is-scrolled .global-nav {
@@ -359,9 +359,9 @@ p { margin: 0; }
   list-style: none;
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: var(--space-xs);
   min-height: 2.7rem;
-  padding: 0.28rem 0.4rem 0.28rem 0.28rem;
+  padding: calc(var(--space-xs) * 0.5);
   border-radius: 999px;
   border: 1px solid var(--line);
   background: color-mix(in srgb, var(--surface-input) 92%, transparent);
@@ -386,7 +386,11 @@ p { margin: 0; }
   font-weight: 800;
 }
 
-.chevron { color: var(--muted); font-size: 0.88rem; line-height: 1; }
+.chevron {
+  color: var(--muted);
+  line-height: 1;
+  transition: transform var(--duration-fast) var(--transition-luxury);
+}
 .account-menu[open] .chevron { transform: rotate(180deg); }
 
 .account-panel {
@@ -394,34 +398,39 @@ p { margin: 0; }
   right: 0;
   top: calc(100% + 0.65rem);
   width: min(18rem, 90vw);
-  padding: 0.72rem;
+  padding: var(--space-s);
   border-radius: 1rem;
   border: 1px solid var(--line);
   background: var(--panel-strong);
   box-shadow: none;
-  backdrop-filter: blur(24px);
+  backdrop-filter: blur(var(--glass-blur));
   display: grid;
-  gap: 0.45rem;
+  gap: calc(var(--space-xs) * 0.75);
   z-index: 40;
 }
 
 .account-panel-head {
-  display: grid;
-  gap: 0.15rem;
-  padding: 0.6rem 0.75rem 0.7rem;
+  gap: var(--space-s);
   border-bottom: 1px solid var(--line);
 }
-.account-panel-head strong { font-size: 0.96rem; letter-spacing: -0.03em; }
-.account-panel-head small { color: var(--muted); font-size: 0.8rem; }
+.account-panel-head.account-item-static {
+  border-radius: 1rem;
+  cursor: default;
+}
+.account-panel-head.account-item-static:hover {
+  background: transparent;
+  border-color: transparent;
+}
+.account-panel-head small { color: var(--muted); font-size: 0.8rem; font-weight: 500; }
 
 .account-item,
 .account-logout {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-s);
   min-height: 3rem;
-  padding: 0.75rem 0.82rem;
+  padding: var(--space-s);
   border-radius: 1.15rem;
   border: 1px solid transparent;
   background: transparent;
@@ -450,9 +459,14 @@ p { margin: 0; }
   color: var(--brand);
   flex: none;
 }
-.account-icon svg { width: 1rem; height: 1rem; }
+.account-icon svg { width: 1.25rem; height: 1.25rem; }
 
 .account-item-copy {
+  display: grid;
+  gap: 0.12rem;
+}
+
+.account-item-copy > span {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
@@ -469,6 +483,18 @@ p { margin: 0; }
 
 .theme-inline {
   justify-content: flex-start;
+}
+
+.theme-toggle-light {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle-dark {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle-light {
+  display: inline-flex;
 }
 
 .account-logout {

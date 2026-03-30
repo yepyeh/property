@@ -80,17 +80,7 @@ const {
           lightModeLabel={lightModeLabel}
           logOutLabel={logOutLabel}
         />
-      ) : (
-        <>
-          <a
-            class="luxury-transition hidden min-h-10 items-center justify-center rounded-full border border-transparent px-s py-xs text-sm font-medium text-muted-ui no-underline hover:border-base hover:bg-card hover:text-white md:inline-flex"
-            href="/login"
-          >
-            {signInLabel}
-          </a>
-          <a class="btn-primary hidden md:inline-flex" href="/signup?role=buyer">{createAccountLabel}</a>
-        </>
-      )}
+      ) : null}
     </div>
   </div>
 </header>

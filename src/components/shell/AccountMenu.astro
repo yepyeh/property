@@ -1,4 +1,15 @@
 ---
+import {
+  ChevronDown,
+  LayoutDashboard,
+  LogOut,
+  Mail,
+  MoonStar,
+  Settings,
+  SunMedium,
+  User,
+} from "lucide-react";
+
 interface Item {
   key?: string;
   label: string;
@@ -26,44 +37,47 @@ const {
   lightModeLabel = "Light mode",
   logOutLabel = "Log out",
 } = Astro.props;
+
+const iconByKey = {
+  dashboard: LayoutDashboard,
+  inbox: Mail,
+  settings: Settings,
+} as const;
 ---
 
 <details class="account-menu">
   <summary class="account-summary">
     <span class="avatar-badge">{viewerInitials}</span>
-    <span class="chevron">▾</span>
+    <span class="chevron" aria-hidden="true">
+      <ChevronDown class="h-4 w-4" strokeWidth={1.5} />
+    </span>
   </summary>
   <div class="account-panel">
-    <div class="account-panel-head">
-      <strong>{viewerLabel}</strong>
-      <small>{viewerRoleLabel}</small>
+    <div class="account-panel-head account-item account-item-static">
+      <span class="account-icon" aria-hidden="true">
+        <User class="h-5 w-5" strokeWidth={1.5} />
+      </span>
+      <span class="account-item-copy">
+        <span>Account</span>
+        <small>{viewerLabel}{viewerRoleLabel ? `, ${viewerRoleLabel}` : ""}</small>
+      </span>
     </div>
 
     {accountMenu.map((item) => (
-      <a class:list={["account-item", item.active && "active"]} href={item.href}>
-        <span class="account-icon" aria-hidden="true">
-          {item.key === "settings" ? (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.33 1V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-.33-1 1.7 1.7 0 0 0-1-.6 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1-.33H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1-.33 1.7 1.7 0 0 0 .6-1 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .33-1V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 .33 1 1.7 1.7 0 0 0 1 .6 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.27.3.48.64.6 1 .08.32.2.66.39.94.2.29.5.5.84.58H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-.94.39c-.29.2-.5.5-.58.84-.12.36-.33.7-.6 1Z"></path>
-            </svg>
-          ) : item.key === "inbox" ? (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11Z"></path>
-              <path d="M4 13h4l1.5 2h5L16 13h4"></path>
-            </svg>
-          ) : (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 12.5 12 5l8 7.5"></path>
-              <path d="M6.5 10.5V19h11v-8.5"></path>
-            </svg>
-          )}
-        </span>
-        <span class="account-item-copy">
-          <span>{item.label}</span>
-          {item.key === "inbox" && item.count && item.count > 0 ? <span class="menu-dot"></span> : null}
-        </span>
-      </a>
+      (() => {
+        const Icon = item.key ? iconByKey[item.key as keyof typeof iconByKey] || LayoutDashboard : LayoutDashboard;
+        return (
+          <a class:list={["account-item", item.active && "active"]} href={item.href}>
+            <span class="account-icon" aria-hidden="true">
+              <Icon class="h-5 w-5" strokeWidth={1.5} />
+            </span>
+            <span class="account-item-copy">
+              <span>{item.label}</span>
+              {item.key === "inbox" && item.count && item.count > 0 ? <span class="menu-dot"></span> : null}
+            </span>
+          </a>
+        );
+      })()
     ))}
 
     <button
@@ -72,7 +86,8 @@ const {
       data-theme-toggle
     >
       <span class="account-icon" aria-hidden="true">
-        <span class="theme-toggle-icon" data-theme-icon>◐</span>
+        <MoonStar class="theme-toggle-dark h-5 w-5" strokeWidth={1.5} />
+        <SunMedium class="theme-toggle-light h-5 w-5" strokeWidth={1.5} />
       </span>
       <span data-theme-label data-theme-dark-label={darkModeLabel} data-theme-light-label={lightModeLabel}>{darkModeLabel}</span>
     </button>
@@ -80,11 +95,7 @@ const {
     <form method="POST" action="/api/auth/logout">
       <button class="account-logout" type="submit">
         <span class="account-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-            <path d="M16 17l5-5-5-5"></path>
-            <path d="M21 12H9"></path>
-          </svg>
+          <LogOut class="h-5 w-5" strokeWidth={1.5} />
         </span>
         <span>{logOutLabel}</span>
       </button>

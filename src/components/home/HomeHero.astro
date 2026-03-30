@@ -135,20 +135,20 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
 <style is:inline>
   .hero-shell {
     display: grid;
-    gap: 1.2rem;
+    gap: var(--space-l);
   }
 
   .hero-grid {
     display: grid;
     grid-template-columns: minmax(0, 1.22fr) minmax(20rem, 0.78fr);
-    gap: 1.3rem;
+    gap: var(--space-l);
     align-items: stretch;
-    padding: 1.5rem;
+    padding: var(--space-xl);
     background: linear-gradient(180deg, var(--surface-panel-subtle), var(--surface-panel-muted));
   }
 
   .hero-copy {
-    padding: 0.3rem 0.3rem 0.2rem;
+    padding: 0;
   }
 
   .section-label,
@@ -168,9 +168,9 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
   }
 
   .hero-copy h1 {
-    margin: 1rem 0 0;
+    margin: var(--space-s) 0 0;
     max-width: 8.5ch;
-    font-size: clamp(4.2rem, 8.4vw, 6.6rem);
+    font-size: var(--text-display);
     line-height: 0.84;
     letter-spacing: -0.06em;
     font-weight: 800;
@@ -178,15 +178,15 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
 
   .hero-text {
     max-width: 56ch;
-    margin-top: 1rem;
-    font-size: 1.02rem;
+    margin-top: var(--space-s);
+    font-size: var(--text-base);
     line-height: 1.78;
   }
 
   .hero-signals {
     display: grid;
-    gap: 0.72rem;
-    margin-top: 1.45rem;
+    gap: var(--space-s);
+    margin-top: var(--space-l);
     max-width: 43rem;
   }
 
@@ -211,9 +211,9 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
 
   .hero-actions {
     display: flex;
-    gap: 0.8rem;
+    gap: var(--space-s);
     flex-wrap: wrap;
-    margin-top: 1.6rem;
+    margin-top: var(--space-l);
   }
 
   .button-dark,
@@ -259,15 +259,15 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
 
   .hero-side {
     display: grid;
-    gap: 0.95rem;
+    gap: var(--space-m);
   }
 
   .search-card {
-    padding: 1.2rem;
+    padding: var(--space-l);
     display: grid;
-    gap: 0.95rem;
+    gap: var(--space-s);
     background: var(--surface-elevated-strong);
-    border-radius: 1rem;
+    border-radius: var(--radius-lg);
     border: 1px solid var(--line);
     box-shadow: var(--shadow-soft);
   }
@@ -275,9 +275,9 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
   .search-head {
     display: flex;
     justify-content: space-between;
-    gap: 0.8rem;
+    gap: var(--space-s);
     align-items: center;
-    padding-bottom: 0.5rem;
+    padding-bottom: var(--space-xs);
     border-bottom: 1px solid var(--line);
   }
 
@@ -294,7 +294,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
   .toggle-row {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.65rem;
+    gap: var(--space-s);
   }
 
   .toggle-pill {
@@ -329,7 +329,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
   .field-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.8rem;
+    gap: var(--space-s);
   }
 
   .compact-grid {
@@ -367,7 +367,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
   .side-metrics {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.8rem;
+    gap: var(--space-s);
   }
 
   .metric-card,
@@ -381,8 +381,8 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
 
   .metric-card {
     display: grid;
-    gap: 0.3rem;
-    padding: 1rem;
+    gap: var(--space-xs);
+    padding: var(--space-m);
   }
 
   .metric-card strong,
@@ -401,23 +401,23 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
   .hero-foot {
     display: grid;
     grid-template-columns: minmax(0, 1.5fr) minmax(18rem, 0.72fr);
-    gap: 1rem;
+    gap: var(--space-m);
   }
 
   .quick-links {
-    padding: 1rem 1.1rem;
+    padding: var(--space-l);
   }
 
   .quick-head {
     display: grid;
     gap: 0.25rem;
-    margin-bottom: 0.85rem;
+    margin-bottom: var(--space-s);
   }
 
   .quick-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.65rem;
+    gap: var(--space-s);
   }
 
   .quick-grid a {
@@ -437,7 +437,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
   .metric-banner {
     display: grid;
     gap: 0.3rem;
-    padding: 1rem 1.1rem;
+    padding: var(--space-l);
     align-content: start;
   }
 
@@ -455,7 +455,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
 
   @media (max-width: 760px) {
     .hero-grid {
-      padding: 1rem;
+      padding: var(--space-l);
     }
 
     .hero-copy h1 {

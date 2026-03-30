@@ -89,39 +89,18 @@ export default function PremiumSearchResultsPage({
   return (
     <div className="space-y-16 md:space-y-24">
       <section className="glass-card overflow-visible">
-        <div className="border-b border-white/5 px-6 py-6 md:px-8">
-          <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-            <div className="max-w-3xl space-y-4">
-              <div className="flex items-center gap-6">
-                <a href="/" className="text-sm font-semibold uppercase tracking-[0.18em] text-white">
-                  Property App
-                </a>
-
-                <nav className="hidden items-center gap-7 md:flex">
-                  <a href="/listings/?intent=buy" className="text-sm text-zinc-300 transition-colors duration-300 ease-luxury hover:text-white">Buy</a>
-                  <a href="/listings/?intent=rent" className="text-sm text-zinc-300 transition-colors duration-300 ease-luxury hover:text-white">Rent</a>
-                  <a href="/for-buyers" className="text-sm text-zinc-300 transition-colors duration-300 ease-luxury hover:text-white">For Buyers</a>
-                  <a href="/for-owners" className="text-sm text-zinc-300 transition-colors duration-300 ease-luxury hover:text-white">For Owners</a>
-                </nav>
-              </div>
-
-              <div className="space-y-3">
-                <span className="inline-flex rounded-full border border-white/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
-                  Search results
-                </span>
-                <h1 className="max-w-4xl text-4xl font-semibold tracking-tight text-white md:text-6xl">
-                  Search property with less noise and stronger buyer signals.
-                </h1>
-                <p className="secondary-text max-w-2xl text-sm leading-7 md:text-base">
-                  The results surface should feel decisive and clean: stronger filters, cleaner cards,
-                  and less portal clutter between intent and action.
-                </p>
-              </div>
-            </div>
-
-            <a href="/signup" className="btn-primary w-full justify-center md:w-auto">
-              Create Account
-            </a>
+        <div className="border-b border-white/5 px-l py-xl">
+          <div className="mb-l max-w-3xl space-y-s">
+            <span className="inline-flex rounded-full border border-white/10 px-s py-xs text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+              Search results
+            </span>
+            <h1 className="max-w-4xl text-4xl font-semibold tracking-tight text-white md:text-6xl">
+              Search property with less noise and stronger buyer signals.
+            </h1>
+            <p className="secondary-text max-w-2xl text-sm leading-7 md:text-base">
+              The results surface should feel decisive and clean: stronger filters, cleaner cards,
+              and less portal clutter between intent and action.
+            </p>
           </div>
 
           <div className="mb-6 space-y-2">

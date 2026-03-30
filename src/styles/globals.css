@@ -172,20 +172,16 @@
   .header-shell {
     @apply sticky z-20 flex items-center justify-between gap-m rounded-lg;
     top: var(--space-s);
-    padding: var(--space-s) var(--space-m);
-    transition:
-      padding var(--duration-fast) var(--transition-luxury),
-      background-color var(--duration-fast) var(--transition-luxury),
-      border-color var(--duration-fast) var(--transition-luxury);
+    padding: var(--space-l);
+    transition: all 0.5s var(--transition-luxury);
   }
 
   :root.is-scrolled .header-shell {
-    padding-top: var(--space-xs);
-    padding-bottom: var(--space-xs);
+    padding: var(--space-s) var(--space-l);
   }
 
   .section-space {
-    @apply py-24 md:py-32;
+    padding-block: var(--space-xl);
   }
 
   .secondary-text {
