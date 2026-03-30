@@ -3,14 +3,14 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Trust and Safety | Property App 2026" description="How Property App protects buyers, renters, owners, and listing quality.">
-  <section class="trust-hero card">
+  <section class="hero-shell glass-card">
     <div class="hero-copy">
       <span class="pill">Trust and safety</span>
       <h1>Trust needs system design, moderation, and visible protection.</h1>
       <p>
         Property marketplaces fail when listings are noisy, contact pathways are opaque, and users are pushed into rushed decisions. We are building the protection layer directly into search, enquiry, verification, reporting, and account workflows.
       </p>
-      <div class="hero-signals">
+      <div class="signal-row">
         <span>Structured enquiries instead of contact scraping</span>
         <span>Verification pathways for owner credibility</span>
         <span>Listing reports and moderation visibility</span>
@@ -19,8 +19,8 @@ import Layout from "../layouts/Layout.astro";
     </div>
   </section>
 
-  <section class="trust-grid section-gap">
-    <article class="card trust-card">
+  <section class="split-grid section-space">
+    <article class="glass-card content-card">
       <strong>For buyers and renters</strong>
       <ul>
         <li>Verified-owner signals appear where identity or ownership status has been reviewed.</li>
@@ -29,7 +29,7 @@ import Layout from "../layouts/Layout.astro";
         <li>Listing reporting exists for suspicious, inaccurate, or duplicated inventory.</li>
       </ul>
     </article>
-    <article class="card trust-card">
+    <article class="glass-card content-card">
       <strong>For owners and landlords</strong>
       <ul>
         <li>Verification request flow sits inside the owner workspace, not outside it.</li>
@@ -40,8 +40,8 @@ import Layout from "../layouts/Layout.astro";
     </article>
   </section>
 
-  <section class="protection-band card section-gap">
-    <div>
+  <section class="glass-card section-shell section-space">
+    <div class="section-head">
       <span class="pill">Security principles</span>
       <h2>Security is not a separate feature. It shapes the product.</h2>
       <p>
@@ -49,26 +49,26 @@ import Layout from "../layouts/Layout.astro";
       </p>
     </div>
     <div class="principles-grid">
-      <article>
+      <article class="surface-card">
         <strong>Protected account flows</strong>
         <span>Buyer, owner, and admin actions sit behind role-aware account controls instead of ad hoc access paths.</span>
       </article>
-      <article>
+      <article class="surface-card">
         <strong>Moderated trust signals</strong>
         <span>Verification and reporting are operational workflows, not decorative badges.</span>
       </article>
-      <article>
+      <article class="surface-card">
         <strong>Decision support before contact</strong>
         <span>Shortlist, compare, collections, and trust context help users decide before they commit.</span>
       </article>
-      <article>
+      <article class="surface-card">
         <strong>Clear owner accountability</strong>
         <span>Owners manage galleries, response states, listing quality, and visibility in one accountable workspace.</span>
       </article>
     </div>
   </section>
 
-  <section class="card trust-card section-gap">
+  <section class="glass-card content-card section-space">
     <strong>Practical safety checklist</strong>
     <ul>
       <li>Do not send deposits before identity, viewing conditions, and listing credibility are clear.</li>
@@ -79,13 +79,13 @@ import Layout from "../layouts/Layout.astro";
     </ul>
   </section>
 
-  <section class="cta-grid section-gap">
-    <a class="card cta-card" href="/about">
+  <section class="split-grid section-space">
+    <a class="glass-card cta-card" href="/about">
       <span class="pill">About us</span>
       <strong>Understand what we are building and why</strong>
       <p>Read the company view behind the product, the market problem we care about, and the standard we are trying to raise.</p>
     </a>
-    <a class="card cta-card" href="/why-property-app">
+    <a class="glass-card cta-card" href="/why-property-app">
       <span class="pill">Why us</span>
       <strong>See what should make this better than the usual portal</strong>
       <p>Our difference is not just more listings. It is clearer workflows, better decision support, and stronger trust signals.</p>
@@ -93,92 +93,105 @@ import Layout from "../layouts/Layout.astro";
   </section>
 
   <style is:inline>
-    .trust-hero,
-    .trust-card,
-    .protection-band,
+    .hero-shell,
+    .section-shell,
+    .content-card,
     .cta-card {
-      padding: 1.4rem;
+      padding: var(--space-xl);
     }
-    .trust-hero {
+
+    .hero-shell {
       background:
-        radial-gradient(circle at top left, rgba(14, 165, 233, 0.13), transparent 26rem),
-        linear-gradient(180deg, var(--surface-overlay-strong), var(--surface-panel-muted));
+        radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 8%, transparent), transparent 26rem),
+        linear-gradient(180deg, color-mix(in srgb, var(--card) 94%, transparent), color-mix(in srgb, var(--card) 82%, transparent));
     }
-    .hero-copy {
+
+    .hero-copy,
+    .section-head,
+    .section-shell,
+    .content-card,
+    .cta-card {
       display: grid;
-      gap: 0.95rem;
-      max-width: 60rem;
+      gap: var(--space-m);
     }
-    .trust-hero h1,
-    .protection-band h2 {
+
+    .hero-copy h1,
+    .section-head h2 {
       margin: 0;
-      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-size: var(--text-5xl);
       line-height: 0.94;
-      letter-spacing: -0.08em;
-      max-width: 12ch;
+      letter-spacing: -0.06em;
+      max-width: 13ch;
     }
-    .trust-hero p,
-    .trust-card li,
-    .protection-band p,
+
+    .hero-copy p,
+    .content-card li,
+    .section-head p,
     .principles-grid span,
     .cta-card p {
+      margin: 0;
       color: var(--muted);
       line-height: 1.72;
     }
-    .hero-signals {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.7rem;
-    }
-    .hero-signals span {
-      padding: 0.7rem 0.95rem;
-      border-radius: 999px;
-      background: var(--surface-overlay-strong);
-      border: 1px solid var(--line);
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: var(--muted);
-    }
-    .trust-grid,
-    .cta-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem;
-    }
-    .trust-card ul {
-      margin: 0.8rem 0 0;
-      padding-left: 1.1rem;
-    }
-    .protection-band {
-      display: grid;
-      gap: 1rem;
-      background: linear-gradient(180deg, var(--surface-elevated), rgba(248,250,252,0.96));
-    }
+
+    .signal-row,
+    .split-grid,
     .principles-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.9rem;
+      gap: var(--space-m);
     }
-    .principles-grid article,
-    .cta-card {
+
+    .signal-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .signal-row span,
+    .surface-card {
+      padding: var(--space-l);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--card) 78%, transparent);
+    }
+
+    .signal-row span {
+      font-size: var(--text-sm);
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .split-grid,
+    .principles-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .surface-card {
       display: grid;
-      gap: 0.4rem;
-      border-radius: 1.3rem;
-      background: var(--surface-panel-muted);
-      border: 1px solid var(--line);
+      gap: var(--space-xs);
+    }
+
+    .content-card ul {
+      margin: 0;
+      padding-left: var(--space-m);
+      display: grid;
+      gap: var(--space-xs);
+    }
+
+    .content-card strong,
+    .surface-card strong,
+    .cta-card strong {
+      font-size: var(--text-lg);
+      letter-spacing: -0.03em;
+    }
+
+    .cta-card {
       text-decoration: none;
       color: inherit;
     }
-    .principles-grid strong,
-    .trust-card strong,
-    .cta-card strong {
-      font-size: 1rem;
-      letter-spacing: -0.03em;
-    }
+
     @media (max-width: 860px) {
-      .trust-grid,
-      .principles-grid,
-      .cta-grid {
+      .signal-row,
+      .split-grid,
+      .principles-grid {
         grid-template-columns: 1fr;
       }
     }

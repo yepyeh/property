@@ -3,7 +3,7 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="About Us | Property App 2026" description="Why Property App exists and what standard it is trying to raise for property search and listing management in Southeast Asia.">
-  <section class="about-hero card">
+  <section class="hero-shell glass-card">
     <div class="hero-copy">
       <span class="pill">About Property App</span>
       <h1>We are trying to make property search and listing management feel clearer, safer, and more accountable.</h1>
@@ -13,14 +13,14 @@ import Layout from "../layouts/Layout.astro";
     </div>
   </section>
 
-  <section class="about-grid section-gap">
-    <article class="card about-card">
+  <section class="grid-band section-space">
+    <article class="glass-card band-card">
       <strong>The problem we care about</strong>
       <p>
         Buyers and renters should be able to search with context, compare a few serious options, and contact with confidence. Owners should be able to publish with structure, manage responses, and understand whether a listing is actually performing.
       </p>
     </article>
-    <article class="card about-card">
+    <article class="glass-card band-card">
       <strong>The standard we are aiming for</strong>
       <p>
         Better search quality, stronger trust signals, cleaner listing operations, and product flows that help people decide rather than just click around.
@@ -28,8 +28,8 @@ import Layout from "../layouts/Layout.astro";
     </article>
   </section>
 
-  <section class="market-band card section-gap">
-    <div>
+  <section class="glass-card section-shell section-space">
+    <div class="section-head">
       <span class="pill">Where we operate</span>
       <h2>We are building for the Southeast Asian property market, where large portals and large advisory brands already prove the demand exists.</h2>
       <p>
@@ -37,57 +37,57 @@ import Layout from "../layouts/Layout.astro";
       </p>
     </div>
     <div class="belief-grid">
-      <article>
+      <article class="surface-card">
         <strong>Portal operators</strong>
         <span>Examples in-market show strong search breadth, directory depth, and localisation basics. They prove inventory demand, but often still feel cluttered and operationally thin.</span>
       </article>
-      <article>
+      <article class="surface-card">
         <strong>Premium advisers</strong>
         <span>Brands like Savills show there is real premium demand and serious supply in the region. They prove the high-end market exists, but they do not solve the broader product workflow problem on their own.</span>
       </article>
-      <article>
+      <article class="surface-card">
         <strong>What this means for us</strong>
         <span>We should serve both everyday and premium users without falling back to either a noisy portal or a purely brokerage-led experience.</span>
       </article>
-      <article>
+      <article class="surface-card">
         <strong>The standard we are building toward</strong>
         <span>Search that feels modern, operations that feel responsive, trust that feels visible, and personal support when automation is not enough.</span>
       </article>
     </div>
   </section>
 
-  <section class="mission-band card section-gap">
-    <div>
+  <section class="glass-card section-shell section-space">
+    <div class="section-head">
       <span class="pill">What we believe</span>
       <h2>A strong marketplace is not just a big inventory count.</h2>
     </div>
     <div class="belief-grid">
-      <article>
+      <article class="surface-card">
         <strong>Clarity over clutter</strong>
         <span>Search, shortlist, compare, and enquiry should feel connected instead of fragmented.</span>
       </article>
-      <article>
+      <article class="surface-card">
         <strong>Trust over empty claims</strong>
         <span>Verification, reporting, and visible process matter more than broad platform promises.</span>
       </article>
-      <article>
+      <article class="surface-card">
         <strong>Decision support over noise</strong>
         <span>Buyers need help narrowing choices, not more reasons to hesitate.</span>
       </article>
-      <article>
+      <article class="surface-card">
         <strong>Operations over vanity</strong>
         <span>Owners need feedback, billing clarity, and enquiry handling that actually helps them act.</span>
       </article>
     </div>
   </section>
 
-  <section class="cta-grid section-gap">
-    <a class="card cta-card" href="/why-property-app">
+  <section class="grid-band section-space">
+    <a class="glass-card cta-card" href="/why-property-app">
       <span class="pill">Why us</span>
       <strong>See what should make this stand out</strong>
       <p>Understand the product differences we think matter in this market.</p>
     </a>
-    <a class="card cta-card" href="/trust">
+    <a class="glass-card cta-card" href="/trust">
       <span class="pill">Trust and safety</span>
       <strong>See how protection is built into the product</strong>
       <p>Read how verification, reporting, and structured workflows support safer use.</p>
@@ -95,69 +95,85 @@ import Layout from "../layouts/Layout.astro";
   </section>
 
   <style is:inline>
-    .about-hero,
-    .market-band,
-    .about-card,
-    .mission-band,
+    .hero-shell,
+    .section-shell,
+    .band-card,
     .cta-card {
-      padding: 1.4rem;
+      padding: var(--space-xl);
     }
-    .about-hero {
+
+    .hero-shell {
       background:
-        radial-gradient(circle at top left, rgba(16, 185, 129, 0.1), transparent 26rem),
-        linear-gradient(180deg, var(--surface-overlay-strong), var(--surface-panel-muted));
+        radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 12%, transparent), transparent 28rem),
+        linear-gradient(180deg, color-mix(in srgb, var(--card) 94%, transparent), color-mix(in srgb, var(--card) 82%, transparent));
     }
+
     .hero-copy,
-    .mission-band,
-    .market-band {
+    .section-head,
+    .section-shell,
+    .band-card,
+    .cta-card {
       display: grid;
-      gap: 0.9rem;
+      gap: var(--space-m);
     }
-    .about-hero h1,
-    .mission-band h2,
-    .market-band h2 {
+
+    .hero-copy h1,
+    .section-head h2 {
       margin: 0;
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      line-height: 0.95;
-      letter-spacing: -0.08em;
-      max-width: 13ch;
+      font-size: var(--text-5xl);
+      line-height: 0.94;
+      letter-spacing: -0.06em;
+      max-width: 14ch;
     }
-    .about-hero p,
-    .about-card p,
-    .market-band p,
+
+    .hero-copy p,
+    .section-head p,
+    .band-card p,
     .belief-grid span,
     .cta-card p {
       margin: 0;
       color: var(--muted);
       line-height: 1.72;
     }
-    .about-grid,
-    .belief-grid,
-    .cta-grid {
+
+    .grid-band,
+    .belief-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem;
+      gap: var(--space-m);
     }
-    .about-card,
-    .belief-grid article,
-    .cta-card {
+
+    .grid-band {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .belief-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .surface-card {
       display: grid;
-      gap: 0.45rem;
-      background: var(--surface-overlay);
-      border: 1px solid var(--line);
+      gap: var(--space-xs);
+      padding: var(--space-l);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--card) 78%, transparent);
+    }
+
+    .band-card strong,
+    .surface-card strong,
+    .cta-card strong {
+      font-size: var(--text-lg);
+      letter-spacing: -0.03em;
+    }
+
+    .cta-card {
       text-decoration: none;
       color: inherit;
     }
-    .about-card strong,
-    .belief-grid strong,
-    .cta-card strong {
-      font-size: 1rem;
-      letter-spacing: -0.03em;
-    }
+
     @media (max-width: 860px) {
-      .about-grid,
-      .belief-grid,
-      .cta-grid {
+      .grid-band,
+      .belief-grid {
         grid-template-columns: 1fr;
       }
     }

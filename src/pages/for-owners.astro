@@ -47,174 +47,167 @@ const ownerComparison = [
   title="For Owners | Property App 2026"
   description="Post homes, manage enquiries, and control listing visibility with a cleaner owner workflow."
 >
-  <section class="landing-hero card">
+  <section class="hero-shell glass-card">
     <div class="hero-copy">
-      <span class="section-kicker">For owners</span>
+      <span class="pill">For owners</span>
       <h1>List faster, manage leads cleanly, and pay for visibility only when it matters.</h1>
       <p>
-        This is the supply-side landing page the product needed. It explains the actual owner workflow instead of
-        expecting people to infer it from the app.
+        This is the supply-side landing page the product needed. It explains the actual owner workflow instead of expecting people to infer it from the app.
       </p>
       <div class="hero-actions">
-        <a class="button-primary" href="/signup?role=owner">Create owner account</a>
-        <a class="button-secondary" href="/submit-listing/">Post a listing</a>
-        <a class="button-secondary" href="/concierge">Talk to the team</a>
+        <a class="btn-primary" href="/signup?role=owner">Create owner account</a>
+        <a class="button-shell" href="/submit-listing/">Post a listing</a>
+        <a class="button-shell" href="/concierge">Talk to the team</a>
       </div>
     </div>
-    <div class="hero-panel">
+    <div class="surface-card hero-panel">
       <strong>Owner workflow</strong>
       <ol>
         {workflowSteps.map((step) => <li>{step}</li>)}
       </ol>
-      <a href="/pricing">See pricing</a>
-      <a href="/concierge">Concierge support</a>
+      <div class="hero-links">
+        <a href="/pricing">See pricing</a>
+        <a href="/concierge">Concierge support</a>
+      </div>
     </div>
   </section>
 
-  <section class="benefits-grid">
+  <section class="card-grid section-space">
     {ownerBenefits.map((benefit) => (
-      <article class="benefit-card card">
-        <span class="section-kicker">Owner benefit</span>
+      <article class="glass-card benefit-card">
+        <span class="pill">Owner benefit</span>
         <h2>{benefit.title}</h2>
         <p>{benefit.body}</p>
       </article>
     ))}
   </section>
 
-  <section class="benefits-grid">
+  <section class="card-grid section-space">
     {ownerComparison.map((item) => (
-      <article class="benefit-card card">
-        <span class="section-kicker">Owner comparison</span>
+      <article class="glass-card benefit-card">
+        <span class="pill">Owner comparison</span>
         <h2>{item.title}</h2>
         <p>{item.body}</p>
       </article>
     ))}
   </section>
 
-  <section class="cta-band card">
-    <div>
-      <span class="section-kicker">Why this matters</span>
+  <section class="glass-card note-shell section-space">
+    <div class="note-copy">
+      <span class="pill">Why this matters</span>
       <h2>Most owner tools fail in the handoff between posting and follow-up.</h2>
       <p>
         This product is aimed at that operational gap: supply creation, lead capture, billing, and renewal in one place.
       </p>
     </div>
-    <a class="button-primary" href="/owner/dashboard/">Go to owner dashboard</a>
+    <a class="btn-primary" href="/owner/dashboard/">Go to owner dashboard</a>
   </section>
 
   <style is:inline>
-    .landing-hero,
-    .cta-band,
-    .benefit-card {
-      padding: 1.4rem;
-      background: var(--surface-elevated);
-      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
+    .hero-shell,
+    .benefit-card,
+    .note-shell {
+      padding: var(--space-xl);
     }
 
-    .landing-hero,
-    .cta-band {
+    .hero-shell,
+    .note-shell {
       display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
-      gap: 1rem;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: var(--space-m);
       align-items: start;
+    }
+
+    .hero-copy,
+    .benefit-card,
+    .note-copy,
+    .hero-panel {
+      display: grid;
+      gap: var(--space-m);
     }
 
     .hero-copy h1,
     .benefit-card h2,
-    .cta-band h2 {
-      margin: 0.8rem 0 0;
-      font-size: clamp(2.1rem, 4vw, 3.8rem);
-      letter-spacing: -0.08em;
-      line-height: 0.96;
+    .note-copy h2 {
+      margin: 0;
+      font-size: var(--text-5xl);
+      line-height: 0.94;
+      letter-spacing: -0.06em;
     }
 
     .benefit-card h2,
-    .cta-band h2 {
-      font-size: clamp(1.4rem, 2.4vw, 2rem);
+    .note-copy h2 {
+      font-size: var(--text-2xl);
     }
 
     .hero-copy p,
     .benefit-card p,
-    .cta-band p,
+    .note-copy p,
     .hero-panel,
     .hero-panel li {
+      margin: 0;
       color: var(--muted);
-      line-height: 1.7;
+      line-height: 1.72;
     }
 
-    .hero-actions {
+    .hero-shell {
+      background:
+        radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 10%, transparent), transparent 26rem),
+        linear-gradient(180deg, color-mix(in srgb, var(--card) 94%, transparent), color-mix(in srgb, var(--card) 82%, transparent));
+    }
+
+    .hero-actions,
+    .hero-links {
       display: flex;
-      gap: 0.75rem;
+      gap: var(--space-s);
       flex-wrap: wrap;
-      margin-top: 1.35rem;
     }
 
-    .button-primary,
-    .button-secondary {
+    .button-shell {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 2.9rem;
-      padding: 0.88rem 1.1rem;
-      border-radius: 999px;
-      font-weight: 700;
+      min-height: calc(var(--space-xl) + var(--space-s));
+      padding: var(--space-s) var(--space-m);
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--card) 78%, transparent);
+      color: inherit;
       text-decoration: none;
+      font-weight: 700;
+      transition: all var(--duration-fast) var(--transition-luxury);
     }
 
-    .button-primary {
-      background: linear-gradient(135deg, var(--brand), #23314d);
-      color: var(--surface-canvas);
-    }
-
-    .button-secondary {
-      border: 1px solid var(--line);
-      background: var(--surface-elevated-strong);
-      color: var(--text);
-    }
-
-    .hero-panel {
-      padding: 1.1rem;
-      border-radius: 24px;
-      background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
-      border: 1px solid var(--line);
-    }
-
-    .hero-panel strong {
-      display: block;
-      margin-bottom: 0.8rem;
-      font-size: 1.05rem;
-      letter-spacing: -0.03em;
-      color: var(--text);
+    .button-shell:hover,
+    .hero-links a:hover {
+      border-color: color-mix(in srgb, var(--accent) 22%, var(--border));
+      color: var(--accent);
     }
 
     .hero-panel ol {
       margin: 0;
-      padding-left: 1.1rem;
+      padding-left: var(--space-m);
+      display: grid;
+      gap: var(--space-xs);
     }
 
-    .hero-panel a {
-      display: inline-flex;
-      margin-top: 1rem;
-      color: var(--accent-strong);
-      font-weight: 700;
+    .hero-links a {
+      color: inherit;
       text-decoration: none;
+      font-weight: 700;
+      transition: color var(--duration-fast) var(--transition-luxury);
     }
 
-    .benefits-grid {
+    .card-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .cta-band {
-      margin-top: 1rem;
+      gap: var(--space-m);
     }
 
     @media (max-width: 980px) {
-      .landing-hero,
-      .cta-band,
-      .benefits-grid {
+      .hero-shell,
+      .note-shell,
+      .card-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -224,8 +217,8 @@ const ownerComparison = [
         display: grid;
       }
 
-      .button-primary,
-      .button-secondary {
+      .btn-primary,
+      .button-shell {
         width: 100%;
       }
     }

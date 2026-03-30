@@ -40,21 +40,20 @@ const buyerComparison = [
   title="For Buyers | Property App 2026"
   description="Search listings, save homes, and manage buyer workflows with a cleaner marketplace experience."
 >
-  <section class="landing-hero card">
+  <section class="hero-shell glass-card">
     <div class="hero-copy">
-      <span class="section-kicker">For buyers</span>
+      <span class="pill">For buyers</span>
       <h1>Search, shortlist, and enquire without the usual marketplace noise.</h1>
       <p>
-        This page explains the buyer side clearly: search, save, revisit, and act. The product is more usable when the
-        buyer workflow is explicit instead of buried across several screens.
+        This page explains the buyer side clearly: search, save, revisit, and act. The product is more usable when the buyer workflow is explicit instead of buried across several screens.
       </p>
       <div class="hero-actions">
-        <a class="button-primary" href="/listings/?intent=buy">Browse homes</a>
-        <a class="button-secondary" href="/signup?role=buyer">Create buyer account</a>
-        <a class="button-secondary" href="/concierge">Ask for help</a>
+        <a class="btn-primary" href="/listings/?intent=buy">Browse homes</a>
+        <a class="button-shell" href="/signup?role=buyer">Create buyer account</a>
+        <a class="button-shell" href="/concierge">Ask for help</a>
       </div>
     </div>
-    <div class="hero-panel">
+    <div class="surface-card hero-panel">
       <strong>Buyer workflow</strong>
       <ul>
         <li>Search by city, district, type, beds, and budget</li>
@@ -65,142 +64,133 @@ const buyerComparison = [
     </div>
   </section>
 
-  <section class="benefits-grid">
+  <section class="card-grid section-space">
     {buyerBenefits.map((benefit) => (
-      <article class="benefit-card card">
-        <span class="section-kicker">Buyer benefit</span>
+      <article class="glass-card benefit-card">
+        <span class="pill">Buyer benefit</span>
         <h2>{benefit.title}</h2>
         <p>{benefit.body}</p>
       </article>
     ))}
   </section>
 
-  <section class="benefits-grid">
+  <section class="card-grid section-space">
     {buyerComparison.map((item) => (
-      <article class="benefit-card card">
-        <span class="section-kicker">Buyer comparison</span>
+      <article class="glass-card benefit-card">
+        <span class="pill">Buyer comparison</span>
         <h2>{item.title}</h2>
         <p>{item.body}</p>
       </article>
     ))}
   </section>
 
-  <section class="cta-band card">
-    <div>
-      <span class="section-kicker">Buyer tools</span>
+  <section class="glass-card note-shell section-space">
+    <div class="note-copy">
+      <span class="pill">Buyer tools</span>
       <h2>Good buyer UX is mostly about reducing friction between search and action.</h2>
       <p>
         That is why saved searches, saved listings, map context, and enquiry flow matter more than decorative feature lists.
       </p>
     </div>
-    <a class="button-primary" href="/buyer/dashboard/">Go to buyer dashboard</a>
+    <a class="btn-primary" href="/buyer/dashboard/">Go to buyer dashboard</a>
   </section>
 
   <style is:inline>
-    .landing-hero,
-    .cta-band,
-    .benefit-card {
-      padding: 1.4rem;
-      background: var(--surface-elevated);
-      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
+    .hero-shell,
+    .benefit-card,
+    .note-shell {
+      padding: var(--space-xl);
     }
 
-    .landing-hero,
-    .cta-band {
+    .hero-shell,
+    .note-shell {
       display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
-      gap: 1rem;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: var(--space-m);
       align-items: start;
+    }
+
+    .hero-copy,
+    .benefit-card,
+    .note-copy,
+    .hero-panel {
+      display: grid;
+      gap: var(--space-m);
     }
 
     .hero-copy h1,
     .benefit-card h2,
-    .cta-band h2 {
-      margin: 0.8rem 0 0;
-      font-size: clamp(2.1rem, 4vw, 3.8rem);
-      letter-spacing: -0.08em;
-      line-height: 0.96;
+    .note-copy h2 {
+      margin: 0;
+      font-size: var(--text-5xl);
+      line-height: 0.94;
+      letter-spacing: -0.06em;
     }
 
     .benefit-card h2,
-    .cta-band h2 {
-      font-size: clamp(1.4rem, 2.4vw, 2rem);
+    .note-copy h2 {
+      font-size: var(--text-2xl);
     }
 
     .hero-copy p,
     .benefit-card p,
-    .cta-band p,
+    .note-copy p,
     .hero-panel,
     .hero-panel li {
+      margin: 0;
       color: var(--muted);
-      line-height: 1.7;
+      line-height: 1.72;
+    }
+
+    .hero-shell {
+      background:
+        radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 10%, transparent), transparent 26rem),
+        linear-gradient(180deg, color-mix(in srgb, var(--card) 94%, transparent), color-mix(in srgb, var(--card) 82%, transparent));
     }
 
     .hero-actions {
       display: flex;
-      gap: 0.75rem;
+      gap: var(--space-s);
       flex-wrap: wrap;
-      margin-top: 1.35rem;
     }
 
-    .button-primary,
-    .button-secondary {
+    .button-shell {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 2.9rem;
-      padding: 0.88rem 1.1rem;
-      border-radius: 999px;
-      font-weight: 700;
+      min-height: calc(var(--space-xl) + var(--space-s));
+      padding: var(--space-s) var(--space-m);
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--card) 78%, transparent);
+      color: inherit;
       text-decoration: none;
+      font-weight: 700;
+      transition: all var(--duration-fast) var(--transition-luxury);
     }
 
-    .button-primary {
-      background: linear-gradient(135deg, var(--brand), #23314d);
-      color: var(--surface-canvas);
-    }
-
-    .button-secondary {
-      border: 1px solid var(--line);
-      background: var(--surface-elevated-strong);
-      color: var(--text);
-    }
-
-    .hero-panel {
-      padding: 1.1rem;
-      border-radius: 24px;
-      background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
-      border: 1px solid var(--line);
-    }
-
-    .hero-panel strong {
-      display: block;
-      margin-bottom: 0.8rem;
-      font-size: 1.05rem;
-      letter-spacing: -0.03em;
-      color: var(--text);
+    .button-shell:hover {
+      border-color: color-mix(in srgb, var(--accent) 22%, var(--border));
+      color: var(--accent);
     }
 
     .hero-panel ul {
       margin: 0;
-      padding-left: 1.1rem;
+      padding-left: var(--space-m);
+      display: grid;
+      gap: var(--space-xs);
     }
 
-    .benefits-grid {
+    .card-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .cta-band {
-      margin-top: 1rem;
+      gap: var(--space-m);
     }
 
     @media (max-width: 980px) {
-      .landing-hero,
-      .cta-band,
-      .benefits-grid {
+      .hero-shell,
+      .note-shell,
+      .card-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -210,8 +200,8 @@ const buyerComparison = [
         display: grid;
       }
 
-      .button-primary,
-      .button-secondary {
+      .btn-primary,
+      .button-shell {
         width: 100%;
       }
     }

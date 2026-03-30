@@ -252,17 +252,17 @@ function buildExpiryEmailContent(notification: ExpiryEmailCandidate, appUrl: str
 
   const subject = `${notification.listingTitle}: ${notification.ctaLabel}`;
   const html = `
-    <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#111827;line-height:1.6">
-      <p style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#0f766e;margin-bottom:8px">Property App 2026</p>
+    <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:black;line-height:1.6">
+      <p style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:teal;margin-bottom:8px">Property App 2026</p>
       <h1 style="font-size:28px;margin:0 0 12px">${escapeHtml(notification.listingTitle)}</h1>
       <p style="margin:0 0 16px">Your ${escapeHtml(categoryLabel)} notification is ready.</p>
       <p style="margin:0 0 16px">${escapeHtml(notification.message)}</p>
       <p style="margin:0 0 16px"><strong>Due:</strong> ${escapeHtml(notification.dueAt)}</p>
       <p style="margin:0 0 24px">
-        <a href="${dashboardUrl}" style="display:inline-block;padding:12px 18px;border-radius:999px;background:#0f766e;color:#fff;text-decoration:none;font-weight:700;margin-right:12px">${escapeHtml(notification.ctaLabel)}</a>
-        <a href="${listingUrl}" style="color:#0f766e;text-decoration:none;font-weight:700">Review listing</a>
+        <a href="${dashboardUrl}" style="display:inline-block;padding:12px 18px;border-radius:999px;background:teal;color:white;text-decoration:none;font-weight:700;margin-right:12px">${escapeHtml(notification.ctaLabel)}</a>
+        <a href="${listingUrl}" style="color:teal;text-decoration:none;font-weight:700">Review listing</a>
       </p>
-      <p style="font-size:14px;color:#6b7280;margin:0">This email was sent because your listing has a time-based visibility or promotion window.</p>
+      <p style="font-size:14px;color:gray;margin:0">This email was sent because your listing has a time-based visibility or promotion window.</p>
     </div>
   `;
 
