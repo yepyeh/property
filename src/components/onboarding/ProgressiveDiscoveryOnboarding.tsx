@@ -73,7 +73,7 @@ export default function ProgressiveDiscoveryOnboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100">
+    <div className="min-h-screen bg-background">
       <div className="page-shell flex min-h-screen items-center justify-center py-10">
         <div className="w-full max-w-2xl">
           <AnimatePresence mode="wait">
@@ -89,14 +89,14 @@ export default function ProgressiveDiscoveryOnboarding() {
               >
                 <div className="space-y-8">
                   <div className="space-y-3">
-                    <span className="inline-flex rounded-full border border-white/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">
+                    <span className="subtle-label inline-flex rounded-full border border-base px-3 py-1">
                       Step 1
                     </span>
                     <div className="space-y-2">
-                      <h1 className="text-3xl font-semibold tracking-[-0.04em] text-white md:text-5xl">
+                      <h1 className="text-3xl font-semibold tracking-[-0.04em] md:text-5xl">
                         What brings you here?
                       </h1>
-                      <p className="max-w-xl text-sm leading-7 text-zinc-400 md:text-base">
+                      <p className="secondary-text max-w-xl text-sm leading-7 md:text-base">
                         Start with intent. The product should adapt around what you need rather than forcing
                         everyone through one generic property journey.
                       </p>
@@ -143,14 +143,14 @@ export default function ProgressiveDiscoveryOnboarding() {
               >
                 <div className="space-y-8">
                   <div className="space-y-3">
-                    <span className="inline-flex rounded-full border border-white/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">
+                    <span className="subtle-label inline-flex rounded-full border border-base px-3 py-1">
                       Step 2
                     </span>
                     <div className="space-y-2">
-                      <h2 className="text-3xl font-semibold tracking-[-0.04em] text-white md:text-5xl">
+                      <h2 className="text-3xl font-semibold tracking-[-0.04em] md:text-5xl">
                         What is your dream neighborhood?
                       </h2>
-                      <p className="max-w-xl text-sm leading-7 text-zinc-400 md:text-base">
+                      <p className="secondary-text max-w-xl text-sm leading-7 md:text-base">
                         Give us a starting point. We will shape the first view around a place that already
                         feels relevant.
                       </p>
@@ -158,9 +158,9 @@ export default function ProgressiveDiscoveryOnboarding() {
                   </div>
 
                   <div className="space-y-4">
-                    <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-2">
-                      <div className="flex items-center gap-3 rounded-[1.15rem] border border-transparent px-4 py-4 transition-all duration-300 ease-luxury focus-within:border-accent/30 focus-within:bg-white/[0.02]">
-                        <span className="text-zinc-500">⌕</span>
+                    <div className="surface-soft rounded-xl border border-base p-2">
+                      <div className="luxury-transition flex items-center gap-3 rounded-lg border border-transparent px-4 py-4 focus-within:border-accent/30 focus-within:bg-card">
+                        <span className="secondary-text">⌕</span>
                         <input
                           value={neighborhood}
                           onChange={(e) => {
@@ -182,17 +182,17 @@ export default function ProgressiveDiscoveryOnboarding() {
                             type="button"
                             whileTap={{ scale: 0.99 }}
                             onClick={() => selectArea(area)}
-                            className={`flex items-center justify-between rounded-2xl border px-4 py-4 text-left transition-all duration-300 ease-luxury ${
+                            className={`luxury-transition flex items-center justify-between rounded-lg border px-4 py-4 text-left ${
                               active
-                                ? "border-accent/40 bg-accent/10 text-white"
-                                : "border-white/10 bg-white/[0.02] text-zinc-300 hover:border-white/15 hover:bg-white/[0.04]"
+                                ? "border-accent/40 surface-accent-soft"
+                                : "border-base surface-soft text-muted-ui hover:bg-card"
                             }`}
                           >
                             <span className="font-medium">{area}</span>
                             <motion.span
                               animate={{ scale: active ? 1.08 : 1 }}
                               transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                              className={`text-sm ${active ? "text-accent" : "text-zinc-500"}`}
+                              className={`text-sm ${active ? "text-accent" : "secondary-text"}`}
                             >
                               {active ? "Selected" : "Suggested"}
                             </motion.span>
@@ -221,15 +221,15 @@ export default function ProgressiveDiscoveryOnboarding() {
               >
                 <div className="mx-auto w-full max-w-xl space-y-8">
                   <div className="space-y-3 text-center">
-                    <span className="inline-flex rounded-full border border-white/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">
+                    <span className="subtle-label inline-flex rounded-full border border-base px-3 py-1">
                       Step 3
                     </span>
-                    <h2 className="text-3xl font-semibold tracking-[-0.04em] text-white md:text-5xl">
+                    <h2 className="text-3xl font-semibold tracking-[-0.04em] md:text-5xl">
                       Generating Your Personalized View...
                     </h2>
-                    <p className="text-sm leading-7 text-zinc-400 md:text-base">
+                    <p className="secondary-text text-sm leading-7 md:text-base">
                       Pulling together a calmer starting point around{" "}
-                      <span className="text-zinc-200">{selectedSuggestion || neighborhood}</span>.
+                      <span>{selectedSuggestion || neighborhood}</span>.
                     </p>
                   </div>
 
@@ -237,7 +237,7 @@ export default function ProgressiveDiscoveryOnboarding() {
                     {[0, 1, 2].map((row) => (
                       <div
                         key={row}
-                        className="rounded-3xl border border-white/10 bg-white/[0.02] p-5"
+                        className="surface-soft rounded-xl border border-base p-5"
                       >
                         <SkeletonLine className="mb-4 h-4 w-24" />
                         <SkeletonLine className="mb-3 h-6 w-2/3" />
@@ -276,24 +276,24 @@ function IntentCard({
       type="button"
       whileTap={{ scale: 0.995 }}
       onClick={onClick}
-      className={`group w-full rounded-[1.5rem] border p-5 text-left transition-all duration-300 ease-luxury ${
+      className={`group luxury-transition w-full rounded-lg border p-5 text-left ${
         active
-          ? "border-accent/40 bg-accent/10"
-          : "border-white/10 bg-white/[0.02] hover:border-white/15 hover:bg-white/[0.04]"
+          ? "border-accent/40 surface-accent-soft"
+          : "border-base surface-soft hover:bg-card"
       }`}
     >
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-2">
-          <h3 className="text-lg font-medium tracking-[-0.03em] text-white">{title}</h3>
-          <p className="max-w-xl text-sm leading-7 text-zinc-400">{description}</p>
+          <h3 className="text-lg font-medium tracking-[-0.03em]">{title}</h3>
+          <p className="secondary-text max-w-xl text-sm leading-7">{description}</p>
         </div>
         <motion.div
           animate={{ scale: active ? 1.08 : 1 }}
           transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
           className={`mt-1 flex h-10 w-10 items-center justify-center rounded-full border ${
             active
-              ? "border-accent/40 bg-accent/15 text-accent"
-              : "border-white/10 bg-white/[0.03] text-zinc-500"
+              ? "border-accent/40 surface-accent-soft text-accent"
+              : "border-base surface-soft secondary-text"
           }`}
         >
           →

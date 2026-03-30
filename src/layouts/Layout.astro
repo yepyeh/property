@@ -64,7 +64,7 @@ const accountMenu = [
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#0e1628" />
+    <meta name="theme-color" content="" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Property App" />
@@ -135,7 +135,10 @@ const accountMenu = [
             node.textContent = theme === "dark" ? "☀" : "◐";
           });
           const themeMeta = document.querySelector('meta[name="theme-color"]');
-          if (themeMeta) themeMeta.setAttribute("content", theme === "dark" ? "#0b1220" : "#0e1628");
+          if (themeMeta) {
+            const nextColor = getComputedStyle(root).getPropertyValue("--background").trim();
+            themeMeta.setAttribute("content", nextColor);
+          }
         };
 
         updateThemeUi(root.dataset.theme || "light");

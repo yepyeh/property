@@ -87,9 +87,9 @@ export default function PremiumSearchResultsPage({
   };
 
   return (
-    <div className="space-y-16 md:space-y-24">
+    <div className="space-y-xl md:space-y-24">
       <section className="glass-card overflow-visible">
-        <div className="border-b border-white/5 px-l py-xl">
+        <div className="border-b border-soft px-l py-xl">
           <div className="mb-l max-w-3xl space-y-s">
             <span className="inline-flex rounded-full border border-white/10 px-s py-xs text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
               Search results
@@ -104,7 +104,7 @@ export default function PremiumSearchResultsPage({
           </div>
 
           <div className="mb-6 space-y-2">
-            <span className="subtle-label text-xs font-medium uppercase tracking-[0.18em]">
+            <span className="subtle-label">
               Refine the shortlist
             </span>
             <h2 className="text-2xl font-semibold tracking-[-0.04em] text-white">
@@ -112,7 +112,7 @@ export default function PremiumSearchResultsPage({
             </h2>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-m md:grid-cols-2 xl:grid-cols-4">
             <GlassSelect label="Country" icon={Landmark} value={filters.country || "All countries"} options={["All countries", ...countries]} onChange={(value) => updateFilter("country", value === "All countries" ? "" : value)} />
             <GlassSelect label="City" icon={Building2} value={filters.city || "All cities"} options={["All cities", ...cities]} onChange={(value) => updateFilter("city", value === "All cities" ? "" : value)} />
             <GlassSelect label="District" icon={MapPin} value={filters.district || "Any district"} options={["Any district", ...districts]} onChange={(value) => updateFilter("district", value === "Any district" ? "" : value)} />
@@ -167,7 +167,7 @@ export default function PremiumSearchResultsPage({
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 border-t border-white/5 bg-white/[0.02] px-6 py-5 md:flex-row md:items-center md:justify-between md:px-8">
+        <div className="surface-soft flex flex-col gap-m border-t border-soft px-6 py-5 md:flex-row md:items-center md:justify-between md:px-8">
           <div className="secondary-text text-sm">
             {initialListings.length} live {initialListings.length === 1 ? "listing" : "listings"} in the current filter set.
           </div>
@@ -175,13 +175,13 @@ export default function PremiumSearchResultsPage({
           <div className="flex flex-col gap-3 sm:flex-row">
             <a
               href={isSignedIn ? "/account/inbox" : "/login"}
-              className="rounded-full border border-white/10 px-5 py-2.5 text-sm font-medium text-zinc-300 transition-all duration-300 ease-luxury hover:border-white/15 hover:bg-white/[0.03] hover:text-white"
+              className="luxury-transition rounded-full border border-base px-5 py-2.5 text-sm font-medium text-muted-ui hover:bg-card hover:text-white"
             >
               Track Enquiries
             </a>
             <a
               href={isSignedIn ? "/submit-listing/" : "/signup?role=owner"}
-              className="rounded-full border border-white/10 px-5 py-2.5 text-sm font-medium text-zinc-300 transition-all duration-300 ease-luxury hover:border-white/15 hover:bg-white/[0.03] hover:text-white"
+              className="luxury-transition rounded-full border border-base px-5 py-2.5 text-sm font-medium text-muted-ui hover:bg-card hover:text-white"
             >
               Post Listing
             </a>
@@ -190,9 +190,9 @@ export default function PremiumSearchResultsPage({
       </section>
 
       {initialListings.length === 0 ? (
-        <section className="space-y-8 py-24 md:py-32">
+        <section className="space-y-l py-xl md:py-32">
           <div className="mx-auto max-w-2xl text-center">
-            <span className="subtle-label mb-3 inline-flex rounded-full border border-white/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em]">
+            <span className="subtle-label mb-3 inline-flex rounded-full border border-base px-3 py-1">
               0 listings
             </span>
             <h3 className="text-2xl font-semibold tracking-[-0.04em] text-white md:text-3xl">
@@ -204,7 +204,7 @@ export default function PremiumSearchResultsPage({
             </p>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-m md:grid-cols-2">
             <ActionCard
               icon={BookmarkPlus}
               title="Save this search"
@@ -261,15 +261,15 @@ function GlassInput({
 }) {
   return (
     <label className="space-y-2">
-      <span className="subtle-label block text-xs font-medium uppercase tracking-[0.18em]">
+      <span className="subtle-label block">
         {label}
       </span>
-      <div className="group flex items-center gap-3 rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-3.5 backdrop-blur-xl transition-all duration-300 ease-luxury hover:border-white/10 hover:bg-white/[0.045]">
-        <Icon className="h-5 w-5 shrink-0 text-zinc-400 transition-colors duration-300 ease-luxury group-hover:text-[#98ff98]" strokeWidth={1.5} />
+      <div className="glass-effect group luxury-transition flex items-center gap-3 rounded-xl px-4 py-3.5 hover:border-base hover:bg-card">
+        <Icon className="h-5 w-5 shrink-0 secondary-text transition-colors duration-300 ease-luxury group-hover:text-accent" strokeWidth={1.5} />
         <input
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className="w-full bg-transparent text-sm text-zinc-100 outline-none placeholder:text-zinc-500"
+          className="input-luxury w-full border-0 bg-transparent px-0 py-0 shadow-none ring-0 focus:ring-0"
           inputMode="numeric"
           placeholder={placeholder}
         />
@@ -342,7 +342,7 @@ function GlassSelect({
 
   return (
     <div className="relative">
-      <span className="subtle-label mb-2 block text-xs font-medium uppercase tracking-[0.18em]">
+      <span className="subtle-label mb-2 block">
         {label}
       </span>
 
@@ -353,17 +353,17 @@ function GlassSelect({
         onKeyDown={handleTriggerKeyDown}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className={`group flex w-full items-center justify-between rounded-2xl border px-4 py-3.5 text-left backdrop-blur-xl transition-all duration-300 ease-luxury ${
+        className={`group glass-effect luxury-transition flex w-full items-center justify-between rounded-xl px-4 py-3.5 text-left ${
           open
-            ? "border-[#98ff98]/30 bg-white/[0.05] shadow-[0_0_0_1px_rgba(152,255,152,0.08)]"
-            : "border-white/5 bg-white/[0.03] hover:border-white/10 hover:bg-white/[0.045]"
+            ? "border-accent/30 shadow-accent-soft"
+            : "hover:border-base hover:bg-card"
         }`}
       >
         <span className="flex min-w-0 items-center gap-3">
-          <Icon className="h-5 w-5 shrink-0 text-zinc-400 transition-colors duration-300 ease-luxury group-hover:text-[#98ff98]" strokeWidth={1.5} />
-          <span className="truncate text-sm text-zinc-100">{value}</span>
+          <Icon className="h-5 w-5 shrink-0 secondary-text transition-colors duration-300 ease-luxury group-hover:text-accent" strokeWidth={1.5} />
+          <span className="truncate text-sm">{value}</span>
         </span>
-        <motion.span animate={{ rotate: open ? 180 : 0 }} transition={dropdownTransition} className="ml-3 text-zinc-500 transition-colors duration-300 ease-luxury group-hover:text-[#98ff98]">
+        <motion.span animate={{ rotate: open ? 180 : 0 }} transition={dropdownTransition} className="secondary-text ml-3 transition-colors duration-300 ease-luxury group-hover:text-accent">
           <ChevronIcon />
         </motion.span>
       </button>
@@ -377,7 +377,7 @@ function GlassSelect({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 8 }}
               transition={dropdownTransition}
-              className="absolute left-0 right-0 z-20 mt-2 overflow-hidden rounded-2xl border border-white/5 bg-zinc-900/95 p-2 shadow-[0_24px_64px_-24px_rgba(0,0,0,0.7)] backdrop-blur-2xl"
+              className="glass-effect absolute left-0 right-0 z-20 mt-2 overflow-hidden rounded-xl p-2"
             >
               <div className="max-h-64 overflow-auto" role="listbox" aria-label={label}>
                 {options.map((option) => {
@@ -396,14 +396,14 @@ function GlassSelect({
                       onKeyDown={(event) => handleOptionKeyDown(event, indexOfOption(options, option), option)}
                       role="option"
                       aria-selected={active}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm transition-all duration-300 ease-luxury ${
+                      className={`luxury-transition flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-sm ${
                         active
-                          ? "bg-[#98ff98]/10 text-white"
-                          : "text-zinc-300 hover:bg-white/[0.04] hover:text-white"
+                          ? "surface-accent-soft text-white"
+                          : "text-muted-ui hover:bg-card hover:text-white"
                       }`}
                     >
                       <span>{option}</span>
-                      {active ? <span className="text-xs font-medium text-[#98ff98]">Selected</span> : null}
+                      {active ? <span className="text-xs font-medium text-accent">Selected</span> : null}
                     </button>
                   );
                 })}
@@ -487,7 +487,7 @@ function MultiGlassSelect({
 
   return (
     <div className="relative">
-      <span className="subtle-label mb-2 block text-xs font-medium uppercase tracking-[0.18em]">
+      <span className="subtle-label mb-2 block">
         {label}
       </span>
 
@@ -498,17 +498,17 @@ function MultiGlassSelect({
         onKeyDown={handleTriggerKeyDown}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className={`group flex w-full items-center justify-between rounded-2xl border px-4 py-3.5 text-left backdrop-blur-xl transition-all duration-300 ease-luxury ${
+        className={`group glass-effect luxury-transition flex w-full items-center justify-between rounded-xl px-4 py-3.5 text-left ${
           open
-            ? "border-[#98ff98]/30 bg-white/[0.05] shadow-[0_0_0_1px_rgba(152,255,152,0.08)]"
-            : "border-white/5 bg-white/[0.03] hover:border-white/10 hover:bg-white/[0.045]"
+            ? "border-accent/30 shadow-accent-soft"
+            : "hover:border-base hover:bg-card"
         }`}
       >
         <span className="flex min-w-0 items-center gap-3">
-          <Icon className="h-5 w-5 shrink-0 text-zinc-400 transition-colors duration-300 ease-luxury group-hover:text-[#98ff98]" strokeWidth={1.5} />
-          <span className={`truncate text-sm ${values.length > 0 ? "text-zinc-100" : "text-zinc-500"}`}>{summary}</span>
+          <Icon className="h-5 w-5 shrink-0 secondary-text transition-colors duration-300 ease-luxury group-hover:text-accent" strokeWidth={1.5} />
+          <span className={`truncate text-sm ${values.length > 0 ? "" : "secondary-text"}`}>{summary}</span>
         </span>
-        <motion.span animate={{ rotate: open ? 180 : 0 }} transition={dropdownTransition} className="ml-3 text-zinc-500 transition-colors duration-300 ease-luxury group-hover:text-[#98ff98]">
+        <motion.span animate={{ rotate: open ? 180 : 0 }} transition={dropdownTransition} className="secondary-text ml-3 transition-colors duration-300 ease-luxury group-hover:text-accent">
           <ChevronIcon />
         </motion.span>
       </button>
@@ -522,7 +522,7 @@ function MultiGlassSelect({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 8 }}
               transition={dropdownTransition}
-              className="absolute left-0 right-0 z-20 mt-2 overflow-hidden rounded-2xl border border-white/5 bg-zinc-900/95 p-2 shadow-[0_24px_64px_-24px_rgba(0,0,0,0.7)] backdrop-blur-2xl"
+              className="glass-effect absolute left-0 right-0 z-20 mt-2 overflow-hidden rounded-xl p-2"
             >
               <div className="max-h-64 overflow-auto" role="listbox" aria-label={label} aria-multiselectable="true">
                 {options.map((option, index) => {
@@ -538,14 +538,14 @@ function MultiGlassSelect({
                       onKeyDown={(event) => handleOptionKeyDown(event, index, option.value)}
                       role="option"
                       aria-selected={active}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm transition-all duration-300 ease-luxury ${
+                      className={`luxury-transition flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-sm ${
                         active
-                          ? "bg-[#98ff98]/10 text-white"
-                          : "text-zinc-300 hover:bg-white/[0.04] hover:text-white"
+                          ? "surface-accent-soft text-white"
+                          : "text-muted-ui hover:bg-card hover:text-white"
                       }`}
                     >
                       <span>{option.label}</span>
-                      <span className={`text-xs font-medium ${active ? "text-[#98ff98]" : "text-zinc-500"}`}>
+                      <span className={`text-xs font-medium ${active ? "text-accent" : "secondary-text"}`}>
                         {active ? "Selected" : "Toggle"}
                       </span>
                     </button>
@@ -585,7 +585,7 @@ function ActionCard({
   return (
     <article className="glass-card group flex h-full flex-col justify-between p-6 md:p-7">
       <div className="space-y-4">
-        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-zinc-600 transition-colors duration-300 ease-luxury group-hover:text-[#98ff98]">
+        <div className="surface-soft luxury-transition flex h-11 w-11 items-center justify-center rounded-full border border-base text-zinc-600 group-hover:text-accent">
           <Icon className="h-5 w-5" strokeWidth={1.5} />
         </div>
         <div className="space-y-2">
@@ -596,7 +596,7 @@ function ActionCard({
       <div className="pt-8">
         <a
           href={href}
-          className="inline-flex items-center gap-2 text-sm font-medium text-zinc-200 transition-colors duration-300 ease-luxury hover:text-[#98ff98]"
+          className="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-300 ease-luxury hover:text-accent"
         >
           {ctaLabel}
           <span aria-hidden="true">→</span>

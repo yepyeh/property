@@ -29,7 +29,6 @@ function buildConfidencePillars(listing: Listing) {
 export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
   const safeScore = buildConfidenceScore(listing);
   const highConfidence = safeScore >= 85;
-  const ringColor = highConfidence ? "#98ff98" : "#52525b";
   const circumference = 2 * Math.PI * 18;
   const dashOffset = circumference - (safeScore / 100) * circumference;
   const heroImage = listing.imageUrls?.[0];
@@ -37,9 +36,9 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
   const pillars = buildConfidencePillars(listing);
 
   return (
-    <article className="glass-card group overflow-hidden border border-white/5 transition-all duration-300 ease-luxury hover:-translate-y-1 hover:border-accent/30">
+    <article className="glass-card group overflow-hidden border border-soft transition-all duration-300 ease-luxury hover:-translate-y-1 hover:border-accent/30">
       <a href={`/listings/${listing.slug}/`} className="block">
-        <div className="relative aspect-[4/3] overflow-hidden border-b border-white/5">
+        <div className="relative aspect-[4/3] overflow-hidden border-b border-soft">
           {heroImage ? (
             <img
               src={heroImage}
@@ -48,16 +47,16 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
               style={{ objectPosition: coverPosition }}
             />
           ) : (
-            <div className="h-full w-full bg-white/[0.03]" />
+            <div className="surface-soft h-full w-full" />
           )}
 
           <div className="absolute inset-x-0 top-0 flex items-start justify-between p-4">
-            <div className="rounded-full border border-white/10 bg-zinc-950/70 px-3 py-1.5 backdrop-blur-xl">
-              <span className="text-sm font-semibold tracking-[-0.03em] text-white">{listing.priceLabel}</span>
+            <div className="glass-effect rounded-full px-3 py-1.5">
+              <span className="text-sm font-semibold tracking-[-0.03em]">{listing.priceLabel}</span>
             </div>
 
-            <div className={`rounded-full border border-white/10 bg-zinc-950/70 px-3 py-1.5 backdrop-blur-xl ${listing.owner.verified ? "shadow-[0_0_15px_-3px_rgba(152,255,152,0.2)]" : ""}`}>
-              <span className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-200">
+            <div className={`glass-effect rounded-full px-3 py-1.5 ${listing.owner.verified ? "shadow-accent-soft" : ""}`}>
+              <span className="text-xs font-medium uppercase tracking-[0.18em]">
                 {listing.owner.verified ? "Verified owner" : "Owner listed"}
               </span>
             </div>
@@ -68,8 +67,8 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
       <div className="space-y-5 p-5 md:p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 space-y-1">
-            <h3 className="truncate text-xl font-semibold tracking-[-0.04em] text-white">
-              <a href={`/listings/${listing.slug}/`} className="hover:text-[#98ff98] transition-colors duration-300 ease-luxury">
+            <h3 className="truncate text-xl font-semibold tracking-[-0.04em]">
+              <a href={`/listings/${listing.slug}/`} className="transition-colors duration-300 ease-luxury hover:text-accent">
                 {listing.title}
               </a>
             </h3>
@@ -81,19 +80,19 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
           <div className="flex shrink-0 items-start gap-3">
             <div className="relative h-12 w-12">
               <svg className="h-12 w-12 -rotate-90" viewBox="0 0 44 44" fill="none">
-                <circle cx="22" cy="22" r="18" stroke="rgba(255,255,255,0.08)" strokeWidth="3" />
+                <circle cx="22" cy="22" r="18" className="stroke-white/10" strokeWidth="3" />
                 <circle
                   cx="22"
                   cy="22"
                   r="18"
-                  stroke={ringColor}
+                  className={highConfidence ? "stroke-accent" : "stroke-zinc-600"}
                   strokeWidth="3"
                   strokeLinecap="round"
                   strokeDasharray={circumference}
                   strokeDashoffset={dashOffset}
                 />
               </svg>
-              <div className="absolute inset-0 flex items-center justify-center text-[11px] font-semibold text-white">
+              <div className="absolute inset-0 flex items-center justify-center text-[11px] font-semibold">
                 {safeScore}%
               </div>
             </div>
@@ -109,8 +108,8 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
               <div
                 className={`inline-flex items-center rounded-full border px-2.5 py-1 text-sm font-semibold ${
                   highConfidence
-                    ? "border-[#98ff98]/20 bg-[#98ff98]/10 text-[#98ff98]"
-                    : "border-zinc-700 bg-zinc-800/70 text-zinc-300"
+                    ? "border-accent/20 surface-accent-soft text-accent"
+                    : "border-base surface-soft text-muted-ui"
                 }`}
               >
                 {safeScore}% {listing.owner.verified ? "Verified" : "Reviewing"}
@@ -127,7 +126,7 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
 
         <p className="secondary-text text-sm leading-7">{listing.summary}</p>
 
-        <div className="grid grid-cols-2 gap-3 border-t border-white/5 pt-4 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 border-t border-soft pt-4 md:grid-cols-4">
           <SpecCell label="Beds" value={String(listing.beds)} />
           <SpecCell label="Baths" value={String(listing.baths)} />
           <SpecCell label="Area" value={`${listing.area} m²`} />
@@ -136,8 +135,8 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
             value={
               <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${
                 listing.owner.verified
-                  ? "border-[#98ff98]/20 bg-[#98ff98]/10 text-[#98ff98]"
-                  : "border-zinc-700 bg-zinc-800/70 text-zinc-300"
+                  ? "border-accent/20 surface-accent-soft text-accent"
+                  : "border-base surface-soft text-muted-ui"
               }`}>
                 {listing.owner.verified ? "Verified" : "Pending"}
               </span>
@@ -159,12 +158,12 @@ function ConfidenceMetric({
   score: number;
 }) {
   return (
-    <div className="group/metric grid justify-items-start gap-2 rounded-2xl bg-white/[0.02] p-3">
-      <div className="flex h-10 w-10 items-center justify-center rounded-md border border-white/5 bg-zinc-800/50 transition-all duration-300 ease-luxury group-hover/metric:scale-110 group-hover/metric:bg-zinc-800">
-        <Icon className="h-4 w-4 text-[#98ff98]" strokeWidth={1.5} />
+    <div className="group/metric surface-soft grid justify-items-start gap-2 rounded-xl p-3">
+      <div className="luxury-transition flex h-10 w-10 items-center justify-center rounded-md border border-soft surface-subtle group-hover/metric:scale-110 group-hover/metric:bg-card">
+        <Icon className="h-4 w-4 text-accent" strokeWidth={1.5} />
       </div>
-      <div className="text-xs font-medium text-zinc-500">{label}</div>
-      <div className="text-sm font-semibold tracking-[-0.02em] text-white">{score}%</div>
+      <div className="secondary-text text-xs font-medium">{label}</div>
+      <div className="text-sm font-semibold tracking-[-0.02em]">{score}%</div>
     </div>
   );
 }
@@ -177,11 +176,11 @@ function SpecCell({
   value: ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-white/5 bg-white/[0.02] px-3 py-3">
+    <div className="surface-soft rounded-xl border border-soft px-3 py-3">
       <div className="subtle-label mb-1 text-[11px] font-medium uppercase tracking-[0.18em]">
         {label}
       </div>
-      <div className="flex items-center justify-between gap-2 text-sm font-medium text-zinc-100">{value}</div>
+      <div className="flex items-center justify-between gap-2 text-sm font-medium">{value}</div>
     </div>
   );
 }
@@ -192,12 +191,12 @@ function TooltipInfo() {
       <button
         type="button"
         aria-label="Confidence score information"
-        className="flex h-5 w-5 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-zinc-400 transition-colors duration-300 ease-luxury hover:border-white/15 hover:text-[#98ff98]"
+        className="luxury-transition surface-soft flex h-5 w-5 items-center justify-center rounded-full border border-base secondary-text hover:text-accent"
       >
         <CircleHelp className="h-4 w-4" strokeWidth={1.5} />
       </button>
 
-      <div className="pointer-events-none absolute left-1/2 top-[calc(100%+10px)] z-20 w-64 -translate-x-1/2 rounded-2xl border border-white/10 bg-zinc-950/95 p-3 text-xs leading-6 text-zinc-300 opacity-0 backdrop-blur-xl transition-all duration-300 ease-luxury group-hover/info:opacity-100">
+      <div className="glass-effect pointer-events-none absolute left-1/2 top-[calc(100%+10px)] z-20 w-64 -translate-x-1/2 rounded-xl p-3 text-xs leading-6 opacity-0 transition-all duration-300 ease-luxury group-hover/info:opacity-100">
         This score is based on recent sales, verified documentation, and owner activity.
       </div>
     </div>

@@ -298,7 +298,7 @@ export default function ListingFlow({
   return (
     <div className="space-y-6">
       {createdSlug ? (
-        <div className="glass-card border-[#98ff98]/20 bg-[#98ff98]/10 p-4 text-sm text-zinc-100">
+        <div className="glass-card border-accent/20 surface-accent-soft p-4 text-sm">
           Listing created successfully. New slug: <code>{createdSlug}</code>.
         </div>
       ) : null}
@@ -313,22 +313,22 @@ export default function ListingFlow({
         statusLabel={saveState === "saving" ? "Saving draft..." : saveState === "saved" ? "Draft saved" : `Step ${currentStep + 1} of ${steps.length}`}
         summary={
           <div className="space-y-5">
-            <div className="overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02]">
-              <div className="aspect-[4/3] bg-gradient-to-br from-white/[0.06] to-transparent" />
+            <div className="overflow-hidden rounded-xl border border-soft surface-soft">
+              <div className="aspect-[4/3] surface-subtle" />
               <div className="space-y-4 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <div className="text-lg font-semibold tracking-[-0.03em] text-white">{previewTitle}</div>
-                    <div className="mt-1 text-sm text-zinc-400">
+                    <div className="text-lg font-semibold tracking-[-0.03em]">{previewTitle}</div>
+                    <div className="secondary-text mt-1 text-sm">
                       {[draft.ward, draft.district, draft.city].filter(Boolean).join(", ") || "Location pending"}
                     </div>
                   </div>
-                  <div className="rounded-full border border-[#98ff98]/20 bg-[#98ff98]/10 px-3 py-1 text-sm font-semibold text-[#98ff98]">
+                  <div className="surface-accent-soft rounded-full border border-accent/20 px-3 py-1 text-sm font-semibold text-accent-ui">
                     {draft.priceLabel || "Price pending"}
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3 border-t border-white/5 pt-4 text-sm">
+                <div className="grid grid-cols-3 gap-3 border-t border-soft pt-4 text-sm">
                   <PreviewMetric icon={BedDouble} label="Beds" value={String(draft.beds)} />
                   <PreviewMetric icon={Bath} label="Baths" value={String(draft.baths)} />
                   <PreviewMetric icon={Home} label="Area" value={`${draft.area} m²`} />
@@ -336,7 +336,7 @@ export default function ListingFlow({
               </div>
             </div>
 
-            <div className="text-sm leading-7 text-zinc-400">
+            <div className="secondary-text text-sm leading-7">
               The preview updates live so the owner sees value immediately instead of typing into a dead form.
             </div>
           </div>
@@ -345,14 +345,14 @@ export default function ListingFlow({
         {currentStep === 0 ? (
           <div className="space-y-8">
             <div className="space-y-3">
-              <label className="text-sm font-medium text-white">Where is the property?</label>
-              <div className="rounded-2xl border border-[#98ff98]/20 bg-white/[0.03] p-1 shadow-[0_0_0_4px_rgba(152,255,152,0.08)]">
-                <div className="flex items-center gap-3 rounded-[0.9rem] px-4 py-4">
-                  <MapPin className="h-5 w-5 text-[#98ff98]" strokeWidth={1.5} />
+              <label className="text-sm font-medium">Where is the property?</label>
+              <div className="rounded-xl border border-accent/20 surface-soft p-1 shadow-accent-soft">
+                <div className="flex items-center gap-3 rounded-lg px-4 py-4">
+                  <MapPin className="h-5 w-5 text-accent" strokeWidth={1.5} />
                   <input
                     value={addressQuery}
                     onChange={(event) => setAddressQuery(event.target.value)}
-                    className="w-full bg-transparent text-base text-white outline-none placeholder:text-zinc-500"
+                    className="input-luxury border-0 bg-transparent px-0 py-0 shadow-none ring-0 focus:ring-0"
                     placeholder="Start with the district, ward, or full address"
                   />
                 </div>
@@ -366,7 +366,7 @@ export default function ListingFlow({
                       key={option}
                       type="button"
                       onClick={() => applyAddress(option)}
-                      className="rounded-2xl border border-white/5 bg-white/[0.02] px-4 py-4 text-left text-sm text-zinc-200 transition-all duration-300 ease-luxury hover:border-white/10 hover:bg-white/[0.04]"
+                      className="luxury-transition rounded-xl border border-soft surface-soft px-4 py-4 text-left text-sm hover:border-base hover:bg-card"
                     >
                       {option}
                     </button>
@@ -374,8 +374,8 @@ export default function ListingFlow({
               </div>
             </div>
 
-            <div className="space-y-3">
-              <label className="text-sm font-medium text-white">What kind of property is it?</label>
+          <div className="space-y-3">
+              <label className="text-sm font-medium">What kind of property is it?</label>
               <div className="grid gap-3 md:grid-cols-3">
                 {propertyTypes.map((type) => {
                   const active = draft.propertyType === type;
@@ -387,10 +387,10 @@ export default function ListingFlow({
                         updateDraft("propertyType", type);
                         if ((draft.city || addressQuery) && draft.district) queueAutoAdvance();
                       }}
-                      className={`rounded-2xl border px-4 py-4 text-left transition-all duration-300 ease-luxury ${
+                      className={`luxury-transition rounded-xl border px-4 py-4 text-left ${
                         active
-                          ? "border-[#98ff98]/30 bg-[#98ff98]/10 text-white"
-                          : "border-white/5 bg-white/[0.02] text-zinc-300 hover:border-white/10 hover:bg-white/[0.04]"
+                          ? "border-accent/30 surface-accent-soft"
+                          : "border-soft surface-soft text-muted-ui hover:border-base hover:bg-card"
                       }`}
                     >
                       <div className="font-medium">{type}</div>
@@ -448,13 +448,13 @@ export default function ListingFlow({
               />
             </div>
 
-            <div className="rounded-2xl border border-white/5 bg-zinc-900/30 p-6">
+            <div className="surface-subtle rounded-xl border border-soft p-6">
               <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+                  <p className="subtle-label">
                     Optimized for High-Intent Buyers
                   </p>
-                  <p className="mt-1 text-sm leading-7 text-zinc-400">
+                  <p className="secondary-text mt-1 text-sm leading-7">
                     Generate the first editorial pass, then edit it until it sounds exactly right.
                   </p>
                 </div>
@@ -462,13 +462,13 @@ export default function ListingFlow({
                   type="button"
                   onClick={generateDescription}
                   disabled={isGenerating}
-                  className={`inline-flex items-center justify-center gap-2 rounded-full border px-5 py-2.5 text-sm font-medium transition-all duration-300 ease-luxury ${
+                  className={`luxury-transition inline-flex items-center justify-center gap-2 rounded-full border px-5 py-2.5 text-sm font-medium ${
                     isGenerating
-                      ? "border-[#98ff98]/30 bg-white/[0.03] text-white shadow-[0_0_0_4px_rgba(152,255,152,0.08)]"
-                      : "border-white/10 bg-white/[0.03] text-zinc-200 hover:border-[#98ff98]/30 hover:text-white"
+                      ? "border-accent/30 surface-soft shadow-accent-soft"
+                      : "border-base surface-soft text-muted-ui hover:border-accent/30 hover:text-white"
                   }`}
                 >
-                  {isGenerating ? <LoaderCircle className="h-5 w-5 animate-spin text-[#98ff98]" strokeWidth={1.5} /> : <Sparkles className="h-5 w-5 text-[#98ff98]" strokeWidth={1.5} />}
+                  {isGenerating ? <LoaderCircle className="h-5 w-5 animate-spin text-accent" strokeWidth={1.5} /> : <Sparkles className="h-5 w-5 text-accent" strokeWidth={1.5} />}
                   <span>Generate Description</span>
                 </button>
               </div>
@@ -477,8 +477,8 @@ export default function ListingFlow({
                 value={draft.description}
                 onChange={(event) => updateDraft("description", event.target.value)}
                 rows={8}
-                className={`w-full rounded-xl border bg-transparent px-4 py-4 text-base font-medium leading-8 text-zinc-100 outline-none transition-all duration-300 ease-luxury placeholder:text-zinc-500 ${
-                  isGenerating ? "border-[#98ff98]/30" : "border-white/5 focus:border-[#98ff98]/30 focus:shadow-[0_0_0_4px_rgba(152,255,152,0.08)]"
+                className={`input-luxury min-h-[16rem] font-medium leading-8 ${
+                  isGenerating ? "border-accent/30" : "border-soft focus:border-accent/30 focus:shadow-accent-soft"
                 }`}
                 placeholder="The AI draft will appear here."
               />
@@ -488,18 +488,18 @@ export default function ListingFlow({
 
         {currentStep === 3 ? (
           <div className="space-y-6">
-            <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-8 text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-white/5 bg-zinc-900/50">
-                <FileCheck2 className="h-6 w-6 text-[#98ff98]" strokeWidth={1.5} />
+            <div className="surface-soft rounded-xl border border-dashed border-base p-8 text-center">
+              <div className="surface-subtle mx-auto flex h-14 w-14 items-center justify-center rounded-xl border border-soft">
+                <FileCheck2 className="h-6 w-6 text-accent" strokeWidth={1.5} />
               </div>
-              <h3 className="mt-4 text-xl font-semibold tracking-[-0.03em] text-white">
+              <h3 className="mt-4 text-xl font-semibold tracking-[-0.03em]">
                 Drag and drop legal documentation
               </h3>
-              <p className="mt-2 text-sm leading-7 text-zinc-400">
+              <p className="secondary-text mt-2 text-sm leading-7">
                 Verified documents increase buyer interest by 40%. Add the core proof now so the listing feels safer before the first conversation.
               </p>
-              <label className="mt-5 inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-5 py-2.5 text-sm font-medium text-zinc-200 transition-all duration-300 ease-luxury hover:border-white/15 hover:bg-white/[0.05] hover:text-white">
-                <ImagePlus className="h-5 w-5 text-[#98ff98]" strokeWidth={1.5} />
+              <label className="luxury-transition mt-5 inline-flex cursor-pointer items-center gap-2 rounded-full border border-base surface-soft px-5 py-2.5 text-sm font-medium text-muted-ui hover:border-base hover:bg-card hover:text-white">
+                <ImagePlus className="h-5 w-5 text-accent" strokeWidth={1.5} />
                 <span>Choose documents</span>
                 <input
                   type="file"
@@ -515,14 +515,14 @@ export default function ListingFlow({
 
             <div className="grid gap-3">
               {draft.documentNames.length === 0 ? (
-                <div className="rounded-2xl border border-white/5 bg-white/[0.02] px-4 py-4 text-sm text-zinc-400">
+                <div className="surface-soft secondary-text rounded-xl border border-soft px-4 py-4 text-sm">
                   No documents attached yet.
                 </div>
               ) : (
                 draft.documentNames.map((name) => (
-                  <div key={name} className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/[0.02] px-4 py-4 text-sm text-zinc-200">
+                  <div key={name} className="surface-soft flex items-center justify-between rounded-xl border border-soft px-4 py-4 text-sm">
                     <span>{name}</span>
-                    <CheckCircle2 className="h-5 w-5 text-[#98ff98]" strokeWidth={1.5} />
+                    <CheckCircle2 className="h-5 w-5 text-accent" strokeWidth={1.5} />
                   </div>
                 ))
               )}
@@ -532,12 +532,12 @@ export default function ListingFlow({
 
         {currentStep === 4 ? (
           <div className="space-y-8">
-            <div className="rounded-[1.5rem] border border-white/5 bg-white/[0.02] p-6 md:p-8">
+            <div className="surface-soft rounded-xl border border-soft p-6 md:p-8">
               <div className="space-y-5">
                 <div className="space-y-2">
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">Review</p>
-                  <h2 className="text-3xl font-semibold tracking-[-0.05em] text-white">{previewTitle}</h2>
-                  <p className="text-sm leading-7 text-zinc-400">
+                  <p className="subtle-label">Review</p>
+                  <h2 className="text-3xl font-semibold tracking-[-0.05em]">{previewTitle}</h2>
+                  <p className="secondary-text text-sm leading-7">
                     {[draft.ward, draft.district, draft.city, draft.country].filter(Boolean).join(", ")}
                   </p>
                 </div>
@@ -548,8 +548,8 @@ export default function ListingFlow({
                   <ReviewBlock label="Contact" value={draft.ownerName || "Owner details pending"} />
                 </div>
 
-                <div className="rounded-2xl border border-white/5 bg-zinc-900/30 p-5">
-                  <p className="text-base font-medium leading-8 text-zinc-100">{draft.description || "Description pending."}</p>
+                <div className="surface-subtle rounded-xl border border-soft p-5">
+                  <p className="text-base font-medium leading-8">{draft.description || "Description pending."}</p>
                 </div>
               </div>
             </div>
@@ -571,11 +571,11 @@ function PreviewMetric({
 }) {
   return (
     <div className="space-y-1">
-      <div className="flex items-center gap-2 text-zinc-400">
+      <div className="secondary-text flex items-center gap-2">
         <Icon className="h-4 w-4" strokeWidth={1.5} />
         <span className="text-[11px] font-medium uppercase tracking-[0.18em]">{label}</span>
       </div>
-      <div className="text-sm font-medium text-white">{value}</div>
+      <div className="text-sm font-medium">{value}</div>
     </div>
   );
 }
@@ -594,19 +594,19 @@ function StepperStat({
   onDecrease: () => void;
 }) {
   return (
-    <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
-      <p className="text-sm font-medium text-white">{label}</p>
+    <div className="surface-soft rounded-xl border border-soft p-5">
+      <p className="text-sm font-medium">{label}</p>
       <div className="mt-4 flex items-center justify-between gap-4">
-        <button type="button" onClick={onDecrease} className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-zinc-200 transition-all duration-300 ease-luxury hover:border-white/15 hover:bg-white/[0.05]">
+        <button type="button" onClick={onDecrease} className="luxury-transition surface-subtle flex h-11 w-11 items-center justify-center rounded-full border border-base text-muted-ui hover:bg-card hover:text-white">
           <Minus className="h-5 w-5" strokeWidth={1.5} />
         </button>
         <div className="text-center">
-          <div className="text-3xl font-semibold tracking-[-0.04em] text-white">
+          <div className="text-3xl font-semibold tracking-[-0.04em]">
             {value}
-            {suffix ? <span className="ml-1 text-base text-zinc-400">{suffix}</span> : null}
+            {suffix ? <span className="secondary-text ml-1 text-base">{suffix}</span> : null}
           </div>
         </div>
-        <button type="button" onClick={onIncrease} className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-zinc-200 transition-all duration-300 ease-luxury hover:border-white/15 hover:bg-white/[0.05]">
+        <button type="button" onClick={onIncrease} className="luxury-transition surface-subtle flex h-11 w-11 items-center justify-center rounded-full border border-base text-muted-ui hover:bg-card hover:text-white">
           <Plus className="h-5 w-5" strokeWidth={1.5} />
         </button>
       </div>
@@ -631,23 +631,23 @@ function Field({
 }) {
   return (
     <label className="space-y-2">
-      <span className="text-sm font-medium text-white">{label}</span>
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 shadow-[0_0_0_4px_rgba(152,255,152,0.08)] transition-all duration-300 ease-luxury focus-within:border-[#98ff98]/30">
+      <span className="text-sm font-medium">{label}</span>
+      <div className="luxury-transition rounded-xl border border-base surface-soft px-4 py-3 shadow-accent-soft focus-within:border-accent/30">
         <div className="flex items-start gap-3">
-          {Icon ? <Icon className="mt-1 h-5 w-5 shrink-0 text-[#98ff98]" strokeWidth={1.5} /> : null}
+          {Icon ? <Icon className="mt-1 h-5 w-5 shrink-0 text-accent" strokeWidth={1.5} /> : null}
           {multiline ? (
             <textarea
               rows={4}
               value={value}
               onChange={(event) => onChange(event.target.value)}
-              className="w-full bg-transparent text-sm text-zinc-100 outline-none placeholder:text-zinc-500"
+              className="input-luxury border-0 bg-transparent px-0 py-0 shadow-none ring-0 focus:ring-0"
               placeholder={placeholder}
             />
           ) : (
             <input
               value={value}
               onChange={(event) => onChange(event.target.value)}
-              className="w-full bg-transparent text-sm text-zinc-100 outline-none placeholder:text-zinc-500"
+              className="input-luxury border-0 bg-transparent px-0 py-0 shadow-none ring-0 focus:ring-0"
               placeholder={placeholder}
             />
           )}
@@ -659,9 +659,9 @@ function Field({
 
 function ReviewBlock({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-4">
-      <div className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">{label}</div>
-      <div className="mt-2 text-sm font-medium leading-7 text-white">{value}</div>
+    <div className="surface-soft rounded-xl border border-soft p-4">
+      <div className="subtle-label">{label}</div>
+      <div className="mt-2 text-sm font-medium leading-7">{value}</div>
     </div>
   );
 }

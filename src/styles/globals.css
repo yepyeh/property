@@ -17,9 +17,19 @@
     --space-m: clamp(1rem, 0.85rem + 0.5vw, 1.4rem);
     --space-l: clamp(1.25rem, 0.95rem + 1vw, 2.25rem);
     --space-xl: clamp(2rem, 1.35rem + 2vw, 3.75rem);
+    --space-2xs: calc(var(--space-xs) * 0.7);
+    --space-2xl: calc(var(--space-xl) * 1.25);
 
+    --text-xs: clamp(0.72rem, 0.7rem + 0.08vw, 0.8rem);
+    --text-sm: clamp(0.84rem, 0.8rem + 0.12vw, 0.94rem);
     --text-base: clamp(0.95rem, 0.9rem + 0.18vw, 1.05rem);
     --text-lg: clamp(1.1rem, 1rem + 0.4vw, 1.45rem);
+    --text-xl: clamp(1.25rem, 1.1rem + 0.55vw, 1.7rem);
+    --text-2xl: clamp(1.5rem, 1.24rem + 0.9vw, 2.15rem);
+    --text-3xl: clamp(1.8rem, 1.42rem + 1.25vw, 2.7rem);
+    --text-4xl: clamp(2.2rem, 1.65rem + 1.9vw, 3.8rem);
+    --text-5xl: clamp(2.6rem, 1.95rem + 2.45vw, 4.8rem);
+    --text-6xl: clamp(3rem, 2.2rem + 2.9vw, 5.8rem);
     --text-display: clamp(2.5rem, 1.8rem + 3.2vw, 5.75rem);
 
     --radius-lg: 1rem;
@@ -191,6 +201,34 @@
   .subtle-label {
     @apply text-xs font-medium uppercase tracking-[0.18em];
     color: var(--muted);
+  }
+
+  .surface-soft {
+    background: color-mix(in srgb, var(--card) 72%, transparent);
+  }
+
+  .surface-subtle {
+    background: color-mix(in srgb, var(--card) 48%, transparent);
+  }
+
+  .surface-accent-soft {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+
+  .border-soft {
+    border-color: color-mix(in srgb, var(--border) 60%, transparent);
+  }
+
+  .border-accent-soft {
+    border-color: color-mix(in srgb, var(--accent) 24%, var(--border));
+  }
+
+  .text-accent-ui {
+    color: var(--accent);
+  }
+
+  .shadow-accent-soft {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 10%, transparent);
   }
 }
 
