@@ -2,6 +2,7 @@
 import Layout from "../../../layouts/Layout.astro";
 import WorkspaceHero from "../../../components/workspace/WorkspaceHero.astro";
 import WorkspaceStats from "../../../components/workspace/WorkspaceStats.astro";
+import { Activity, Clock3, Users } from "lucide-react";
 import { getOwnerListingDetail } from "../../../lib/dashboard";
 import { getDB } from "../../../lib/runtime";
 
@@ -186,12 +187,15 @@ const imageUrls = getImageUrls(listing.image_keys);
             <ul class="stack-list compact-list">
               {auctionEvents.map((event) => (
                 <li class="list-item">
-                  <strong>{event.title}</strong>
+                  <div class="item-title">
+                    <Activity className="h-5 w-5 item-icon accent-icon" strokeWidth={1.5} />
+                    <strong>{event.title}</strong>
+                  </div>
                   <p>{event.message}</p>
                   <div class="meta-row">
                     <span>{event.event_type}</span>
                     {event.value_label && <span>{event.value_label}</span>}
-                    <span>{event.created_at}</span>
+                    <span class="meta-with-icon"><Clock3 className="h-5 w-5 item-icon" strokeWidth={1.5} />{event.created_at}</span>
                   </div>
                 </li>
               ))}
@@ -212,7 +216,10 @@ const imageUrls = getImageUrls(listing.image_keys);
           <ul class="stack-list compact-list">
             {enquiries.map((enquiry) => (
               <li class="list-item">
-                <strong>{enquiry.applicant_name}</strong>
+                <div class="item-title">
+                  <Users className="h-5 w-5 item-icon accent-icon" strokeWidth={1.5} />
+                  <strong>{enquiry.applicant_name}</strong>
+                </div>
                 <div class="meta-row">
                   <span>{enquiry.contact}</span>
                   <span>Status: {enquiry.response_status ?? "new"}</span>
@@ -221,7 +228,7 @@ const imageUrls = getImageUrls(listing.image_keys);
                 {enquiry.owner_note && <p class="inline-note">Owner note: {enquiry.owner_note}</p>}
                 <div class="meta-row">
                   <span>{enquiry.preferred_time || "No preferred time"}</span>
-                  <span>{enquiry.responded_at ? `Updated ${enquiry.responded_at}` : enquiry.created_at}</span>
+                  <span class="meta-with-icon"><Clock3 className="h-5 w-5 item-icon" strokeWidth={1.5} />{enquiry.responded_at ? `Updated ${enquiry.responded_at}` : enquiry.created_at}</span>
                 </div>
               </li>
             ))}
@@ -241,10 +248,13 @@ const imageUrls = getImageUrls(listing.image_keys);
           <ul class="stack-list compact-list">
             {payments.map((payment) => (
               <li class="list-item">
-                <strong>{payment.plan_type} · {payment.amount} {String(payment.currency).toUpperCase()}</strong>
+                <div class="item-title">
+                  <Activity className="h-5 w-5 item-icon" strokeWidth={1.5} />
+                  <strong>{payment.plan_type} · {payment.amount} {String(payment.currency).toUpperCase()}</strong>
+                </div>
                 <div class="meta-row">
                   <span>Status: {payment.status}</span>
-                  <span>{payment.paid_at ? `Paid at ${payment.paid_at}` : payment.created_at}</span>
+                  <span class="meta-with-icon"><Clock3 className="h-5 w-5 item-icon" strokeWidth={1.5} />{payment.paid_at ? `Paid at ${payment.paid_at}` : payment.created_at}</span>
                 </div>
                 <p>{payment.stripe_session_id}</p>
               </li>
@@ -407,6 +417,18 @@ const imageUrls = getImageUrls(listing.image_keys);
       color: var(--text);
       font-weight: 650;
     }
+    .item-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .item-icon {
+      flex: 0 0 auto;
+      color: var(--muted);
+    }
+    .accent-icon {
+      color: var(--accent-strong);
+    }
     .compact-list .list-item p {
       font-size: 0.95rem;
       line-height: 1.7;
@@ -424,6 +446,11 @@ const imageUrls = getImageUrls(listing.image_keys);
     .compact-list .inline-note {
       font-size: 0.88rem;
       color: var(--muted-strong);
+    }
+    .meta-with-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
     }
     .compact-list .list-item + .list-item {
       margin-top: 0.1rem;

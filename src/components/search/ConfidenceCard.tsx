@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { BadgeCheck, CircleHelp } from "lucide-react";
 import type { Listing } from "../../data/listings";
 
 interface ConfidenceCardProps {
@@ -89,6 +90,7 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
                 <span className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
                   Confidence
                 </span>
+                <BadgeCheck className={`h-5 w-5 ${highConfidence ? "text-[#98ff98]" : "text-zinc-400"}`} strokeWidth={1.5} />
                 <TooltipInfo />
               </div>
 
@@ -152,9 +154,9 @@ function TooltipInfo() {
       <button
         type="button"
         aria-label="Confidence score information"
-        className="flex h-5 w-5 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-[11px] text-zinc-400 transition-colors duration-300 ease-luxury hover:border-white/15 hover:text-white"
+        className="flex h-5 w-5 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-zinc-400 transition-colors duration-300 ease-luxury hover:border-white/15 hover:text-[#98ff98]"
       >
-        i
+        <CircleHelp className="h-4 w-4" strokeWidth={1.5} />
       </button>
 
       <div className="pointer-events-none absolute left-1/2 top-[calc(100%+10px)] z-20 w-64 -translate-x-1/2 rounded-2xl border border-white/10 bg-zinc-950/95 p-3 text-xs leading-6 text-zinc-300 opacity-0 backdrop-blur-xl transition-all duration-300 ease-luxury group-hover/info:opacity-100">

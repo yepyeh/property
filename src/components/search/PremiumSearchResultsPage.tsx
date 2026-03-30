@@ -1,4 +1,16 @@
 import { AnimatePresence, motion } from "framer-motion";
+import {
+  BookmarkPlus,
+  Building2,
+  DollarSign,
+  Home,
+  Landmark,
+  Map,
+  MapPin,
+  Search,
+  BedDouble,
+  type LucideIcon,
+} from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Listing } from "../../data/listings";
 import ConfidenceCard from "./ConfidenceCard";
@@ -122,11 +134,12 @@ export default function PremiumSearchResultsPage({
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <GlassSelect label="Country" value={filters.country || "All countries"} options={["All countries", ...countries]} onChange={(value) => updateFilter("country", value === "All countries" ? "" : value)} />
-            <GlassSelect label="City" value={filters.city || "All cities"} options={["All cities", ...cities]} onChange={(value) => updateFilter("city", value === "All cities" ? "" : value)} />
-            <GlassSelect label="District" value={filters.district || "Any district"} options={["Any district", ...districts]} onChange={(value) => updateFilter("district", value === "Any district" ? "" : value)} />
+            <GlassSelect label="Country" icon={Landmark} value={filters.country || "All countries"} options={["All countries", ...countries]} onChange={(value) => updateFilter("country", value === "All countries" ? "" : value)} />
+            <GlassSelect label="City" icon={Building2} value={filters.city || "All cities"} options={["All cities", ...cities]} onChange={(value) => updateFilter("city", value === "All cities" ? "" : value)} />
+            <GlassSelect label="District" icon={MapPin} value={filters.district || "Any district"} options={["Any district", ...districts]} onChange={(value) => updateFilter("district", value === "Any district" ? "" : value)} />
             <MultiGlassSelect
               label="Property Type"
+              icon={Home}
               values={splitCsv(filters.propertyType)}
               options={PROPERTY_TYPES.filter((option) => option !== "Any property").map((option) => ({ value: option, label: option }))}
               placeholder="Any property"
@@ -134,6 +147,7 @@ export default function PremiumSearchResultsPage({
             />
             <MultiGlassSelect
               label="Sale mode"
+              icon={Search}
               values={splitCsv(filters.saleMode)}
               options={[
                 { value: "Private sale", label: "Private sale" },
@@ -144,6 +158,7 @@ export default function PremiumSearchResultsPage({
             />
             <MultiGlassSelect
               label="Beds"
+              icon={BedDouble}
               values={splitCsv(filters.beds)}
               options={[
                 { value: "1", label: "1 bed" },
@@ -155,8 +170,8 @@ export default function PremiumSearchResultsPage({
               placeholder="Any beds"
               onChange={(values) => updateFilter("beds", values.join(","))}
             />
-            <GlassInput label="Min price" value={filters.minPrice} onChange={(value) => updateFilter("minPrice", value)} placeholder="0" />
-            <GlassInput label="Max price" value={filters.maxPrice} onChange={(value) => updateFilter("maxPrice", value)} placeholder="1000000" />
+            <GlassInput label="Min price" icon={DollarSign} value={filters.minPrice} onChange={(value) => updateFilter("minPrice", value)} placeholder="0" />
+            <GlassInput label="Max price" icon={DollarSign} value={filters.maxPrice} onChange={(value) => updateFilter("maxPrice", value)} placeholder="1000000" />
           </div>
 
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -212,14 +227,14 @@ export default function PremiumSearchResultsPage({
 
           <div className="grid gap-4 md:grid-cols-2">
             <ActionCard
-              icon="✦"
+              icon={BookmarkPlus}
               title="Save this search"
               description="Keep this filter combination and return when stronger supply appears."
               ctaLabel={isSignedIn ? "Open dashboard" : "Sign in to save"}
               href={isSignedIn ? "/buyer/dashboard/" : "/login"}
             />
             <ActionCard
-              icon="⌖"
+              icon={Map}
               title="Map View"
               description="See the filtered listings on a live map."
               ctaLabel="Open map view"
@@ -254,11 +269,13 @@ export default function PremiumSearchResultsPage({
 
 function GlassInput({
   label,
+  icon: Icon,
   value,
   onChange,
   placeholder,
 }: {
   label: string;
+  icon: LucideIcon;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -268,13 +285,16 @@ function GlassInput({
       <span className="block text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
         {label}
       </span>
-      <input
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="input-luxury"
-        inputMode="numeric"
-        placeholder={placeholder}
-      />
+      <div className="group flex items-center gap-3 rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-3.5 backdrop-blur-xl transition-all duration-300 ease-luxury hover:border-white/10 hover:bg-white/[0.045]">
+        <Icon className="h-5 w-5 shrink-0 text-zinc-400 transition-colors duration-300 ease-luxury group-hover:text-[#98ff98]" strokeWidth={1.5} />
+        <input
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          className="w-full bg-transparent text-sm text-zinc-100 outline-none placeholder:text-zinc-500"
+          inputMode="numeric"
+          placeholder={placeholder}
+        />
+      </div>
     </label>
   );
 }
@@ -288,11 +308,13 @@ function splitCsv(value: string) {
 
 function GlassSelect({
   label,
+  icon: Icon,
   value,
   options,
   onChange,
 }: {
   label: string;
+  icon: LucideIcon;
   value: string;
   options: string[];
   onChange: (value: string) => void;
@@ -352,14 +374,17 @@ function GlassSelect({
         onKeyDown={handleTriggerKeyDown}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3.5 text-left backdrop-blur-xl transition-all duration-300 ease-luxury ${
+        className={`group flex w-full items-center justify-between rounded-2xl border px-4 py-3.5 text-left backdrop-blur-xl transition-all duration-300 ease-luxury ${
           open
             ? "border-[#98ff98]/30 bg-white/[0.05] shadow-[0_0_0_1px_rgba(152,255,152,0.08)]"
             : "border-white/5 bg-white/[0.03] hover:border-white/10 hover:bg-white/[0.045]"
         }`}
       >
-        <span className="text-sm text-zinc-100">{value}</span>
-        <motion.span animate={{ rotate: open ? 180 : 0 }} transition={dropdownTransition} className="ml-3 text-zinc-500">
+        <span className="flex min-w-0 items-center gap-3">
+          <Icon className="h-5 w-5 shrink-0 text-zinc-400 transition-colors duration-300 ease-luxury group-hover:text-[#98ff98]" strokeWidth={1.5} />
+          <span className="truncate text-sm text-zinc-100">{value}</span>
+        </span>
+        <motion.span animate={{ rotate: open ? 180 : 0 }} transition={dropdownTransition} className="ml-3 text-zinc-500 transition-colors duration-300 ease-luxury group-hover:text-[#98ff98]">
           <ChevronIcon />
         </motion.span>
       </button>
@@ -418,12 +443,14 @@ function indexOfOption(options: string[], option: string) {
 
 function MultiGlassSelect({
   label,
+  icon: Icon,
   values,
   options,
   placeholder,
   onChange,
 }: {
   label: string;
+  icon: LucideIcon;
   values: string[];
   options: Array<{ value: string; label: string }>;
   placeholder: string;
@@ -492,14 +519,17 @@ function MultiGlassSelect({
         onKeyDown={handleTriggerKeyDown}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3.5 text-left backdrop-blur-xl transition-all duration-300 ease-luxury ${
+        className={`group flex w-full items-center justify-between rounded-2xl border px-4 py-3.5 text-left backdrop-blur-xl transition-all duration-300 ease-luxury ${
           open
             ? "border-[#98ff98]/30 bg-white/[0.05] shadow-[0_0_0_1px_rgba(152,255,152,0.08)]"
             : "border-white/5 bg-white/[0.03] hover:border-white/10 hover:bg-white/[0.045]"
         }`}
       >
-        <span className={`text-sm ${values.length > 0 ? "text-zinc-100" : "text-zinc-500"}`}>{summary}</span>
-        <motion.span animate={{ rotate: open ? 180 : 0 }} transition={dropdownTransition} className="ml-3 text-zinc-500">
+        <span className="flex min-w-0 items-center gap-3">
+          <Icon className="h-5 w-5 shrink-0 text-zinc-400 transition-colors duration-300 ease-luxury group-hover:text-[#98ff98]" strokeWidth={1.5} />
+          <span className={`truncate text-sm ${values.length > 0 ? "text-zinc-100" : "text-zinc-500"}`}>{summary}</span>
+        </span>
+        <motion.span animate={{ rotate: open ? 180 : 0 }} transition={dropdownTransition} className="ml-3 text-zinc-500 transition-colors duration-300 ease-luxury group-hover:text-[#98ff98]">
           <ChevronIcon />
         </motion.span>
       </button>
@@ -566,17 +596,18 @@ function ActionCard({
   ctaLabel,
   href,
 }: {
-  icon: string;
+  icon: LucideIcon;
   title: string;
   description: string;
   ctaLabel: string;
   href: string;
 }) {
+  const Icon = icon;
   return (
-    <article className="glass-card flex h-full flex-col justify-between p-6 md:p-7">
+    <article className="glass-card group flex h-full flex-col justify-between p-6 md:p-7">
       <div className="space-y-4">
-        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-lg text-[#98ff98]">
-          {icon}
+        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-zinc-600 transition-colors duration-300 ease-luxury group-hover:text-[#98ff98]">
+          <Icon className="h-5 w-5" strokeWidth={1.5} />
         </div>
         <div className="space-y-2">
           <h4 className="text-xl font-semibold tracking-[-0.04em] text-white">{title}</h4>
