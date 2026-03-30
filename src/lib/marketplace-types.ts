@@ -127,6 +127,7 @@ export interface ListingFilters {
   city?: string;
   district?: string;
   propertyType?: string;
+  beds?: string;
   minPrice?: number;
   maxPrice?: number;
   minBeds?: number;

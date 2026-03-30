@@ -5,6 +5,15 @@ import { getAllListings, searchListings } from "../../lib/listings";
 import { getDB } from "../../lib/runtime";
 
 const params = Astro.url.searchParams;
+const mapSaleModeQueryToLabel = (value: string) =>
+  value
+    .split(",")
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .map((entry) => (entry === "auction" ? "Auction" : entry === "private-sale" ? "Private sale" : ""))
+    .filter(Boolean)
+    .join(",");
+
 const filters = {
   intent: params.get("intent") || "buy",
   country: params.get("country") || "",
@@ -12,6 +21,7 @@ const filters = {
   district: params.get("district") || "",
   propertyType: params.get("propertyType") || "",
   saleMode: params.get("saleMode") || "",
+  beds: params.get("beds") || "",
   minPrice: Number(params.get("minPrice") || "") || undefined,
   maxPrice: Number(params.get("maxPrice") || "") || undefined,
   minBeds: Number(params.get("minBeds") || "") || undefined,
@@ -32,8 +42,8 @@ const initialFilters = {
   city: filters.city || "",
   district: filters.district || "",
   propertyType: filters.propertyType || "",
-  saleMode: filters.saleMode === "auction" ? "Auction" : filters.saleMode === "private-sale" ? "Private sale" : "",
-  minBeds: typeof filters.minBeds === "number" ? String(filters.minBeds) : "",
+  saleMode: mapSaleModeQueryToLabel(filters.saleMode || ""),
+  beds: filters.beds || (typeof filters.minBeds === "number" ? String(filters.minBeds) : ""),
   minPrice: typeof filters.minPrice === "number" ? String(filters.minPrice) : "",
   maxPrice: typeof filters.maxPrice === "number" ? String(filters.maxPrice) : "",
 };

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Listing } from "../../data/listings";
 import ConfidenceCard from "./ConfidenceCard";
 
@@ -10,7 +10,7 @@ type FilterState = {
   district: string;
   propertyType: string;
   saleMode: string;
-  minBeds: string;
+  beds: string;
   minPrice: string;
   maxPrice: string;
 };
@@ -25,12 +25,14 @@ interface PremiumSearchResultsPageProps {
 }
 
 const PROPERTY_TYPES = ["Any property", "Condo", "Villa", "Townhouse", "Apartment", "House", "Land"];
-const SALE_MODES = ["Any mode", "Private sale", "Auction"];
-const BEDS = ["Any beds", "1+", "2+", "3+", "4+", "5+"];
-
 const dropdownTransition = {
   duration: 0.3,
   ease: [0.4, 0, 0.2, 1] as const,
+};
+
+const SALE_MODE_LABEL_TO_QUERY: Record<string, string> = {
+  Auction: "auction",
+  "Private sale": "private-sale",
 };
 
 export default function PremiumSearchResultsPage({
@@ -55,10 +57,14 @@ export default function PremiumSearchResultsPage({
     if (filters.country) params.set("country", filters.country);
     if (filters.city) params.set("city", filters.city);
     if (filters.district) params.set("district", filters.district);
-    if (filters.propertyType && filters.propertyType !== "Any property") params.set("propertyType", filters.propertyType);
-    if (filters.saleMode === "Auction") params.set("saleMode", "auction");
-    if (filters.saleMode === "Private sale") params.set("saleMode", "private-sale");
-    if (filters.minBeds && filters.minBeds !== "Any beds") params.set("minBeds", filters.minBeds.replace("+", ""));
+    const propertyTypes = splitCsv(filters.propertyType);
+    const saleModes = splitCsv(filters.saleMode)
+      .map((value) => SALE_MODE_LABEL_TO_QUERY[value] || value)
+      .filter(Boolean);
+    const beds = splitCsv(filters.beds);
+    if (propertyTypes.length > 0) params.set("propertyType", propertyTypes.join(","));
+    if (saleModes.length > 0) params.set("saleMode", saleModes.join(","));
+    if (beds.length > 0) params.set("beds", beds.join(","));
     if (filters.minPrice) params.set("minPrice", filters.minPrice);
     if (filters.maxPrice) params.set("maxPrice", filters.maxPrice);
     window.location.href = `/listings/?${params.toString()}`;
@@ -119,9 +125,36 @@ export default function PremiumSearchResultsPage({
             <GlassSelect label="Country" value={filters.country || "All countries"} options={["All countries", ...countries]} onChange={(value) => updateFilter("country", value === "All countries" ? "" : value)} />
             <GlassSelect label="City" value={filters.city || "All cities"} options={["All cities", ...cities]} onChange={(value) => updateFilter("city", value === "All cities" ? "" : value)} />
             <GlassSelect label="District" value={filters.district || "Any district"} options={["Any district", ...districts]} onChange={(value) => updateFilter("district", value === "Any district" ? "" : value)} />
-            <GlassSelect label="Property Type" value={filters.propertyType || "Any property"} options={PROPERTY_TYPES} onChange={(value) => updateFilter("propertyType", value)} />
-            <GlassSelect label="Sale mode" value={filters.saleMode || "Any mode"} options={SALE_MODES} onChange={(value) => updateFilter("saleMode", value)} />
-            <GlassSelect label="Beds" value={filters.minBeds ? `${filters.minBeds}+` : "Any beds"} options={BEDS} onChange={(value) => updateFilter("minBeds", value === "Any beds" ? "" : value.replace("+", ""))} />
+            <MultiGlassSelect
+              label="Property Type"
+              values={splitCsv(filters.propertyType)}
+              options={PROPERTY_TYPES.filter((option) => option !== "Any property").map((option) => ({ value: option, label: option }))}
+              placeholder="Any property"
+              onChange={(values) => updateFilter("propertyType", values.join(","))}
+            />
+            <MultiGlassSelect
+              label="Sale mode"
+              values={splitCsv(filters.saleMode)}
+              options={[
+                { value: "Private sale", label: "Private sale" },
+                { value: "Auction", label: "Auction" },
+              ]}
+              placeholder="Any mode"
+              onChange={(values) => updateFilter("saleMode", values.join(","))}
+            />
+            <MultiGlassSelect
+              label="Beds"
+              values={splitCsv(filters.beds)}
+              options={[
+                { value: "1", label: "1 bed" },
+                { value: "2", label: "2 bed" },
+                { value: "3", label: "3 bed" },
+                { value: "4", label: "4 bed" },
+                { value: "5", label: "5+ bed" },
+              ]}
+              placeholder="Any beds"
+              onChange={(values) => updateFilter("beds", values.join(","))}
+            />
             <GlassInput label="Min price" value={filters.minPrice} onChange={(value) => updateFilter("minPrice", value)} placeholder="0" />
             <GlassInput label="Max price" value={filters.maxPrice} onChange={(value) => updateFilter("maxPrice", value)} placeholder="1000000" />
           </div>
@@ -246,6 +279,13 @@ function GlassInput({
   );
 }
 
+function splitCsv(value: string) {
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 function GlassSelect({
   label,
   value,
@@ -258,6 +298,46 @@ function GlassSelect({
   onChange: (value: string) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    optionRefs.current[activeIndex]?.focus();
+  }, [open, activeIndex]);
+
+  const handleTriggerKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === "ArrowDown" || event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      setActiveIndex(Math.max(0, options.findIndex((option) => option === value)));
+      setOpen(true);
+    }
+  };
+
+  const handleOptionKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number, option: string) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setOpen(false);
+      triggerRef.current?.focus();
+      return;
+    }
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setActiveIndex((index + 1) % options.length);
+      return;
+    }
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setActiveIndex((index - 1 + options.length) % options.length);
+      return;
+    }
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onChange(option);
+      setOpen(false);
+    }
+  };
 
   return (
     <div className="relative">
@@ -267,7 +347,11 @@ function GlassSelect({
 
       <button
         type="button"
+        ref={triggerRef}
         onClick={() => setOpen((current) => !current)}
+        onKeyDown={handleTriggerKeyDown}
+        aria-haspopup="listbox"
+        aria-expanded={open}
         className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3.5 text-left backdrop-blur-xl transition-all duration-300 ease-luxury ${
           open
             ? "border-[#98ff98]/30 bg-white/[0.05] shadow-[0_0_0_1px_rgba(152,255,152,0.08)]"
@@ -291,17 +375,23 @@ function GlassSelect({
               transition={dropdownTransition}
               className="absolute left-0 right-0 z-20 mt-2 overflow-hidden rounded-2xl border border-white/5 bg-zinc-900/95 p-2 shadow-[0_24px_64px_-24px_rgba(0,0,0,0.7)] backdrop-blur-2xl"
             >
-              <div className="max-h-64 overflow-auto">
+              <div className="max-h-64 overflow-auto" role="listbox" aria-label={label}>
                 {options.map((option) => {
                   const active = option === value;
                   return (
                     <button
                       key={option}
                       type="button"
+                      ref={(element) => {
+                        optionRefs.current[indexOfOption(options, option)] = element;
+                      }}
                       onClick={() => {
                         onChange(option);
                         setOpen(false);
                       }}
+                      onKeyDown={(event) => handleOptionKeyDown(event, indexOfOption(options, option), option)}
+                      role="option"
+                      aria-selected={active}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm transition-all duration-300 ease-luxury ${
                         active
                           ? "bg-[#98ff98]/10 text-white"
@@ -310,6 +400,145 @@ function GlassSelect({
                     >
                       <span>{option}</span>
                       {active ? <span className="text-xs font-medium text-[#98ff98]">Selected</span> : null}
+                    </button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function indexOfOption(options: string[], option: string) {
+  return options.findIndex((entry) => entry === option);
+}
+
+function MultiGlassSelect({
+  label,
+  values,
+  options,
+  placeholder,
+  onChange,
+}: {
+  label: string;
+  values: string[];
+  options: Array<{ value: string; label: string }>;
+  placeholder: string;
+  onChange: (values: string[]) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const valueSet = new Set(values);
+  const summary = values.length > 0
+    ? options.filter((option) => valueSet.has(option.value)).map((option) => option.label).join(", ")
+    : placeholder;
+
+  useEffect(() => {
+    if (!open) return;
+    optionRefs.current[activeIndex]?.focus();
+  }, [open, activeIndex]);
+
+  const toggleValue = (value: string) => {
+    const next = valueSet.has(value) ? values.filter((entry) => entry !== value) : [...values, value];
+    onChange(next);
+  };
+
+  const handleTriggerKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === "ArrowDown" || event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      setOpen(true);
+      setActiveIndex(0);
+    }
+  };
+
+  const handleOptionKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number, value: string) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setOpen(false);
+      triggerRef.current?.focus();
+      return;
+    }
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setActiveIndex((index + 1) % options.length);
+      return;
+    }
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setActiveIndex((index - 1 + options.length) % options.length);
+      return;
+    }
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      toggleValue(value);
+    }
+  };
+
+  return (
+    <div className="relative">
+      <span className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+        {label}
+      </span>
+
+      <button
+        type="button"
+        ref={triggerRef}
+        onClick={() => setOpen((current) => !current)}
+        onKeyDown={handleTriggerKeyDown}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3.5 text-left backdrop-blur-xl transition-all duration-300 ease-luxury ${
+          open
+            ? "border-[#98ff98]/30 bg-white/[0.05] shadow-[0_0_0_1px_rgba(152,255,152,0.08)]"
+            : "border-white/5 bg-white/[0.03] hover:border-white/10 hover:bg-white/[0.045]"
+        }`}
+      >
+        <span className={`text-sm ${values.length > 0 ? "text-zinc-100" : "text-zinc-500"}`}>{summary}</span>
+        <motion.span animate={{ rotate: open ? 180 : 0 }} transition={dropdownTransition} className="ml-3 text-zinc-500">
+          <ChevronIcon />
+        </motion.span>
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <>
+            <button type="button" aria-label={`Close ${label}`} className="fixed inset-0 z-10 cursor-default" onClick={() => setOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={dropdownTransition}
+              className="absolute left-0 right-0 z-20 mt-2 overflow-hidden rounded-2xl border border-white/5 bg-zinc-900/95 p-2 shadow-[0_24px_64px_-24px_rgba(0,0,0,0.7)] backdrop-blur-2xl"
+            >
+              <div className="max-h-64 overflow-auto" role="listbox" aria-label={label} aria-multiselectable="true">
+                {options.map((option, index) => {
+                  const active = valueSet.has(option.value);
+                  return (
+                    <button
+                      key={option.value}
+                      ref={(element) => {
+                        optionRefs.current[index] = element;
+                      }}
+                      type="button"
+                      onClick={() => toggleValue(option.value)}
+                      onKeyDown={(event) => handleOptionKeyDown(event, index, option.value)}
+                      role="option"
+                      aria-selected={active}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm transition-all duration-300 ease-luxury ${
+                        active
+                          ? "bg-[#98ff98]/10 text-white"
+                          : "text-zinc-300 hover:bg-white/[0.04] hover:text-white"
+                      }`}
+                    >
+                      <span>{option.label}</span>
+                      <span className={`text-xs font-medium ${active ? "text-[#98ff98]" : "text-zinc-500"}`}>
+                        {active ? "Selected" : "Toggle"}
+                      </span>
                     </button>
                   );
                 })}

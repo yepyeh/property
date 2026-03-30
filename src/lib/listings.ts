@@ -32,17 +32,40 @@ function normalizeSort(value?: string) {
   return value === "price-asc" || value === "price-desc" || value === "beds-desc" ? value : "newest";
 }
 
+function parseOptionSet(value?: string) {
+  return Array.from(
+    new Set(
+      (value || "")
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean)
+    )
+  );
+}
+
+function parseBedSet(value?: string) {
+  return parseOptionSet(value)
+    .map((item) => Number(item))
+    .filter((item) => Number.isFinite(item) && item > 0)
+    .sort((a, b) => a - b);
+}
+
 function normalizeListingFilters(filters: ListingFilters) {
+  const propertyTypes = parseOptionSet(filters.propertyType);
+  const saleModes = parseOptionSet(filters.saleMode).filter((value) => value === "auction" || value === "private-sale");
+  const bedSet = parseBedSet(filters.beds || (typeof filters.minBeds === "number" ? String(filters.minBeds) : ""));
+
   return {
     intent: filters.intent === "rent" ? "rent" : "buy",
     country: filters.country?.trim() || "",
     city: filters.city?.trim() || "",
     district: filters.district?.trim() || "",
-    propertyType: filters.propertyType?.trim() || "",
-    saleMode: filters.saleMode === "auction" ? "auction" : filters.saleMode === "private-sale" ? "private-sale" : "",
+    propertyType: propertyTypes.join(","),
+    beds: bedSet.join(","),
+    saleMode: saleModes.join(","),
     minPrice: typeof filters.minPrice === "number" && Number.isFinite(filters.minPrice) ? filters.minPrice : undefined,
     maxPrice: typeof filters.maxPrice === "number" && Number.isFinite(filters.maxPrice) ? filters.maxPrice : undefined,
-    minBeds: typeof filters.minBeds === "number" && Number.isFinite(filters.minBeds) ? filters.minBeds : undefined,
+    minBeds: bedSet.length > 0 ? undefined : typeof filters.minBeds === "number" && Number.isFinite(filters.minBeds) ? filters.minBeds : undefined,
     sort: normalizeSort(filters.sort),
   } satisfies ListingFilters;
 }
@@ -75,13 +98,25 @@ function buildDynamicListingWhere(filters: ListingFilters, options: { createdAft
   }
 
   if (filters.propertyType) {
-    clauses.push("property_type = ?");
-    values.push(filters.propertyType);
+    const propertyTypes = parseOptionSet(filters.propertyType);
+    if (propertyTypes.length === 1) {
+      clauses.push("property_type = ?");
+      values.push(propertyTypes[0]);
+    } else if (propertyTypes.length > 1) {
+      clauses.push(`property_type IN (${propertyTypes.map(() => "?").join(", ")})`);
+      values.push(...propertyTypes);
+    }
   }
 
-  if (filters.saleMode === "auction" || filters.saleMode === "private-sale") {
-    clauses.push("COALESCE(sale_mode, 'private-sale') = ?");
-    values.push(filters.saleMode);
+  if (filters.saleMode) {
+    const saleModes = parseOptionSet(filters.saleMode).filter((value) => value === "auction" || value === "private-sale");
+    if (saleModes.length === 1) {
+      clauses.push("COALESCE(sale_mode, 'private-sale') = ?");
+      values.push(saleModes[0]);
+    } else if (saleModes.length > 1) {
+      clauses.push(`COALESCE(sale_mode, 'private-sale') IN (${saleModes.map(() => "?").join(", ")})`);
+      values.push(...saleModes);
+    }
   }
 
   if (typeof filters.minPrice === "number" && Number.isFinite(filters.minPrice)) {
@@ -94,7 +129,14 @@ function buildDynamicListingWhere(filters: ListingFilters, options: { createdAft
     values.push(filters.maxPrice);
   }
 
-  if (typeof filters.minBeds === "number" && Number.isFinite(filters.minBeds)) {
+  const bedSet = parseBedSet(filters.beds);
+  if (bedSet.length === 1) {
+    clauses.push("beds = ?");
+    values.push(bedSet[0]);
+  } else if (bedSet.length > 1) {
+    clauses.push(`beds IN (${bedSet.map(() => "?").join(", ")})`);
+    values.push(...bedSet);
+  } else if (typeof filters.minBeds === "number" && Number.isFinite(filters.minBeds)) {
     clauses.push("beds >= ?");
     values.push(filters.minBeds);
   }
@@ -117,6 +159,7 @@ export function buildSavedSearchQuery(filters: ListingFilters) {
   if (normalized.district) params.set("district", normalized.district);
   if (normalized.propertyType) params.set("propertyType", normalized.propertyType);
   if (normalized.saleMode) params.set("saleMode", normalized.saleMode);
+  if (normalized.beds) params.set("beds", normalized.beds);
   if (typeof normalized.minPrice === "number") params.set("minPrice", String(normalized.minPrice));
   if (typeof normalized.maxPrice === "number") params.set("maxPrice", String(normalized.maxPrice));
   if (typeof normalized.minBeds === "number") params.set("minBeds", String(normalized.minBeds));
@@ -135,6 +178,7 @@ function buildSavedSearchName(filters: ListingFilters) {
   ];
 
   if (normalized.district) parts.push(normalized.district);
+  if (normalized.beds) parts.push(`${parseBedSet(normalized.beds).join(", ")} beds`);
   if (typeof normalized.minBeds === "number") parts.push(`${normalized.minBeds}+ beds`);
 
   return parts.join(" · ");
@@ -330,16 +374,20 @@ function applyListingFilters(listings: Listing[], filters: ListingFilters) {
   const city = normalizeTextFilter(filters.city);
   const district = normalizeTextFilter(filters.district);
   const sort = normalizeSort(filters.sort);
+  const propertyTypes = parseOptionSet(filters.propertyType);
+  const saleModes = parseOptionSet(filters.saleMode);
+  const bedSet = parseBedSet(filters.beds);
 
   const filtered = listings.filter((listing) => {
     if ((filters.intent === "buy" || filters.intent === "rent") && listing.intent !== filters.intent) return false;
     if (country && !listing.country.toLowerCase().includes(country)) return false;
     if (city && !listing.city.toLowerCase().includes(city)) return false;
     if (district && !listing.district.toLowerCase().includes(district)) return false;
-    if (filters.propertyType && listing.type !== filters.propertyType) return false;
-    if (filters.saleMode && (listing.saleMode || "private-sale") !== filters.saleMode) return false;
+    if (propertyTypes.length > 0 && !propertyTypes.includes(listing.type)) return false;
+    if (saleModes.length > 0 && !saleModes.includes(listing.saleMode || "private-sale")) return false;
     if (typeof filters.minPrice === "number" && Number.isFinite(filters.minPrice) && listing.numericPrice < filters.minPrice) return false;
     if (typeof filters.maxPrice === "number" && Number.isFinite(filters.maxPrice) && listing.numericPrice > filters.maxPrice) return false;
+    if (bedSet.length > 0 && !bedSet.includes(listing.beds)) return false;
     if (typeof filters.minBeds === "number" && Number.isFinite(filters.minBeds) && listing.beds < filters.minBeds) return false;
     return true;
   });
