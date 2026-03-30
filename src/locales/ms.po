@@ -526,6 +526,126 @@ msgstr "Verification request submitted. Admin review is now required before trus
 msgid "A verification request is already pending review."
 msgstr "A verification request is already pending review."
 
+msgid "Compare saved listings"
+msgstr "Compare saved listings"
+
+msgid "Compare shortlisted homes side by side across price, location, trust signals, and key facts."
+msgstr "Compare shortlisted homes side by side across price, location, trust signals, and key facts."
+
+msgid "Buyer comparison"
+msgstr "Buyer comparison"
+
+msgid "Compare shortlisted homes side by side."
+msgstr "Compare shortlisted homes side by side."
+
+msgid "This is where a shortlist turns into a decision. Compare price, area, trust, and location first. If one listing clearly pulls ahead, mark it as a finalist. If you are ready, move it to contacted and continue from the listing page."
+msgstr "This is where a shortlist turns into a decision. Compare price, area, trust, and location first. If one listing clearly pulls ahead, mark it as a finalist. If you are ready, move it to contacted and continue from the listing page."
+
+msgid "Back to dashboard"
+msgstr "Back to dashboard"
+
+msgid "Shortlist decision updated from compare view."
+msgstr "Shortlist decision updated from compare view."
+
+msgid "Owner listing"
+msgstr "Owner listing"
+
+msgid "Review listing-specific demand, media, and payments."
+msgstr "Review listing-specific demand, media, and payments."
+
+msgid "Listing drilldown"
+msgstr "Listing drilldown"
+
+msgid "Use this view to evaluate one listing instead of scanning the whole dashboard. Demand, media, and paid visibility are easier to judge at listing scope."
+msgstr "Use this view to evaluate one listing instead of scanning the whole dashboard. Demand, media, and paid visibility are easier to judge at listing scope."
+
+msgid "Open public page"
+msgstr "Open public page"
+
+msgid "Auction update published. Watchers and registered bidders can now see the new event."
+msgstr "Auction update published. Watchers and registered bidders can now see the new event."
+
+msgid "Account login"
+msgstr "Account login"
+
+msgid "Secure login for buyer, owner, and administrator accounts."
+msgstr "Secure login for buyer, owner, and administrator accounts."
+
+msgid "Protected access"
+msgstr "Protected access"
+
+msgid "Sign back in without losing your place."
+msgstr "Sign back in without losing your place."
+
+msgid "Login failed. Check the email and password and try again."
+msgstr "Login failed. Check the email and password and try again."
+
+msgid "Create an owner or buyer account to use the marketplace with the right workflow."
+msgstr "Create an owner or buyer account to use the marketplace with the right workflow."
+
+msgid "Buyer onboarding"
+msgstr "Buyer onboarding"
+
+msgid "Owner onboarding"
+msgstr "Owner onboarding"
+
+msgid "Create a buyer account that helps you decide, not just browse."
+msgstr "Create a buyer account that helps you decide, not just browse."
+
+msgid "Create an owner account built to publish, manage, and convert."
+msgstr "Create an owner account built to publish, manage, and convert."
+
+msgid "That email already has an account."
+msgstr "That email already has an account."
+
+msgid "Use a valid email and a password with at least 8 characters."
+msgstr "Use a valid email and a password with at least 8 characters."
+
+msgid "Full name"
+msgstr "Full name"
+
+msgid "Phone"
+msgstr "Phone"
+
+msgid "Already have an account?"
+msgstr "Already have an account?"
+
+msgid "Notification inbox"
+msgstr "Notification inbox"
+
+msgid "Review and manage in-app notifications across buyer and owner workflows."
+msgstr "Review and manage in-app notifications across buyer and owner workflows."
+
+msgid "One feed for account activity."
+msgstr "One feed for account activity."
+
+msgid "Expiry reminders, enquiries, billing events, and buyer-side activity land in one timeline so important state changes stay easy to scan and easy to clear."
+msgstr "Expiry reminders, enquiries, billing events, and buyer-side activity land in one timeline so important state changes stay easy to scan and easy to clear."
+
+msgid "Mark all read"
+msgstr "Mark all read"
+
+msgid "All notifications marked as read."
+msgstr "All notifications marked as read."
+
+msgid "Notification marked as read."
+msgstr "Notification marked as read."
+
+msgid "Notification settings"
+msgstr "Notification settings"
+
+msgid "Manage email and in-app notification preferences for your marketplace account."
+msgstr "Manage email and in-app notification preferences for your marketplace account."
+
+msgid "Choose what reaches you and how often."
+msgstr "Choose what reaches you and how often."
+
+msgid "Delivery channels, digest cadence, and category-level preferences should live in one clear settings surface rather than being scattered across dashboards."
+msgstr "Delivery channels, digest cadence, and category-level preferences should live in one clear settings surface rather than being scattered across dashboards."
+
+msgid "Notification preferences updated."
+msgstr "Notification preferences updated."
+
 msgid "Villa"
 msgstr "Villa"
 

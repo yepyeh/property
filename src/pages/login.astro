@@ -4,13 +4,14 @@ import { sanitizeInternalRedirect } from "../lib/http";
 
 const error = Astro.url.searchParams.get("error");
 const redirectTo = sanitizeInternalRedirect(Astro.url.searchParams.get("redirect"), "");
+const t = Astro.locals.t || ((value: string) => value);
 ---
 
-<Layout title="Account Login | Property App 2026" description="Secure login for buyer, owner, and administrator accounts.">
+<Layout title={`${t("Account login")} | Property App 2026`} description={t("Secure login for buyer, owner, and administrator accounts.")}>
   <section class="auth-shell">
     <div class="auth-story card">
-      <span class="pill">Protected access</span>
-      <h1>Sign back in without losing your place.</h1>
+      <span class="pill">{t("Protected access")}</span>
+      <h1>{t("Sign back in without losing your place.")}</h1>
       <p>
         Buyers return to shortlist, compare, and enquiry history. Owners return to listing performance, billing, and response workflows.
       </p>
@@ -45,22 +46,22 @@ const redirectTo = sanitizeInternalRedirect(Astro.url.searchParams.get("redirect
         <p>Use the account you created. The system routes you into the correct workflow automatically.</p>
       </div>
 
-      {error && <p class="error">Login failed. Check the email and password and try again.</p>}
+      {error && <p class="error">{t("Login failed. Check the email and password and try again.")}</p>}
 
       <form class="login-form" method="POST" action="/api/auth/login">
         <input type="hidden" name="redirect" value={redirectTo} />
 
         <label class="field">
-          <span>Email</span>
+          <span>{t("Email")}</span>
           <input type="email" name="email" required placeholder="name@example.com" />
         </label>
 
         <label class="field">
-          <span>Password</span>
+          <span>{t("Password")}</span>
           <input type="password" name="password" required placeholder="Enter password" />
         </label>
 
-        <button type="submit">Sign in</button>
+        <button type="submit">{t("Sign in")}</button>
       </form>
 
       <div class="panel-footer">

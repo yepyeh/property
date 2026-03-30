@@ -5,13 +5,14 @@ const error = Astro.url.searchParams.get("error");
 const exists = Astro.url.searchParams.get("exists");
 const role = Astro.url.searchParams.get("role") === "buyer" ? "buyer" : "owner";
 const isBuyer = role === "buyer";
+const t = Astro.locals.t || ((value: string) => value);
 ---
 
-<Layout title="Create Account | Property App 2026" description="Create an owner or buyer account to use the marketplace with the right workflow.">
+<Layout title={`${t("Create account")} | Property App 2026`} description={t("Create an owner or buyer account to use the marketplace with the right workflow.")}>
   <section class="auth-shell">
     <div class="story-panel card">
-      <span class="pill">{isBuyer ? "Buyer onboarding" : "Owner onboarding"}</span>
-      <h1>{isBuyer ? "Create a buyer account that helps you decide, not just browse." : "Create an owner account built to publish, manage, and convert."}</h1>
+      <span class="pill">{isBuyer ? t("Buyer onboarding") : t("Owner onboarding")}</span>
+      <h1>{isBuyer ? t("Create a buyer account that helps you decide, not just browse.") : t("Create an owner account built to publish, manage, and convert.")}</h1>
       <p>
         {isBuyer
           ? "Use one account to shortlist, compare, mark finalists, and track enquiry follow-up without losing context between visits."
@@ -57,8 +58,8 @@ const isBuyer = role === "buyer";
     <section class="form-panel card">
       <div class="panel-head">
         <div>
-          <span class="eyebrow">Create account</span>
-          <h2>{isBuyer ? "Buyer account" : "Owner account"}</h2>
+          <span class="eyebrow">{t("Create account")}</span>
+          <h2>{isBuyer ? t("Buyer account") : t("Owner account")}</h2>
         </div>
         <p>
           {isBuyer
@@ -69,7 +70,7 @@ const isBuyer = role === "buyer";
 
       {(error || exists) && (
         <p class="error">
-          {exists ? "That email already has an account." : "Use a valid email and a password with at least 8 characters."}
+          {exists ? t("That email already has an account.") : t("Use a valid email and a password with at least 8 characters.")}
         </p>
       )}
 
@@ -78,26 +79,26 @@ const isBuyer = role === "buyer";
 
         <div class="grid two">
           <label class="field">
-            <span>Full name</span>
+            <span>{t("Full name")}</span>
             <input type="text" name="fullName" required placeholder="Nguyen Anh" />
           </label>
           <label class="field">
-            <span>Phone</span>
+            <span>{t("Phone")}</span>
             <input type="text" name="phone" placeholder="+84 ..." />
           </label>
         </div>
 
         <label class="field">
-          <span>Email</span>
+          <span>{t("Email")}</span>
           <input type="email" name="email" required placeholder={isBuyer ? "buyer@example.com" : "owner@example.com"} />
         </label>
 
         <label class="field">
-          <span>Password</span>
+          <span>{t("Password")}</span>
           <input type="password" name="password" required minlength="8" placeholder="At least 8 characters" />
         </label>
 
-        <button type="submit">Create {isBuyer ? "buyer" : "owner"} account</button>
+        <button type="submit">{isBuyer ? t("Create buyer account") : t("Create owner account")}</button>
       </form>
 
       <div class="plan-card">
@@ -119,7 +120,7 @@ const isBuyer = role === "buyer";
         </ul>
       </div>
 
-      <p class="switch-link">Already have an account? <a href="/login">Sign in</a>.</p>
+      <p class="switch-link">{t("Already have an account?")} <a href="/login">{t("Sign in")}</a>.</p>
     </section>
   </section>
 

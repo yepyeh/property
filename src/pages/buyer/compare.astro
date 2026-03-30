@@ -9,6 +9,7 @@ import { getAllListings } from "../../lib/listings";
 import { getDB } from "../../lib/runtime";
 
 const viewer = Astro.locals.owner;
+const t = Astro.locals.t || ((value: string) => value);
 
 if (!viewer || (viewer.role !== "buyer" && viewer.role !== "admin")) {
   return Astro.redirect("/login");
@@ -42,18 +43,18 @@ function getCons(listing: NonNullable<(typeof compareEntries)[number]["listing"]
 }
 ---
 
-<Layout title="Compare Saved Listings | Property App 2026" description="Compare shortlisted homes side by side across price, location, trust signals, and key facts.">
+<Layout title={`${t("Compare saved listings")} | Property App 2026`} description={t("Compare shortlisted homes side by side across price, location, trust signals, and key facts.")}>
   <WorkspaceHero
-    eyebrow="Buyer comparison"
-    title="Compare shortlisted homes side by side."
-    text="This is where a shortlist turns into a decision. Compare price, area, trust, and location first. If one listing clearly pulls ahead, mark it as a finalist. If you are ready, move it to contacted and continue from the listing page."
+    eyebrow={t("Buyer comparison")}
+    title={t("Compare shortlisted homes side by side.")}
+    text={t("This is where a shortlist turns into a decision. Compare price, area, trust, and location first. If one listing clearly pulls ahead, mark it as a finalist. If you are ready, move it to contacted and continue from the listing page.")}
     actions={[
-      { href: "/buyer/dashboard/", label: "Back to dashboard", kind: "secondary" },
-      { href: "/listings/", label: "Browse listings", kind: "secondary" },
+      { href: "/buyer/dashboard/", label: t("Back to dashboard"), kind: "secondary" },
+      { href: "/listings/", label: t("Browse listings"), kind: "secondary" },
     ]}
   />
 
-  {savedListingUpdated && <FlashBanner message="Shortlist decision updated from compare view." />}
+  {savedListingUpdated && <FlashBanner message={t("Shortlist decision updated from compare view.")} />}
 
   <section class="card compare-help section-gap">
     <strong>Need help using compare?</strong>

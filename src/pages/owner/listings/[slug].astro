@@ -6,6 +6,7 @@ import { getOwnerListingDetail } from "../../../lib/dashboard";
 import { getDB } from "../../../lib/runtime";
 
 const owner = Astro.locals.owner;
+const t = Astro.locals.t || ((value: string) => value);
 
 if (!owner || !["owner", "admin"].includes(owner.role)) {
   return Astro.redirect("/login");
@@ -32,14 +33,14 @@ function getImageUrls(value: unknown) {
 const imageUrls = getImageUrls(listing.image_keys);
 ---
 
-<Layout title={`${listing.title} | Owner Listing`} description="Review listing-specific demand, media, and payments.">
+<Layout title={`${listing.title} | ${t("Owner listing")}`} description={t("Review listing-specific demand, media, and payments.")}>
   <WorkspaceHero
-    eyebrow="Listing drilldown"
+    eyebrow={t("Listing drilldown")}
     title={listing.title}
-    text="Use this view to evaluate one listing instead of scanning the whole dashboard. Demand, media, and paid visibility are easier to judge at listing scope."
+    text={t("Use this view to evaluate one listing instead of scanning the whole dashboard. Demand, media, and paid visibility are easier to judge at listing scope.")}
     actions={[
-      { href: "/owner/dashboard/", label: "Back to dashboard", kind: "secondary" },
-      { href: `/listings/${listing.slug}/`, label: "Open public page", kind: "secondary" },
+      { href: "/owner/dashboard/", label: t("Back to dashboard"), kind: "secondary" },
+      { href: `/listings/${listing.slug}/`, label: t("Open public page"), kind: "secondary" },
     ]}
   />
 
@@ -52,7 +53,7 @@ const imageUrls = getImageUrls(listing.image_keys);
     ]}
   />
 
-  {auctionEventAdded && <p class="auction-banner">Auction update published. Watchers and registered bidders can now see the new event.</p>}
+  {auctionEventAdded && <p class="auction-banner">{t("Auction update published. Watchers and registered bidders can now see the new event.")}</p>}
 
   <section class="split-grid section-gap">
     <article class="card panel">

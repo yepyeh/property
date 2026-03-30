@@ -6,6 +6,7 @@ import { getInboxNotifications } from "../../lib/notifications";
 import { getDB } from "../../lib/runtime";
 
 const viewer = Astro.locals.owner;
+const t = Astro.locals.t || ((value: string) => value);
 
 if (!viewer) {
   return Astro.redirect("/login");
@@ -17,20 +18,20 @@ const allRead = Astro.url.searchParams.get("allRead");
 const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashboard/";
 ---
 
-<Layout title="Notification Inbox | Property App 2026" description="Review and manage in-app notifications across buyer and owner workflows.">
+<Layout title={`${t("Notification inbox")} | Property App 2026`} description={t("Review and manage in-app notifications across buyer and owner workflows.")}>
   <WorkspaceHero
-    eyebrow="Notification inbox"
-    title="One feed for account activity."
-    text="Expiry reminders, enquiries, billing events, and buyer-side activity land in one timeline so important state changes stay easy to scan and easy to clear."
+    eyebrow={t("Notification inbox")}
+    title={t("One feed for account activity.")}
+    text={t("Expiry reminders, enquiries, billing events, and buyer-side activity land in one timeline so important state changes stay easy to scan and easy to clear.")}
     actions={[
-      { href: returnHref, label: "Back to dashboard", kind: "secondary" },
-      { href: "/account/notifications", label: "Settings", kind: "secondary" },
-      { formAction: "/api/account/inbox/read-all", label: "Mark all read" },
+      { href: returnHref, label: t("Back to dashboard"), kind: "secondary" },
+      { href: "/account/notifications", label: t("Settings"), kind: "secondary" },
+      { formAction: "/api/account/inbox/read-all", label: t("Mark all read") },
     ]}
   />
 
   {(read || allRead) && (
-    <FlashBanner message={allRead ? "All notifications marked as read." : "Notification marked as read."} />
+    <FlashBanner message={allRead ? t("All notifications marked as read.") : t("Notification marked as read.")} />
   )}
 
   <section class="inbox-metrics section-gap">

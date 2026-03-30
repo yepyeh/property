@@ -6,6 +6,7 @@ import { getNotificationPreferences } from "../../lib/notifications";
 import { getDB } from "../../lib/runtime";
 
 const viewer = Astro.locals.owner;
+const t = Astro.locals.t || ((value: string) => value);
 
 if (!viewer) {
   return Astro.redirect("/login");
@@ -16,18 +17,18 @@ const updated = Astro.url.searchParams.get("updated");
 const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashboard/";
 ---
 
-<Layout title="Notification Settings | Property App 2026" description="Manage email and in-app notification preferences for your marketplace account.">
+<Layout title={`${t("Notification settings")} | Property App 2026`} description={t("Manage email and in-app notification preferences for your marketplace account.")}>
   <WorkspaceHero
-    eyebrow="Notification settings"
-    title="Choose what reaches you and how often."
-    text="Delivery channels, digest cadence, and category-level preferences should live in one clear settings surface rather than being scattered across dashboards."
+    eyebrow={t("Notification settings")}
+    title={t("Choose what reaches you and how often.")}
+    text={t("Delivery channels, digest cadence, and category-level preferences should live in one clear settings surface rather than being scattered across dashboards.")}
     actions={[
-      { href: returnHref, label: "Back to dashboard", kind: "secondary" },
-      { href: "/account/inbox", label: "Open inbox", kind: "secondary" },
+      { href: returnHref, label: t("Back to dashboard"), kind: "secondary" },
+      { href: "/account/inbox", label: t("Open inbox"), kind: "secondary" },
     ]}
   />
 
-  {updated && <FlashBanner message="Notification preferences updated." />}
+  {updated && <FlashBanner message={t("Notification preferences updated.")} />}
 
   <section class="settings-summary section-gap">
     <article class="card summary-card">
