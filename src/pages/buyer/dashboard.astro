@@ -8,6 +8,7 @@ import { getBuyerDashboardData } from "../../lib/dashboard";
 import { getDB } from "../../lib/runtime";
 
 const owner = Astro.locals.owner;
+const t = Astro.locals.t || ((value: string) => value);
 
 if (!owner || (owner.role !== "buyer" && owner.role !== "admin")) {
   return Astro.redirect("/login");
@@ -34,73 +35,73 @@ const enquiryStatusCounts = {
 };
 ---
 
-<Layout title="Buyer Dashboard | Property App 2026" description="Manage saved searches and buyer-side activity in the marketplace.">
+<Layout title={`${t("Buyer dashboard")} | Property App 2026`} description={t("Manage saved searches and buyer-side activity in the marketplace.")}>
   <WorkspaceHero
-    eyebrow="Buyer workspace"
-    title="Track homes, return to strong areas, and keep your shortlist moving."
-    text="This should feel like a clean buyer workspace, not a storage page. Saved searches, favorite listings, and new activity stay in one place so revisits feel deliberate."
+    eyebrow={t("Buyer workspace")}
+    title={t("Track homes, return to strong areas, and keep your shortlist moving.")}
+    text={t("This should feel like a clean buyer workspace, not a storage page. Saved searches, favorite listings, and new activity stay in one place so revisits feel deliberate.")}
     actions={[
-      { href: "/listings/", label: "Browse listings" },
-      ...(savedListings.length > 1 ? [{ href: "/buyer/compare/", label: "Compare saved homes", kind: "secondary" as const }] : []),
-      { href: "/account/inbox", label: "Open inbox", kind: "secondary" },
-      { href: "/account/notifications", label: "Notification settings", kind: "secondary" },
+      { href: "/listings/", label: t("Browse listings") },
+      ...(savedListings.length > 1 ? [{ href: "/buyer/compare/", label: t("Compare saved homes"), kind: "secondary" as const }] : []),
+      { href: "/account/inbox", label: t("Open inbox"), kind: "secondary" },
+      { href: "/account/notifications", label: t("Notification settings"), kind: "secondary" },
     ]}
   />
 
-  {savedSearchDeleted && <FlashBanner message="Saved search deleted." />}
-  {savedListingDeleted && <FlashBanner message="Saved listing removed." />}
-  {savedListingUpdated && <FlashBanner message="Shortlist state updated." />}
-  {auctionWatchUpdated && <FlashBanner message="Auction watch updated." />}
-  {auctionWatchRemoved && <FlashBanner message="Auction watch removed." />}
+  {savedSearchDeleted && <FlashBanner message={t("Saved search deleted.")} />}
+  {savedListingDeleted && <FlashBanner message={t("Saved listing removed.")} />}
+  {savedListingUpdated && <FlashBanner message={t("Shortlist state updated.")} />}
+  {auctionWatchUpdated && <FlashBanner message={t("Auction watch updated.")} />}
+  {auctionWatchRemoved && <FlashBanner message={t("Auction watch removed.")} />}
 
   <WorkspaceStats
     items={[
       { label: "Searches", value: savedSearches.length, copy: "Saved searches" },
-      { label: "Favorites", value: savedListings.length, copy: "Saved listings" },
-      { label: "Finalists", value: finalistCount, copy: "Decision-ready homes" },
-      { label: "Enquiries", value: enquiries.length, copy: "Sent enquiries" },
-      { label: "Watching", value: watchedAuctions.length, copy: "Auction alerts" },
-      { label: "Recent", value: recentlyViewed.length, copy: "Recently viewed" },
-      { label: "Inbox", value: unreadNotificationCount, copy: "Unread notifications" },
+      { label: t("Favorites"), value: savedListings.length, copy: t("Saved listings") },
+      { label: t("Finalists"), value: finalistCount, copy: t("Decision-ready homes") },
+      { label: t("Enquiries"), value: enquiries.length, copy: t("Sent enquiries") },
+      { label: t("Watching"), value: watchedAuctions.length, copy: t("Auction alerts") },
+      { label: t("Recent"), value: recentlyViewed.length, copy: t("Recently viewed") },
+      { label: t("Inbox"), value: unreadNotificationCount, copy: t("Unread notifications") },
     ]}
   />
 
   <AccountSummaryCard
     blocks={[
-      { eyebrow: "Signed in as", title: owner.full_name, copy: owner.email },
-      { eyebrow: "Account role", title: owner.role, copy: "Browse, save, compare, and return to high-intent searches" },
+      { eyebrow: t("Signed in as"), title: owner.full_name, copy: owner.email },
+      { eyebrow: t("Account role"), title: owner.role, copy: t("Browse, save, compare, and return to high-intent searches") },
     ]}
   />
 
   <section class="card panel section-gap">
     <div class="panel-head">
       <div>
-        <p class="eyebrow">How to use this</p>
-        <h2>Like a listing, but not ready to contact yet?</h2>
-        <p class="panel-copy">Use the buyer flow in order. Save a few places into your shortlist, compare them side by side, mark a finalist, then contact the one that still looks strongest after price, location, and trust are all on the table.</p>
+        <p class="eyebrow">{t("How to use this")}</p>
+        <h2>{t("Like a listing, but not ready to contact yet?")}</h2>
+        <p class="panel-copy">{t("Use the buyer flow in order. Save a few places into your shortlist, compare them side by side, mark a finalist, then contact the one that still looks strongest after price, location, and trust are all on the table.")}</p>
       </div>
     </div>
     <div class="journey-grid">
       <article class="journey-step">
-        <strong>1. Save to shortlist</strong>
-        <p>Add any promising listing first. You do not need to decide on the spot.</p>
+        <strong>{t("1. Save to shortlist")}</strong>
+        <p>{t("Add any promising listing first. You do not need to decide on the spot.")}</p>
       </article>
       <article class="journey-step">
-        <strong>2. Group into collections</strong>
-        <p>Use collections for areas, trips, or move plans so your shortlist does not turn into one long pile.</p>
+        <strong>{t("2. Group into collections")}</strong>
+        <p>{t("Use collections for areas, trips, or move plans so your shortlist does not turn into one long pile.")}</p>
       </article>
       <article class="journey-step">
-        <strong>3. Compare a few</strong>
-        <p>Put two or three options next to each other so tradeoffs are obvious.</p>
+        <strong>{t("3. Compare a few")}</strong>
+        <p>{t("Put two or three options next to each other so tradeoffs are obvious.")}</p>
       </article>
       <article class="journey-step">
-        <strong>4. Mark finalist, then contact</strong>
-        <p>Use `Finalist` when one listing is pulling ahead, then contact from the listing page when you are ready.</p>
+        <strong>{t("4. Mark finalist, then contact")}</strong>
+        <p>{t("Use `Finalist` when one listing is pulling ahead, then contact from the listing page when you are ready.")}</p>
       </article>
     </div>
     <div class="action-row top-gap">
-      <a class="button-secondary" href="/help/buyer-shortlist-and-compare/">Open buyer guide</a>
-      <a class="button-tertiary" href="/help/what-changed-march-2026/">What changed</a>
+      <a class="button-secondary" href="/help/buyer-shortlist-and-compare/">{t("Open buyer guide")}</a>
+      <a class="button-tertiary" href="/help/what-changed-march-2026/">{t("What changed")}</a>
     </div>
   </section>
 

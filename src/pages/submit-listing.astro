@@ -3,73 +3,73 @@ import Layout from "../layouts/Layout.astro";
 
 const created = Astro.url.searchParams.get("created");
 const owner = Astro.locals.owner;
+const t = Astro.locals.t || ((value: string) => value);
 ---
 
-<Layout title="Post a Listing | Property App 2026" description="Owners can submit property listings directly into the marketplace.">
+<Layout title={`${t("Post a listing")} | Property App 2026`} description={t("Owners can submit property listings directly into the marketplace.")}>
   <section class="page-head card">
     <div class="head-copy">
-      <span class="pill">Owner flow</span>
-      <h1 class="section-title">Post a listing</h1>
+      <span class="pill">{t("Owner flow")}</span>
+      <h1 class="section-title">{t("Post a listing")}</h1>
       <p class="section-copy">
-        Build the listing with enough trust, location context, and media intent that a buyer can decide whether it is
-        worth enquiring. Every new listing starts on a 7-day free trial, then can be upgraded into paid or promoted visibility.
+        {t("Build the listing with enough trust, location context, and media intent that a buyer can decide whether it is worth enquiring. Every new listing starts on a 7-day free trial, then can be upgraded into paid or promoted visibility.")}
       </p>
       <div class="head-signals">
-        <span>Searchable facts first</span>
-        <span>Trust and location context next</span>
-        <span>Gallery and contact layer after publish</span>
+        <span>{t("Searchable facts first")}</span>
+        <span>{t("Trust and location context next")}</span>
+        <span>{t("Gallery and contact layer after publish")}</span>
       </div>
     </div>
     <div class="actions">
-      <a class="ghost" href="/owner/dashboard/">Owner dashboard</a>
-      <a class="ghost" href="/help/posting-and-managing-listings/">Owner help</a>
+      <a class="ghost" href="/owner/dashboard/">{t("Owner dashboard")}</a>
+      <a class="ghost" href="/help/posting-and-managing-listings/">{t("Owner help")}</a>
       <form method="POST" action="/api/auth/logout">
-        <button class="ghost" type="submit">Log out</button>
+        <button class="ghost" type="submit">{t("Log out")}</button>
       </form>
     </div>
   </section>
 
   {created && (
     <div class="notice card">
-      Listing created successfully. New slug: <code>{created}</code>. Add photos from the <a href="/owner/dashboard/">owner dashboard</a>.
+      {t("Listing created successfully. New slug:")} <code>{created}</code>. {t("Add photos from the")} <a href="/owner/dashboard/">{t("owner dashboard")}</a>.
     </div>
   )}
 
   <section class="prep-grid">
     <div class="pricing card">
-      <strong>Monetization path</strong>
+      <strong>{t("Monetization path")}</strong>
       <ul>
-        <li>Free: every listing is visible for 7 days.</li>
-        <li>Paid: keep a listing live after the free-trial window.</li>
-        <li>Promoted: push the listing above standard inventory.</li>
+        <li>{t("Free: every listing is visible for 7 days.")}</li>
+        <li>{t("Paid: keep a listing live after the free-trial window.")}</li>
+        <li>{t("Promoted: push the listing above standard inventory.")}</li>
       </ul>
     </div>
 
     <div class="pricing card">
-      <strong>What makes a listing perform</strong>
+      <strong>{t("What makes a listing perform")}</strong>
       <ul>
-        <li>Specific headline and summary, not generic sales language.</li>
-        <li>Real neighborhood context: commute, landmarks, buyer trust signals.</li>
-        <li>Clear ownership identity and realistic response expectations.</li>
+        <li>{t("Specific headline and summary, not generic sales language.")}</li>
+        <li>{t("Real neighborhood context: commute, landmarks, buyer trust signals.")}</li>
+        <li>{t("Clear ownership identity and realistic response expectations.")}</li>
       </ul>
     </div>
 
     <div class="pricing card">
-      <strong>Photo checklist</strong>
+      <strong>{t("Photo checklist")}</strong>
       <ul>
-        <li>One strong exterior or tower/context image.</li>
-        <li>Main living area in natural light.</li>
-        <li>Kitchen, primary bedroom, and bathroom.</li>
-        <li>One neighborhood or amenities image if available.</li>
+        <li>{t("One strong exterior or tower/context image.")}</li>
+        <li>{t("Main living area in natural light.")}</li>
+        <li>{t("Kitchen, primary bedroom, and bathroom.")}</li>
+        <li>{t("One neighborhood or amenities image if available.")}</li>
       </ul>
     </div>
 
     <div class="pricing card">
-      <strong>Before you publish</strong>
+      <strong>{t("Before you publish")}</strong>
       <ul>
-        <li>Lead with the specific buyer fit, not vague “luxury” claims.</li>
-        <li>Use the location section to explain why the area works.</li>
-        <li>Upload a gallery immediately after publishing from the owner workspace.</li>
+        <li>{t("Lead with the specific buyer fit, not vague “luxury” claims.")}</li>
+        <li>{t("Use the location section to explain why the area works.")}</li>
+        <li>{t("Upload a gallery immediately after publishing from the owner workspace.")}</li>
       </ul>
     </div>
   </section>
@@ -77,21 +77,21 @@ const owner = Astro.locals.owner;
   <section class="onboarding-strip card">
     <div class="strip-copy">
       <span class="pill">Publishing rhythm</span>
-      <h2>Good onboarding keeps owners moving with confidence.</h2>
-      <p>Use this page to build the decision layer first. After publish, go straight to the owner dashboard to upload media, monitor performance, and respond to enquiries.</p>
+      <h2>{t("Good onboarding keeps owners moving with confidence.")}</h2>
+      <p>{t("Use this page to build the decision layer first. After publish, go straight to the owner dashboard to upload media, monitor performance, and respond to enquiries.")}</p>
     </div>
     <div class="strip-grid">
       <article>
-        <strong>Stage 1</strong>
-        <span>Set the facts buyers filter on: city, type, price, beds, and sale mode.</span>
+        <strong>{t("Stage 1")}</strong>
+        <span>{t("Set the facts buyers filter on: city, type, price, beds, and sale mode.")}</span>
       </article>
       <article>
-        <strong>Stage 2</strong>
-        <span>Write the positioning and location context so the listing feels credible.</span>
+        <strong>{t("Stage 2")}</strong>
+        <span>{t("Write the positioning and location context so the listing feels credible.")}</span>
       </article>
       <article>
-        <strong>Stage 3</strong>
-        <span>Publish, upload a gallery, and tighten the listing from live buyer signals.</span>
+        <strong>{t("Stage 3")}</strong>
+        <span>{t("Publish, upload a gallery, and tighten the listing from live buyer signals.")}</span>
       </article>
     </div>
   </section>

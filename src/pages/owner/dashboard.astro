@@ -9,6 +9,7 @@ import { getOwnerDashboardData } from "../../lib/dashboard";
 import { getDB } from "../../lib/runtime";
 
 const owner = Astro.locals.owner;
+const t = Astro.locals.t || ((value: string) => value);
 const { listings, enquiries, payments, notifications, savedSearches, inboxNotifications, unreadNotificationCount, verificationStatus } = owner
   ? await getOwnerDashboardData(owner.id, getDB(Astro.locals.runtime))
   : { listings: [], enquiries: [], payments: [], notifications: [], savedSearches: [], inboxNotifications: [], unreadNotificationCount: 0, verificationStatus: null };
@@ -80,53 +81,53 @@ function getCoverPosition(listing: { cover_focus_x?: number | null; cover_focus_
 }
 ---
 
-<Layout title="Owner Dashboard | Property App 2026" description="Review submitted listings and enquiries from the marketplace backend.">
+<Layout title={`${t("Owner dashboard")} | Property App 2026`} description={t("Review submitted listings and enquiries from the marketplace backend.")}>
   <WorkspaceHero
-    eyebrow="Owner workspace"
-    title="Run listings, enquiries, and renewals without losing the thread."
-    text="This should feel closer to an operator workspace than an admin panel. Inventory health, buyer follow-up, and paid visibility all stay readable in one place."
+    eyebrow={t("Owner workspace")}
+    title={t("Run listings, enquiries, and renewals without losing the thread.")}
+    text={t("This should feel closer to an operator workspace than an admin panel. Inventory health, buyer follow-up, and paid visibility all stay readable in one place.")}
     actions={[
-      { href: "/submit-listing/", label: "Post a listing" },
-      { href: "/account/inbox", label: "Open inbox", kind: "secondary" },
-      { href: "/account/notifications", label: "Notification settings", kind: "secondary" },
+      { href: "/submit-listing/", label: t("Post a listing") },
+      { href: "/account/inbox", label: t("Open inbox"), kind: "secondary" },
+      { href: "/account/notifications", label: t("Notification settings"), kind: "secondary" },
     ]}
   />
 
   <WorkspaceStats
     items={[
-      { label: "Inventory", value: listings.length, copy: "Database listings" },
-      { label: "Pipeline", value: enquiries.length, copy: "Enquiries received" },
-      { label: "Inbox", value: unreadNotificationCount, copy: "Unread notifications" },
+      { label: t("Inventory"), value: listings.length, copy: t("Database listings") },
+      { label: t("Pipeline"), value: enquiries.length, copy: t("Enquiries received") },
+      { label: t("Inbox"), value: unreadNotificationCount, copy: t("Unread notifications") },
     ]}
   />
 
   <AccountSummaryCard
     blocks={[
-      { eyebrow: "Signed in as", title: owner?.full_name ?? "Owner account", copy: owner?.email ?? "" },
-      { eyebrow: "Plan tier", title: owner?.plan_tier ?? "starter", copy: "7-day free trial, paid listing upgrades, promoted placement" },
+      { eyebrow: t("Signed in as"), title: owner?.full_name ?? t("Owner account"), copy: owner?.email ?? "" },
+      { eyebrow: t("Plan tier"), title: owner?.plan_tier ?? "starter", copy: t("7-day free trial, paid listing upgrades, promoted placement") },
     ]}
   />
 
-  {uploaded && <FlashBanner message={`${uploadCount || "1"} image${uploadCount === "1" ? "" : "s"} uploaded for ${uploaded}. Gallery coverage updated immediately.`} />}
+  {uploaded && <FlashBanner message={`${uploadCount || "1"} ${t("image")}${uploadCount === "1" ? "" : "s"} ${t("uploaded for")} ${updated || uploaded}. ${t("Gallery coverage updated immediately.")}`} />}
   {updated && action === "gallery-updated" && (
-    <FlashBanner message={`${mediaAction === "deleted" ? "Removed one image from" : mediaAction === "focal" ? "Updated the cover crop for" : "Updated gallery order for"} ${updated}. Listing media state is live now.`} />
+    <FlashBanner message={`${t(mediaAction === "deleted" ? "Removed one image from" : mediaAction === "focal" ? "Updated the cover crop for" : "Updated gallery order for")} ${updated}. ${t("Listing media state is live now.")}`} />
   )}
   {updated && action === "enquiry-responded" && (
     <FlashBanner
       tone="info"
-      message={`Enquiry status for ${updated} moved to ${status || "updated"}. The buyer-facing history will reflect this on their next view.`}
+      message={`${t("Enquiry status for")} ${updated} ${t("moved to")} ${status || t("updated")}. ${t("The buyer-facing history will reflect this on their next view.")}`}
     />
   )}
   {updated && action === "plan-updated" && (
     <FlashBanner
       tone="info"
-      message={`Billing state for ${updated} moved to ${planType || "updated"}. Visibility rules are already recalculated.`}
+      message={`${t("Billing state for")} ${updated} ${t("moved to")} ${planType || t("updated")}. ${t("Visibility rules are already recalculated.")}`}
     />
   )}
-  {updated && !action && <FlashBanner message={`Listing state updated for ${updated}.`} />}
-  {savedSearchDeleted && <FlashBanner message="Saved search deleted." />}
-  {action === "verification-requested" && <FlashBanner tone="info" message="Verification request submitted. Admin review is now required before trust status changes." />}
-  {action === "verification-pending" && <FlashBanner tone="info" message="A verification request is already pending review." />}
+  {updated && !action && <FlashBanner message={`${t("Listing state updated for")} ${updated}.`} />}
+  {savedSearchDeleted && <FlashBanner message={t("Saved search deleted.")} />}
+  {action === "verification-requested" && <FlashBanner tone="info" message={t("Verification request submitted. Admin review is now required before trust status changes.")} />}
+  {action === "verification-pending" && <FlashBanner tone="info" message={t("A verification request is already pending review.")} />}
 
   <section class="card panel section-gap">
     <div class="panel-head">

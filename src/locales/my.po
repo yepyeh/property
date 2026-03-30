@@ -259,6 +259,273 @@ msgstr "District"
 msgid "Condo"
 msgstr "Condo"
 
+msgid "Owners can submit property listings directly into the marketplace."
+msgstr "Owners can submit property listings directly into the marketplace."
+
+msgid "Owner flow"
+msgstr "Owner flow"
+
+msgid "Owner help"
+msgstr "Owner help"
+
+msgid "Log out"
+msgstr "Log out"
+
+msgid "Listing created successfully. New slug:"
+msgstr "Listing created successfully. New slug:"
+
+msgid "Add photos from the"
+msgstr "Add photos from the"
+
+msgid "owner dashboard"
+msgstr "owner dashboard"
+
+msgid "Monetization path"
+msgstr "Monetization path"
+
+msgid "Free: every listing is visible for 7 days."
+msgstr "Free: every listing is visible for 7 days."
+
+msgid "Paid: keep a listing live after the free-trial window."
+msgstr "Paid: keep a listing live after the free-trial window."
+
+msgid "Promoted: push the listing above standard inventory."
+msgstr "Promoted: push the listing above standard inventory."
+
+msgid "What makes a listing perform"
+msgstr "What makes a listing perform"
+
+msgid "Specific headline and summary, not generic sales language."
+msgstr "Specific headline and summary, not generic sales language."
+
+msgid "Real neighborhood context: commute, landmarks, buyer trust signals."
+msgstr "Real neighborhood context: commute, landmarks, buyer trust signals."
+
+msgid "Clear ownership identity and realistic response expectations."
+msgstr "Clear ownership identity and realistic response expectations."
+
+msgid "Photo checklist"
+msgstr "Photo checklist"
+
+msgid "One strong exterior or tower/context image."
+msgstr "One strong exterior or tower/context image."
+
+msgid "Main living area in natural light."
+msgstr "Main living area in natural light."
+
+msgid "Kitchen, primary bedroom, and bathroom."
+msgstr "Kitchen, primary bedroom, and bathroom."
+
+msgid "One neighborhood or amenities image if available."
+msgstr "One neighborhood or amenities image if available."
+
+msgid "Before you publish"
+msgstr "Before you publish"
+
+msgid "Lead with the specific buyer fit, not vague “luxury” claims."
+msgstr "Lead with the specific buyer fit, not vague “luxury” claims."
+
+msgid "Use the location section to explain why the area works."
+msgstr "Use the location section to explain why the area works."
+
+msgid "Upload a gallery immediately after publishing from the owner workspace."
+msgstr "Upload a gallery immediately after publishing from the owner workspace."
+
+msgid "Good onboarding keeps owners moving with confidence."
+msgstr "Good onboarding keeps owners moving with confidence."
+
+msgid "Use this page to build the decision layer first. After publish, go straight to the owner dashboard to upload media, monitor performance, and respond to enquiries."
+msgstr "Use this page to build the decision layer first. After publish, go straight to the owner dashboard to upload media, monitor performance, and respond to enquiries."
+
+msgid "Stage 1"
+msgstr "Stage 1"
+
+msgid "Set the facts buyers filter on: city, type, price, beds, and sale mode."
+msgstr "Set the facts buyers filter on: city, type, price, beds, and sale mode."
+
+msgid "Stage 2"
+msgstr "Stage 2"
+
+msgid "Write the positioning and location context so the listing feels credible."
+msgstr "Write the positioning and location context so the listing feels credible."
+
+msgid "Stage 3"
+msgstr "Stage 3"
+
+msgid "Publish, upload a gallery, and tighten the listing from live buyer signals."
+msgstr "Publish, upload a gallery, and tighten the listing from live buyer signals."
+
+msgid "Manage saved searches and buyer-side activity in the marketplace."
+msgstr "Manage saved searches and buyer-side activity in the marketplace."
+
+msgid "Buyer workspace"
+msgstr "Buyer workspace"
+
+msgid "Track homes, return to strong areas, and keep your shortlist moving."
+msgstr "Track homes, return to strong areas, and keep your shortlist moving."
+
+msgid "This should feel like a clean buyer workspace, not a storage page. Saved searches, favorite listings, and new activity stay in one place so revisits feel deliberate."
+msgstr "This should feel like a clean buyer workspace, not a storage page. Saved searches, favorite listings, and new activity stay in one place so revisits feel deliberate."
+
+msgid "Compare saved homes"
+msgstr "Compare saved homes"
+
+msgid "Saved listing removed."
+msgstr "Saved listing removed."
+
+msgid "Shortlist state updated."
+msgstr "Shortlist state updated."
+
+msgid "Auction watch updated."
+msgstr "Auction watch updated."
+
+msgid "Auction watch removed."
+msgstr "Auction watch removed."
+
+msgid "Favorites"
+msgstr "Favorites"
+
+msgid "Finalists"
+msgstr "Finalists"
+
+msgid "Decision-ready homes"
+msgstr "Decision-ready homes"
+
+msgid "Sent enquiries"
+msgstr "Sent enquiries"
+
+msgid "Watching"
+msgstr "Watching"
+
+msgid "Auction alerts"
+msgstr "Auction alerts"
+
+msgid "Recent"
+msgstr "Recent"
+
+msgid "Recently viewed"
+msgstr "Recently viewed"
+
+msgid "Unread notifications"
+msgstr "Unread notifications"
+
+msgid "Account role"
+msgstr "Account role"
+
+msgid "Browse, save, compare, and return to high-intent searches"
+msgstr "Browse, save, compare, and return to high-intent searches"
+
+msgid "How to use this"
+msgstr "How to use this"
+
+msgid "Like a listing, but not ready to contact yet?"
+msgstr "Like a listing, but not ready to contact yet?"
+
+msgid "Use the buyer flow in order. Save a few places into your shortlist, compare them side by side, mark a finalist, then contact the one that still looks strongest after price, location, and trust are all on the table."
+msgstr "Use the buyer flow in order. Save a few places into your shortlist, compare them side by side, mark a finalist, then contact the one that still looks strongest after price, location, and trust are all on the table."
+
+msgid "1. Save to shortlist"
+msgstr "1. Save to shortlist"
+
+msgid "Add any promising listing first. You do not need to decide on the spot."
+msgstr "Add any promising listing first. You do not need to decide on the spot."
+
+msgid "2. Group into collections"
+msgstr "2. Group into collections"
+
+msgid "Use collections for areas, trips, or move plans so your shortlist does not turn into one long pile."
+msgstr "Use collections for areas, trips, or move plans so your shortlist does not turn into one long pile."
+
+msgid "3. Compare a few"
+msgstr "3. Compare a few"
+
+msgid "Put two or three options next to each other so tradeoffs are obvious."
+msgstr "Put two or three options next to each other so tradeoffs are obvious."
+
+msgid "4. Mark finalist, then contact"
+msgstr "4. Mark finalist, then contact"
+
+msgid "Use `Finalist` when one listing is pulling ahead, then contact from the listing page when you are ready."
+msgstr "Use `Finalist` when one listing is pulling ahead, then contact from the listing page when you are ready."
+
+msgid "Review submitted listings and enquiries from the marketplace backend."
+msgstr "Review submitted listings and enquiries from the marketplace backend."
+
+msgid "Run listings, enquiries, and renewals without losing the thread."
+msgstr "Run listings, enquiries, and renewals without losing the thread."
+
+msgid "This should feel closer to an operator workspace than an admin panel. Inventory health, buyer follow-up, and paid visibility all stay readable in one place."
+msgstr "This should feel closer to an operator workspace than an admin panel. Inventory health, buyer follow-up, and paid visibility all stay readable in one place."
+
+msgid "Inventory"
+msgstr "Inventory"
+
+msgid "Database listings"
+msgstr "Database listings"
+
+msgid "Pipeline"
+msgstr "Pipeline"
+
+msgid "Enquiries received"
+msgstr "Enquiries received"
+
+msgid "Owner account"
+msgstr "Owner account"
+
+msgid "Plan tier"
+msgstr "Plan tier"
+
+msgid "7-day free trial, paid listing upgrades, promoted placement"
+msgstr "7-day free trial, paid listing upgrades, promoted placement"
+
+msgid "image"
+msgstr "image"
+
+msgid "uploaded for"
+msgstr "uploaded for"
+
+msgid "Gallery coverage updated immediately."
+msgstr "Gallery coverage updated immediately."
+
+msgid "Removed one image from"
+msgstr "Removed one image from"
+
+msgid "Updated the cover crop for"
+msgstr "Updated the cover crop for"
+
+msgid "Updated gallery order for"
+msgstr "Updated gallery order for"
+
+msgid "Listing media state is live now."
+msgstr "Listing media state is live now."
+
+msgid "Enquiry status for"
+msgstr "Enquiry status for"
+
+msgid "moved to"
+msgstr "moved to"
+
+msgid "updated"
+msgstr "updated"
+
+msgid "The buyer-facing history will reflect this on their next view."
+msgstr "The buyer-facing history will reflect this on their next view."
+
+msgid "Billing state for"
+msgstr "Billing state for"
+
+msgid "Visibility rules are already recalculated."
+msgstr "Visibility rules are already recalculated."
+
+msgid "Listing state updated for"
+msgstr "Listing state updated for"
+
+msgid "Verification request submitted. Admin review is now required before trust status changes."
+msgstr "Verification request submitted. Admin review is now required before trust status changes."
+
+msgid "A verification request is already pending review."
+msgstr "A verification request is already pending review."
+
 msgid "Villa"
 msgstr "Villa"
 
