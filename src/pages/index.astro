@@ -116,11 +116,10 @@ const comparePoints = [
 
   <HomeFeaturedSection featuredListings={featuredListings} />
 
-  <section class="compare-band card section-space">
+  <section class="compare-band section-space">
     <div class="compare-head">
       <span class="pill">{t("How we compare")}</span>
       <h2>{t("We are not trying to be louder than the old portal model. We are trying to be more useful.")}</h2>
-      <p class="secondary-text">{t("The strongest competitors already prove the market exists. The product opportunity is to reduce clutter, improve trust, and help buyers and owners move through real workflows instead of directory pages.")}</p>
     </div>
     <div class="compare-grid">
       {comparePoints.map((point) => (
@@ -140,10 +139,11 @@ const comparePoints = [
 
 <style is:inline>
   .compare-band {
-    padding: var(--space-l);
+    padding-block: var(--space-2xl);
     margin-top: 0;
     display: grid;
-    gap: var(--space-l);
+    gap: var(--space-xl);
+    border-top: 1px solid var(--border);
   }
 
   .compare-head {
@@ -175,9 +175,9 @@ const comparePoints = [
     display: grid;
     gap: var(--space-xs);
     padding: var(--space-m);
-    border-radius: var(--radius-lg);
-    background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
-    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: 1px solid var(--border);
   }
 
   .compare-grid strong {
@@ -186,7 +186,7 @@ const comparePoints = [
   }
 
   .pill.subtle {
-    background: var(--surface-overlay);
+    background: transparent;
   }
 
   @media (max-width: 860px) {

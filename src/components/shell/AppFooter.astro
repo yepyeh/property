@@ -21,21 +21,20 @@ const isAdmin = viewer?.role === "admin";
 const footerLocales = (localeOptions as LocaleOption[]).filter((option) => option.code === "en" || option.suggested || option.code === currentLocale).slice(0, 3);
 ---
 
-<footer class="app-footer card">
+<footer class="app-footer">
   <div class="footer-grid">
     <div class="footer-brand">
-      <span class="pill">Property App 2026</span>
+      <span class="footer-eyebrow">Property App 2026</span>
       <h2>{t("Search clearly. Decide faster. Move with context.")}</h2>
       <p>
         {t("Built for listing discovery, buyer decision-making, owner-side follow-through, and a stronger trust standard.")}
       </p>
-      <div class="footer-cta-row">
-        <a class="footer-cta primary" href="/listings/?intent=buy">{t("Browse homes")}</a>
-        <a class="footer-cta" href="/help/">{t("Open help centre")}</a>
+      <div class="footer-brand-links">
+        <a href="/listings/?intent=buy">{t("Browse homes")}</a>
+        <a href="/help/">{t("Open help centre")}</a>
       </div>
       <div class="footer-locale-note">
         <strong>{t("Language")}</strong>
-        <p>{t("English-first, with your local language available.")}</p>
         <div class="footer-locale-links">
           {footerLocales.map((option) => (
             <a class:list={[option.current && "active"]} href={option.href}>

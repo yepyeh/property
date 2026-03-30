@@ -28,12 +28,11 @@ const {
   <div class="section-heading narrow">
     <span class="section-kicker">{sectionKicker}</span>
     <h2>{sectionTitle}</h2>
-    <p>{sectionBody}</p>
   </div>
 
   <div class="path-grid">
     {entryPaths.map((path, index) => (
-      <article class="path-card card">
+      <article class="path-card">
         <div class="path-head">
           <span class="mini-kicker">{path.kicker}</span>
           <span class="path-index">0{index + 1}</span>
@@ -51,12 +50,13 @@ const {
 
 <style is:inline>
   .path-section {
-    margin-top: 2.75rem;
+    padding-block: var(--space-2xl);
+    border-top: 1px solid var(--border);
   }
 
   .section-heading {
     max-width: 48rem;
-    margin-bottom: 1.2rem;
+    margin-bottom: var(--space-xl);
   }
 
   .section-heading.narrow {
@@ -68,30 +68,20 @@ const {
   .path-index {
     display: inline-flex;
     align-items: center;
-    min-height: 2rem;
-    padding: 0.35rem 0.82rem;
-    border-radius: var(--radius-full);
-    border: 1px solid var(--line);
-    background: var(--surface-overlay);
-    color: var(--muted-strong);
-    font-size: 0.72rem;
+    color: var(--muted);
+    font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
-  .path-index {
-    background: var(--bg-soft);
-  }
-
   .section-heading h2 {
-    margin: 0.7rem 0 0;
+    margin: var(--space-s) 0 0;
     font-size: var(--text-display);
     line-height: 0.9;
     letter-spacing: -0.1em;
   }
 
-  .section-heading p,
   .path-card p {
     color: var(--muted);
     line-height: 1.76;
@@ -105,11 +95,11 @@ const {
 
   .path-card {
     display: grid;
-    gap: 0.95rem;
+    gap: var(--space-s);
     padding: var(--space-l);
-    border-radius: calc(var(--radius-lg) * 1.8);
-    background: var(--surface-overlay);
-    box-shadow: var(--shadow-soft);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: transparent;
   }
 
   .path-head {
@@ -129,7 +119,7 @@ const {
 
   .path-actions {
     display: flex;
-    gap: 0.7rem;
+    gap: var(--space-s);
     flex-wrap: wrap;
     margin-top: 0.15rem;
   }
@@ -138,11 +128,11 @@ const {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 2.7rem;
-    padding: 0.75rem 0.98rem;
-    border-radius: var(--radius-full);
-    border: 1px solid var(--line);
-    background: var(--surface-elevated-strong);
+    min-height: calc(var(--space-xl) + var(--space-2xs));
+    padding: var(--space-s) var(--space-m);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: transparent;
     color: var(--text);
     font-size: 0.88rem;
     font-weight: 700;

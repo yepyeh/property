@@ -1,4 +1,4 @@
-<section class="product-band card">
+<section class="product-band">
   <div class="band-copy">
     <span class="section-kicker">Mobile app path</span>
     <h2>Start as a serious web marketplace. Let native come later.</h2>
@@ -23,21 +23,20 @@
 
 <style is:inline>
   .product-band {
-    margin-top: 2.35rem;
+    margin-top: 0;
     display: grid;
     grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
-    gap: var(--space-m);
-    padding: var(--space-l);
-    border-radius: calc(var(--radius-lg) * 2);
-    background: linear-gradient(180deg, color-mix(in srgb, var(--brand) 92%, black), var(--brand))
-    color: var(--surface-canvas);
+    gap: var(--space-xl);
+    padding-block: var(--space-2xl);
+    border-top: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border));
+    color: var(--text);
   }
 
   .section-kicker,
   .panel-label {
     display: inline-flex;
-    color: var(--surface-panel-muted);
-    font-size: 0.72rem;
+    color: var(--muted);
+    font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -54,18 +53,17 @@
     font-size: var(--text-display);
     line-height: 0.9;
     letter-spacing: -0.1em;
-    color: var(--surface-canvas);
   }
 
   .band-copy p,
   .panel-window span {
-    color: var(--surface-panel-muted);
+    color: var(--muted);
     line-height: 1.75;
   }
 
   .band-panel {
     display: grid;
-    gap: 0.9rem;
+    gap: var(--space-m);
     align-content: center;
   }
 
@@ -73,18 +71,14 @@
     display: grid;
     gap: 0.28rem;
     padding: var(--space-m);
-    border-radius: calc(var(--radius-lg) * 1.35);
-    background: color-mix(in srgb, var(--surface-canvas) 10%, transparent);
-    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: 1px solid var(--border);
   }
 
   .panel-window strong {
     font-size: var(--text-base);
     letter-spacing: -0.04em;
-  }
-
-  .panel-window.muted {
-    background: color-mix(in srgb, var(--surface-canvas) 8%, transparent);
   }
 
   @media (max-width: 1080px) {
