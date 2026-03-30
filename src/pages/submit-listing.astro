@@ -204,6 +204,32 @@ const t = Astro.locals.t || ((value: string) => value);
         <label>Auction starting price<input name="auctionStartingPriceLabel" placeholder="Opening bid 11.2B VND" /></label>
       </div>
       <label>Short summary<textarea name="summary" rows="3" required placeholder="High-floor condo with clean finish quality, direct bridge access into the core, and a layout that feels stronger than typical investor stock."></textarea><span class="field-tip">Three lines. Think listing card, not brochure. Lead with the buyer fit and the strongest differentiator.</span></label>
+      <div class="description-assistant card-inset" data-description-assistant>
+        <div class="assistant-head">
+          <div class="assistant-copy">
+            <span class="preview-kicker">Editorial drafting</span>
+            <strong>Generate Description</strong>
+            <p>Use the listing facts to draft a warmer, more credible narrative. The AI version is optimized for high-intent buyers, then you can edit it freely.</p>
+          </div>
+          <button type="button" class="generate-button" data-generate-description>
+            <span class="sparkles-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 3L13.8 8.2L19 10L13.8 11.8L12 17L10.2 11.8L5 10L10.2 8.2L12 3Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M18 3V7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
+                <path d="M20 5H16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
+              </svg>
+            </span>
+            <span>Generate Description</span>
+          </button>
+        </div>
+        <div class="description-preview" data-description-preview>
+          <div class="description-preview-head">
+            <span class="assistant-status">Optimized for High-Intent Buyers</span>
+            <span class="assistant-status muted-status" data-description-state>Ready</span>
+          </div>
+          <p class="description-excerpt" data-description-excerpt>Use the generator to draft a more editorial, confidence-led description from the listing facts above.</p>
+        </div>
+      </div>
       <label>Full description<textarea name="description" rows="6" required placeholder="Describe the home, location, condition, buyer fit, and why it stands out against nearby alternatives."></textarea><span class="field-tip">Write for a buyer deciding whether to enquire today, not for an internal property record.</span></label>
       <label>Included features<input name="features" placeholder="Private garden, Home office, Pool deck, Covered parking" /></label>
       <div class="grid three">
@@ -267,6 +293,17 @@ const t = Astro.locals.t || ((value: string) => value);
       const bedsInput = submitForm.querySelector('input[name="beds"]');
       const bathsInput = submitForm.querySelector('input[name="baths"]');
       const areaInput = submitForm.querySelector('input[name="area"]');
+      const summaryInput = submitForm.querySelector('textarea[name="summary"]');
+      const descriptionInput = submitForm.querySelector('textarea[name="description"]');
+      const wardInput = submitForm.querySelector('input[name="ward"]');
+      const featuresInput = submitForm.querySelector('input[name="features"]');
+      const trustSignalsInput = submitForm.querySelector('input[name="trustSignals"]');
+      const neighborhoodHeadlineInput = submitForm.querySelector('textarea[name="neighborhoodHeadline"]');
+      const commuteNotesInput = submitForm.querySelector('textarea[name="commuteNotes"]');
+      const generateButton = submitForm.querySelector("[data-generate-description]");
+      const descriptionPreview = submitForm.querySelector("[data-description-preview]");
+      const descriptionExcerpt = submitForm.querySelector("[data-description-excerpt]");
+      const descriptionState = submitForm.querySelector("[data-description-state]");
 
       const titleNode = submitForm.querySelector("[data-preview-title]");
       const routeNode = submitForm.querySelector("[data-preview-route]");
@@ -307,6 +344,65 @@ const t = Astro.locals.t || ((value: string) => value);
         });
 
       updatePreview();
+
+      const animateDescription = async (text) => {
+        if (!descriptionInput || !descriptionExcerpt) return;
+        descriptionInput.value = "";
+        descriptionExcerpt.textContent = "";
+
+        for (const char of text) {
+          descriptionInput.value += char;
+          descriptionExcerpt.textContent += char;
+          await new Promise((resolve) => window.setTimeout(resolve, 8));
+        }
+      };
+
+      generateButton?.addEventListener("click", async () => {
+        const payload = {
+          title: titleInput?.value || "",
+          propertyType: propertyTypeInput?.value || "",
+          country: submitForm.querySelector('select[name="country"]')?.value || "",
+          city: cityInput?.value || "",
+          district: districtInput?.value || "",
+          ward: wardInput?.value || "",
+          area: areaInput?.value || "",
+          beds: bedsInput?.value || "",
+          baths: bathsInput?.value || "",
+          summary: summaryInput?.value || "",
+          neighborhoodHeadline: neighborhoodHeadlineInput?.value || "",
+          commuteNotes: commuteNotesInput?.value || "",
+          uniqueSellingPoints: featuresInput?.value || "",
+          trustSignals: trustSignalsInput?.value || "",
+        };
+
+        if (descriptionPreview) descriptionPreview.classList.add("is-generating");
+        if (descriptionState) descriptionState.textContent = "Writing";
+        generateButton.setAttribute("disabled", "disabled");
+
+        try {
+          const response = await fetch("/api/listings/generate-description", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          if (!response.ok) {
+            throw new Error("Description generation failed");
+          }
+
+          const data = await response.json();
+          await animateDescription(data.description || "");
+          if (descriptionState) descriptionState.textContent = "Generated";
+        } catch (error) {
+          if (descriptionExcerpt) {
+            descriptionExcerpt.textContent = "Description generation failed. Check the core facts and try again.";
+          }
+          if (descriptionState) descriptionState.textContent = "Retry";
+        } finally {
+          if (descriptionPreview) descriptionPreview.classList.remove("is-generating");
+          generateButton.removeAttribute("disabled");
+        }
+      });
     }
   </script>
 
@@ -566,6 +662,104 @@ const t = Astro.locals.t || ((value: string) => value);
       margin: 0;
       color: var(--muted);
       line-height: 1.7;
+    }
+    .description-assistant {
+      gap: 1rem;
+      background: rgba(24, 24, 27, 0.3);
+      padding: 1.5rem;
+      border: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+      border-radius: 1rem;
+    }
+    .assistant-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .assistant-copy {
+      display: grid;
+      gap: 0.5rem;
+      max-width: 42rem;
+    }
+    .assistant-copy strong {
+      font-size: 1.1rem;
+      letter-spacing: -0.03em;
+    }
+    .generate-button {
+      border: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+      background: color-mix(in srgb, var(--surface-input-strong) 84%, transparent);
+      color: var(--text);
+      transition: border-color var(--duration-fast) var(--ease-premium), background var(--duration-fast) var(--ease-premium), transform var(--duration-fast) var(--ease-premium);
+      gap: 0.65rem;
+    }
+    .generate-button:hover {
+      border-color: color-mix(in srgb, var(--accent-strong) 28%, transparent);
+      background: color-mix(in srgb, var(--surface-input-strong) 92%, transparent);
+    }
+    .generate-button[disabled] {
+      opacity: 0.7;
+      cursor: wait;
+    }
+    .sparkles-icon {
+      display: inline-flex;
+      width: 1.1rem;
+      height: 1.1rem;
+      color: var(--accent-strong);
+    }
+    .sparkles-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+    .description-preview {
+      display: grid;
+      gap: 0.8rem;
+      padding: 1.5rem;
+      background: rgba(24, 24, 27, 0.3);
+      border: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+      border-radius: 1rem;
+      transition: border-color var(--duration-fast) var(--ease-premium);
+    }
+    .description-preview.is-generating {
+      animation: preview-pulse 1.2s ease-in-out infinite;
+      border-color: color-mix(in srgb, var(--accent-strong) 30%, transparent);
+    }
+    .description-preview-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .assistant-status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 1.9rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--accent-strong) 12%, transparent);
+      color: var(--accent-strong);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .muted-status {
+      background: color-mix(in srgb, var(--surface-input) 84%, transparent);
+      color: var(--muted);
+    }
+    .description-excerpt {
+      margin: 0;
+      color: var(--text);
+      font-size: 1.02rem;
+      line-height: 1.8;
+      letter-spacing: -0.01em;
+      font-weight: 500;
+      max-width: 66ch;
+    }
+    @keyframes preview-pulse {
+      0%, 100% { border-color: color-mix(in srgb, var(--line) 60%, transparent); }
+      50% { border-color: color-mix(in srgb, var(--accent-strong) 36%, transparent); }
     }
     .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
