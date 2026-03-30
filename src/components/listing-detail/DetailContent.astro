@@ -1,6 +1,7 @@
 ---
 import type { AuctionTimelineStep, Listing } from "../../data/listings";
 import type { ListingInsights } from "../../lib/insights";
+import type { AuctionEventRecord } from "../../lib/marketplace-types";
 
 export interface Props {
   listing: Listing;
@@ -9,10 +10,11 @@ export interface Props {
   insights?: ListingInsights;
   hasPremiumInsights?: boolean;
   auctionTimeline?: AuctionTimelineStep[];
+  auctionEvents?: AuctionEventRecord[];
   t?: (value: string) => string;
 }
 
-const { listing, mapHref, mapEmbedHref, insights, hasPremiumInsights = false, auctionTimeline = [], t = (value: string) => value } = Astro.props;
+const { listing, mapHref, mapEmbedHref, insights, hasPremiumInsights = false, auctionTimeline = [], auctionEvents = [], t = (value: string) => value } = Astro.props;
 const neighborhood = listing.neighborhood;
 const location = listing.location;
 const isAuction = listing.saleMode === "auction";
@@ -48,6 +50,26 @@ const isAuction = listing.saleMode === "auction";
             <article class={`timeline-step timeline-${step.state}`}>
               <strong>{t(step.title)}</strong>
               <p>{t(step.body)}</p>
+            </article>
+          ))}
+        </div>
+      )}
+      {auctionEvents.length > 0 && (
+        <div class="auction-events">
+          <div class="events-head">
+            <strong>{t("Live auction signals")}</strong>
+            <span>{t("Recent updates for watchers and registered bidders")}</span>
+          </div>
+          {auctionEvents.map((event) => (
+            <article class="event-row">
+              <div class="event-copy">
+                <strong>{event.title}</strong>
+                <p>{event.message}</p>
+              </div>
+              <div class="event-meta">
+                {event.value_label && <span>{event.value_label}</span>}
+                <small>{event.created_at}</small>
+              </div>
             </article>
           ))}
         </div>
@@ -327,6 +349,42 @@ const isAuction = listing.saleMode === "auction";
   .timeline-complete {
     background: color-mix(in srgb, var(--accent-1) 58%, var(--surface-elevated-strong));
   }
+  .auction-events {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+  .events-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .event-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: start;
+    padding: 0.95rem 1rem;
+    border-radius: 18px;
+    background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
+    border: 1px solid var(--line);
+  }
+  .event-copy p {
+    margin: 0.2rem 0 0;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .event-meta {
+    display: grid;
+    justify-items: end;
+    gap: 0.3rem;
+    text-align: right;
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
 
   .tag-row span {
     background: rgba(248,250,252,0.96);
@@ -565,10 +623,18 @@ const isAuction = listing.saleMode === "auction";
     .overview-grid,
     .auction-grid,
     .auction-timeline,
+    .auction-events,
     .context-grid,
     .map-panel,
     .gallery-editorial {
       grid-template-columns: 1fr;
+    }
+    .event-row {
+      flex-direction: column;
+    }
+    .event-meta {
+      justify-items: start;
+      text-align: left;
     }
   }
 

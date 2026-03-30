@@ -208,6 +208,10 @@ export interface AuctionWatchRecord {
   registration_status?: string | null;
   registration_method?: string | null;
   max_proxy_bid?: number | null;
+  latest_event_type?: string | null;
+  latest_event_title?: string | null;
+  latest_event_at?: string | null;
+  latest_event_value_label?: string | null;
   listing?: Listing | null;
 }
 
@@ -224,6 +228,28 @@ export interface AuctionBidderRegistrationRecord {
   created_at: string;
   updated_at?: string;
   listing?: Listing | null;
+}
+
+export interface AuctionEventRecord {
+  id: number;
+  listing_slug: string;
+  event_type:
+    | "registration_open"
+    | "starting_soon"
+    | "bid_placed"
+    | "reserve_met"
+    | "extended"
+    | "ending_soon"
+    | "sold"
+    | "passed_in"
+    | "status_update";
+  title: string;
+  message: string;
+  value_label?: string | null;
+  numeric_value?: number | null;
+  is_public: number;
+  created_by_user_id?: number | null;
+  created_at: string;
 }
 
 export interface ExpiryEmailDeliveryRecord {

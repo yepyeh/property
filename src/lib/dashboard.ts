@@ -1,5 +1,5 @@
 import { normalizeExpiredListingPlans } from "./listing-lifecycle";
-import { getAuctionWatchRecords, getBuyerEnquiryRecords, getRecentlyViewedRecords, getSavedListingRecords, getSavedSearchRecords } from "./listings";
+import { getAuctionEventRecords, getAuctionWatchRecords, getBuyerEnquiryRecords, getRecentlyViewedRecords, getSavedListingRecords, getSavedSearchRecords } from "./listings";
 import type {
   ExpiryEmailDeliveryRecord,
   NotificationPreferences,
@@ -313,7 +313,7 @@ export async function getAdminBillingData(db?: D1Like) {
 
 export async function getOwnerListingDetail(ownerUserId: number, listingSlug: string, db?: D1Like) {
   if (!db) {
-    return { listing: null, enquiries: [], payments: [], insights: null };
+    return { listing: null, enquiries: [], payments: [], insights: null, auctionEvents: [], auctionDemand: null };
   }
 
   await normalizeExpiredListingPlans(db);
@@ -321,7 +321,8 @@ export async function getOwnerListingDetail(ownerUserId: number, listingSlug: st
   const listing = await db
     .prepare(
       `SELECT slug, title, country, city, district, ward, intent, status, created_at, enquiries,
-              image_keys, plan_type, trial_ends_at, paid_until, promoted_until, views_24h, saves
+              image_keys, plan_type, trial_ends_at, paid_until, promoted_until, views_24h, saves,
+              sale_mode, auction_starts_at, auction_ends_at, auction_starting_price_label, auction_reserve_price_label
        FROM listings
        WHERE owner_user_id = ?
          AND slug = ?
@@ -346,10 +347,15 @@ export async function getOwnerListingDetail(ownerUserId: number, listingSlug: st
       promoted_until?: string | null;
       views_24h?: number;
       saves?: number;
+      sale_mode?: string | null;
+      auction_starts_at?: string | null;
+      auction_ends_at?: string | null;
+      auction_starting_price_label?: string | null;
+      auction_reserve_price_label?: string | null;
     }>();
 
   if (!listing) {
-    return { listing: null, enquiries: [], payments: [], insights: null };
+    return { listing: null, enquiries: [], payments: [], insights: null, auctionEvents: [], auctionDemand: null };
   }
 
   const enquiriesResult = await db
@@ -372,6 +378,17 @@ export async function getOwnerListingDetail(ownerUserId: number, listingSlug: st
     )
     .bind(ownerUserId, listingSlug)
     .all();
+
+  const auctionEvents = listing.sale_mode === "auction" ? await getAuctionEventRecords(db, listingSlug, 30) : [];
+  const auctionDemand = listing.sale_mode === "auction"
+    ? await Promise.all([
+        db.prepare(`SELECT COUNT(*) as count FROM auction_watchers WHERE listing_slug = ?`).bind(listingSlug).first<{ count: number }>(),
+        db.prepare(`SELECT COUNT(*) as count FROM auction_bidder_registrations WHERE listing_slug = ? AND status = 'registered'`).bind(listingSlug).first<{ count: number }>(),
+      ]).then(([watchers, bidders]) => ({
+        watcherCount: Number(watchers?.count || 0),
+        bidderCount: Number(bidders?.count || 0),
+      }))
+    : null;
 
   const allListings = await getAllListings(db);
   const areaInsights = buildAreaGuideInsights(
@@ -404,6 +421,8 @@ export async function getOwnerListingDetail(ownerUserId: number, listingSlug: st
     listing,
     enquiries: enquiriesResult.results,
     payments: paymentsResult.results,
+    auctionEvents,
+    auctionDemand,
     insights: {
       marketBand,
       marketPace: areaInsights.free.marketPaceLabel,

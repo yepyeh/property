@@ -12,7 +12,8 @@ if (!owner || !["owner", "admin"].includes(owner.role)) {
 }
 
 const slug = Astro.params.slug || "";
-const { listing, enquiries, payments, insights } = await getOwnerListingDetail(owner.id, slug, getDB(Astro.locals.runtime));
+const { listing, enquiries, payments, insights, auctionEvents, auctionDemand } = await getOwnerListingDetail(owner.id, slug, getDB(Astro.locals.runtime));
+const auctionEventAdded = Astro.url.searchParams.get("auctionEventAdded") === "1";
 
 if (!listing) {
   return Astro.redirect("/owner/dashboard/");
@@ -47,9 +48,11 @@ const imageUrls = getImageUrls(listing.image_keys);
       { label: "Views", value: listing.views_24h ?? 0, copy: "Last 24 hours" },
       { label: "Saves", value: listing.saves ?? 0, copy: "Buyer shortlists" },
       { label: "Enquiries", value: listing.enquiries ?? 0, copy: "Total enquiries" },
-      { label: "Payments", value: payments.length, copy: "Recorded upgrades" },
+      { label: listing.sale_mode === "auction" ? "Watchers" : "Payments", value: listing.sale_mode === "auction" ? (auctionDemand?.watcherCount ?? 0) : payments.length, copy: listing.sale_mode === "auction" ? "Auction interest" : "Recorded upgrades" },
     ]}
   />
+
+  {auctionEventAdded && <p class="auction-banner">Auction update published. Watchers and registered bidders can now see the new event.</p>}
 
   <section class="split-grid section-gap">
     <article class="card panel">
@@ -126,6 +129,76 @@ const imageUrls = getImageUrls(listing.image_keys);
         </article>
       )}
 
+      {listing.sale_mode === "auction" && (
+        <article class="card panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Auction operations</p>
+              <h2>Watchers, bidders, and live updates</h2>
+              <p class="panel-copy">This is the owner-side control layer. Publish meaningful auction events so serious buyers feel looked after before a full live bidding engine exists.</p>
+            </div>
+          </div>
+          <div class="performance-strip">
+            <div class="performance-chip"><strong>{auctionDemand?.watcherCount ?? 0}</strong><span>Watching</span></div>
+            <div class="performance-chip"><strong>{auctionDemand?.bidderCount ?? 0}</strong><span>Registered bidders</span></div>
+            <div class="performance-chip"><strong>{listing.auction_starting_price_label ?? "Set"}</strong><span>Opening guide</span></div>
+            <div class="performance-chip"><strong>{listing.auction_reserve_price_label ?? "Private"}</strong><span>Reserve</span></div>
+          </div>
+          <form class="auction-event-form" method="POST" action="/api/owner/auction-events">
+            <input type="hidden" name="listingSlug" value={listing.slug} />
+            <input type="hidden" name="redirectTo" value={`/owner/listings/${listing.slug}/`} />
+            <label>
+              <span>Event type</span>
+              <select name="eventType">
+                <option value="registration_open">Registration open</option>
+                <option value="starting_soon">Starting soon</option>
+                <option value="bid_placed">Bid placed</option>
+                <option value="reserve_met">Reserve met</option>
+                <option value="extended">Extended</option>
+                <option value="ending_soon">Ending soon</option>
+                <option value="sold">Sold</option>
+                <option value="passed_in">Passed in</option>
+                <option value="status_update">Status update</option>
+              </select>
+            </label>
+            <label>
+              <span>Short title</span>
+              <input type="text" name="title" placeholder="Reserve met" />
+            </label>
+            <label>
+              <span>Message</span>
+              <textarea name="message" rows="3" placeholder="Explain what changed and what a watcher or bidder should expect next."></textarea>
+            </label>
+            <div class="meta-grid">
+              <label>
+                <span>Value label</span>
+                <input type="text" name="valueLabel" placeholder="Current bid 6.2B VND" />
+              </label>
+              <label>
+                <span>Numeric value</span>
+                <input type="number" name="numericValue" min="0" step="0.01" placeholder="6200000000" />
+              </label>
+            </div>
+            <button type="submit" class="button-secondary">Publish auction update</button>
+          </form>
+          {auctionEvents.length === 0 ? <p class="empty-copy">No auction events published yet.</p> : (
+            <ul class="stack-list compact-list">
+              {auctionEvents.map((event) => (
+                <li class="list-item">
+                  <strong>{event.title}</strong>
+                  <p>{event.message}</p>
+                  <div class="meta-row">
+                    <span>{event.event_type}</span>
+                    {event.value_label && <span>{event.value_label}</span>}
+                    <span>{event.created_at}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </article>
+      )}
+
       <article class="card panel">
         <div class="panel-head">
           <div>
@@ -182,6 +255,15 @@ const imageUrls = getImageUrls(listing.image_keys);
   </section>
 
   <style is:inline>
+    .auction-banner {
+      margin: 0 0 1rem;
+      padding: 0.9rem 1rem;
+      border-radius: 16px;
+      background: color-mix(in srgb, var(--brand-soft) 65%, var(--surface-elevated-strong));
+      border: 1px solid color-mix(in srgb, var(--brand) 18%, var(--line));
+      color: var(--text);
+      font-weight: 600;
+    }
     .split-grid {
       display: grid;
       grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
@@ -256,6 +338,26 @@ const imageUrls = getImageUrls(listing.image_keys);
     }
     .next-action {
       background: linear-gradient(180deg, color-mix(in srgb, var(--accent-strong) 10%, transparent), var(--surface-elevated-strong));
+    }
+    .auction-event-form {
+      display: grid;
+      gap: 0.85rem;
+      margin-bottom: 1rem;
+    }
+    .auction-event-form label {
+      display: grid;
+      gap: 0.35rem;
+    }
+    .auction-event-form input,
+    .auction-event-form select,
+    .auction-event-form textarea {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: var(--surface-input-strong);
+      color: var(--text);
+      padding: 0.85rem 0.95rem;
+      font: inherit;
     }
     .chip-row {
       display: flex;

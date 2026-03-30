@@ -225,6 +225,13 @@ const enquiryStatusCounts = {
               {watch.registration_method && <span>{watch.registration_method} route</span>}
               {watch.max_proxy_bid && <span>Proxy max {watch.max_proxy_bid}</span>}
             </div>
+            {(watch.latest_event_title || watch.latest_event_at) && (
+              <div class="meta-row">
+                {watch.latest_event_title && <span>Latest signal: {watch.latest_event_title}</span>}
+                {watch.latest_event_value_label && <span>{watch.latest_event_value_label}</span>}
+                {watch.latest_event_at && <span>{watch.latest_event_at}</span>}
+              </div>
+            )}
             <div class="meta-row">
               <span>{watch.notify_starting_soon ? "Start alerts on" : "Start alerts off"}</span>
               <span>{watch.notify_ending_soon ? "Ending-soon alerts on" : "Ending-soon alerts off"}</span>

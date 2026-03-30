@@ -9,6 +9,7 @@ import {
 import { buildInitialListingPresentation } from "./listing-defaults";
 import { normalizeExpiredListingPlans } from "./listing-lifecycle";
 import type {
+  AuctionEventRecord,
   AuctionBidderRegistrationRecord,
   AuctionWatchRecord,
   EnquiryInput,
@@ -20,7 +21,7 @@ import type {
   SavedSearchRecord,
 } from "./marketplace-types";
 import type { D1Like } from "./runtime";
-import { buildInboxEventKey, upsertInboxNotification } from "./notifications";
+import { buildInboxEventKey, getNotificationPreferences, upsertInboxNotification } from "./notifications";
 
 function normalizeTextFilter(value?: string) {
   return value?.trim().toLowerCase() || "";
@@ -859,7 +860,11 @@ export async function getAuctionWatchRecord(db: D1Like | undefined, userId: numb
     .prepare(
       `SELECT w.id, w.listing_slug, w.max_bid_amount, w.notify_outbid, w.notify_over_max_bid, w.notify_unsold_under,
               w.notify_starting_soon, w.notify_ending_soon, w.created_at, w.updated_at,
-              r.status as registration_status, r.registration_method, r.max_proxy_bid
+              r.status as registration_status, r.registration_method, r.max_proxy_bid,
+              (SELECT e.event_type FROM auction_events e WHERE e.listing_slug = w.listing_slug ORDER BY e.created_at DESC LIMIT 1) as latest_event_type,
+              (SELECT e.title FROM auction_events e WHERE e.listing_slug = w.listing_slug ORDER BY e.created_at DESC LIMIT 1) as latest_event_title,
+              (SELECT e.created_at FROM auction_events e WHERE e.listing_slug = w.listing_slug ORDER BY e.created_at DESC LIMIT 1) as latest_event_at,
+              (SELECT e.value_label FROM auction_events e WHERE e.listing_slug = w.listing_slug ORDER BY e.created_at DESC LIMIT 1) as latest_event_value_label
        FROM auction_watchers w
        LEFT JOIN auction_bidder_registrations r
          ON r.user_id = w.user_id
@@ -877,7 +882,11 @@ export async function getAuctionWatchRecords(db: D1Like, userId: number) {
     .prepare(
       `SELECT w.id, w.listing_slug, w.max_bid_amount, w.notify_outbid, w.notify_over_max_bid, w.notify_unsold_under,
               w.notify_starting_soon, w.notify_ending_soon, w.created_at, w.updated_at,
-              r.status as registration_status, r.registration_method, r.max_proxy_bid
+              r.status as registration_status, r.registration_method, r.max_proxy_bid,
+              (SELECT e.event_type FROM auction_events e WHERE e.listing_slug = w.listing_slug ORDER BY e.created_at DESC LIMIT 1) as latest_event_type,
+              (SELECT e.title FROM auction_events e WHERE e.listing_slug = w.listing_slug ORDER BY e.created_at DESC LIMIT 1) as latest_event_title,
+              (SELECT e.created_at FROM auction_events e WHERE e.listing_slug = w.listing_slug ORDER BY e.created_at DESC LIMIT 1) as latest_event_at,
+              (SELECT e.value_label FROM auction_events e WHERE e.listing_slug = w.listing_slug ORDER BY e.created_at DESC LIMIT 1) as latest_event_value_label
        FROM auction_watchers w
        LEFT JOIN auction_bidder_registrations r
          ON r.user_id = w.user_id
@@ -1043,6 +1052,149 @@ export async function withdrawAuctionBidderRegistrationForBuyer(db: D1Like, user
     )
     .bind(userId, listingSlug)
     .run();
+
+  return { ok: true as const };
+}
+
+export async function getAuctionEventRecords(db: D1Like | undefined, listingSlug: string, limit = 20) {
+  if (!db || !listingSlug) return [] as AuctionEventRecord[];
+
+  const result = await db
+    .prepare(
+      `SELECT id, listing_slug, event_type, title, message, value_label, numeric_value, is_public, created_by_user_id, created_at
+       FROM auction_events
+       WHERE listing_slug = ?
+       ORDER BY created_at DESC
+       LIMIT ?`
+    )
+    .bind(listingSlug, limit)
+    .all<AuctionEventRecord>();
+
+  return result.results;
+}
+
+function shouldNotifyAuctionWatcher(
+  watch: {
+    notify_outbid: number;
+    notify_over_max_bid: number;
+    notify_starting_soon: number;
+    notify_ending_soon: number;
+    max_bid_amount?: number | null;
+    notify_unsold_under?: number | null;
+  },
+  event: { eventType: string; numericValue?: number | null }
+) {
+  if (event.eventType === "starting_soon") return Boolean(watch.notify_starting_soon);
+  if (event.eventType === "ending_soon") return Boolean(watch.notify_ending_soon);
+  if (event.eventType === "bid_placed") {
+    if (watch.notify_over_max_bid && typeof event.numericValue === "number" && typeof watch.max_bid_amount === "number") {
+      return event.numericValue > watch.max_bid_amount;
+    }
+    return Boolean(watch.notify_outbid);
+  }
+  if (event.eventType === "passed_in") {
+    if (typeof watch.notify_unsold_under === "number" && typeof event.numericValue === "number") {
+      return event.numericValue <= watch.notify_unsold_under;
+    }
+    return false;
+  }
+  return ["registration_open", "reserve_met", "extended", "sold", "status_update"].includes(event.eventType);
+}
+
+export async function createAuctionEvent(
+  db: D1Like,
+  actorUserId: number,
+  input: {
+    listingSlug: string;
+    eventType: AuctionEventRecord["event_type"];
+    title: string;
+    message: string;
+    valueLabel?: string | null;
+    numericValue?: number | null;
+    isPublic?: boolean;
+  }
+) {
+  await db
+    .prepare(
+      `INSERT INTO auction_events (
+         listing_slug, event_type, title, message, value_label, numeric_value, is_public, created_by_user_id
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+    )
+    .bind(
+      input.listingSlug,
+      input.eventType,
+      input.title,
+      input.message,
+      input.valueLabel ?? null,
+      input.numericValue ?? null,
+      input.isPublic === false ? 0 : 1,
+      actorUserId
+    )
+    .run();
+
+  const listing = await getListingBySlug(input.listingSlug, db);
+  if (!listing) return { ok: true as const };
+
+  const watchersResult = await db
+    .prepare(
+      `SELECT DISTINCT user_id, max_bid_amount, notify_outbid, notify_over_max_bid, notify_unsold_under, notify_starting_soon, notify_ending_soon
+       FROM auction_watchers
+       WHERE listing_slug = ?`
+    )
+    .bind(input.listingSlug)
+    .all<{
+      user_id: number;
+      max_bid_amount?: number | null;
+      notify_outbid: number;
+      notify_over_max_bid: number;
+      notify_unsold_under?: number | null;
+      notify_starting_soon: number;
+      notify_ending_soon: number;
+    }>();
+
+  const bidderResult = await db
+    .prepare(
+      `SELECT DISTINCT user_id
+       FROM auction_bidder_registrations
+       WHERE listing_slug = ?
+         AND status = 'registered'`
+    )
+    .bind(input.listingSlug)
+    .all<{ user_id: number }>();
+
+  const recipientIds = new Set<number>();
+
+  for (const watch of watchersResult.results) {
+    if (shouldNotifyAuctionWatcher(watch, { eventType: input.eventType, numericValue: input.numericValue })) {
+      recipientIds.add(watch.user_id);
+    }
+  }
+
+  if (["registration_open", "reserve_met", "extended", "ending_soon", "sold", "passed_in"].includes(input.eventType)) {
+    for (const bidder of bidderResult.results) {
+      recipientIds.add(bidder.user_id);
+    }
+  }
+
+  for (const recipientId of recipientIds) {
+    const preferences = await getNotificationPreferences(db, recipientId);
+    if (!preferences?.in_app_enabled || !preferences.saved_listing_updates) continue;
+
+    await upsertInboxNotification(db, {
+      eventKey: buildInboxEventKey(["auction-event", input.listingSlug, recipientId, input.eventType, input.title]),
+      userId: recipientId,
+      category: "saved_listing_updates",
+      title: input.title,
+      message: input.valueLabel ? `${input.message} ${input.valueLabel}` : input.message,
+      href: `/listings/${input.listingSlug}/`,
+      level:
+        input.eventType === "ending_soon" || input.eventType === "bid_placed"
+          ? "warning"
+          : input.eventType === "sold"
+            ? "critical"
+            : "info",
+    });
+  }
 
   return { ok: true as const };
 }

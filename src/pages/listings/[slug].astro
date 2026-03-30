@@ -6,7 +6,7 @@ import DetailSidebar from "../../components/listing-detail/DetailSidebar.astro";
 import SimilarListingsSection from "../../components/listing-detail/SimilarListingsSection.astro";
 import { buildAuctionTimeline } from "../../data/listings";
 import { buildListingInsights, hasPremiumInsightsAccess } from "../../lib/insights";
-import { getAllListings, getAuctionBidderRegistrationRecord, getAuctionWatchRecord, getListingBySlug, isListingSavedByUser, recordRecentlyViewedListing } from "../../lib/listings";
+import { getAllListings, getAuctionBidderRegistrationRecord, getAuctionEventRecords, getAuctionWatchRecord, getListingBySlug, isListingSavedByUser, recordRecentlyViewedListing } from "../../lib/listings";
 import { getDB } from "../../lib/runtime";
 
 const t = Astro.locals.t || ((value: string) => value);
@@ -58,6 +58,7 @@ const mapEmbedHref = location
 const auctionWatch = listing.saleMode === "auction" ? await getAuctionWatchRecord(db, viewer?.id, listing.slug) : null;
 const auctionRegistration = listing.saleMode === "auction" ? await getAuctionBidderRegistrationRecord(db, viewer?.id, listing.slug) : null;
 const auctionTimeline = listing.saleMode === "auction" ? buildAuctionTimeline(listing.auction) : [];
+const auctionEvents = listing.saleMode === "auction" ? await getAuctionEventRecords(db, listing.slug, 12) : [];
 ---
 
 <Layout title={`${listing.title} | Property App 2026`} description={listing.summary}>
@@ -72,7 +73,7 @@ const auctionTimeline = listing.saleMode === "auction" ? buildAuctionTimeline(li
   />
 
   <section class="detail-grid">
-    <DetailContent listing={listing} mapHref={mapHref} mapEmbedHref={mapEmbedHref} insights={insights} hasPremiumInsights={hasPremiumInsights} auctionTimeline={auctionTimeline} t={t} />
+    <DetailContent listing={listing} mapHref={mapHref} mapEmbedHref={mapEmbedHref} insights={insights} hasPremiumInsights={hasPremiumInsights} auctionTimeline={auctionTimeline} auctionEvents={auctionEvents} t={t} />
     <DetailSidebar
       listing={listing}
       ownerTrustLabel={ownerTrustLabel}
