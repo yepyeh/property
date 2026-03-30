@@ -40,8 +40,10 @@ const { eyebrow, title, text, actions = [] } = Astro.props;
 <style is:inline>
   .page-hero {
     padding: 1.5rem;
-    background: var(--surface-overlay-strong);
-    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 40px rgba(16, 24, 40, 0.06);
+    background:
+      radial-gradient(circle at top left, color-mix(in srgb, var(--hero-glow) 46%, transparent), transparent 32rem),
+      linear-gradient(180deg, var(--surface-overlay-strong), var(--surface-panel-muted));
+    box-shadow: var(--shadow-panel);
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -79,7 +81,7 @@ const { eyebrow, title, text, actions = [] } = Astro.props;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 2.75rem;
+    min-height: 2.8rem;
     border-radius: 999px;
     padding: 0.82rem 1.05rem;
     font: inherit;
@@ -92,15 +94,15 @@ const { eyebrow, title, text, actions = [] } = Astro.props;
   .button-secondary:hover { transform: translateY(-1px); }
   .button-primary {
     border: none;
-    background: linear-gradient(135deg, #12b76a, #079455);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--brand) 94%, white), var(--brand));
     color: var(--surface-canvas);
-    box-shadow: 0 12px 24px rgba(18, 183, 106, 0.2);
+    box-shadow: 0 16px 32px -20px var(--shadow-deep-color);
   }
   .button-secondary {
-    border: 1px solid var(--line-strong);
-    background: var(--surface-elevated-strong);
+    border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--surface-input) 88%, transparent);
     color: var(--text);
-    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--surface-overlay-strong) 88%, transparent);
   }
   @media (max-width: 760px) {
     .page-hero,

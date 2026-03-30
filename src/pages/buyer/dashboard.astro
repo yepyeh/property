@@ -380,7 +380,7 @@ const enquiryStatusCounts = {
       min-height: 1.9rem;
       padding: 0.3rem 0.75rem;
       border-radius: 999px;
-      background: var(--accent-1);
+      background: color-mix(in srgb, var(--accent-1) 74%, var(--surface-elevated-strong));
       color: var(--muted-strong);
       font-size: 0.78rem;
       font-weight: 700;
@@ -399,9 +399,10 @@ const enquiryStatusCounts = {
 
     .list-item {
       padding: 1rem;
-      border-radius: 22px;
-      background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
+      border-radius: calc(var(--radius-panel) + 0.1rem);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--surface-input-strong) 94%, transparent), color-mix(in srgb, var(--surface-panel-muted) 90%, transparent));
       border: 1px solid var(--line);
+      box-shadow: inset 0 1px 0 color-mix(in srgb, var(--surface-overlay-strong) 86%, transparent);
     }
 
     .saved-list-grid {
@@ -419,7 +420,7 @@ const enquiryStatusCounts = {
     .saved-media {
       display: block;
       min-height: 11.5rem;
-      border-radius: 20px;
+      border-radius: var(--radius-panel);
       background-size: cover;
       background-position: center;
       background-color: var(--accent-1);
@@ -462,9 +463,10 @@ const enquiryStatusCounts = {
 
     .journey-step {
       padding: 1rem;
-      border-radius: 20px;
-      background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
+      border-radius: var(--radius-panel);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--surface-input-strong) 94%, transparent), color-mix(in srgb, var(--surface-panel-muted) 90%, transparent));
       border: 1px solid var(--line);
+      box-shadow: inset 0 1px 0 color-mix(in srgb, var(--surface-overlay-strong) 86%, transparent);
     }
 
     .journey-step p {
@@ -495,7 +497,7 @@ const enquiryStatusCounts = {
       font-size: 0.78rem;
       font-weight: 700;
       text-transform: capitalize;
-      background: var(--accent-1);
+      background: color-mix(in srgb, var(--accent-1) 74%, var(--surface-elevated-strong));
       color: var(--muted-strong);
     }
 
@@ -518,9 +520,10 @@ const enquiryStatusCounts = {
       display: grid;
       gap: 0.35rem;
       padding: 1rem;
-      border-radius: 20px;
-      background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
+      border-radius: var(--radius-panel);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--surface-input-strong) 94%, transparent), color-mix(in srgb, var(--surface-panel-muted) 90%, transparent));
       border: 1px solid var(--line);
+      box-shadow: inset 0 1px 0 color-mix(in srgb, var(--surface-overlay-strong) 86%, transparent);
     }
 
     .compare-chip span {
@@ -537,7 +540,7 @@ const enquiryStatusCounts = {
       width: fit-content;
       padding: 0.45rem 0.7rem;
       border-radius: 999px;
-      background: var(--accent-1);
+      background: color-mix(in srgb, var(--accent-1) 74%, var(--surface-elevated-strong));
       color: var(--muted-strong);
       font-size: 0.82rem;
       font-weight: 700;

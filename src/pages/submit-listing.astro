@@ -315,7 +315,7 @@ const owner = Astro.locals.owner;
     .form-shell,
     .notice,
     .pricing {
-      padding: 1.4rem;
+      padding: 1.5rem;
       margin-bottom: 1rem;
     }
     .prep-grid {
@@ -336,7 +336,7 @@ const owner = Astro.locals.owner;
       gap: 1rem;
       align-items: flex-start;
       background:
-        radial-gradient(circle at top left, rgba(14, 165, 233, 0.12), transparent 30rem),
+        radial-gradient(circle at top left, color-mix(in srgb, var(--hero-glow) 42%, transparent), transparent 32rem),
         linear-gradient(180deg, var(--surface-overlay-strong), var(--surface-panel-muted));
     }
     .head-copy {
@@ -351,7 +351,7 @@ const owner = Astro.locals.owner;
     .head-signals span {
       padding: 0.65rem 0.9rem;
       border-radius: 999px;
-      background: var(--surface-overlay);
+      background: color-mix(in srgb, var(--surface-input) 82%, transparent);
       border: 1px solid var(--line);
       color: var(--muted);
       font-size: 0.88rem;
@@ -374,7 +374,8 @@ const owner = Astro.locals.owner;
     }
     .ghost {
       border: 1px solid var(--line);
-      background: var(--surface-panel-muted);
+      background: color-mix(in srgb, var(--surface-input) 86%, transparent);
+      box-shadow: inset 0 1px 0 color-mix(in srgb, var(--surface-overlay-strong) 88%, transparent);
     }
     .small-ghost {
       padding: 0.8rem 1rem;
@@ -382,7 +383,7 @@ const owner = Astro.locals.owner;
     .form-shell {
       display: grid;
       gap: 1rem;
-      background: var(--surface-elevated);
+      background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
     }
     .onboarding-strip {
       display: grid;
@@ -391,7 +392,7 @@ const owner = Astro.locals.owner;
       padding: 1.35rem;
       margin-bottom: 1rem;
       background:
-        linear-gradient(180deg, var(--surface-elevated), var(--surface-panel-muted));
+        linear-gradient(180deg, var(--surface-overlay-strong), var(--surface-panel-muted));
     }
     .strip-copy,
     .strip-grid,
@@ -404,11 +405,12 @@ const owner = Astro.locals.owner;
     }
     .strip-grid article {
       padding: 1rem;
-      border-radius: 1.2rem;
-      background: var(--surface-overlay);
+      border-radius: var(--radius-panel);
+      background: color-mix(in srgb, var(--surface-input) 84%, transparent);
       border: 1px solid var(--line);
       display: grid;
       gap: 0.35rem;
+      box-shadow: inset 0 1px 0 color-mix(in srgb, var(--surface-overlay-strong) 88%, transparent);
     }
     .strip-grid strong {
       font-size: 0.92rem;
@@ -442,9 +444,10 @@ const owner = Astro.locals.owner;
       display: grid;
       gap: 0.2rem;
       padding: 0.95rem 1rem;
-      border-radius: 18px;
-      background: var(--surface-panel-muted);
+      border-radius: var(--radius-panel);
+      background: color-mix(in srgb, var(--surface-input) 84%, transparent);
       border: 1px solid var(--line);
+      box-shadow: inset 0 1px 0 color-mix(in srgb, var(--surface-overlay-strong) 88%, transparent);
     }
     .section-steps span {
       color: var(--muted);
@@ -454,10 +457,10 @@ const owner = Astro.locals.owner;
       display: grid;
       gap: 1rem;
       padding: 1.2rem;
-      border-radius: 1.6rem;
-      background: var(--surface-panel-subtle);
+      border-radius: calc(var(--radius-panel) + 0.15rem);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--surface-overlay-strong) 92%, transparent), color-mix(in srgb, var(--surface-rail) 92%, transparent));
       border: 1px solid var(--line);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.75);
+      box-shadow: inset 0 1px 0 color-mix(in srgb, var(--surface-overlay-strong) 90%, transparent);
     }
     .section-intro {
       display: grid;
@@ -481,8 +484,8 @@ const owner = Astro.locals.owner;
       display: grid;
       gap: 0.9rem;
       padding: 1.1rem;
-      border-radius: 24px;
-      background: rgba(248, 250, 252, 0.88);
+      border-radius: calc(var(--radius-panel) + 0.15rem);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--surface-input-strong) 94%, transparent), color-mix(in srgb, var(--surface-panel-muted) 90%, transparent));
       border: 1px solid var(--line);
     }
     .outcome-preview {
@@ -497,8 +500,8 @@ const owner = Astro.locals.owner;
       display: grid;
       gap: 0.7rem;
       padding: 1rem;
-      border-radius: 20px;
-      background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
+      border-radius: var(--radius-panel);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--surface-input-strong) 94%, transparent), color-mix(in srgb, var(--surface-panel-muted) 90%, transparent));
       border: 1px solid var(--line);
       align-content: start;
     }
@@ -514,7 +517,7 @@ const owner = Astro.locals.owner;
       width: fit-content;
       padding: 0.22rem 0.7rem;
       border-radius: 999px;
-      background: var(--surface-overlay);
+      background: color-mix(in srgb, var(--surface-input) 84%, transparent);
       border: 1px solid var(--line);
       color: var(--muted-strong);
       font-size: 0.76rem;
@@ -542,7 +545,7 @@ const owner = Astro.locals.owner;
       min-height: 1.9rem;
       padding: 0.2rem 0.7rem;
       border-radius: 999px;
-      background: var(--brand-soft);
+      background: color-mix(in srgb, var(--brand-soft) 84%, var(--surface-elevated-strong));
       color: var(--muted-strong);
       font-size: 0.78rem;
       font-weight: 700;
@@ -577,10 +580,11 @@ const owner = Astro.locals.owner;
       width: 100%;
       margin-top: 0.4rem;
       padding: 0.95rem 1rem;
-      border-radius: 18px;
+      border-radius: var(--radius-input);
       border: 1px solid var(--line);
-      background: rgba(248,250,252,0.95);
+      background: color-mix(in srgb, var(--surface-input-strong) 92%, transparent);
       font: inherit;
+      color: var(--text);
     }
     input:focus,
     select:focus,
@@ -617,9 +621,10 @@ const owner = Astro.locals.owner;
     }
     button {
       border: none;
-      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      background: linear-gradient(180deg, color-mix(in srgb, var(--brand) 94%, white), var(--brand));
       color: var(--surface-canvas);
       cursor: pointer;
+      box-shadow: 0 16px 32px -20px var(--shadow-deep-color);
     }
     code { font-family: monospace; }
     @media (max-width: 960px) {
