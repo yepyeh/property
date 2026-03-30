@@ -14,7 +14,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
 ---
 
 <section class="hero-shell section-space" id="top">
-  <div class="hero-grid card">
+  <div class="hero-grid glass-card">
     <div class="hero-copy">
       <span class="section-label">{t("Search-first property marketplace")}</span>
       <h1>{t("Find the right place faster, then follow through with confidence.")}</h1>
@@ -115,7 +115,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
   </div>
 
   <div class="hero-foot">
-    <div class="quick-links card">
+    <div class="quick-links glass-card">
       <div class="quick-head">
         <span class="metric-kicker">{t("Fast routes")}</span>
         <strong>{t("Start from the most common searches")}</strong>
@@ -124,7 +124,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
         {quickFilters.map((filter) => <a href={filter.href}>{filter.label}</a>)}
       </div>
     </div>
-    <div class="metric-banner card">
+    <div class="metric-banner glass-card">
       <span class="metric-kicker">{t("PWA-ready")}</span>
       <strong>{t("Mobile-first shell")}</strong>
       <span class="secondary-text">{t("Installable, app-like behavior with a cleaner browsing flow on smaller screens.")}</span>
@@ -204,7 +204,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
     height: 0.55rem;
     margin-top: 0.48rem;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--accent-strong) 28%, var(--surface-elevated-strong))
+    background: color-mix(in srgb, var(--accent-strong) 28%, var(--surface-elevated-strong));
     box-shadow: 0 0 0 0.28rem color-mix(in srgb, var(--accent-strong) 22%, transparent);
     flex: none;
   }
@@ -459,7 +459,8 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
     }
 
     .hero-copy h1 {
-      font-size: clamp(3.2rem, 13vw, 4.8rem);
+      font-size: clamp(2.4rem, 10vw, 4rem);
+      max-width: 10ch;
     }
 
     .field-grid,

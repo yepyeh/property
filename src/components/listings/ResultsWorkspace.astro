@@ -39,7 +39,7 @@ const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareL
 </div>
 
 <section class="results-layout" data-results-view="list">
-  <aside class="market-panel card">
+  <aside class="market-panel glass-card">
     <span class="section-kicker">{t("Map view")}</span>
     <h2>{t("See the filtered listings on a live map")}</h2>
     <p>{t("Search by filters first, then use the map to validate coverage and cluster patterns instead of guessing where the inventory sits.")}</p>
@@ -74,7 +74,7 @@ const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareL
         </div>
       ))
     ) : (
-      <article class="empty-state card">
+      <article class="empty-state glass-card">
         <span class="section-kicker">{t("No matches")}</span>
         <h2>{t("There are no listings for this filter set yet.")}</h2>
         <p>
@@ -98,7 +98,6 @@ const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareL
     border-radius: 999px;
     background: var(--surface-elevated);
     border: 1px solid var(--line);
-    box-shadow: var(--shadow-soft);
   }
 
   .toggle-chip,
@@ -138,22 +137,21 @@ const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareL
   .results-layout {
     display: grid;
     grid-template-columns: minmax(20rem, 0.42fr) minmax(0, 1fr);
-    gap: 1rem;
+    gap: var(--space-m);
     align-items: start;
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-m);
   }
 
   .market-panel,
   .empty-state {
-    padding: 1.4rem;
-    background: var(--surface-overlay-strong);
-    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
+    padding: var(--space-l);
+    background: var(--card);
   }
 
   .market-panel {
     position: sticky;
     top: 6rem;
-    background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-elevated));
+    background: color-mix(in srgb, var(--card) 92%, transparent);
   }
 
   .section-kicker {
@@ -187,21 +185,20 @@ const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareL
 
   .results-map {
     min-height: 22rem;
-    margin-top: 1rem;
-    border-radius: 24px;
+    margin-top: var(--space-m);
+    border-radius: var(--radius-lg);
     overflow: hidden;
     border: 1px solid var(--line);
-    background: linear-gradient(180deg, #f8fafc, #e5edf6);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+    background: color-mix(in srgb, var(--card) 70%, transparent);
   }
 
   .map-empty {
     display: grid;
-    gap: 0.45rem;
-    margin-top: 1rem;
-    padding: 1rem;
-    border-radius: 24px;
-    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    gap: var(--space-xs);
+    margin-top: var(--space-m);
+    padding: var(--space-m);
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--card) 78%, transparent);
     border: 1px solid var(--line);
   }
 
@@ -217,23 +214,23 @@ const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareL
 
   .district-list {
     display: grid;
-    gap: 1rem;
+    gap: var(--space-m);
   }
 
   .district-list b {
     display: block;
-    padding: 0.9rem 1rem;
-    border-radius: 20px;
-    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    padding: var(--space-s) var(--space-m);
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--card) 78%, transparent);
     border: 1px solid var(--line);
     font-size: 0.95rem;
   }
 
   .neighborhood-list {
     display: flex;
-    gap: 0.75rem;
+    gap: var(--space-s);
     flex-wrap: wrap;
-    margin-top: 1rem;
+    margin-top: var(--space-m);
   }
 
   .neighborhood-list span {
@@ -250,7 +247,7 @@ const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareL
 
   .results-list {
     display: grid;
-    gap: 1rem;
+    gap: var(--space-m);
   }
 
   .results-list > :global(*) + :global(*) {
@@ -258,7 +255,7 @@ const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareL
   }
 
   .listing-card-shell {
-    border-radius: 30px;
+    border-radius: var(--radius-lg);
     transition: transform 180ms ease, box-shadow 180ms ease;
   }
 
@@ -269,21 +266,21 @@ const { listings, mappableListings, allDistricts, topNeighborhoods, showCompareL
 
   .listing-card-shell.is-active {
     transform: translateY(-2px);
-    box-shadow: 0 20px 42px rgba(15, 23, 42, 0.12);
+    box-shadow: var(--shadow-soft);
   }
 
   .listing-card-shell.is-active :global(.listing-card) {
-    outline: 2px solid rgba(15, 118, 110, 0.2);
+    outline: 2px solid color-mix(in srgb, var(--accent) 24%, transparent);
     outline-offset: 2px;
   }
 
   .empty-actions {
     display: flex;
     justify-content: space-between;
-    gap: 1rem;
+    gap: var(--space-m);
     align-items: flex-start;
     flex-wrap: wrap;
-    margin-top: 1rem;
+    margin-top: var(--space-m);
   }
 
   .button-dark {

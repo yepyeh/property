@@ -520,6 +520,11 @@ p { margin: 0; }
   box-shadow: none;
   backdrop-filter: blur(24px);
   z-index: 30;
+  transition:
+    transform 0.5s var(--transition-luxury),
+    opacity 0.5s var(--transition-luxury),
+    background-color 0.5s var(--transition-luxury),
+    border-color 0.5s var(--transition-luxury);
 }
 
 .mobile-utility a,
@@ -539,6 +544,10 @@ p { margin: 0; }
 
 .mobile-link {
   gap: 0.28rem;
+  transition:
+    transform 0.5s var(--transition-luxury),
+    color 0.5s var(--transition-luxury),
+    background-color 0.5s var(--transition-luxury);
 }
 
 .mobile-icon {
@@ -569,6 +578,40 @@ p { margin: 0; }
 .mobile-utility a.active .mobile-icon,
 .mobile-utility button.active .mobile-icon {
   color: var(--accent-strong);
+}
+
+@media (max-width: 760px) {
+  .account-panel {
+    position: fixed;
+    left: 0.75rem;
+    right: 0.75rem;
+    top: auto;
+    bottom: calc(5.5rem + var(--space-s));
+    width: auto;
+    max-height: min(70vh, 36rem);
+    overflow-y: auto;
+    border-radius: 1.25rem;
+    backdrop-filter: blur(var(--glass-blur));
+  }
+
+  .account-menu[open] .account-panel {
+    animation: account-sheet-in 0.5s var(--transition-luxury);
+  }
+
+  .global-nav .btn-primary {
+    padding: var(--space-xs) var(--space-s);
+  }
+}
+
+@keyframes account-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .app-footer {

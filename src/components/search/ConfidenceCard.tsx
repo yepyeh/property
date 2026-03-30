@@ -196,7 +196,7 @@ function TooltipInfo() {
         <CircleHelp className="h-4 w-4" strokeWidth={1.5} />
       </button>
 
-      <div className="glass-effect pointer-events-none absolute left-1/2 top-[calc(100%+10px)] z-20 w-64 -translate-x-1/2 rounded-xl p-3 text-xs leading-6 opacity-0 transition-all duration-300 ease-luxury group-hover/info:opacity-100">
+      <div className="glass-effect pointer-events-none absolute left-1/2 top-full z-20 mt-3 w-64 -translate-x-1/2 rounded-xl p-3 text-xs leading-6 opacity-0 transition-all duration-300 ease-luxury group-hover/info:opacity-100">
         This score is based on recent sales, verified documentation, and owner activity.
       </div>
     </div>
