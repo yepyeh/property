@@ -11,6 +11,11 @@
     --accent-foreground: #041404;
     --border: rgba(255, 255, 255, 0.1);
     --muted: #a1a1aa;
+    --ink-strong: #18181b;
+    --warning-base: #f59e0b;
+    --danger-base: #f87171;
+    --danger-base-strong: #dc2626;
+    --success-base: #2f7f2f;
 
     --space-xs: clamp(0.5rem, 0.42rem + 0.22vw, 0.7rem);
     --space-s: clamp(0.75rem, 0.62rem + 0.35vw, 1rem);
@@ -53,6 +58,21 @@
     --foundation-ease: var(--transition-luxury);
     --foundation-duration-fast: var(--duration-fast);
     --foundation-duration-slow: var(--duration-slow);
+    --shadow-color: color-mix(in srgb, black 34%, transparent);
+    --shadow-soft-color: color-mix(in srgb, black 24%, transparent);
+    --shadow-deep-color: color-mix(in srgb, black 48%, transparent);
+    --success-bg: color-mix(in srgb, var(--accent) 12%, transparent);
+    --success-border: color-mix(in srgb, var(--accent) 20%, transparent);
+    --success-text: color-mix(in srgb, var(--accent) 72%, white);
+    --info-bg: color-mix(in srgb, white 5%, transparent);
+    --info-border: var(--border);
+    --info-text: var(--foundation-text);
+    --warning-bg: color-mix(in srgb, #f59e0b 12%, transparent);
+    --warning-border: color-mix(in srgb, #f59e0b 20%, transparent);
+    --warning-text: color-mix(in srgb, white 72%, var(--accent));
+    --danger-bg: color-mix(in srgb, #f87171 12%, transparent);
+    --danger-border: color-mix(in srgb, #f87171 20%, transparent);
+    --danger-text: color-mix(in srgb, white 68%, black);
   }
 
   html {
@@ -66,6 +86,11 @@
     --accent-foreground: #062106;
     --border: rgba(24, 24, 27, 0.1);
     --muted: #71717a;
+    --ink-strong: #18181b;
+    --warning-base: #f59e0b;
+    --danger-base: #f87171;
+    --danger-base-strong: #dc2626;
+    --success-base: #2f7f2f;
 
     --foundation-bg: var(--background);
     --foundation-card: rgba(255, 255, 255, 0.74);
@@ -76,6 +101,21 @@
     --foundation-text: #18181b;
     --foundation-text-muted: var(--muted);
     --foundation-text-subtle: #52525b;
+    --shadow-color: color-mix(in srgb, #18181b 12%, transparent);
+    --shadow-soft-color: color-mix(in srgb, #18181b 8%, transparent);
+    --shadow-deep-color: color-mix(in srgb, #18181b 18%, transparent);
+    --success-bg: color-mix(in srgb, #2f7f2f 8%, transparent);
+    --success-border: color-mix(in srgb, #2f7f2f 16%, transparent);
+    --success-text: var(--accent-hover);
+    --info-bg: color-mix(in srgb, #18181b 4%, transparent);
+    --info-border: color-mix(in srgb, #18181b 8%, transparent);
+    --info-text: var(--foundation-text);
+    --warning-bg: color-mix(in srgb, #f59e0b 12%, transparent);
+    --warning-border: color-mix(in srgb, #f59e0b 18%, transparent);
+    --warning-text: color-mix(in srgb, black 42%, var(--accent));
+    --danger-bg: color-mix(in srgb, #dc2626 8%, transparent);
+    --danger-border: color-mix(in srgb, #dc2626 16%, transparent);
+    --danger-text: color-mix(in srgb, black 46%, var(--foundation-text));
   }
 
   * {
@@ -153,6 +193,77 @@
 
   .btn-primary:focus-visible {
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+
+  .btn-secondary,
+  .button-secondary {
+    @apply inline-flex items-center justify-center rounded-full px-m py-s text-sm font-semibold;
+    background: color-mix(in srgb, var(--card) 86%, transparent);
+    border: 1px solid var(--border);
+    color: inherit;
+    transition:
+      background-color var(--duration-fast) var(--transition-luxury),
+      border-color var(--duration-fast) var(--transition-luxury),
+      color var(--duration-fast) var(--transition-luxury),
+      transform var(--duration-fast) var(--transition-luxury);
+  }
+
+  .btn-secondary:hover,
+  .button-secondary:hover {
+    border-color: color-mix(in srgb, var(--accent) 24%, var(--border));
+    transform: translateY(-1px);
+  }
+
+  .btn-tertiary,
+  .button-tertiary {
+    @apply inline-flex items-center justify-center rounded-full px-m py-s text-sm font-semibold;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--muted);
+    transition:
+      background-color var(--duration-fast) var(--transition-luxury),
+      border-color var(--duration-fast) var(--transition-luxury),
+      color var(--duration-fast) var(--transition-luxury),
+      transform var(--duration-fast) var(--transition-luxury);
+  }
+
+  .btn-tertiary:hover,
+  .button-tertiary:hover {
+    background: color-mix(in srgb, var(--card) 64%, transparent);
+    border-color: var(--border);
+    color: inherit;
+    transform: translateY(-1px);
+  }
+
+  .btn-dark,
+  .button-dark,
+  .button-primary {
+    @apply inline-flex items-center justify-center rounded-full px-m py-s text-sm font-semibold;
+    background: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+    color: var(--accent-foreground);
+    transition:
+      background-color var(--duration-fast) var(--transition-luxury),
+      border-color var(--duration-fast) var(--transition-luxury),
+      color var(--duration-fast) var(--transition-luxury),
+      transform var(--duration-fast) var(--transition-luxury),
+      box-shadow var(--duration-fast) var(--transition-luxury);
+  }
+
+  .btn-dark:hover,
+  .button-dark:hover,
+  .button-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+  }
+
+  .button-primary.small,
+  .button-secondary.small,
+  .button-tertiary.small,
+  .button-dark.small {
+    padding: var(--space-xs) var(--space-s);
+    min-height: auto;
+    font-size: var(--text-sm);
   }
 
   .input-luxury {

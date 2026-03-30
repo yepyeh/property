@@ -140,20 +140,20 @@ const comparePoints = [
 
 <style is:inline>
   .compare-band {
-    padding: 1.75rem;
+    padding: var(--space-l);
     margin-top: 0;
     display: grid;
-    gap: 1.5rem;
+    gap: var(--space-l);
   }
 
   .compare-head {
     display: grid;
-    gap: 0.7rem;
+    gap: var(--space-xs);
   }
 
   .compare-head h2 {
     margin: 0;
-    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-size: var(--text-5xl);
     line-height: 0.96;
     letter-spacing: -0.05em;
     max-width: 14ch;
@@ -168,20 +168,20 @@ const comparePoints = [
   .compare-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 2rem;
+    gap: var(--space-l);
   }
 
   .compare-grid article {
     display: grid;
-    gap: 0.7rem;
-    padding: 1.25rem;
-    border-radius: 1rem;
+    gap: var(--space-xs);
+    padding: var(--space-m);
+    border-radius: var(--radius-lg);
     background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
     border: 1px solid var(--line);
   }
 
   .compare-grid strong {
-    font-size: 1rem;
+    font-size: var(--text-base);
     letter-spacing: -0.03em;
   }
 

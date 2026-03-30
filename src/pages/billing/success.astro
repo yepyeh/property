@@ -11,39 +11,26 @@ import Layout from "../../layouts/Layout.astro";
       owner dashboard to confirm the updated plan state.
     </p>
     <div class="actions">
-      <a class="primary" href="/owner/dashboard/">Go to dashboard</a>
-      <a class="ghost" href="/listings/">Browse listings</a>
+      <a class="primary btn-primary" href="/owner/dashboard/">Go to dashboard</a>
+      <a class="ghost button-secondary" href="/listings/">Browse listings</a>
     </div>
   </section>
 
   <style is:inline>
     .shell {
       max-width: 40rem;
-      margin: 4rem auto 0;
-      padding: 1.5rem;
+      margin: var(--space-2xl) auto 0;
+      padding: var(--space-l);
     }
     .actions {
       display: flex;
-      gap: 0.8rem;
+      gap: var(--space-s);
       flex-wrap: wrap;
-      margin-top: 1rem;
+      margin-top: var(--space-m);
     }
-    .primary, .ghost {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.95rem 1.2rem;
-      border-radius: 999px;
-      text-decoration: none;
-      font-weight: 700;
-    }
-    .primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      color: var(--surface-canvas);
-    }
+    .primary,
     .ghost {
-      border: 1px solid var(--line);
-      background: var(--surface-panel-muted);
+      text-decoration: none;
     }
   </style>
 </Layout>

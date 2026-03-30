@@ -53,15 +53,15 @@ const t = Astro.locals.t || ((value: string) => value);
 
         <label class="field">
           <span>{t("Email")}</span>
-          <input type="email" name="email" required placeholder="name@example.com" />
+          <input class="input-luxury" type="email" name="email" required placeholder="name@example.com" />
         </label>
 
         <label class="field">
           <span>{t("Password")}</span>
-          <input type="password" name="password" required placeholder="Enter password" />
+          <input class="input-luxury" type="password" name="password" required placeholder="Enter password" />
         </label>
 
-        <button type="submit">{t("Sign in")}</button>
+        <button class="btn-primary" type="submit">{t("Sign in")}</button>
       </form>
 
       <div class="panel-footer">
@@ -81,25 +81,25 @@ const t = Astro.locals.t || ((value: string) => value);
     .auth-shell {
       display: grid;
       grid-template-columns: minmax(0, 1.08fr) minmax(22rem, 0.92fr);
-      gap: 1.15rem;
+      gap: var(--space-m);
       align-items: stretch;
     }
     .auth-story,
     .auth-panel {
-      padding: 1.6rem;
+      padding: var(--space-l);
     }
     .auth-story {
       background:
         radial-gradient(circle at top left, color-mix(in srgb, var(--hero-glow) 48%, transparent), transparent 30rem),
         linear-gradient(180deg, var(--surface-overlay-strong), var(--surface-panel-muted));
       display: grid;
-      gap: 1.15rem;
+      gap: var(--space-m);
       min-height: 100%;
     }
     .auth-story h1,
     .panel-head h2 {
       margin: 0;
-      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-size: var(--text-5xl);
       line-height: 0.95;
       letter-spacing: -0.06em;
     }
@@ -114,51 +114,51 @@ const t = Astro.locals.t || ((value: string) => value);
     .story-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.85rem;
+      gap: var(--space-s);
     }
     .story-grid article,
     .story-band,
     .footer-card {
-      padding: 1rem 1.05rem;
+      padding: var(--space-m);
       border-radius: var(--radius-panel);
       background: color-mix(in srgb, var(--surface-input) 84%, transparent);
       border: 1px solid var(--line);
       display: grid;
-      gap: 0.35rem;
+      gap: var(--space-2xs);
       box-shadow: inset 0 1px 0 color-mix(in srgb, var(--surface-overlay-strong) 88%, transparent);
     }
     .story-grid strong,
     .story-band strong,
     .footer-card strong {
-      font-size: 0.95rem;
+      font-size: var(--text-base);
       letter-spacing: -0.02em;
     }
     .story-grid span {
       color: var(--muted);
       line-height: 1.6;
-      font-size: 0.92rem;
+      font-size: var(--text-sm);
     }
     .story-band ul {
       margin: 0;
-      padding-left: 1rem;
+      padding-left: var(--space-m);
       display: grid;
-      gap: 0.35rem;
+      gap: var(--space-2xs);
     }
     .auth-panel {
       display: grid;
-      gap: 1rem;
+      gap: var(--space-m);
       align-content: start;
       background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
     }
     .panel-head {
       display: grid;
-      gap: 0.65rem;
+      gap: var(--space-xs);
     }
     .eyebrow {
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      font-size: 0.78rem;
+      gap: var(--space-2xs);
+      font-size: var(--text-xs);
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -166,8 +166,8 @@ const t = Astro.locals.t || ((value: string) => value);
     }
     .error {
       margin: 0;
-      padding: 0.95rem 1rem;
-      border-radius: 1.1rem;
+      padding: var(--space-s) var(--space-m);
+      border-radius: var(--radius-lg);
       background: var(--danger-bg);
       color: var(--danger-text);
       font-weight: 600;
@@ -175,51 +175,30 @@ const t = Astro.locals.t || ((value: string) => value);
     }
     .login-form {
       display: grid;
-      gap: 0.95rem;
+      gap: var(--space-s);
     }
     .field {
       display: grid;
-      gap: 0.45rem;
+      gap: var(--space-2xs);
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: var(--text-sm);
       font-weight: 600;
     }
     input {
       width: 100%;
-      padding: 1rem 1rem;
-      border-radius: var(--radius-input);
-      border: 1px solid var(--line);
-      background: color-mix(in srgb, var(--surface-input-strong) 92%, transparent);
-      font: inherit;
-      color: var(--text);
-      box-shadow: inset 0 1px 0 color-mix(in srgb, var(--surface-overlay-strong) 84%, transparent);
     }
-    input:focus {
-      outline: none;
-      border-color: var(--line-strong);
-      box-shadow: 0 0 0 4px var(--accent-1);
+    .login-form input {
+      width: 100%;
     }
-    button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem 1.2rem;
-      border: none;
-      border-radius: 999px;
-      background: linear-gradient(180deg, color-mix(in srgb, var(--brand) 94%, white), var(--brand));
-      color: var(--surface-canvas);
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 16px 32px -20px var(--shadow-deep-color);
-    }
+    .login-form input { }
     .panel-footer {
       display: grid;
-      gap: 0.85rem;
+      gap: var(--space-s);
     }
     .switch-link {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.8rem 1rem;
+      gap: var(--space-s) var(--space-m);
       margin: 0;
     }
     .switch-link a {
@@ -234,7 +213,7 @@ const t = Astro.locals.t || ((value: string) => value);
       }
       .auth-story h1,
       .panel-head h2 {
-        font-size: clamp(2rem, 10vw, 2.9rem);
+        font-size: var(--text-4xl);
       }
     }
   </style>

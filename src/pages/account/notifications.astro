@@ -118,17 +118,17 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
     .settings-summary {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1rem;
+      gap: var(--space-m);
     }
 
     .summary-card {
-      padding: 1.1rem;
+      padding: var(--space-m);
       display: grid;
-      gap: 0.35rem;
+      gap: var(--space-2xs);
     }
 
     .summary-card strong {
-      font-size: 1.7rem;
+      font-size: var(--text-3xl);
       letter-spacing: -0.05em;
       text-transform: capitalize;
     }
@@ -140,7 +140,7 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
     }
 
     .summary-label {
-      font-size: 0.8rem;
+      font-size: var(--text-xs);
       text-transform: uppercase;
       letter-spacing: 0.08em;
       font-weight: 800;
@@ -149,26 +149,26 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
     .settings-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem;
+      gap: var(--space-m);
     }
 
     .stack-group,
     .cadence-block {
       display: grid;
-      gap: 0.8rem;
+      gap: var(--space-s);
     }
 
     .setting-row {
-      padding: 1rem;
+      padding: var(--space-m);
       align-items: center;
-      border-radius: 22px;
+      border-radius: var(--radius-lg);
       background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
       border: 1px solid var(--line);
     }
 
     .setting-row strong {
       display: block;
-      margin-bottom: 0.2rem;
+      margin-bottom: calc(var(--space-2xs) * 0.75);
     }
 
     .setting-row input,
@@ -181,15 +181,15 @@ const returnHref = viewer.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashb
     .choice-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.8rem;
+      gap: var(--space-s);
     }
 
     .choice-card {
       display: grid;
-      gap: 0.45rem;
-      padding: 1rem;
+      gap: var(--space-2xs);
+      padding: var(--space-m);
       cursor: pointer;
-      border-radius: 22px;
+      border-radius: var(--radius-lg);
       background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
       border: 1px solid var(--line);
     }
