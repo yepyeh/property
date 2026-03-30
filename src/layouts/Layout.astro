@@ -46,21 +46,15 @@ function getInitials(value?: string) {
 const viewerInitials = getInitials(viewer?.full_name || viewer?.email);
 
 const primaryNav = [
-  { label: t("Buy"), href: "/listings/?intent=buy", active: pathname === "/listings/" || pathname.startsWith("/listings/") },
-  { label: t("Rent"), href: "/listings/?intent=rent", active: pathname === "/listings/" || pathname.startsWith("/listings/") },
-  { label: t("For buyers"), href: "/for-buyers", active: pathname === "/for-buyers" },
-  { label: t("For owners"), href: "/for-owners", active: pathname === "/for-owners" },
-  { label: t("Pricing"), href: "/pricing", active: pathname === "/pricing" },
-  { label: t("Help"), href: "/help/", active: pathname === "/help/" || pathname.startsWith("/help/") },
-  ...(isOwner ? [{ label: t("Post"), href: "/submit-listing/", active: pathname === "/submit-listing/" }] : []),
-  ...(viewer ? [{ label: t("Inbox"), href: "/account/inbox", active: pathname.startsWith("/account/inbox"), count: unreadCount }] : []),
+  { label: t("Explore"), href: "/listings/?intent=buy", active: pathname === "/listings/" || pathname === "/" || pathname.startsWith("/listings/") },
+  { label: t("Buyers"), href: "/for-buyers", active: pathname === "/for-buyers" },
+  { label: t("Owners"), href: "/for-owners", active: pathname === "/for-owners" },
 ];
 
 const accountMenu = [
+  ...(viewer ? [{ key: "dashboard", label: isBuyer ? t("Dashboard") : t("Dashboard"), href: dashboardHref, active: pathname.startsWith("/buyer/") || pathname.startsWith("/owner/") || pathname.startsWith("/admin/") }] : []),
+  ...(viewer ? [{ key: "inbox", label: t("Inbox"), href: "/account/inbox", active: pathname.startsWith("/account/inbox"), count: unreadCount }] : []),
   ...(viewer ? [{ key: "settings", label: t("Settings"), href: "/account/notifications", active: pathname.startsWith("/account/notifications") }] : []),
-  ...(isBuyer ? [{ key: "compare", label: t("Compare"), href: compareHref, active: pathname.startsWith("/buyer/compare/") }] : []),
-  ...(viewer ? [{ key: "dashboard", label: isBuyer ? t("Buyer dashboard") : t("Dashboard"), href: dashboardHref, active: pathname.startsWith("/buyer/") || pathname.startsWith("/owner/") }] : []),
-  ...(isAdmin ? [{ key: "billing", label: t("Billing"), href: "/admin/billing/", active: pathname.startsWith("/admin/") }] : []),
 ];
 ---
 
@@ -103,17 +97,12 @@ const accountMenu = [
         viewerRoleLabel={viewerRoleLabel}
         viewerInitials={viewerInitials}
         accountMenu={accountMenu}
-        localeMeta={localeMeta}
-        localeOptions={localeOptions}
-        localeLabel={t("Language")}
-        suggestedLabel={t("Suggested")}
+        postHref={isOwner ? "/submit-listing/" : "/signup?role=owner"}
+        postLabel={t("Post")}
         darkModeLabel={t("Dark mode")}
         lightModeLabel={t("Light mode")}
         signInLabel={t("Sign in")}
         createAccountLabel={t("Create account")}
-        accountLabel={t("Account")}
-        navigationLabel={t("Explore")}
-        shortcutsLabel={t("Settings")}
         logOutLabel="Log out"
       />
     </div>
@@ -127,12 +116,9 @@ const accountMenu = [
       viewer={viewer}
       unreadCount={unreadCount}
       dashboardHref={dashboardHref}
+      listingsHref={isOwner ? "/owner/dashboard/" : isBuyer ? "/signup?role=owner" : "/signup?role=owner"}
+      savedHref={viewer ? "/buyer/dashboard/" : "/login"}
       t={t}
-      localeMeta={localeMeta}
-      localeOptions={localeOptions}
-      suggestedLabel={t("Suggested")}
-      darkModeLabel={t("Dark mode")}
-      lightModeLabel={t("Light mode")}
     />
     <script is:inline>
       (() => {
@@ -165,6 +151,15 @@ const accountMenu = [
             }
           });
         });
+      })();
+
+      (() => {
+        const root = document.documentElement;
+        const updateScrolled = () => {
+          root.classList.toggle("is-scrolled", window.scrollY > 24);
+        };
+        updateScrolled();
+        window.addEventListener("scroll", updateScrolled, { passive: true });
       })();
 
       if ("serviceWorker" in navigator) {

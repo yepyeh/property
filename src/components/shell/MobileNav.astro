@@ -1,57 +1,37 @@
 ---
+import { Bookmark, CircleUserRound, HousePlus, Search } from "lucide-react";
+
 export interface Props {
   pathname: string;
   viewer?: { role?: string } | null;
   unreadCount: number;
   dashboardHref: string;
+  listingsHref: string;
+  savedHref: string;
   t: (key: string) => string;
-  localeMeta: { nativeLabel: string };
-  localeOptions: Array<{ code: string; nativeLabel: string; href: string; current: boolean; suggested: boolean }>;
-  suggestedLabel: string;
-  darkModeLabel: string;
-  lightModeLabel: string;
 }
 
-const { pathname, viewer, unreadCount, dashboardHref, t, localeMeta, localeOptions, suggestedLabel, darkModeLabel, lightModeLabel } = Astro.props;
+const { pathname, viewer, unreadCount, dashboardHref, listingsHref, savedHref, t } = Astro.props;
 ---
 
 <nav class="mobile-utility" aria-label="Mobile navigation">
   <a class:list={["mobile-link", pathname.startsWith("/listings") || pathname === "/" ? "active" : ""]} href="/listings/?intent=buy">
-    <span class="mobile-icon" aria-hidden="true">⌕</span>
+    <Search class="mobile-icon" aria-hidden="true" stroke-width="1.5" />
     <span>{t("Search")}</span>
   </a>
-  <a class:list={[pathname.startsWith("/account/inbox") ? "active" : ""]} href={viewer ? "/account/inbox" : "/login"}>
-    <span class="mobile-icon" aria-hidden="true">◔</span>
-    <span>{viewer && unreadCount > 0 ? `${t("Inbox")} (${unreadCount > 9 ? "9+" : unreadCount})` : t("Inbox")}</span>
+  <a class:list={["mobile-link", pathname.startsWith("/buyer/") ? "active" : ""]} href={savedHref}>
+    <span class="mobile-icon-wrap">
+      <Bookmark class="mobile-icon" aria-hidden="true" stroke-width="1.5" />
+      {viewer && unreadCount > 0 ? <span class="mobile-dot"></span> : null}
+    </span>
+    <span>{t("Saved")}</span>
   </a>
-  <a class:list={["mobile-link", pathname.startsWith("/account/notifications") ? "active" : ""]} href={viewer ? "/account/notifications" : "/login"}>
-    <span class="mobile-icon" aria-hidden="true">⚙</span>
-    <span>{t("Settings")}</span>
+  <a class:list={["mobile-link", pathname.startsWith("/owner/") || pathname.startsWith("/submit-listing") ? "active" : ""]} href={listingsHref}>
+    <HousePlus class="mobile-icon" aria-hidden="true" stroke-width="1.5" />
+    <span>{t("My Listings")}</span>
   </a>
-  <a class:list={["mobile-link", pathname.startsWith("/buyer/") || pathname.startsWith("/owner/") || pathname.startsWith("/admin/") ? "active" : ""]} href={viewer ? dashboardHref : "/login"}>
-    <span class="mobile-icon" aria-hidden="true">{viewer ? "◉" : "→"}</span>
-    <span>{viewer ? t("Account") : t("Sign in")}</span>
+  <a class:list={["mobile-link", pathname.startsWith("/account/") || pathname.startsWith("/buyer/") || pathname.startsWith("/owner/") || pathname.startsWith("/admin/") ? "active" : ""]} href={viewer ? dashboardHref : "/login"}>
+    <CircleUserRound class="mobile-icon" aria-hidden="true" stroke-width="1.5" />
+    <span>{t("Profile")}</span>
   </a>
-  <details class="mobile-locale-menu">
-    <summary class="mobile-link">
-      <span class="mobile-icon" aria-hidden="true">文</span>
-      <span>{localeMeta.nativeLabel}</span>
-    </summary>
-    <div class="mobile-locale-panel">
-      {localeOptions.map((option) => (
-        <a class:list={["mobile-locale-item", option.current && "active"]} href={option.href}>
-          <span>{option.nativeLabel}</span>
-          {option.suggested ? <em>{suggestedLabel}</em> : null}
-        </a>
-      ))}
-    </div>
-  </details>
-  <button
-    class="mobile-link theme-mobile-toggle"
-    type="button"
-    data-theme-toggle
-  >
-    <span class="mobile-icon" aria-hidden="true" data-theme-icon>◐</span>
-    <span data-theme-label data-theme-dark-label={darkModeLabel} data-theme-light-label={lightModeLabel}>{darkModeLabel}</span>
-  </button>
 </nav>

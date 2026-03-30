@@ -10,15 +10,6 @@ interface NavItem {
   count?: number;
 }
 
-interface LocaleOption {
-  code: string;
-  label: string;
-  nativeLabel: string;
-  href: string;
-  current: boolean;
-  suggested: boolean;
-}
-
 export interface Props {
   primaryNav: NavItem[];
   viewer?: unknown;
@@ -26,17 +17,12 @@ export interface Props {
   viewerRoleLabel: string;
   viewerInitials: string;
   accountMenu: NavItem[];
-  localeMeta: { code: string; nativeLabel: string };
-  localeOptions: LocaleOption[];
-  localeLabel: string;
-  suggestedLabel: string;
+  postHref: string;
+  postLabel: string;
   darkModeLabel: string;
   lightModeLabel: string;
   signInLabel: string;
   createAccountLabel: string;
-  accountLabel: string;
-  navigationLabel: string;
-  shortcutsLabel: string;
   logOutLabel: string;
 }
 
@@ -47,17 +33,12 @@ const {
   viewerRoleLabel,
   viewerInitials,
   accountMenu,
-  localeMeta,
-  localeOptions,
-  localeLabel,
-  suggestedLabel,
+  postHref,
+  postLabel,
   darkModeLabel,
   lightModeLabel,
   signInLabel,
   createAccountLabel,
-  accountLabel,
-  navigationLabel,
-  shortcutsLabel,
   logOutLabel,
 } = Astro.props;
 ---
@@ -76,42 +57,15 @@ const {
     </nav>
 
     <div class="utility-links">
-      <details class="locale-menu">
-        <summary class="locale-summary">
-          <span class="locale-label">{localeLabel}</span>
-          <strong>{localeMeta.nativeLabel}</strong>
-          <span class="chevron">▾</span>
-        </summary>
-        <div class="locale-panel">
-          {localeOptions.map((option) => (
-            <a class:list={["locale-item", option.current && "active"]} href={option.href}>
-              <span>
-                {option.nativeLabel}
-                {option.code !== "en" ? <small>{option.label}</small> : null}
-              </span>
-              {option.suggested ? <em>{suggestedLabel}</em> : null}
-            </a>
-          ))}
-        </div>
-      </details>
-
-      <button
-        class="theme-toggle"
-        type="button"
-        data-theme-toggle
-      >
-        <span class="theme-toggle-icon" data-theme-icon>◐</span>
-        <span data-theme-label data-theme-dark-label={darkModeLabel} data-theme-light-label={lightModeLabel}>{darkModeLabel}</span>
-      </button>
+      <a class="auth-link primary nav-post" href={postHref}>{postLabel}</a>
       {viewer ? (
         <AccountMenu
           viewerLabel={viewerLabel}
           viewerRoleLabel={viewerRoleLabel}
           viewerInitials={viewerInitials}
           accountMenu={accountMenu}
-          accountLabel={accountLabel}
-          navigationLabel={navigationLabel}
-          shortcutsLabel={shortcutsLabel}
+          darkModeLabel={darkModeLabel}
+          lightModeLabel={lightModeLabel}
           logOutLabel={logOutLabel}
         />
       ) : (
