@@ -221,6 +221,11 @@ const enquiryStatusCounts = {
               <span>{watch.notify_outbid ? "Outbid alerts on" : "Outbid alerts off"}</span>
             </div>
             <div class="meta-row">
+              <span>{watch.registration_status === "registered" ? "Registered to bid" : "Watching only"}</span>
+              {watch.registration_method && <span>{watch.registration_method} route</span>}
+              {watch.max_proxy_bid && <span>Proxy max {watch.max_proxy_bid}</span>}
+            </div>
+            <div class="meta-row">
               <span>{watch.notify_starting_soon ? "Start alerts on" : "Start alerts off"}</span>
               <span>{watch.notify_ending_soon ? "Ending-soon alerts on" : "Ending-soon alerts off"}</span>
             </div>

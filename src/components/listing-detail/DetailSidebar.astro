@@ -1,7 +1,7 @@
 ---
 import { estimateMonthlyPayment, formatVndAmount } from "../../lib/affordability";
 import type { Listing } from "../../data/listings";
-import type { AuctionWatchRecord } from "../../lib/marketplace-types";
+import type { AuctionBidderRegistrationRecord, AuctionWatchRecord } from "../../lib/marketplace-types";
 
 export interface Props {
   listing: Listing;
@@ -11,8 +11,11 @@ export interface Props {
   reportSent?: boolean;
   protectedFlow?: boolean;
   auctionWatch?: AuctionWatchRecord | null;
+  auctionRegistration?: AuctionBidderRegistrationRecord | null;
   auctionWatchUpdated?: boolean;
   auctionWatchRemoved?: boolean;
+  auctionRegistered?: boolean;
+  auctionRegistrationRemoved?: boolean;
   t?: (value: string) => string;
 }
 
@@ -24,8 +27,11 @@ const {
   reportSent = false,
   protectedFlow = false,
   auctionWatch = null,
+  auctionRegistration = null,
   auctionWatchUpdated = false,
   auctionWatchRemoved = false,
+  auctionRegistered = false,
+  auctionRegistrationRemoved = false,
   t = (value: string) => value,
 } = Astro.props;
 const defaultDownPayment = 20;
@@ -47,6 +53,8 @@ const defaultMonthlyEstimate = formatVndAmount(
     {protectedFlow && <p class="info-banner">{t("Your enquiry stays inside the platform flow first. That gives both sides a cleaner history and a safer follow-up path.")}</p>}
     {auctionWatchUpdated && <p class="success-banner">{t("Auction watch updated. You will now get the alerts you asked for on this listing.")}</p>}
     {auctionWatchRemoved && <p class="info-banner">{t("Auction watch removed. This listing is no longer being tracked for your auction alerts.")}</p>}
+    {auctionRegistered && <p class="success-banner">{t("Bid registration saved. The system now treats you as a ready participant for this auction.")}</p>}
+    {auctionRegistrationRemoved && <p class="info-banner">{t("Bid registration withdrawn. You can still watch the auction without staying registered to bid.")}</p>}
 
     <div class="owner-card">
       <strong>{listing.owner.name}</strong>
@@ -80,6 +88,16 @@ const defaultMonthlyEstimate = formatVndAmount(
         <div class="watch-head">
           <strong>{t("Watch auction")}</strong>
           <span>{auctionWatch ? t("Watching with refined alerts") : t("Save alert rules before bidding starts")}</span>
+        </div>
+        <div class="auction-care-strip">
+          <article>
+            <strong>{t("Registration first")}</strong>
+            <span>{t("Like premium auction houses, serious bidders should register before the window opens.")}</span>
+          </article>
+          <article>
+            <strong>{t("Finance and legal ready")}</strong>
+            <span>{t("Treat this like a binding auction route. Funds, ID, and legal review should be ready before you bid.")}</span>
+          </article>
         </div>
         {isBuyer ? (
           <>
@@ -119,9 +137,55 @@ const defaultMonthlyEstimate = formatVndAmount(
                 <button type="submit" class="button-tertiary full-width">{t("Stop watching this auction")}</button>
               </form>
             )}
+            <div class="bidder-registration-panel">
+              <div class="watch-head">
+                <strong>{t("Register to bid")}</strong>
+                <span>{auctionRegistration?.status === "registered" ? t("Registered with a chosen bidding route") : t("Tell the system how you plan to participate")}</span>
+              </div>
+              <form class="auction-watch-form" method="POST" action="/api/account/auction-register">
+                <input type="hidden" name="listingSlug" value={listing.slug} />
+                <input type="hidden" name="redirectTo" value={`/listings/${listing.slug}/`} />
+                <label>
+                  <span>{t("Bidding route")}</span>
+                  <select name="registrationMethod">
+                    <option value="online" selected={(auctionRegistration?.registration_method ?? "online") === "online"}>{t("Online / app style bidding")}</option>
+                    <option value="telephone" selected={auctionRegistration?.registration_method === "telephone"}>{t("Telephone bidding support")}</option>
+                    <option value="absentee" selected={auctionRegistration?.registration_method === "absentee"}>{t("Absentee / proxy bid")}</option>
+                  </select>
+                </label>
+                <label>
+                  <span>{t("Maximum proxy bid")}</span>
+                  <input type="number" min="0" step="0.01" name="maxProxyBid" value={auctionRegistration?.max_proxy_bid ?? auctionWatch?.max_bid_amount ?? ""} placeholder={t("Optional absentee ceiling")} />
+                </label>
+                <label>
+                  <span>{t("Bidder note")}</span>
+                  <textarea name="bidderNote" rows="3" placeholder={t("Add anything important: financing route, due diligence status, or preferred contact method.")}>{auctionRegistration?.bidder_note ?? ""}</textarea>
+                </label>
+                <label class="check-row">
+                  <input type="checkbox" name="confirmIdentity" checked={auctionRegistration ? Boolean(auctionRegistration.confirm_identity) : true} />
+                  <span>{t("I have identity documents ready for bidding checks")}</span>
+                </label>
+                <label class="check-row">
+                  <input type="checkbox" name="confirmFunds" checked={auctionRegistration ? Boolean(auctionRegistration.confirm_funds) : true} />
+                  <span>{t("I have funds or financing lined up before bidding")}</span>
+                </label>
+                <label class="check-row">
+                  <input type="checkbox" name="confirmTerms" checked={auctionRegistration ? Boolean(auctionRegistration.confirm_terms) : true} />
+                  <span>{t("I understand auction bids can become binding and should follow the legal pack and terms")}</span>
+                </label>
+                <button type="submit" class="button-dark full-width">{auctionRegistration?.status === "registered" ? t("Update bidder registration") : t("Register to bid")}</button>
+              </form>
+              {auctionRegistration?.status === "registered" && (
+                <form method="POST" action="/api/account/auction-register/delete">
+                  <input type="hidden" name="listingSlug" value={listing.slug} />
+                  <input type="hidden" name="redirectTo" value={`/listings/${listing.slug}/`} />
+                  <button type="submit" class="button-tertiary full-width">{t("Withdraw bidder registration")}</button>
+                </form>
+              )}
+            </div>
           </>
         ) : (
-          <a class="button-secondary full-width" href={`/login?redirect=${encodeURIComponent(`/listings/${listing.slug}/`)}`}>{t("Sign in to watch this auction")}</a>
+          <a class="button-secondary full-width" href={`/login?redirect=${encodeURIComponent(`/listings/${listing.slug}/`)}`}>{t("Sign in to watch or register for this auction")}</a>
         )}
       </section>
     )}
@@ -384,6 +448,33 @@ const defaultMonthlyEstimate = formatVndAmount(
     border: 1px solid var(--line);
   }
 
+  .auction-care-strip {
+    display: grid;
+    gap: 0.7rem;
+    margin-bottom: 0.95rem;
+  }
+
+  .auction-care-strip article,
+  .bidder-registration-panel {
+    padding: 0.95rem 1rem;
+    border-radius: 18px;
+    background: var(--surface-panel-muted);
+    border: 1px solid var(--line);
+  }
+
+  .auction-care-strip strong,
+  .bidder-registration-panel strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+    letter-spacing: -0.02em;
+  }
+
+  .auction-care-strip span {
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
   .watch-head {
     display: grid;
     gap: 0.2rem;
@@ -403,6 +494,12 @@ const defaultMonthlyEstimate = formatVndAmount(
   .auction-watch-form {
     display: grid;
     gap: 0.75rem;
+  }
+
+  .bidder-registration-panel {
+    display: grid;
+    gap: 0.85rem;
+    margin-top: 0.9rem;
   }
 
   .check-row {
@@ -501,7 +598,10 @@ const defaultMonthlyEstimate = formatVndAmount(
   .report-form input,
   .report-form textarea,
   .report-form select,
-  .budget-grid input {
+  .budget-grid input,
+  .auction-watch-form input,
+  .auction-watch-form textarea,
+  .auction-watch-form select {
     width: 100%;
     border: 1px solid var(--line);
     border-radius: 16px;

@@ -1,5 +1,5 @@
 ---
-import type { Listing } from "../../data/listings";
+import type { AuctionTimelineStep, Listing } from "../../data/listings";
 import type { ListingInsights } from "../../lib/insights";
 
 export interface Props {
@@ -8,10 +8,11 @@ export interface Props {
   mapEmbedHref?: string;
   insights?: ListingInsights;
   hasPremiumInsights?: boolean;
+  auctionTimeline?: AuctionTimelineStep[];
   t?: (value: string) => string;
 }
 
-const { listing, mapHref, mapEmbedHref, insights, hasPremiumInsights = false, t = (value: string) => value } = Astro.props;
+const { listing, mapHref, mapEmbedHref, insights, hasPremiumInsights = false, auctionTimeline = [], t = (value: string) => value } = Astro.props;
 const neighborhood = listing.neighborhood;
 const location = listing.location;
 const isAuction = listing.saleMode === "auction";
@@ -41,6 +42,16 @@ const isAuction = listing.saleMode === "auction";
         </article>
       </div>
       {listing.auction.terms && <p class="auction-terms">{listing.auction.terms}</p>}
+      {auctionTimeline.length > 0 && (
+        <div class="auction-timeline">
+          {auctionTimeline.map((step) => (
+            <article class={`timeline-step timeline-${step.state}`}>
+              <strong>{t(step.title)}</strong>
+              <p>{t(step.body)}</p>
+            </article>
+          ))}
+        </div>
+      )}
     </div>
   )}
 
@@ -281,6 +292,42 @@ const isAuction = listing.saleMode === "auction";
     margin-top: 1rem !important;
   }
 
+  .auction-timeline {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+    margin-top: 1rem;
+  }
+
+  .timeline-step {
+    padding: 1rem;
+    border-radius: 18px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--surface-input-strong) 94%, transparent), color-mix(in srgb, var(--surface-panel-muted) 90%, transparent));
+    border: 1px solid var(--line);
+  }
+
+  .timeline-step strong {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.96rem;
+    letter-spacing: -0.02em;
+  }
+
+  .timeline-step p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .timeline-active {
+    border-color: color-mix(in srgb, var(--accent-9) 18%, var(--line));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-9) 12%, transparent);
+  }
+
+  .timeline-complete {
+    background: color-mix(in srgb, var(--accent-1) 58%, var(--surface-elevated-strong));
+  }
+
   .tag-row span {
     background: rgba(248,250,252,0.96);
     border: 1px solid var(--line);
@@ -517,6 +564,7 @@ const isAuction = listing.saleMode === "auction";
     .insights-grid,
     .overview-grid,
     .auction-grid,
+    .auction-timeline,
     .context-grid,
     .map-panel,
     .gallery-editorial {

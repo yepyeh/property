@@ -9,6 +9,7 @@ import {
 import { buildInitialListingPresentation } from "./listing-defaults";
 import { normalizeExpiredListingPlans } from "./listing-lifecycle";
 import type {
+  AuctionBidderRegistrationRecord,
   AuctionWatchRecord,
   EnquiryInput,
   ListingFilters,
@@ -856,11 +857,15 @@ export async function getAuctionWatchRecord(db: D1Like | undefined, userId: numb
 
   return db
     .prepare(
-      `SELECT id, listing_slug, max_bid_amount, notify_outbid, notify_over_max_bid, notify_unsold_under,
-              notify_starting_soon, notify_ending_soon, created_at, updated_at
-       FROM auction_watchers
-       WHERE user_id = ?
-         AND listing_slug = ?
+      `SELECT w.id, w.listing_slug, w.max_bid_amount, w.notify_outbid, w.notify_over_max_bid, w.notify_unsold_under,
+              w.notify_starting_soon, w.notify_ending_soon, w.created_at, w.updated_at,
+              r.status as registration_status, r.registration_method, r.max_proxy_bid
+       FROM auction_watchers w
+       LEFT JOIN auction_bidder_registrations r
+         ON r.user_id = w.user_id
+        AND r.listing_slug = w.listing_slug
+       WHERE w.user_id = ?
+         AND w.listing_slug = ?
        LIMIT 1`
     )
     .bind(userId, listingSlug)
@@ -870,11 +875,15 @@ export async function getAuctionWatchRecord(db: D1Like | undefined, userId: numb
 export async function getAuctionWatchRecords(db: D1Like, userId: number) {
   const result = await db
     .prepare(
-      `SELECT id, listing_slug, max_bid_amount, notify_outbid, notify_over_max_bid, notify_unsold_under,
-              notify_starting_soon, notify_ending_soon, created_at, updated_at
-       FROM auction_watchers
-       WHERE user_id = ?
-       ORDER BY updated_at DESC, created_at DESC`
+      `SELECT w.id, w.listing_slug, w.max_bid_amount, w.notify_outbid, w.notify_over_max_bid, w.notify_unsold_under,
+              w.notify_starting_soon, w.notify_ending_soon, w.created_at, w.updated_at,
+              r.status as registration_status, r.registration_method, r.max_proxy_bid
+       FROM auction_watchers w
+       LEFT JOIN auction_bidder_registrations r
+         ON r.user_id = w.user_id
+        AND r.listing_slug = w.listing_slug
+       WHERE w.user_id = ?
+       ORDER BY w.updated_at DESC, w.created_at DESC`
     )
     .bind(userId)
     .all<AuctionWatchRecord>();
@@ -946,6 +955,92 @@ export async function saveAuctionWatchForBuyer(
 export async function removeAuctionWatchForBuyer(db: D1Like, userId: number, listingSlug: string) {
   await db
     .prepare(`DELETE FROM auction_watchers WHERE user_id = ? AND listing_slug = ?`)
+    .bind(userId, listingSlug)
+    .run();
+
+  return { ok: true as const };
+}
+
+export async function getAuctionBidderRegistrationRecord(db: D1Like | undefined, userId: number | undefined, listingSlug: string) {
+  if (!db || !userId || !listingSlug) return null;
+
+  return db
+    .prepare(
+      `SELECT id, listing_slug, registration_method, max_proxy_bid, bidder_note,
+              confirm_identity, confirm_funds, confirm_terms, status, created_at, updated_at
+       FROM auction_bidder_registrations
+       WHERE user_id = ?
+         AND listing_slug = ?
+       LIMIT 1`
+    )
+    .bind(userId, listingSlug)
+    .first<AuctionBidderRegistrationRecord>();
+}
+
+export async function saveAuctionBidderRegistrationForBuyer(
+  db: D1Like,
+  userId: number,
+  input: {
+    listingSlug: string;
+    registrationMethod: "online" | "telephone" | "absentee";
+    maxProxyBid?: number | null;
+    bidderNote?: string | null;
+    confirmIdentity: boolean;
+    confirmFunds: boolean;
+    confirmTerms: boolean;
+  }
+) {
+  await db
+    .prepare(
+      `INSERT INTO auction_bidder_registrations (
+         user_id, listing_slug, registration_method, max_proxy_bid, bidder_note,
+         confirm_identity, confirm_funds, confirm_terms, status, updated_at
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'registered', CURRENT_TIMESTAMP)
+       ON CONFLICT(user_id, listing_slug) DO UPDATE SET
+         registration_method = excluded.registration_method,
+         max_proxy_bid = excluded.max_proxy_bid,
+         bidder_note = excluded.bidder_note,
+         confirm_identity = excluded.confirm_identity,
+         confirm_funds = excluded.confirm_funds,
+         confirm_terms = excluded.confirm_terms,
+         status = 'registered',
+         updated_at = CURRENT_TIMESTAMP`
+    )
+    .bind(
+      userId,
+      input.listingSlug,
+      input.registrationMethod,
+      input.maxProxyBid ?? null,
+      input.bidderNote?.trim() || null,
+      input.confirmIdentity ? 1 : 0,
+      input.confirmFunds ? 1 : 0,
+      input.confirmTerms ? 1 : 0
+    )
+    .run();
+
+  const listing = await getListingBySlug(input.listingSlug, db);
+  if (listing) {
+    await upsertInboxNotification(db, {
+      eventKey: buildInboxEventKey(["auction-registration", userId, input.listingSlug]),
+      userId,
+      category: "saved_listing_updates",
+      title: "Bidder registration saved",
+      message: `${listing.title} is now marked as a registered auction interest with your preferred bidding route.`,
+      href: `/listings/${input.listingSlug}/`,
+      level: "info",
+    });
+  }
+
+  return { ok: true as const };
+}
+
+export async function withdrawAuctionBidderRegistrationForBuyer(db: D1Like, userId: number, listingSlug: string) {
+  await db
+    .prepare(
+      `UPDATE auction_bidder_registrations
+       SET status = 'withdrawn', updated_at = CURRENT_TIMESTAMP
+       WHERE user_id = ? AND listing_slug = ?`
+    )
     .bind(userId, listingSlug)
     .run();
 

@@ -4,8 +4,9 @@ import DetailHero from "../../components/listing-detail/DetailHero.astro";
 import DetailContent from "../../components/listing-detail/DetailContent.astro";
 import DetailSidebar from "../../components/listing-detail/DetailSidebar.astro";
 import SimilarListingsSection from "../../components/listing-detail/SimilarListingsSection.astro";
+import { buildAuctionTimeline } from "../../data/listings";
 import { buildListingInsights, hasPremiumInsightsAccess } from "../../lib/insights";
-import { getAllListings, getAuctionWatchRecord, getListingBySlug, isListingSavedByUser, recordRecentlyViewedListing } from "../../lib/listings";
+import { getAllListings, getAuctionBidderRegistrationRecord, getAuctionWatchRecord, getListingBySlug, isListingSavedByUser, recordRecentlyViewedListing } from "../../lib/listings";
 import { getDB } from "../../lib/runtime";
 
 const t = Astro.locals.t || ((value: string) => value);
@@ -19,6 +20,8 @@ const reportSent = Astro.url.searchParams.get("report") === "sent";
 const protectedFlow = Astro.url.searchParams.get("protected") === "1";
 const auctionWatchUpdated = Astro.url.searchParams.get("auctionWatchUpdated") === "1";
 const auctionWatchRemoved = Astro.url.searchParams.get("auctionWatchRemoved") === "1";
+const auctionRegistered = Astro.url.searchParams.get("auctionRegistered") === "1";
+const auctionRegistrationRemoved = Astro.url.searchParams.get("auctionRegistrationRemoved") === "1";
 const isBuyer = viewer?.role === "buyer" || viewer?.role === "admin";
 const isSaved = listing ? await isListingSavedByUser(db, viewer?.id, listing.slug) : false;
 
@@ -53,6 +56,8 @@ const mapEmbedHref = location
   ? `https://www.openstreetmap.org/export/embed.html?bbox=${location.lng - 0.01}%2C${location.lat - 0.01}%2C${location.lng + 0.01}%2C${location.lat + 0.01}&layer=mapnik&marker=${location.lat}%2C${location.lng}`
   : undefined;
 const auctionWatch = listing.saleMode === "auction" ? await getAuctionWatchRecord(db, viewer?.id, listing.slug) : null;
+const auctionRegistration = listing.saleMode === "auction" ? await getAuctionBidderRegistrationRecord(db, viewer?.id, listing.slug) : null;
+const auctionTimeline = listing.saleMode === "auction" ? buildAuctionTimeline(listing.auction) : [];
 ---
 
 <Layout title={`${listing.title} | Property App 2026`} description={listing.summary}>
@@ -67,7 +72,7 @@ const auctionWatch = listing.saleMode === "auction" ? await getAuctionWatchRecor
   />
 
   <section class="detail-grid">
-    <DetailContent listing={listing} mapHref={mapHref} mapEmbedHref={mapEmbedHref} insights={insights} hasPremiumInsights={hasPremiumInsights} t={t} />
+    <DetailContent listing={listing} mapHref={mapHref} mapEmbedHref={mapEmbedHref} insights={insights} hasPremiumInsights={hasPremiumInsights} auctionTimeline={auctionTimeline} t={t} />
     <DetailSidebar
       listing={listing}
       ownerTrustLabel={ownerTrustLabel}
@@ -76,8 +81,11 @@ const auctionWatch = listing.saleMode === "auction" ? await getAuctionWatchRecor
       reportSent={reportSent}
       protectedFlow={protectedFlow}
       auctionWatch={auctionWatch}
+      auctionRegistration={auctionRegistration}
       auctionWatchUpdated={auctionWatchUpdated}
       auctionWatchRemoved={auctionWatchRemoved}
+      auctionRegistered={auctionRegistered}
+      auctionRegistrationRemoved={auctionRegistrationRemoved}
       t={t}
     />
   </section>

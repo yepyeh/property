@@ -116,6 +116,46 @@ export function getAuctionTimingLabel(auction?: Listing["auction"]) {
   return phase === "live" ? "Auction live" : "Auction scheduled";
 }
 
+export interface AuctionTimelineStep {
+  key: string;
+  title: string;
+  body: string;
+  state: "complete" | "active" | "upcoming";
+}
+
+export function buildAuctionTimeline(auction?: Listing["auction"]) {
+  if (!auction) return [] as AuctionTimelineStep[];
+
+  const phase = getAuctionPhase(auction) || "scheduled";
+
+  return [
+    {
+      key: "review",
+      title: "Review the pack and inspect the property",
+      body: "Check the legal pack, condition, reserve guidance, and local comparables before you commit to bidding.",
+      state: phase === "scheduled" ? "active" : "complete",
+    },
+    {
+      key: "register",
+      title: "Register to bid before the window opens",
+      body: "Confirm identity, funds readiness, and the route you want to use: online, telephone, or absentee proxy bidding.",
+      state: phase === "scheduled" ? "active" : "complete",
+    },
+    {
+      key: "live",
+      title: "Track the live window and bid discipline",
+      body: "Use your maximum as a ceiling, stay alert for extensions, and keep the platform notifications working for you.",
+      state: phase === "live" ? "active" : phase === "ended" ? "complete" : "upcoming",
+    },
+    {
+      key: "close",
+      title: "Confirm the outcome and next steps",
+      body: "If the lot sells, move into post-auction completion. If it passes in, watch for follow-up and unsold opportunities.",
+      state: phase === "ended" ? "active" : "upcoming",
+    },
+  ];
+}
+
 export const listings: Listing[] = generatedSeaListings as Listing[];
 
 export function getListingBySlug(slug: string) {

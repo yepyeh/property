@@ -205,6 +205,24 @@ export interface AuctionWatchRecord {
   notify_ending_soon: number;
   created_at: string;
   updated_at?: string;
+  registration_status?: string | null;
+  registration_method?: string | null;
+  max_proxy_bid?: number | null;
+  listing?: Listing | null;
+}
+
+export interface AuctionBidderRegistrationRecord {
+  id: number;
+  listing_slug: string;
+  registration_method: "online" | "telephone" | "absentee";
+  max_proxy_bid?: number | null;
+  bidder_note?: string | null;
+  confirm_identity: number;
+  confirm_funds: number;
+  confirm_terms: number;
+  status: "registered" | "withdrawn";
+  created_at: string;
+  updated_at?: string;
   listing?: Listing | null;
 }
 
