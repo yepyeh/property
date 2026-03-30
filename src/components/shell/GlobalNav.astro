@@ -43,21 +43,33 @@ const {
 } = Astro.props;
 ---
 
-<header class="global-nav card">
+<header class="header-shell glass-effect">
   <BrandLink />
 
-  <div class="nav-cluster">
-    <nav class="nav-links">
+  <div class="flex items-center gap-s">
+    <nav class="hidden items-center gap-xs md:flex">
       {primaryNav.map((item) => (
-        <a class:list={["nav-link", "link-with-count", item.active && "active"]} href={item.href}>
+        <a
+          class:list={[
+            "luxury-transition inline-flex min-h-10 items-center justify-center rounded-full border border-transparent px-s py-xs text-sm font-medium no-underline",
+            item.active
+              ? "border-base bg-card text-white"
+              : "text-muted-ui hover:border-base hover:bg-card hover:text-white",
+          ]}
+          href={item.href}
+        >
           <span>{item.label}</span>
-          {item.count ? <span class="count-badge">{item.count > 9 ? "9+" : item.count}</span> : null}
+          {item.count ? (
+            <span class="ml-xs inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-[0.34rem] text-[0.68rem] font-semibold text-accent-foreground">
+              {item.count > 9 ? "9+" : item.count}
+            </span>
+          ) : null}
         </a>
       ))}
     </nav>
 
-    <div class="utility-links">
-      <a class="auth-link primary nav-post" href={postHref}>{postLabel}</a>
+    <div class="flex items-center gap-xs">
+      <a class="btn-primary" href={postHref}>{postLabel}</a>
       {viewer ? (
         <AccountMenu
           viewerLabel={viewerLabel}
@@ -70,8 +82,13 @@ const {
         />
       ) : (
         <>
-          <a class="auth-link" href="/login">{signInLabel}</a>
-          <a class="auth-link primary" href="/signup?role=buyer">{createAccountLabel}</a>
+          <a
+            class="luxury-transition hidden min-h-10 items-center justify-center rounded-full border border-transparent px-s py-xs text-sm font-medium text-muted-ui no-underline hover:border-base hover:bg-card hover:text-white md:inline-flex"
+            href="/login"
+          >
+            {signInLabel}
+          </a>
+          <a class="btn-primary hidden md:inline-flex" href="/signup?role=buyer">{createAccountLabel}</a>
         </>
       )}
     </div>

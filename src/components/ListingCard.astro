@@ -18,332 +18,117 @@ const auctionLabel = listing.auction?.phase === "live" ? t("Live auction") : lis
 const auctionTimingLabel = isAuction ? getAuctionTimingLabel(listing.auction) : null;
 ---
 
-<article class={`listing-card card ${listing.tone}`}>
-  <a class="photo-wrap" href={`/listings/${listing.slug}/`}>
-    <div class="photo" style={heroImage ? `background-image: linear-gradient(180deg, rgba(17, 17, 17, 0.08), rgba(17, 17, 17, 0.34)), url(${heroImage});background-position:${coverPosition}` : undefined}>
-      <div class="photo-top">
-        <div class="chip-row">
-          <span class="intent-chip">{intentLabel}</span>
-          {isAuction && <span class="auction-chip">{auctionLabel}</span>}
-          <span class="status-chip">{listing.status}</span>
+<article class="glass-card luxury-transition group overflow-hidden hover:-translate-y-1 hover:border-accent">
+  <a class="block no-underline" href={`/listings/${listing.slug}/`}>
+    <div class="relative aspect-[4/3] overflow-hidden border-b border-border">
+      {heroImage ? (
+        <img
+          src={heroImage}
+          alt={listing.title}
+          class="h-full w-full object-cover transition-transform duration-[400ms] ease-luxury group-hover:scale-[1.03]"
+          style={`object-position:${coverPosition}`}
+        />
+      ) : (
+        <div class="bg-card-surface h-full w-full" />
+      )}
+
+      <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,10,0.08),rgba(10,10,10,0.4))]" />
+
+      <div class="absolute inset-x-0 top-0 flex items-start justify-between gap-s p-m">
+        <div class="flex flex-wrap gap-xs">
+          <span class="glass-effect rounded-full px-s py-xs text-xs font-semibold uppercase tracking-[0.12em] text-white">
+            {intentLabel}
+          </span>
+          {isAuction && (
+            <span class="glass-effect rounded-full px-s py-xs text-xs font-semibold uppercase tracking-[0.12em] text-white">
+              {auctionLabel}
+            </span>
+          )}
+          <span class="glass-effect rounded-full px-s py-xs text-xs font-semibold uppercase tracking-[0.12em] text-white">
+            {listing.status}
+          </span>
         </div>
-        <div class="media-meta">
-          <span class="save-count">{listing.stats.saves} {t("saves")}</span>
-          <span class="save-count">{imageCount} {t("photos")}</span>
+
+        <div class="flex flex-wrap justify-end gap-xs">
+          <span class="glass-effect rounded-full px-s py-xs text-xs font-medium text-white">
+            {listing.stats.saves} {t("saves")}
+          </span>
+          <span class="glass-effect rounded-full px-s py-xs text-xs font-medium text-white">
+            {imageCount} {t("photos")}
+          </span>
         </div>
       </div>
     </div>
   </a>
 
-  <div class="listing-body">
-    <div class="listing-label-row">
-      <span class="market-chip">{listing.type}</span>
-      <span class="market-chip muted">{listing.intent === "rent" ? t("Monthly rental") : isAuction ? t("Auction") : t("Private sale")}</span>
-    </div>
-    <div class="listing-top">
-      <div>
-        <p class="price">{listing.priceLabel}</p>
-        <h3><a href={`/listings/${listing.slug}/`}>{listing.title}</a></h3>
-      </div>
-      <span class="meta-label">{listing.intent === "rent" ? t("Rental") : t("Sale")}</span>
+  <div class="grid gap-s p-m">
+    <div class="flex flex-wrap gap-xs">
+      <span class="rounded-full bg-accent px-s py-xs text-xs font-semibold uppercase tracking-[0.12em] text-accent-foreground">
+        {listing.type}
+      </span>
+      <span class="rounded-full border border-border px-s py-xs text-xs font-medium uppercase tracking-[0.12em] text-muted">
+        {listing.intent === "rent" ? t("Monthly rental") : isAuction ? t("Auction") : t("Private sale")}
+      </span>
     </div>
 
-    <p class="meta">{listing.ward}, {listing.district}, {listing.city}, {listing.country}</p>
-    <div class="fact-row">
+    <div class="flex flex-wrap items-start justify-between gap-s">
+      <div class="min-w-0 flex-1">
+        <p class="text-lg font-semibold tracking-[-0.05em] text-white">{listing.priceLabel}</p>
+        <h3 class="mt-xs text-lg font-semibold tracking-[-0.04em] text-white">
+          <a href={`/listings/${listing.slug}/`} class="luxury-transition no-underline hover:text-accent">
+            {listing.title}
+          </a>
+        </h3>
+      </div>
+      <span class="rounded-full border border-border px-s py-xs text-xs font-medium uppercase tracking-[0.12em] text-muted">
+        {listing.intent === "rent" ? t("Rental") : t("Sale")}
+      </span>
+    </div>
+
+    <p class="secondary-text text-sm leading-7">{listing.ward}, {listing.district}, {listing.city}, {listing.country}</p>
+
+    <div class="flex flex-wrap items-center justify-between gap-s border-y border-border py-s text-sm text-muted">
       <span>{listing.type}</span>
       <span>{listing.beds} {t("beds")}</span>
       <span>{listing.baths} {t("baths")}</span>
       <span>{listing.area} m2</span>
     </div>
-    <p class="summary">{listing.summary}</p>
+
+    <p class="secondary-text min-h-[4.5rem] text-sm leading-7">{listing.summary}</p>
+
     {isAuction && listing.auction && (
-      <div class="auction-strip">
-        <strong>{listing.auction.startingPriceLabel || listing.priceLabel}</strong>
-        {auctionTimingLabel && <span>{t(auctionTimingLabel)}</span>}
+      <div class="flex flex-wrap items-center justify-between gap-s rounded-lg border border-border bg-card p-s">
+        <strong class="text-sm font-semibold tracking-[-0.03em] text-white">
+          {listing.auction.startingPriceLabel || listing.priceLabel}
+        </strong>
+        {auctionTimingLabel && <span class="secondary-text text-sm">{t(auctionTimingLabel)}</span>}
       </div>
     )}
+
     {neighborhood && (
-      <div class="context-panel">
-        <p class="context-headline">{neighborhood.headline}</p>
-        <div class="context-row">
+      <div class="grid gap-xs rounded-lg border border-border bg-card p-s">
+        <p class="text-sm font-medium text-white">{neighborhood.headline}</p>
+        <div class="flex flex-wrap items-center justify-between gap-s text-sm text-muted">
           <span>{neighborhood.commute}</span>
           <span>{neighborhood.nearby[0]}</span>
         </div>
       </div>
     )}
 
-    <div class="listing-footer">
-      <div class="signal-row">
+    <div class="flex flex-wrap items-center justify-between gap-s">
+      <div class="flex flex-wrap items-center gap-s text-sm text-muted">
         <span>{listing.stats.enquiries} {t("enquiries")}</span>
         <span>{listing.owner.verified ? t("Verified owner") : t("Owner listed")}</span>
       </div>
-      <div class="footer-actions">
-        {showCompareLink && <a class="compare-link" href="/buyer/compare/">{t("Compare")}</a>}
-        <a class="details-link" href={`/listings/${listing.slug}/`}>{t("View details")}</a>
+
+      <div class="flex flex-wrap items-center gap-s">
+        {showCompareLink && (
+          <a class="luxury-transition rounded-full border border-border px-s py-xs text-sm font-medium no-underline text-muted hover:text-white" href="/buyer/compare/">
+            {t("Compare")}
+          </a>
+        )}
+        <a class="btn-primary" href={`/listings/${listing.slug}/`}>{t("View details")}</a>
       </div>
     </div>
   </div>
 </article>
-
-<style is:inline>
-  .listing-card {
-    overflow: hidden;
-    background: var(--surface-elevated-strong);
-    border-radius: 1.95rem;
-    box-shadow: 0 24px 54px var(--shadow-soft-color);
-    transition: transform 180ms ease, box-shadow 180ms ease;
-  }
-
-  .listing-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 32px 68px var(--shadow-color);
-  }
-
-  .photo-wrap {
-    display: block;
-    text-decoration: none;
-  }
-
-  .photo {
-    min-height: 15rem;
-    padding: 1rem;
-    display: flex;
-    align-items: flex-start;
-    background-size: cover;
-    background-position: center;
-  }
-
-  .photo-top {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    gap: 0.8rem;
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .media-meta {
-    display: flex;
-    gap: 0.45rem;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-
-  .sea .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.06), rgba(17,17,17,0.26)), linear-gradient(135deg, #c7ddd7, #95bcb4); }
-  .sun .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.06), rgba(17,17,17,0.3)), linear-gradient(135deg, #edd1ab, #d29b67); }
-  .forest .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.06), rgba(17,17,17,0.3)), linear-gradient(135deg, #c9d9c7, #92ac96); }
-  .night .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.06), rgba(17,17,17,0.34)), linear-gradient(135deg, #d2d7e1, #8890a6); }
-  .clay .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.06), rgba(17,17,17,0.3)), linear-gradient(135deg, #e8d0bf, #ba917c); }
-  .sky .photo:not([style]) { background-image: linear-gradient(180deg, rgba(17,17,17,0.06), rgba(17,17,17,0.3)), linear-gradient(135deg, #d9e6ee, #9db2be); }
-
-  .chip-row {
-    display: flex;
-    gap: 0.45rem;
-    flex-wrap: wrap;
-  }
-
-  .intent-chip,
-  .auction-chip,
-  .status-chip,
-  .save-count,
-  .meta-label {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 1.95rem;
-    padding: 0.22rem 0.72rem;
-    border-radius: 999px;
-    font-size: 0.72rem;
-    font-weight: 800;
-  }
-
-  .intent-chip,
-  .auction-chip,
-  .status-chip,
-  .save-count {
-    background: var(--surface-overlay-strong);
-    color: var(--text);
-    border: 1px solid var(--line);
-    backdrop-filter: blur(10px);
-  }
-
-  .auction-chip {
-    background: var(--surface-overlay-strong);
-    color: var(--surface-canvas);
-  }
-
-  .listing-body {
-    display: grid;
-    gap: 0.9rem;
-    padding: 1.15rem;
-  }
-
-  .listing-label-row {
-    display: flex;
-    gap: 0.55rem;
-    flex-wrap: wrap;
-  }
-
-  .market-chip {
-    display: inline-flex;
-    align-items: center;
-    min-height: 2rem;
-    padding: 0.2rem 0.72rem;
-    border-radius: 999px;
-    background: var(--surface-soft);
-    color: var(--brand);
-    font-size: 0.74rem;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-
-  .market-chip.muted {
-    background: var(--surface-elevated-strong);
-    border: 1px solid var(--line);
-    color: var(--muted-strong);
-  }
-
-  .listing-top,
-  .listing-footer,
-  .footer-actions,
-  .fact-row,
-  .signal-row,
-  .context-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.7rem;
-    flex-wrap: wrap;
-  }
-
-  .price {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 800;
-    letter-spacing: -0.06em;
-  }
-
-  h3 {
-    margin: 0.25rem 0 0;
-    font-size: 1.16rem;
-    line-height: 1.18;
-    letter-spacing: -0.05em;
-  }
-
-  h3 a {
-    text-decoration: none;
-  }
-
-  .meta-label {
-    border: 1px solid var(--line);
-    background: var(--bg-soft);
-    color: var(--muted-strong);
-  }
-
-  .meta,
-  .summary,
-  .fact-row,
-  .signal-row,
-  .context-row,
-  .context-headline,
-  .auction-strip span {
-    color: var(--muted);
-  }
-
-  .meta,
-  .summary,
-  .context-headline {
-    margin: 0;
-    line-height: 1.68;
-  }
-
-  .auction-strip {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.7rem;
-    flex-wrap: wrap;
-    padding: 0.8rem 0.9rem;
-    border-radius: 18px;
-    background: var(--accent-1);
-    border: 1px solid var(--line);
-  }
-
-  .auction-strip strong {
-    font-size: 0.96rem;
-    letter-spacing: -0.03em;
-  }
-
-  .summary {
-    font-size: 0.95rem;
-    min-height: 4.8rem;
-  }
-
-  .fact-row,
-  .signal-row,
-  .context-row {
-    font-size: 0.88rem;
-  }
-
-  .fact-row {
-    padding: 0.75rem 0;
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-  }
-
-  .context-panel {
-    display: grid;
-    gap: 0.58rem;
-    padding: 0.92rem;
-    border-radius: 1.25rem;
-    background: linear-gradient(180deg, var(--surface-brand-soft), var(--surface-elevated-strong));
-    border: 1px solid var(--line);
-  }
-
-  .details-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 2.7rem;
-    padding: 0.78rem 1rem;
-    border-radius: 999px;
-    background: var(--brand);
-    color: var(--surface-canvas);
-    font-weight: 700;
-    text-decoration: none;
-  }
-
-  .details-link:hover {
-    background: var(--brand);
-  }
-
-  .compare-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 2.7rem;
-    padding: 0.78rem 0.95rem;
-    border-radius: 999px;
-    border: 1px solid var(--line);
-    background: var(--surface-elevated);
-    color: var(--text);
-    font-weight: 700;
-    text-decoration: none;
-  }
-
-  @media (max-width: 760px) {
-    .listing-label-row,
-    .listing-top,
-    .listing-footer,
-    .fact-row,
-    .signal-row,
-    .context-row {
-      display: grid;
-    }
-
-    .details-link {
-      width: 100%;
-    }
-  }
-</style>
