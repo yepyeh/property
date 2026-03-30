@@ -1,14 +1,9 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import ResultsHero from "../../components/listings/ResultsHero.astro";
-import SearchFiltersForm from "../../components/listings/SearchFiltersForm.astro";
-import ResultsSummary from "../../components/listings/ResultsSummary.astro";
-import SaveSearchPanel from "../../components/listings/SaveSearchPanel.astro";
-import ResultsWorkspace from "../../components/listings/ResultsWorkspace.astro";
-import { buildSavedSearchQuery, searchListings } from "../../lib/listings";
+import PremiumSearchResultsPage from "../../components/search/PremiumSearchResultsPage";
+import { getAllListings, searchListings } from "../../lib/listings";
 import { getDB } from "../../lib/runtime";
 
-const t = Astro.locals.t || ((value: string) => value);
 const params = Astro.url.searchParams;
 const filters = {
   intent: params.get("intent") || "buy",
@@ -23,292 +18,39 @@ const filters = {
   sort: params.get("sort") || "newest",
 };
 
-const listings = await searchListings(filters, getDB(Astro.locals.runtime));
+const db = getDB(Astro.locals.runtime);
+const listings = await searchListings(filters, db);
+const allListings = await getAllListings(db);
 const owner = Astro.locals.owner;
-const dashboardHref = owner?.role === "buyer" ? "/buyer/dashboard/" : "/owner/dashboard/";
-const allCountries = Array.from(new Set(listings.map((listing) => listing.country))).sort();
-const allCities = Array.from(new Set(listings.map((listing) => listing.city))).sort();
-const allDistricts = Array.from(new Set(listings.map((listing) => listing.district))).sort();
-const saved = Astro.url.searchParams.get("saved");
-const activeFilters = [
-  filters.intent ? `Intent: ${filters.intent}` : "",
-  filters.country ? `Country: ${filters.country}` : "",
-  filters.city ? `City: ${filters.city}` : "",
-  filters.district ? `District: ${filters.district}` : "",
-  filters.propertyType ? `Type: ${filters.propertyType}` : "",
-  filters.saleMode ? `Mode: ${filters.saleMode}` : "",
-  typeof filters.minPrice === "number" ? `Min price: ${filters.minPrice}` : "",
-  typeof filters.maxPrice === "number" ? `Max price: ${filters.maxPrice}` : "",
-  typeof filters.minBeds === "number" ? `Beds: ${filters.minBeds}+` : "",
-].filter(Boolean);
+const allCountries = Array.from(new Set(allListings.map((listing) => listing.country))).sort();
+const allCities = Array.from(new Set(allListings.map((listing) => listing.city))).sort();
+const allDistricts = Array.from(new Set(allListings.map((listing) => listing.district))).sort();
 
-const resultSummary = {
-  total: listings.length,
-  countries: Array.from(new Set(listings.map((listing) => listing.country))).length,
-  cities: Array.from(new Set(listings.map((listing) => listing.city))).length,
-  forRent: listings.filter((listing) => listing.intent === "rent").length,
+const initialFilters = {
+  intent: filters.intent === "rent" ? "rent" : "buy",
+  country: filters.country || "",
+  city: filters.city || "",
+  district: filters.district || "",
+  propertyType: filters.propertyType || "",
+  saleMode: filters.saleMode === "auction" ? "Auction" : filters.saleMode === "private-sale" ? "Private sale" : "",
+  minBeds: typeof filters.minBeds === "number" ? String(filters.minBeds) : "",
+  minPrice: typeof filters.minPrice === "number" ? String(filters.minPrice) : "",
+  maxPrice: typeof filters.maxPrice === "number" ? String(filters.maxPrice) : "",
 };
-const mappableListings = listings
-  .filter((listing) => listing.location)
-  .map((listing) => ({
-    slug: listing.slug,
-    title: listing.title,
-    priceLabel: listing.priceLabel,
-    ward: listing.ward,
-    district: listing.district,
-    city: listing.city,
-    country: listing.country,
-    lat: listing.location?.lat ?? 0,
-    lng: listing.location?.lng ?? 0,
-  }));
-const topNeighborhoods = Array.from(
-  new Set(
-    listings
-      .flatMap((listing) => [listing.ward ? `${listing.ward}, ${listing.district}` : "", listing.district])
-      .filter(Boolean)
-  )
-).slice(0, 5);
-
-const selectedIntent = filters.intent === "rent" ? "rent" : "buy";
-const selectedSort = filters.sort || "newest";
-const hasFilters =
-  filters.city ||
-  filters.district ||
-  filters.propertyType ||
-  typeof filters.minPrice === "number" ||
-  typeof filters.maxPrice === "number" ||
-  typeof filters.minBeds === "number" ||
-  selectedIntent !== "buy" ||
-  selectedSort !== "newest";
-const currentSearchQuery = buildSavedSearchQuery(filters);
 ---
 
 <Layout
-  title={`${t("Search listings")} | Property App 2026`}
-  description={t("Search properties to buy or rent with real filterable results and a cleaner, portal-style search experience.")}
+  title="Search listings | Property App 2026"
+  description="Search properties to buy or rent with a cleaner premium results experience."
   inlineShellCss={true}
 >
-  <ResultsHero t={t} />
-
-  <SearchFiltersForm filters={filters} owner={owner} dashboardHref={dashboardHref} activeFilters={activeFilters} allCountries={allCountries} t={t} />
-
-  {saved && <div class="card flash-banner">{t("Search saved. You can manage it from your dashboard.")}</div>}
-
-  <ResultsSummary
-    total={resultSummary.total}
-    countries={resultSummary.countries}
-    cities={resultSummary.cities}
-    forRent={resultSummary.forRent}
-    hasFilters={hasFilters}
-    allCities={allCities}
-    selectedIntent={selectedIntent}
-    t={t}
+  <PremiumSearchResultsPage
+    client:load
+    initialListings={listings}
+    initialFilters={initialFilters}
+    countries={allCountries}
+    cities={allCities}
+    districts={allDistricts}
+    isSignedIn={Boolean(owner)}
   />
-
-  <SaveSearchPanel owner={owner} filters={filters} dashboardHref={dashboardHref} currentSearchQuery={currentSearchQuery} />
-
-  <ResultsWorkspace
-    listings={listings}
-    mappableListings={mappableListings}
-    allDistricts={allDistricts}
-    topNeighborhoods={topNeighborhoods}
-    showCompareLink={owner?.role === "buyer" || owner?.role === "admin"}
-    t={t}
-  />
-
-  <script is:inline>
-    const layoutNode = document.querySelector("[data-results-view]");
-    const viewTriggerNodes = Array.from(document.querySelectorAll("[data-results-view-trigger]"));
-    const mapNode = document.getElementById("results-map");
-    const cardNodes = Array.from(document.querySelectorAll("[data-listing-card]"));
-    const markerBySlug = new Map();
-
-    function setResultsView(nextView) {
-      if (!layoutNode) return;
-      layoutNode.setAttribute("data-results-view", nextView);
-
-      viewTriggerNodes.forEach((node) => {
-        const active = node.getAttribute("data-results-view-trigger") === nextView;
-        node.classList.toggle("is-active", active);
-        node.setAttribute("aria-pressed", active ? "true" : "false");
-      });
-    }
-
-    function setActiveListing(slug, options = {}) {
-      const { openMarker = false, centerMap = false, scrollCard = false } = options;
-
-      cardNodes.forEach((node) => {
-        node.classList.toggle("is-active", node.getAttribute("data-listing-card") === slug);
-      });
-
-      const markerEntry = markerBySlug.get(slug);
-      if (markerEntry) {
-        markerBySlug.forEach((entry, entrySlug) => {
-          entry.marker.setStyle({
-            radius: entrySlug === slug ? 11 : 9,
-            weight: entrySlug === slug ? 3 : 2,
-            fillOpacity: entrySlug === slug ? 1 : 0.88,
-          });
-        });
-
-        if (centerMap) {
-          markerEntry.map.setView(markerEntry.marker.getLatLng(), Math.max(markerEntry.map.getZoom(), 13), {
-            animate: true,
-          });
-        }
-
-        if (openMarker) {
-          markerEntry.marker.openPopup();
-        }
-      }
-
-      if (scrollCard) {
-        const activeCard = document.querySelector(`[data-listing-card="${slug}"]`);
-        if (activeCard) {
-          activeCard.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-      }
-    }
-
-    async function loadLeaflet() {
-      if (window.L) return window.L;
-
-      if (!document.querySelector('link[data-leaflet="true"]')) {
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
-        link.dataset.leaflet = "true";
-        document.head.appendChild(link);
-      }
-
-      await new Promise((resolve, reject) => {
-        const existing = document.querySelector('script[data-leaflet="true"]');
-        if (existing && window.L) {
-          resolve(window.L);
-          return;
-        }
-
-        if (existing) {
-          existing.addEventListener("load", () => resolve(window.L), { once: true });
-          existing.addEventListener("error", reject, { once: true });
-          return;
-        }
-
-        const script = document.createElement("script");
-        script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
-        script.dataset.leaflet = "true";
-        script.onload = () => resolve(window.L);
-        script.onerror = reject;
-        document.head.appendChild(script);
-      });
-
-      return window.L;
-    }
-
-    async function initResultsMap() {
-      if (!mapNode) return;
-
-      const payload = mapNode.getAttribute("data-listings");
-      const listings = payload ? JSON.parse(payload) : [];
-      if (!Array.isArray(listings) || listings.length === 0) return;
-
-      const L = await loadLeaflet();
-      const map = L.map(mapNode, {
-        scrollWheelZoom: false,
-        zoomControl: true,
-      });
-
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
-
-      const bounds = [];
-
-      listings.forEach((listing) => {
-        const marker = L.circleMarker([listing.lat, listing.lng], {
-          radius: 9,
-          color: "#0f172a",
-          weight: 2,
-          fillColor: "#0f766e",
-          fillOpacity: 0.88,
-        }).addTo(map);
-
-        marker.bindPopup(`
-          <div style="min-width: 180px; font-family: 'Plus Jakarta Sans', sans-serif;">
-            <strong style="display:block; margin-bottom:6px;">${listing.title}</strong>
-            <span style="display:block; margin-bottom:6px; color:#475467;">${listing.priceLabel}</span>
-            <span style="display:block; margin-bottom:10px; color:#667085;">${listing.ward}, ${listing.district}</span>
-            <a href="/listings/${listing.slug}/" style="color:#0f766e; font-weight:700; text-decoration:none;">Open listing</a>
-          </div>
-        `);
-
-        marker.on("click", () => {
-          setActiveListing(listing.slug, {
-            openMarker: true,
-            scrollCard: true,
-          });
-        });
-
-        markerBySlug.set(listing.slug, { marker, map });
-
-        bounds.push([listing.lat, listing.lng]);
-      });
-
-      if (bounds.length === 1) {
-        map.setView(bounds[0], 13);
-      } else {
-        map.fitBounds(bounds, { padding: [24, 24] });
-      }
-
-      if (listings[0]?.slug) {
-        setActiveListing(listings[0].slug);
-      }
-    }
-
-    viewTriggerNodes.forEach((node) => {
-      node.addEventListener("click", () => {
-        if (node.hasAttribute("disabled")) return;
-        setResultsView(node.getAttribute("data-results-view-trigger") || "list");
-      });
-    });
-
-    cardNodes.forEach((node) => {
-      const slug = node.getAttribute("data-listing-card");
-      const hasMap = node.getAttribute("data-has-map") === "true";
-      if (!slug || !hasMap) return;
-
-      node.addEventListener("mouseenter", () => {
-        setActiveListing(slug, { centerMap: false, openMarker: false, scrollCard: false });
-      });
-
-      node.addEventListener("focusin", () => {
-        setActiveListing(slug, { centerMap: true, openMarker: true, scrollCard: false });
-      });
-
-      node.addEventListener("click", (event) => {
-        const target = event.target;
-        if (!(target instanceof Element)) return;
-        if (target.closest("a, button, input, textarea, select, form")) return;
-        setActiveListing(slug, { centerMap: true, openMarker: true, scrollCard: false });
-      });
-    });
-
-    setResultsView("list");
-
-    initResultsMap().catch((error) => {
-      console.error("Failed to initialize listings map", error);
-    });
-  </script>
-
-  <style is:inline>
-    .flash-banner {
-      margin-bottom: 1rem;
-      padding: 1.4rem;
-      border-left: 4px solid var(--success-border);
-      color: var(--success-text);
-      font-weight: 700;
-      background: var(--surface-overlay-strong);
-      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 36px rgba(16, 24, 40, 0.06);
-    }
-  </style>
 </Layout>
