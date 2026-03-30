@@ -21,10 +21,10 @@ const quickFilters = [
 ];
 const featuredListings = (await getAllListings(getDB(Astro.locals.runtime))).slice(0, 6);
 const browseCities = [
-  { name: "Ho Chi Minh City", note: "Condos, villas, and launch inventory", href: "/listings/?intent=buy&city=Ho%20Chi%20Minh%20City" },
-  { name: "Hanoi", note: "Family homes, urban rentals, and district-led search", href: "/listings/?intent=buy&city=Hanoi" },
-  { name: "Da Nang", note: "Coastal relocation demand and second-home supply", href: "/listings/?intent=buy&city=Da%20Nang" },
-  { name: "Thu Duc City", note: "Growth corridor, education hubs, and condo supply", href: "/listings/?intent=buy&district=Thu%20Duc%20City" },
+  { name: "Ho Chi Minh City", note: "Condos, villas, and launch inventory", href: "/guides/vietnam/ho-chi-minh-city/" },
+  { name: "Hanoi", note: "Family homes, urban rentals, and district-led search", href: "/guides/vietnam/hanoi/" },
+  { name: "Da Nang", note: "Coastal relocation demand and second-home supply", href: "/guides/vietnam/da-nang/" },
+  { name: "Thu Duc City", note: "Growth corridor, education hubs, and condo supply", href: "/guides/vietnam/ho-chi-minh-city/thu-duc-city/" },
 ];
 const trustSignals = [
   t("Verified owners and agent-facing listing controls"),
@@ -84,6 +84,18 @@ const entryPaths = [
     secondaryLabel: "See trust approach",
   },
 ];
+const comparePoints = [
+  {
+    kicker: "Typical portal model",
+    title: "Good at directory depth",
+    body: "Large operators often do breadth and categories well, but users still have to manage most of the decision flow themselves.",
+  },
+  {
+    kicker: "Property App model",
+    title: "Better at guided decisions",
+    body: "We combine cleaner search, market guides, shortlist and compare, owner operations, trust systems, concierge help, and auctions in one connected product.",
+  },
+];
 ---
 
 <Layout
@@ -104,7 +116,83 @@ const entryPaths = [
 
   <HomeFeaturedSection featuredListings={featuredListings} />
 
+  <section class="compare-band card">
+    <div class="compare-head">
+      <span class="pill">{t("How we compare")}</span>
+      <h2>{t("We are not trying to be louder than the old portal model. We are trying to be more useful.")}</h2>
+      <p>{t("The strongest competitors already prove the market exists. The product opportunity is to reduce clutter, improve trust, and help buyers and owners move through real workflows instead of directory pages.")}</p>
+    </div>
+    <div class="compare-grid">
+      {comparePoints.map((point) => (
+        <article>
+          <span class="pill subtle">{point.kicker}</span>
+          <strong>{point.title}</strong>
+          <p>{point.body}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
   <HomeOwnerSection ownerSteps={ownerSteps} />
 
   <HomeProductBand />
 </Layout>
+
+<style is:inline>
+  .compare-band {
+    padding: 1.4rem;
+    margin-top: 1rem;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .compare-head {
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  .compare-head h2 {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 0.96;
+    letter-spacing: -0.08em;
+    max-width: 14ch;
+  }
+
+  .compare-head p,
+  .compare-grid p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .compare-grid article {
+    display: grid;
+    gap: 0.55rem;
+    padding: 1rem;
+    border-radius: 20px;
+    background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
+    border: 1px solid var(--line);
+  }
+
+  .compare-grid strong {
+    font-size: 1rem;
+    letter-spacing: -0.03em;
+  }
+
+  .pill.subtle {
+    background: var(--surface-overlay);
+  }
+
+  @media (max-width: 860px) {
+    .compare-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

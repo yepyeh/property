@@ -1,0 +1,150 @@
+---
+import Layout from "../../../../layouts/Layout.astro";
+import { getAllListings } from "../../../../lib/listings";
+import { getDB } from "../../../../lib/runtime";
+import { buildAreaGuideInsights, hasPremiumInsightsAccess, matchGuideDistrict } from "../../../../lib/insights";
+
+const listings = await getAllListings(getDB(Astro.locals.runtime));
+const viewer = Astro.locals.owner;
+const hasPremiumInsights = hasPremiumInsightsAccess(viewer);
+const match = matchGuideDistrict(Astro.params.country ?? "", Astro.params.city ?? "", Astro.params.district ?? "", listings);
+
+if (!match) {
+  return Astro.redirect("/listings/");
+}
+
+const insights = buildAreaGuideInsights(match.country, match.city, listings, match.district);
+const districtListings = listings.filter((listing) => listing.country === match.country && listing.city === match.city && listing.district === match.district).slice(0, 6);
+---
+
+<Layout title={`${match.district} guide | Property App 2026`} description={`District guide, market signals, and listing context for ${match.district}, ${match.city}.`}>
+  <section class="guide-hero card">
+    <div class="hero-copy">
+      <span class="pill">District guide</span>
+      <h1>{match.district} should be readable in seconds, not buried in a table.</h1>
+      <p>This district page is designed to tell casual users whether this pocket feels affordable, active, premium, family-oriented, renter-oriented, or simply worth comparing before they dive into individual listings.</p>
+      <div class="hero-actions">
+        <a class="button-primary" href={`/listings/?city=${encodeURIComponent(match.city)}&district=${encodeURIComponent(match.district)}`}>Browse {match.district} listings</a>
+        <a class="button-secondary" href={`/guides/${encodeURIComponent(match.country.toLowerCase().replace(/\s+/g, "-"))}/${encodeURIComponent(match.city.toLowerCase().replace(/\s+/g, "-"))}/`}>Back to {match.city}</a>
+      </div>
+    </div>
+    <div class="hero-panel">
+      <strong>Free read</strong>
+      <ul>
+        <li>{insights.free.priceBandLabel}</li>
+        <li>{insights.free.marketPaceLabel}</li>
+        <li>{insights.free.demandLabel}</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="guide-grid section-gap">
+    <article class="guide-card card">
+      <span class="pill">Free insight</span>
+      <strong>What a casual user should know first</strong>
+      <ul>
+        <li>Typical visible price band: {insights.free.priceBandLabel}</li>
+        <li>Market pace: {insights.free.marketPaceLabel}</li>
+        <li>Demand signal: {insights.free.demandLabel}</li>
+        <li>Best for: {insights.free.bestFor.join(", ")}</li>
+      </ul>
+    </article>
+    <article class={`guide-card card premium-card ${hasPremiumInsights ? "open" : "locked"}`}>
+      <span class="pill">Premium insight</span>
+      <strong>{hasPremiumInsights ? "Advanced district context" : "Deeper district insight for advanced users"}</strong>
+      {hasPremiumInsights ? (
+        <>
+          <p>{insights.premium.pricingNarrative}</p>
+          <p>{insights.premium.renterVsBuyerLabel}</p>
+        </>
+      ) : (
+        <p>Premium insight should answer the harder questions: whether this district is overpriced, how buy-side supply compares with rental-led supply, and what the best alternatives are nearby.</p>
+      )}
+    </article>
+  </section>
+
+  <section class="listing-panel card section-gap">
+    <div class="panel-head">
+      <div>
+        <span class="pill">Listings in this pocket</span>
+        <h2>Live examples from {match.district}</h2>
+      </div>
+      <p>{districtListings.length} examples surfaced here for quick comparison.</p>
+    </div>
+    <div class="listing-grid">
+      {districtListings.map((listing) => (
+        <a class="listing-card" href={`/listings/${listing.slug}/`}>
+          <strong>{listing.title}</strong>
+          <span>{listing.priceLabel}</span>
+          <span>{listing.ward}, {listing.district}, {listing.city}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  {insights.premium.topComparables.length > 0 && (
+    <section class="listing-panel card section-gap">
+      <div class="panel-head">
+        <div>
+          <span class="pill">Premium comparables</span>
+          <h2>Best-matched alternatives nearby</h2>
+        </div>
+        <p>{hasPremiumInsights ? "These are the strongest local comparables in the live inventory." : "Premium users can unlock the strongest local comparables here."}</p>
+      </div>
+      <div class="listing-grid">
+        {insights.premium.topComparables.map((listing) => (
+          <a class="listing-card" href={`/listings/${listing.slug}/`}>
+            <strong>{listing.title}</strong>
+            <span>{listing.priceLabel}</span>
+            <span>{listing.locationLabel}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <style is:inline>
+    .guide-hero,
+    .guide-card,
+    .listing-panel { padding: 1.4rem; }
+    .guide-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
+      gap: 1rem;
+      align-items: start;
+      background: linear-gradient(180deg, var(--surface-overlay-strong), var(--surface-panel-muted));
+    }
+    .hero-copy,
+    .hero-panel,
+    .guide-card,
+    .panel-head { display: grid; gap: 0.8rem; }
+    .hero-copy h1,
+    .panel-head h2 { margin: 0; font-size: clamp(2rem, 5vw, 3.4rem); line-height: 0.95; letter-spacing: -0.08em; }
+    .hero-copy p,
+    .hero-panel li,
+    .guide-card p,
+    .guide-card li,
+    .listing-card span,
+    .panel-head p { margin: 0; color: var(--muted); line-height: 1.7; }
+    .hero-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+    .button-primary,
+    .button-secondary {
+      display: inline-flex; align-items: center; justify-content: center; min-height: 2.85rem; padding: 0.85rem 1.05rem; border-radius: 999px; font-weight: 700; text-decoration: none;
+    }
+    .button-primary { background: linear-gradient(135deg, var(--brand), color-mix(in srgb, var(--brand) 82%, var(--surface-soft))); color: var(--surface-canvas); }
+    .button-secondary { background: var(--surface-elevated-strong); border: 1px solid var(--line); color: var(--text); }
+    .hero-panel,
+    .listing-card { padding: 1rem; border-radius: 20px; background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted)); border: 1px solid var(--line); }
+    .guide-grid,
+    .listing-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .premium-card.locked { background: linear-gradient(180deg, color-mix(in srgb, var(--accent-strong) 10%, transparent), var(--surface-elevated-strong)); }
+    .guide-card ul,
+    .hero-panel ul { margin: 0; padding-left: 1rem; display: grid; gap: 0.35rem; }
+    .listing-card { display: grid; gap: 0.3rem; text-decoration: none; color: inherit; }
+    @media (max-width: 960px) {
+      .guide-hero,
+      .guide-grid,
+      .listing-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</Layout>
