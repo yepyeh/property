@@ -53,11 +53,18 @@
   ::selection {
     @apply bg-accent text-black;
   }
+
+  button,
+  input,
+  select,
+  textarea {
+    outline: none;
+  }
 }
 
 @layer components {
   .glass-card {
-    @apply rounded-3xl border border-white/5 bg-white/[0.03] backdrop-blur-xl shadow-soft;
+    @apply rounded-2xl border border-white/5 bg-white/[0.03] backdrop-blur-xl shadow-soft;
   }
 
   html[data-theme="light"] .glass-card {
@@ -101,5 +108,25 @@
 
   .page-shell {
     @apply mx-auto max-w-7xl px-5 md:px-8;
+  }
+
+  .section-space {
+    @apply py-24 md:py-32;
+  }
+
+  .secondary-text {
+    @apply text-zinc-400;
+  }
+
+  html[data-theme="light"] .secondary-text {
+    @apply text-zinc-500;
+  }
+
+  .subtle-label {
+    @apply text-zinc-400;
+  }
+
+  html[data-theme="light"] .subtle-label {
+    @apply text-zinc-500;
   }
 }

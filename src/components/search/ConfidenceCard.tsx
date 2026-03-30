@@ -37,7 +37,7 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
   const pillars = buildConfidencePillars(listing);
 
   return (
-    <article className="glass-card group overflow-hidden border border-white/5 transition-all duration-300 ease-luxury hover:scale-[1.02] hover:border-white/10">
+    <article className="glass-card group overflow-hidden border border-white/5 transition-all duration-300 ease-luxury hover:-translate-y-1 hover:border-accent/30">
       <a href={`/listings/${listing.slug}/`} className="block">
         <div className="relative aspect-[4/3] overflow-hidden border-b border-white/5">
           {heroImage ? (
@@ -56,7 +56,7 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
               <span className="text-sm font-semibold tracking-[-0.03em] text-white">{listing.priceLabel}</span>
             </div>
 
-            <div className="rounded-full border border-white/10 bg-zinc-950/70 px-3 py-1.5 backdrop-blur-xl">
+            <div className={`rounded-full border border-white/10 bg-zinc-950/70 px-3 py-1.5 backdrop-blur-xl ${listing.owner.verified ? "shadow-[0_0_15px_-3px_rgba(152,255,152,0.2)]" : ""}`}>
               <span className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-200">
                 {listing.owner.verified ? "Verified owner" : "Owner listed"}
               </span>
@@ -73,7 +73,7 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
                 {listing.title}
               </a>
             </h3>
-            <p className="text-sm text-zinc-400">
+            <p className="secondary-text text-sm">
               {listing.ward}, {listing.district}, {listing.city}
             </p>
           </div>
@@ -100,14 +100,14 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
 
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+                <span className="subtle-label text-xs font-medium uppercase tracking-[0.18em]">
                   Confidence
                 </span>
                 <TooltipInfo />
               </div>
 
               <div
-                className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${
+                className={`inline-flex items-center rounded-full border px-2.5 py-1 text-sm font-semibold ${
                   highConfidence
                     ? "border-[#98ff98]/20 bg-[#98ff98]/10 text-[#98ff98]"
                     : "border-zinc-700 bg-zinc-800/70 text-zinc-300"
@@ -125,7 +125,7 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
           <ConfidenceMetric icon={History} label="History" score={pillars.history} />
         </div>
 
-        <p className="text-sm leading-7 text-zinc-400">{listing.summary}</p>
+        <p className="secondary-text text-sm leading-7">{listing.summary}</p>
 
         <div className="grid grid-cols-2 gap-3 border-t border-white/5 pt-4 md:grid-cols-4">
           <SpecCell label="Beds" value={String(listing.beds)} />
@@ -178,10 +178,10 @@ function SpecCell({
 }) {
   return (
     <div className="rounded-2xl border border-white/5 bg-white/[0.02] px-3 py-3">
-      <div className="mb-1 text-[11px] font-medium uppercase tracking-[0.18em] text-zinc-500">
+      <div className="subtle-label mb-1 text-[11px] font-medium uppercase tracking-[0.18em]">
         {label}
       </div>
-      <div className="text-sm font-medium text-zinc-100">{value}</div>
+      <div className="flex items-center justify-between gap-2 text-sm font-medium text-zinc-100">{value}</div>
     </div>
   );
 }

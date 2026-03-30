@@ -9,13 +9,13 @@ export interface Props {
 const { featuredListings } = Astro.props;
 ---
 
-<section class="feature-section">
+<section class="feature-section section-space">
   <div class="section-heading split-heading">
     <div>
       <span class="section-kicker">Featured listings</span>
       <h2>Search results should feel curated and trustworthy, not like a noisy directory.</h2>
     </div>
-    <p>
+    <p class="secondary-text">
       Clear pricing, compact facts, and visible trust signals matter more than decorative clutter. The public browse
       layer needs to feel efficient before it feels clever.
     </p>
@@ -28,11 +28,11 @@ const { featuredListings } = Astro.props;
 
 <style is:inline>
   .feature-section {
-    margin-top: 2.75rem;
+    margin-top: 0;
   }
 
   .section-heading {
-    margin-bottom: 1.2rem;
+    margin-bottom: 2rem;
   }
 
   .split-heading {
@@ -61,19 +61,18 @@ const { featuredListings } = Astro.props;
     margin: 0.7rem 0 0;
     font-size: clamp(2.7rem, 5vw, 4.9rem);
     line-height: 0.9;
-    letter-spacing: -0.1em;
+    letter-spacing: -0.08em;
     max-width: 10.5ch;
   }
 
   .section-heading p {
-    color: var(--muted);
     line-height: 1.76;
     margin: 0;
   }
 
   .listing-grid {
     display: grid;
-    gap: 1rem;
+    gap: 2rem;
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 

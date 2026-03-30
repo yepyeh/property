@@ -13,12 +13,12 @@ export interface Props {
 const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props;
 ---
 
-<section class="hero-shell" id="top">
+<section class="hero-shell section-space" id="top">
   <div class="hero-grid card">
     <div class="hero-copy">
       <span class="section-label">{t("Search-first property marketplace")}</span>
       <h1>{t("Find the right place faster, then follow through with confidence.")}</h1>
-      <p class="hero-text">
+      <p class="hero-text secondary-text">
         {t("Search, shortlist, save, and enquire from one calmer interface. Built for buyers, owners, and teams that need cleaner property workflows in Southeast Asia.")}
       </p>
 
@@ -41,7 +41,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
       <form class="search-card" method="GET" action="/listings/">
         <div class="search-head">
           <strong>{t("Search")}</strong>
-          <span>{t("Active inventory")}</span>
+          <span class="secondary-text">{t("Active inventory")}</span>
         </div>
 
         <div class="toggle-row">
@@ -103,12 +103,12 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
         <div class="metric-card">
           <span class="metric-kicker">{t("Live search")}</span>
           <strong>{t("Query-driven inventory")}</strong>
-          <span>{t("Buyer and rent intent")}</span>
+          <span class="secondary-text">{t("Buyer and rent intent")}</span>
         </div>
         <div class="metric-card">
           <span class="metric-kicker">{t("Owner workflow")}</span>
           <strong>{t("Leads, billing, renewals")}</strong>
-          <span>{t("Supply-side operations")}</span>
+          <span class="secondary-text">{t("Supply-side operations")}</span>
         </div>
       </div>
     </div>
@@ -127,7 +127,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
     <div class="metric-banner card">
       <span class="metric-kicker">{t("PWA-ready")}</span>
       <strong>{t("Mobile-first shell")}</strong>
-      <span>{t("Installable, app-like behavior with a cleaner browsing flow on smaller screens.")}</span>
+      <span class="secondary-text">{t("Installable, app-like behavior with a cleaner browsing flow on smaller screens.")}</span>
     </div>
   </div>
 </section>
@@ -143,7 +143,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
     grid-template-columns: minmax(0, 1.22fr) minmax(20rem, 0.78fr);
     gap: 1.3rem;
     align-items: stretch;
-    padding: 1.3rem;
+    padding: 1.5rem;
     background: linear-gradient(180deg, var(--surface-panel-subtle), var(--surface-panel-muted));
   }
 
@@ -172,14 +172,13 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
     max-width: 8.5ch;
     font-size: clamp(4.2rem, 8.4vw, 6.6rem);
     line-height: 0.84;
-    letter-spacing: -0.1em;
+    letter-spacing: -0.06em;
     font-weight: 800;
   }
 
   .hero-text {
     max-width: 56ch;
     margin-top: 1rem;
-    color: var(--muted);
     font-size: 1.02rem;
     line-height: 1.78;
   }
@@ -231,6 +230,12 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
     font-weight: 700;
     text-decoration: none;
     cursor: pointer;
+    transition:
+      background-color var(--foundation-duration-fast) var(--foundation-ease),
+      border-color var(--foundation-duration-fast) var(--foundation-ease),
+      color var(--foundation-duration-fast) var(--foundation-ease),
+      transform var(--foundation-duration-fast) var(--foundation-ease),
+      box-shadow var(--foundation-duration-fast) var(--foundation-ease);
   }
 
   .button-dark,
@@ -246,6 +251,11 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
     color: var(--text);
     border-color: var(--line);
   }
+  .button-dark:hover,
+  .button-light:hover,
+  .submit-button:hover {
+    transform: translateY(-1px);
+  }
 
   .hero-side {
     display: grid;
@@ -257,7 +267,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
     display: grid;
     gap: 0.95rem;
     background: var(--surface-elevated-strong);
-    border-radius: 1.75rem;
+    border-radius: 1rem;
     border: 1px solid var(--line);
     box-shadow: var(--shadow-soft);
   }

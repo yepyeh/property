@@ -116,11 +116,11 @@ const comparePoints = [
 
   <HomeFeaturedSection featuredListings={featuredListings} />
 
-  <section class="compare-band card">
+  <section class="compare-band card section-space">
     <div class="compare-head">
       <span class="pill">{t("How we compare")}</span>
       <h2>{t("We are not trying to be louder than the old portal model. We are trying to be more useful.")}</h2>
-      <p>{t("The strongest competitors already prove the market exists. The product opportunity is to reduce clutter, improve trust, and help buyers and owners move through real workflows instead of directory pages.")}</p>
+      <p class="secondary-text">{t("The strongest competitors already prove the market exists. The product opportunity is to reduce clutter, improve trust, and help buyers and owners move through real workflows instead of directory pages.")}</p>
     </div>
     <div class="compare-grid">
       {comparePoints.map((point) => (
@@ -140,10 +140,10 @@ const comparePoints = [
 
 <style is:inline>
   .compare-band {
-    padding: 1.4rem;
-    margin-top: 1rem;
+    padding: 1.75rem;
+    margin-top: 0;
     display: grid;
-    gap: 1rem;
+    gap: 1.5rem;
   }
 
   .compare-head {
@@ -155,28 +155,27 @@ const comparePoints = [
     margin: 0;
     font-size: clamp(2rem, 4vw, 3.2rem);
     line-height: 0.96;
-    letter-spacing: -0.08em;
+    letter-spacing: -0.05em;
     max-width: 14ch;
   }
 
   .compare-head p,
   .compare-grid p {
     margin: 0;
-    color: var(--muted);
     line-height: 1.7;
   }
 
   .compare-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
+    gap: 2rem;
   }
 
   .compare-grid article {
     display: grid;
-    gap: 0.55rem;
-    padding: 1rem;
-    border-radius: 20px;
+    gap: 0.7rem;
+    padding: 1.25rem;
+    border-radius: 1rem;
     background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted));
     border: 1px solid var(--line);
   }

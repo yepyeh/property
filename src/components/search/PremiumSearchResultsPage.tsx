@@ -87,7 +87,7 @@ export default function PremiumSearchResultsPage({
   };
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-16 md:space-y-24">
       <section className="glass-card overflow-visible">
         <div className="border-b border-white/5 px-6 py-6 md:px-8">
           <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
@@ -109,10 +109,10 @@ export default function PremiumSearchResultsPage({
                 <span className="inline-flex rounded-full border border-white/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
                   Search results
                 </span>
-                <h1 className="max-w-4xl text-4xl font-semibold tracking-[-0.05em] text-white md:text-6xl">
+                <h1 className="max-w-4xl text-4xl font-semibold tracking-tight text-white md:text-6xl">
                   Search property with less noise and stronger buyer signals.
                 </h1>
-                <p className="max-w-2xl text-sm leading-7 text-zinc-400 md:text-base">
+                <p className="secondary-text max-w-2xl text-sm leading-7 md:text-base">
                   The results surface should feel decisive and clean: stronger filters, cleaner cards,
                   and less portal clutter between intent and action.
                 </p>
@@ -125,7 +125,7 @@ export default function PremiumSearchResultsPage({
           </div>
 
           <div className="mb-6 space-y-2">
-            <span className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+            <span className="subtle-label text-xs font-medium uppercase tracking-[0.18em]">
               Refine the shortlist
             </span>
             <h2 className="text-2xl font-semibold tracking-[-0.04em] text-white">
@@ -189,7 +189,7 @@ export default function PremiumSearchResultsPage({
         </div>
 
         <div className="flex flex-col gap-3 border-t border-white/5 bg-white/[0.02] px-6 py-5 md:flex-row md:items-center md:justify-between md:px-8">
-          <div className="text-sm text-zinc-500">
+          <div className="secondary-text text-sm">
             {initialListings.length} live {initialListings.length === 1 ? "listing" : "listings"} in the current filter set.
           </div>
 
@@ -211,15 +211,15 @@ export default function PremiumSearchResultsPage({
       </section>
 
       {initialListings.length === 0 ? (
-        <section className="space-y-8 py-6">
+        <section className="space-y-8 py-24 md:py-32">
           <div className="mx-auto max-w-2xl text-center">
-            <span className="mb-3 inline-flex rounded-full border border-white/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+            <span className="subtle-label mb-3 inline-flex rounded-full border border-white/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em]">
               0 listings
             </span>
             <h3 className="text-2xl font-semibold tracking-[-0.04em] text-white md:text-3xl">
               There are no listings for this filter set yet.
             </h3>
-            <p className="mt-4 text-sm leading-7 text-zinc-400 md:text-base">
+            <p className="secondary-text mt-4 text-sm leading-7 md:text-base">
               Widen the criteria, change the area, or save this view so the platform can help you
               return when relevant supply appears.
             </p>
@@ -246,17 +246,17 @@ export default function PremiumSearchResultsPage({
         <section className="space-y-6">
           <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">Confidence-led results</p>
+              <p className="subtle-label text-xs font-medium uppercase tracking-[0.18em]">Confidence-led results</p>
               <h3 className="text-2xl font-semibold tracking-[-0.04em] text-white">
                 Listings with stronger trust signals first.
               </h3>
             </div>
-            <p className="max-w-xl text-sm leading-7 text-zinc-400">
+            <p className="secondary-text max-w-xl text-sm leading-7">
               These cards prioritize trust, clarity, and direct comparability so buyers can shortlist with less noise.
             </p>
           </div>
 
-          <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-8 lg:grid-cols-2 xl:grid-cols-3">
             {visibleCards.map((listing) => (
               <ConfidenceCard key={listing.slug} listing={listing} />
             ))}
@@ -282,7 +282,7 @@ function GlassInput({
 }) {
   return (
     <label className="space-y-2">
-      <span className="block text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+      <span className="subtle-label block text-xs font-medium uppercase tracking-[0.18em]">
         {label}
       </span>
       <div className="group flex items-center gap-3 rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-3.5 backdrop-blur-xl transition-all duration-300 ease-luxury hover:border-white/10 hover:bg-white/[0.045]">
@@ -363,7 +363,7 @@ function GlassSelect({
 
   return (
     <div className="relative">
-      <span className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+      <span className="subtle-label mb-2 block text-xs font-medium uppercase tracking-[0.18em]">
         {label}
       </span>
 
@@ -508,7 +508,7 @@ function MultiGlassSelect({
 
   return (
     <div className="relative">
-      <span className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+      <span className="subtle-label mb-2 block text-xs font-medium uppercase tracking-[0.18em]">
         {label}
       </span>
 
@@ -611,7 +611,7 @@ function ActionCard({
         </div>
         <div className="space-y-2">
           <h4 className="text-xl font-semibold tracking-[-0.04em] text-white">{title}</h4>
-          <p className="text-sm leading-7 text-zinc-400">{description}</p>
+          <p className="secondary-text text-sm leading-7">{description}</p>
         </div>
       </div>
       <div className="pt-8">
