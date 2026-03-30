@@ -12,7 +12,7 @@ if (!owner || !["owner", "admin"].includes(owner.role)) {
 }
 
 const slug = Astro.params.slug || "";
-const { listing, enquiries, payments } = await getOwnerListingDetail(owner.id, slug, getDB(Astro.locals.runtime));
+const { listing, enquiries, payments, insights } = await getOwnerListingDetail(owner.id, slug, getDB(Astro.locals.runtime));
 
 if (!listing) {
   return Astro.redirect("/owner/dashboard/");
@@ -85,6 +85,47 @@ const imageUrls = getImageUrls(listing.image_keys);
     </article>
 
     <div class="right-stack">
+      {insights && (
+        <article class="card panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Owner insights</p>
+              <h2>What the market is telling you</h2>
+              <p class="panel-copy">This is the operator layer: how the listing sits in its district and what the next move should probably be.</p>
+            </div>
+          </div>
+          <div class="insight-stack">
+            <div class="insight-box">
+              <strong>Visible district band</strong>
+              <span>{insights.marketBand}</span>
+            </div>
+            <div class="insight-box">
+              <strong>Market pace</strong>
+              <span>{insights.marketPace}</span>
+            </div>
+            <div class="insight-box">
+              <strong>Demand signal</strong>
+              <span>{insights.demandLabel}</span>
+            </div>
+            <div class="insight-box">
+              <strong>Listing response</strong>
+              <span>{insights.performanceLabel}</span>
+            </div>
+          </div>
+          <div class="operator-note">
+            <strong>Pricing context</strong>
+            <p>{insights.pricingPositionLabel}</p>
+          </div>
+          <div class="operator-note next-action">
+            <strong>Recommended next action</strong>
+            <p>{insights.nextAction}</p>
+          </div>
+          <div class="chip-row">
+            {insights.bestFor.map((item) => <span>{item}</span>)}
+          </div>
+        </article>
+      )}
+
       <article class="card panel">
         <div class="panel-head">
           <div>
@@ -187,6 +228,52 @@ const imageUrls = getImageUrls(listing.image_keys);
     .inline-note {
       color: var(--muted);
     }
+    .insight-stack {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .insight-box,
+    .operator-note {
+      display: grid;
+      gap: 0.25rem;
+      padding: 0.95rem 1rem;
+      border-radius: 18px;
+      background: var(--surface-panel-subtle);
+      border: 1px solid var(--line);
+    }
+    .insight-box strong,
+    .operator-note strong {
+      font-size: 0.92rem;
+      letter-spacing: -0.02em;
+    }
+    .insight-box span,
+    .operator-note p {
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.65;
+    }
+    .next-action {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--accent-strong) 10%, transparent), var(--surface-elevated-strong));
+    }
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-top: 1rem;
+    }
+    .chip-row span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 1.85rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 999px;
+      background: var(--brand-soft);
+      color: var(--muted-strong);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -208,6 +295,7 @@ const imageUrls = getImageUrls(listing.image_keys);
     @media (max-width: 920px) {
       .split-grid,
       .meta-grid,
+      .insight-stack,
       .performance-strip,
       .gallery-grid {
         grid-template-columns: 1fr;

@@ -15,6 +15,8 @@ import {
 } from "./notifications";
 import { getRecentConciergeRequests } from "./service";
 import type { D1Like } from "./runtime";
+import { buildAreaGuideInsights } from "./insights";
+import { getAllListings } from "./listings";
 
 async function getInboxState(db: D1Like, userId: number, enabled: boolean) {
   const inboxNotifications = enabled ? await getInboxNotifications(db, userId, 8) : [];
@@ -311,14 +313,14 @@ export async function getAdminBillingData(db?: D1Like) {
 
 export async function getOwnerListingDetail(ownerUserId: number, listingSlug: string, db?: D1Like) {
   if (!db) {
-    return { listing: null, enquiries: [], payments: [] };
+    return { listing: null, enquiries: [], payments: [], insights: null };
   }
 
   await normalizeExpiredListingPlans(db);
 
   const listing = await db
     .prepare(
-      `SELECT slug, title, city, district, ward, intent, status, created_at, enquiries,
+      `SELECT slug, title, country, city, district, ward, intent, status, created_at, enquiries,
               image_keys, plan_type, trial_ends_at, paid_until, promoted_until, views_24h, saves
        FROM listings
        WHERE owner_user_id = ?
@@ -329,6 +331,7 @@ export async function getOwnerListingDetail(ownerUserId: number, listingSlug: st
     .first<{
       slug: string;
       title: string;
+      country: string;
       city: string;
       district: string;
       ward: string;
@@ -346,7 +349,7 @@ export async function getOwnerListingDetail(ownerUserId: number, listingSlug: st
     }>();
 
   if (!listing) {
-    return { listing: null, enquiries: [], payments: [] };
+    return { listing: null, enquiries: [], payments: [], insights: null };
   }
 
   const enquiriesResult = await db
@@ -370,9 +373,45 @@ export async function getOwnerListingDetail(ownerUserId: number, listingSlug: st
     .bind(ownerUserId, listingSlug)
     .all();
 
+  const allListings = await getAllListings(db);
+  const areaInsights = buildAreaGuideInsights(
+    listing.country,
+    listing.city,
+    allListings,
+    listing.district
+  );
+
+  const marketBand = areaInsights.free.priceBandLabel;
+  const performanceScore = (Number(listing.views_24h || 0) * 0.35) + (Number(listing.saves || 0) * 1.5) + (Number(listing.enquiries || 0) * 3);
+  const performanceLabel =
+    performanceScore >= 45 ? "Strong response" :
+    performanceScore >= 20 ? "Usable response" :
+    performanceScore >= 8 ? "Early traction" :
+    "Needs attention";
+
+  const nextAction =
+    Number(listing.enquiries || 0) >= 4 ? "Keep the listing stable and respond quickly. The current flow is already producing demand." :
+    Number(listing.saves || 0) >= 6 ? "Buyer interest is visible, but enquiries are lighter than saves. Tighten trust cues or add better gallery coverage." :
+    Number(listing.views_24h || 0) < 20 ? "Visibility is weak. Improve media, sharpen the summary, or consider promoted placement." :
+    "The listing is being seen, but it needs stronger trust or positioning to convert.";
+
+  const pricingPositionLabel =
+    listing.status?.toLowerCase().includes("auction")
+      ? "Auction listings should be judged by watcher and bidder intent more than static pricing."
+      : `This listing is competing inside a visible district band of ${marketBand}.`;
+
   return {
     listing,
     enquiries: enquiriesResult.results,
     payments: paymentsResult.results,
+    insights: {
+      marketBand,
+      marketPace: areaInsights.free.marketPaceLabel,
+      demandLabel: areaInsights.free.demandLabel,
+      performanceLabel,
+      pricingPositionLabel,
+      nextAction,
+      bestFor: areaInsights.free.bestFor,
+    },
   };
 }
