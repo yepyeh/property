@@ -74,7 +74,7 @@ export default function ProgressiveDiscoveryOnboarding() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="page-shell flex min-h-screen items-center justify-center py-10">
+      <div className="page-shell flex min-h-screen items-center justify-center py-xl">
         <div className="w-full max-w-2xl">
           <AnimatePresence mode="wait">
             {step === 1 && (
@@ -85,7 +85,7 @@ export default function ProgressiveDiscoveryOnboarding() {
                 animate="animate"
                 exit="exit"
                 transition={slideTransition}
-                className="glass-card mx-auto flex min-h-[560px] flex-col justify-between p-8 md:p-10"
+                className="glass-card panel-min-h mx-auto flex flex-col justify-between p-l md:p-xl"
               >
                 <div className="space-y-8">
                   <div className="space-y-3">
@@ -93,7 +93,7 @@ export default function ProgressiveDiscoveryOnboarding() {
                       Step 1
                     </span>
                     <div className="space-y-2">
-                      <h1 className="text-3xl font-semibold tracking-[-0.04em] md:text-5xl">
+                      <h1 className="title-tight text-3xl font-semibold md:text-5xl">
                         What brings you here?
                       </h1>
                       <p className="secondary-text max-w-xl text-sm leading-7 md:text-base">
@@ -139,7 +139,7 @@ export default function ProgressiveDiscoveryOnboarding() {
                 animate="animate"
                 exit="exit"
                 transition={slideTransition}
-                className="glass-card mx-auto flex min-h-[560px] flex-col justify-between p-8 md:p-10"
+                className="glass-card panel-min-h mx-auto flex flex-col justify-between p-l md:p-xl"
               >
                 <div className="space-y-8">
                   <div className="space-y-3">
@@ -147,7 +147,7 @@ export default function ProgressiveDiscoveryOnboarding() {
                       Step 2
                     </span>
                     <div className="space-y-2">
-                      <h2 className="text-3xl font-semibold tracking-[-0.04em] md:text-5xl">
+                      <h2 className="title-tight text-3xl font-semibold md:text-5xl">
                         What is your dream neighborhood?
                       </h2>
                       <p className="secondary-text max-w-xl text-sm leading-7 md:text-base">
@@ -217,14 +217,14 @@ export default function ProgressiveDiscoveryOnboarding() {
                 animate="animate"
                 exit="exit"
                 transition={slideTransition}
-                className="glass-card mx-auto flex min-h-[560px] flex-col justify-center p-8 md:p-10"
+                className="glass-card panel-min-h mx-auto flex flex-col justify-center p-l md:p-xl"
               >
                 <div className="mx-auto w-full max-w-xl space-y-8">
                   <div className="space-y-3 text-center">
                     <span className="subtle-label inline-flex rounded-full border border-base px-3 py-1">
                       Step 3
                     </span>
-                    <h2 className="text-3xl font-semibold tracking-[-0.04em] md:text-5xl">
+                    <h2 className="title-tight text-3xl font-semibold md:text-5xl">
                       Generating Your Personalized View...
                     </h2>
                     <p className="secondary-text text-sm leading-7 md:text-base">
@@ -284,7 +284,7 @@ function IntentCard({
     >
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-2">
-          <h3 className="text-lg font-medium tracking-[-0.03em]">{title}</h3>
+          <h3 className="title-snug text-lg font-medium">{title}</h3>
           <p className="secondary-text max-w-xl text-sm leading-7">{description}</p>
         </div>
         <motion.div
@@ -315,7 +315,7 @@ function ContinueButton({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className={`btn-primary min-w-[148px] ${disabled ? "cursor-not-allowed opacity-40 grayscale" : "opacity-100"}`}
+      className={`btn-primary action-min-w ${disabled ? "cursor-not-allowed opacity-40 grayscale" : "opacity-100"}`}
     >
       Continue
     </button>

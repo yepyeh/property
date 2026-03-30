@@ -267,9 +267,9 @@ const imageUrls = getImageUrls(listing.image_keys);
 
   <style is:inline>
     .auction-banner {
-      margin: 0 0 1rem;
-      padding: 0.9rem 1rem;
-      border-radius: 16px;
+      margin: 0 0 var(--space-m);
+      padding: var(--space-s) var(--space-m);
+      border-radius: var(--radius-lg);
       background: color-mix(in srgb, var(--brand-soft) 65%, var(--surface-elevated-strong));
       border: 1px solid color-mix(in srgb, var(--brand) 18%, var(--line));
       color: var(--text);
@@ -278,21 +278,21 @@ const imageUrls = getImageUrls(listing.image_keys);
     .split-grid {
       display: grid;
       grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-      gap: 1rem;
+      gap: var(--space-m);
     }
     .right-stack {
       display: grid;
-      gap: 1rem;
+      gap: var(--space-m);
     }
     .meta-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.75rem;
-      margin-bottom: 1rem;
+      gap: var(--space-s);
+      margin-bottom: var(--space-m);
     }
     .meta-grid span {
-      padding: 0.85rem 0.95rem;
-      border-radius: 16px;
+      padding: var(--space-s) var(--space-m);
+      border-radius: var(--radius-lg);
       background: var(--accent-1);
       color: var(--muted-strong);
       font-weight: 600;
@@ -300,18 +300,18 @@ const imageUrls = getImageUrls(listing.image_keys);
     .performance-strip {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 0.75rem;
-      margin-bottom: 1rem;
+      gap: var(--space-s);
+      margin-bottom: var(--space-m);
     }
     .performance-chip {
       display: grid;
-      gap: 0.28rem;
-      padding: 0.95rem 0;
+      gap: calc(var(--space-2xs) * 1.1);
+      padding: var(--space-s) 0;
       border-radius: 0;
       background: transparent;
     }
     .performance-chip strong {
-      font-size: 1.2rem;
+      font-size: var(--text-lg);
       letter-spacing: -0.03em;
       color: var(--text);
     }
@@ -324,20 +324,20 @@ const imageUrls = getImageUrls(listing.image_keys);
     .insight-stack {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.75rem;
-      margin-bottom: 1rem;
+      gap: var(--space-s);
+      margin-bottom: var(--space-m);
     }
     .insight-box,
     .operator-note {
       display: grid;
-      gap: 0.3rem;
-      padding: 1rem 1.05rem;
-      border-radius: 18px;
+      gap: calc(var(--space-2xs) * 1.1);
+      padding: var(--space-m);
+      border-radius: var(--radius-lg);
       background: color-mix(in srgb, var(--surface-panel-subtle) 72%, transparent);
     }
     .insight-box strong,
     .operator-note strong {
-      font-size: 0.96rem;
+      font-size: var(--text-sm);
       letter-spacing: -0.02em;
       color: var(--text);
     }
@@ -352,49 +352,49 @@ const imageUrls = getImageUrls(listing.image_keys);
     }
     .auction-event-form {
       display: grid;
-      gap: 0.85rem;
-      margin-bottom: 1rem;
+      gap: var(--space-s);
+      margin-bottom: var(--space-m);
     }
     .auction-event-form label {
       display: grid;
-      gap: 0.35rem;
+      gap: var(--space-2xs);
     }
     .auction-event-form input,
     .auction-event-form select,
     .auction-event-form textarea {
       width: 100%;
-      border-radius: 14px;
+      border-radius: var(--radius-lg);
       border: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
       background: color-mix(in srgb, var(--surface-input-strong) 82%, transparent);
       color: var(--text);
-      padding: 0.85rem 0.95rem;
+      padding: var(--space-s) var(--space-m);
       font: inherit;
     }
     .chip-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.55rem;
-      margin-top: 1rem;
+      gap: var(--space-xs);
+      margin-top: var(--space-m);
     }
     .chip-row span {
       display: inline-flex;
       align-items: center;
-      min-height: 1.85rem;
-      padding: 0.2rem 0.7rem;
-      border-radius: 999px;
+      min-height: calc(var(--space-l) * 0.95);
+      padding: calc(var(--space-2xs) * 0.8) var(--space-s);
+      border-radius: var(--radius-full);
       background: var(--brand-soft);
       color: var(--muted-strong);
-      font-size: 0.78rem;
+      font-size: var(--text-xs);
       font-weight: 700;
     }
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.85rem;
+      gap: var(--space-s);
     }
     .gallery-tile {
       min-height: 12rem;
-      border-radius: 20px;
+      border-radius: var(--radius-lg);
       background-size: cover;
       background-position: center;
       background-color: var(--accent-1);
@@ -408,10 +408,10 @@ const imageUrls = getImageUrls(listing.image_keys);
       gap: 0.5rem;
     }
     .compact-list {
-      gap: 1.5rem;
+      gap: var(--space-l);
     }
     .compact-list .list-item strong {
-      font-size: 1.02rem;
+      font-size: var(--text-base);
       line-height: 1.35;
       letter-spacing: -0.03em;
       color: var(--text);
@@ -420,7 +420,7 @@ const imageUrls = getImageUrls(listing.image_keys);
     .item-title {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: var(--space-s);
     }
     .item-icon {
       flex: 0 0 auto;
@@ -430,27 +430,27 @@ const imageUrls = getImageUrls(listing.image_keys);
       color: var(--accent-strong);
     }
     .compact-list .list-item p {
-      font-size: 0.95rem;
+      font-size: var(--text-sm);
       line-height: 1.7;
       margin: 0;
       max-width: 62ch;
     }
     .compact-list .meta-row {
-      gap: 0.75rem;
-      font-size: 0.72rem;
+      gap: var(--space-s);
+      font-size: var(--text-xs);
       line-height: 1.4;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--muted);
     }
     .compact-list .inline-note {
-      font-size: 0.88rem;
+      font-size: var(--text-sm);
       color: var(--muted-strong);
     }
     .meta-with-icon {
       display: inline-flex;
       align-items: center;
-      gap: 0.45rem;
+      gap: var(--space-2xs);
     }
     .compact-list .list-item + .list-item {
       margin-top: 0.1rem;

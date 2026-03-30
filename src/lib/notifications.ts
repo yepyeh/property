@@ -244,6 +244,23 @@ async function sendExpiryEmail(
 function buildExpiryEmailContent(notification: ExpiryEmailCandidate, appUrl: string) {
   const dashboardUrl = `${appUrl}/owner/dashboard/`;
   const listingUrl = `${appUrl}/listings/${notification.listingSlug}/`;
+  const brandAccent = "#98ff98";
+  const brandAccentHover = "#7dfa7d";
+  const ink = "#111827";
+  const muted = "#6b7280";
+  const panel = "#f8fafc";
+  const emailShellPadding = "24px";
+  const emailShellRadius = "20px";
+  const emailEyebrowSize = "12px";
+  const emailHeadingSize = "28px";
+  const emailBodySize = "14px";
+  const emailButtonPadding = "12px 18px";
+  const emailButtonRadius = "999px";
+  const emailSpaceXs = "8px";
+  const emailSpaceS = "12px";
+  const emailSpaceM = "16px";
+  const emailSpaceL = "24px";
+  const emailBorder = "1px solid rgba(17,24,39,0.08)";
   const categoryLabel = notification.category === "trial"
     ? "free trial"
     : notification.category === "paid"
@@ -252,17 +269,17 @@ function buildExpiryEmailContent(notification: ExpiryEmailCandidate, appUrl: str
 
   const subject = `${notification.listingTitle}: ${notification.ctaLabel}`;
   const html = `
-    <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:black;line-height:1.6">
-      <p style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:teal;margin-bottom:8px">Property App 2026</p>
-      <h1 style="font-size:28px;margin:0 0 12px">${escapeHtml(notification.listingTitle)}</h1>
-      <p style="margin:0 0 16px">Your ${escapeHtml(categoryLabel)} notification is ready.</p>
-      <p style="margin:0 0 16px">${escapeHtml(notification.message)}</p>
-      <p style="margin:0 0 16px"><strong>Due:</strong> ${escapeHtml(notification.dueAt)}</p>
-      <p style="margin:0 0 24px">
-        <a href="${dashboardUrl}" style="display:inline-block;padding:12px 18px;border-radius:999px;background:teal;color:white;text-decoration:none;font-weight:700;margin-right:12px">${escapeHtml(notification.ctaLabel)}</a>
-        <a href="${listingUrl}" style="color:teal;text-decoration:none;font-weight:700">Review listing</a>
+    <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:${ink};line-height:1.6;background:${panel};padding:${emailShellPadding};border-radius:${emailShellRadius};border:${emailBorder}">
+      <p style="font-size:${emailEyebrowSize};letter-spacing:0.08em;text-transform:uppercase;color:${muted};margin:0 0 ${emailSpaceXs}">Property App 2026</p>
+      <h1 style="font-size:${emailHeadingSize};margin:0 0 ${emailSpaceS};color:${ink}">${escapeHtml(notification.listingTitle)}</h1>
+      <p style="margin:0 0 ${emailSpaceM};color:${ink}">Your ${escapeHtml(categoryLabel)} notification is ready.</p>
+      <p style="margin:0 0 ${emailSpaceM};color:${muted}">${escapeHtml(notification.message)}</p>
+      <p style="margin:0 0 ${emailSpaceM};color:${ink}"><strong>Due:</strong> ${escapeHtml(notification.dueAt)}</p>
+      <p style="margin:0 0 ${emailSpaceL}">
+        <a href="${dashboardUrl}" style="display:inline-block;padding:${emailButtonPadding};border-radius:${emailButtonRadius};background:${brandAccent};color:${ink};text-decoration:none;font-weight:700;margin-right:${emailSpaceS};border:1px solid ${brandAccentHover}">${escapeHtml(notification.ctaLabel)}</a>
+        <a href="${listingUrl}" style="color:${ink};text-decoration:none;font-weight:700">Review listing</a>
       </p>
-      <p style="font-size:14px;color:gray;margin:0">This email was sent because your listing has a time-based visibility or promotion window.</p>
+      <p style="font-size:${emailBodySize};color:${muted};margin:0">This email was sent because your listing has a time-based visibility or promotion window.</p>
     </div>
   `;
 

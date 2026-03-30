@@ -8,8 +8,8 @@ const { message, tone = "success" } = Astro.props;
 <div class:list={["card", "flash-banner", `flash-${tone}`]}>{message}</div>
 <style is:inline>
   .flash-banner {
-    margin-top: 1rem;
-    padding: 1.5rem;
+    margin-top: var(--space-m);
+    padding: var(--space-l);
     font-weight: 700;
     background: linear-gradient(180deg, var(--surface-overlay-strong), var(--surface-panel-muted));
     box-shadow: var(--shadow-panel);

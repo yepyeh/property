@@ -26,9 +26,9 @@
     margin-top: 2.35rem;
     display: grid;
     grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
-    gap: 1rem;
-    padding: 1.2rem;
-    border-radius: 2rem;
+    gap: var(--space-m);
+    padding: var(--space-l);
+    border-radius: calc(var(--radius-lg) * 2);
     background: linear-gradient(180deg, color-mix(in srgb, var(--brand) 92%, black), var(--brand))
     color: var(--surface-canvas);
   }
@@ -45,13 +45,13 @@
 
   .band-copy {
     display: grid;
-    gap: 0.75rem;
+    gap: var(--space-s);
     align-content: start;
   }
 
   .band-copy h2 {
     margin: 0;
-    font-size: clamp(2.4rem, 5vw, 4.75rem);
+    font-size: var(--text-display);
     line-height: 0.9;
     letter-spacing: -0.1em;
     color: var(--surface-canvas);
@@ -72,14 +72,14 @@
   .panel-window {
     display: grid;
     gap: 0.28rem;
-    padding: 1.05rem;
-    border-radius: 1.35rem;
+    padding: var(--space-m);
+    border-radius: calc(var(--radius-lg) * 1.35);
     background: color-mix(in srgb, var(--surface-canvas) 10%, transparent);
     border: 1px solid var(--border-strong);
   }
 
   .panel-window strong {
-    font-size: 1.02rem;
+    font-size: var(--text-base);
     letter-spacing: -0.04em;
   }
 

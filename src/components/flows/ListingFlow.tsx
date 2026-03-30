@@ -314,11 +314,11 @@ export default function ListingFlow({
         summary={
           <div className="space-y-5">
             <div className="overflow-hidden rounded-xl border border-soft surface-soft">
-              <div className="aspect-[4/3] surface-subtle" />
+              <div className="ratio-photo surface-subtle" />
               <div className="space-y-4 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <div className="text-lg font-semibold tracking-[-0.03em]">{previewTitle}</div>
+                    <div className="title-snug text-lg font-semibold">{previewTitle}</div>
                     <div className="secondary-text mt-1 text-sm">
                       {[draft.ward, draft.district, draft.city].filter(Boolean).join(", ") || "Location pending"}
                     </div>
@@ -477,7 +477,7 @@ export default function ListingFlow({
                 value={draft.description}
                 onChange={(event) => updateDraft("description", event.target.value)}
                 rows={8}
-                className={`input-luxury min-h-[16rem] font-medium leading-8 ${
+                className={`input-luxury story-min-h font-medium leading-8 ${
                   isGenerating ? "border-accent/30" : "border-soft focus:border-accent/30 focus:shadow-accent-soft"
                 }`}
                 placeholder="The AI draft will appear here."
@@ -492,7 +492,7 @@ export default function ListingFlow({
               <div className="surface-subtle mx-auto flex h-14 w-14 items-center justify-center rounded-xl border border-soft">
                 <FileCheck2 className="h-6 w-6 text-accent" strokeWidth={1.5} />
               </div>
-              <h3 className="mt-4 text-xl font-semibold tracking-[-0.03em]">
+              <h3 className="title-snug mt-4 text-xl font-semibold">
                 Drag and drop legal documentation
               </h3>
               <p className="secondary-text mt-2 text-sm leading-7">
@@ -536,7 +536,7 @@ export default function ListingFlow({
               <div className="space-y-5">
                 <div className="space-y-2">
                   <p className="subtle-label">Review</p>
-                  <h2 className="text-3xl font-semibold tracking-[-0.05em]">{previewTitle}</h2>
+                  <h2 className="title-tighter text-3xl font-semibold">{previewTitle}</h2>
                   <p className="secondary-text text-sm leading-7">
                     {[draft.ward, draft.district, draft.city, draft.country].filter(Boolean).join(", ")}
                   </p>
@@ -573,7 +573,7 @@ function PreviewMetric({
     <div className="space-y-1">
       <div className="secondary-text flex items-center gap-2">
         <Icon className="h-4 w-4" strokeWidth={1.5} />
-        <span className="text-[11px] font-medium uppercase tracking-[0.18em]">{label}</span>
+        <span className="subtle-label">{label}</span>
       </div>
       <div className="text-sm font-medium">{value}</div>
     </div>
@@ -601,7 +601,7 @@ function StepperStat({
           <Minus className="h-5 w-5" strokeWidth={1.5} />
         </button>
         <div className="text-center">
-          <div className="text-3xl font-semibold tracking-[-0.04em]">
+          <div className="title-tight text-3xl font-semibold">
             {value}
             {suffix ? <span className="secondary-text ml-1 text-base">{suffix}</span> : null}
           </div>

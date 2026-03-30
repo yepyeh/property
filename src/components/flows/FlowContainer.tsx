@@ -36,7 +36,7 @@ export default function FlowContainer({
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-7xl px-5 py-8 md:px-8 md:py-10">
+      <div className="page-shell py-l md:py-xl">
         <div className="mb-8">
           <div className="h-px overflow-hidden rounded-full border-base surface-subtle">
             <motion.div
@@ -47,7 +47,7 @@ export default function FlowContainer({
           </div>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[360px_minmax(0,1fr)]">
+        <div className="flow-layout">
           <aside className="hidden lg:block">
             <div className="sticky top-8 space-y-6">
               <div className="glass-card p-6">
@@ -56,7 +56,7 @@ export default function FlowContainer({
                     <p className="subtle-label">
                       Live preview
                     </p>
-                    <h2 className="text-xl font-semibold tracking-[-0.04em]">
+                    <h2 className="title-tight text-xl font-semibold">
                       Your listing is taking shape
                     </h2>
                   </div>
@@ -98,7 +98,7 @@ export default function FlowContainer({
                 <p className="subtle-label">
                   {statusLabel || `Step ${currentStep + 1} of ${steps.length}`}
                 </p>
-                <h1 className="text-3xl font-semibold tracking-[-0.05em] md:text-5xl">
+                <h1 className="title-tighter text-3xl font-semibold md:text-5xl">
                   {steps[currentStep].title}
                 </h1>
                 <p className="secondary-text max-w-3xl text-sm leading-7 md:text-base">
@@ -112,7 +112,7 @@ export default function FlowContainer({
                 <button
                   type="button"
                   onClick={onBack}
-                  className="luxury-transition inline-flex min-h-[44px] items-center justify-center rounded-full border border-base px-5 py-2.5 text-sm font-medium text-muted-ui hover:bg-card hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                  className="luxury-transition control-min-h inline-flex items-center justify-center rounded-full border border-base px-m py-s text-sm font-medium text-muted-ui hover:bg-card hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
                   disabled={!onBack}
                 >
                   {backLabel}
@@ -121,7 +121,7 @@ export default function FlowContainer({
                 <button
                   type="button"
                   onClick={onNext}
-                  className="btn-primary min-w-[180px] justify-center disabled:cursor-not-allowed disabled:opacity-40"
+                  className="btn-primary cta-min-w justify-center disabled:cursor-not-allowed disabled:opacity-40"
                   disabled={Boolean(nextDisabled) || !onNext}
                 >
                   {nextLabel}

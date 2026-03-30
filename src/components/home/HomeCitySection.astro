@@ -49,7 +49,7 @@ const { browseCities } = Astro.props;
     align-items: center;
     min-height: 2rem;
     padding: 0.35rem 0.82rem;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     border: 1px solid var(--line);
     background: var(--surface-overlay);
     color: var(--muted-strong);
@@ -61,7 +61,7 @@ const { browseCities } = Astro.props;
 
   .section-heading h2 {
     margin: 0.7rem 0 0;
-    font-size: clamp(2.7rem, 5vw, 4.9rem);
+    font-size: var(--text-display);
     line-height: 0.9;
     letter-spacing: -0.1em;
   }
@@ -75,16 +75,16 @@ const { browseCities } = Astro.props;
   .city-grid {
     display: grid;
     grid-template-columns: 1.2fr repeat(3, minmax(0, 1fr));
-    gap: 1rem;
+    gap: var(--space-m);
   }
 
   .city-card {
     display: grid;
     align-content: start;
-    gap: 0.75rem;
+    gap: var(--space-s);
     min-height: 12rem;
-    padding: 1.25rem;
-    border-radius: 1.8rem;
+    padding: var(--space-l);
+    border-radius: calc(var(--radius-lg) * 1.8);
     border: 1px solid var(--line);
     background: var(--surface-overlay);
     text-decoration: none;
@@ -92,7 +92,7 @@ const { browseCities } = Astro.props;
   }
 
   .city-card strong {
-    font-size: 1.16rem;
+    font-size: var(--text-lg);
     letter-spacing: -0.05em;
   }
 

@@ -21,7 +21,6 @@ const selectedSort = filters.sort || "newest";
       <p class="search-kicker">{t("Refine the shortlist")}</p>
       <h2>{t("Search by location, price band, and home type.")}</h2>
     </div>
-    <p class="search-note">{t("Use the filters to get to a tighter results set first. The map works better once the shortlist is already credible.")}</p>
   </div>
 
   <div class="intent-tabs">
@@ -117,8 +116,8 @@ const selectedSort = filters.sort || "newest";
 
 <style is:inline>
   .search-frame {
-    margin-bottom: 1rem;
-    padding: 1.35rem;
+    margin-bottom: var(--space-m);
+    padding: var(--space-l);
     background: var(--surface-overlay);
     box-shadow: var(--shadow-soft);
   }
@@ -126,20 +125,20 @@ const selectedSort = filters.sort || "newest";
   .intent-tabs,
   .filter-grid {
     display: grid;
-    gap: 1rem;
+    gap: var(--space-m);
   }
 
   .search-head {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.75fr);
-    gap: 1rem;
+    gap: var(--space-m);
     align-items: end;
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-m);
   }
 
   .search-kicker {
     margin: 0;
-    font-size: 0.8rem;
+    font-size: var(--text-xs);
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -147,21 +146,15 @@ const selectedSort = filters.sort || "newest";
   }
 
   .search-head h2 {
-    margin: 0.35rem 0 0;
-    font-size: clamp(1.5rem, 2.8vw, 2.35rem);
+    margin: var(--space-2xs) 0 0;
+    font-size: var(--text-2xl);
     line-height: 0.98;
     letter-spacing: -0.07em;
   }
 
-  .search-note {
-    margin: 0;
-    color: var(--muted);
-    line-height: 1.7;
-  }
-
   .intent-tabs {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-m);
   }
 
   .intent-tabs label {
@@ -176,16 +169,14 @@ const selectedSort = filters.sort || "newest";
   }
 
   .intent-tabs label span,
-  .button-dark,
-  .button-secondary,
   .utility-links a,
   .filter-chips span {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 2.95rem;
-    border-radius: 999px;
-    padding: 0.86rem 1rem;
+    min-height: calc(var(--space-xl) + var(--space-s));
+    border-radius: var(--radius-full);
+    padding: var(--space-s) var(--space-m);
     font-weight: 700;
     text-decoration: none;
     font: inherit;
@@ -212,11 +203,11 @@ const selectedSort = filters.sort || "newest";
 
   .field {
     display: grid;
-    gap: 0.42rem;
+    gap: var(--space-2xs);
   }
 
   .field span {
-    font-size: 0.82rem;
+    font-size: var(--text-xs);
     font-weight: 700;
     color: var(--muted-strong);
   }
@@ -224,11 +215,11 @@ const selectedSort = filters.sort || "newest";
   .field input,
   .field select {
     width: 100%;
-    min-height: 3.1rem;
-    border-radius: 1rem;
+    min-height: calc(var(--space-xl) + var(--space-m));
+    border-radius: var(--radius-lg);
     border: 1px solid var(--line);
     background: var(--bg-soft);
-    padding: 0.92rem 1rem;
+    padding: var(--space-s) var(--space-m);
     color: var(--text);
     font: inherit;
   }
@@ -237,7 +228,7 @@ const selectedSort = filters.sort || "newest";
   .utility-links,
   .filter-chips {
     display: flex;
-    gap: 0.75rem;
+    gap: var(--space-s);
     flex-wrap: wrap;
   }
 
@@ -248,26 +239,19 @@ const selectedSort = filters.sort || "newest";
   .utility-row {
     display: flex;
     justify-content: space-between;
-    gap: 1rem;
+    gap: var(--space-m);
     align-items: flex-start;
     flex-wrap: wrap;
-    margin-top: 1rem;
-    padding-top: 1rem;
+    margin-top: var(--space-m);
+    padding-top: var(--space-m);
     border-top: 1px solid var(--line);
   }
 
   .filter-chips span {
-    min-height: 2.25rem;
-    padding: 0.56rem 0.84rem;
-    font-size: 0.82rem;
+    min-height: calc(var(--space-l) * 1.05);
+    padding: var(--space-xs) var(--space-s);
+    font-size: var(--text-xs);
     background: var(--surface-overlay-strong);
-  }
-
-  .button-dark {
-    background: var(--brand);
-    color: var(--surface-canvas);
-    border-color: var(--brand);
-    cursor: pointer;
   }
 
   @media (max-width: 1100px) {

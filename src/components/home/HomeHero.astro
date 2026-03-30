@@ -157,7 +157,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
     align-items: center;
     min-height: 2rem;
     padding: 0.35rem 0.82rem;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     border: 1px solid var(--line);
     background: var(--surface-overlay);
     color: var(--muted-strong);
@@ -192,7 +192,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
 
   .signal-row {
     display: flex;
-    gap: 0.75rem;
+    gap: var(--space-s);
     align-items: flex-start;
     color: var(--muted-strong);
     font-size: 0.95rem;
@@ -203,7 +203,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
     width: 0.55rem;
     height: 0.55rem;
     margin-top: 0.48rem;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--accent-strong) 28%, var(--surface-elevated-strong));
     box-shadow: 0 0 0 0.28rem color-mix(in srgb, var(--accent-strong) 22%, transparent);
     flex: none;
@@ -224,7 +224,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
     justify-content: center;
     min-height: 3.2rem;
     padding: 0.95rem 1.2rem;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     border: 1px solid transparent;
     font: inherit;
     font-weight: 700;
@@ -282,7 +282,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
   }
 
   .search-head strong {
-    font-size: 1rem;
+    font-size: var(--text-base);
     letter-spacing: -0.03em;
   }
 
@@ -314,7 +314,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
     align-items: center;
     justify-content: center;
     min-height: 3rem;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     border: 1px solid var(--line);
     background: var(--bg-soft);
     font-weight: 700;
@@ -356,7 +356,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
     width: 100%;
     min-height: 3.2rem;
     padding: 0.92rem 1rem;
-    border-radius: 1rem;
+    border-radius: var(--radius-lg);
     border: 1px solid var(--line);
     background: var(--bg-soft);
     color: var(--text);
@@ -373,7 +373,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
   .metric-card,
   .metric-banner,
   .quick-links {
-    border-radius: 1.6rem;
+    border-radius: calc(var(--radius-lg) * 1.6);
     border: 1px solid var(--line);
     background: var(--surface-panel-muted);
     box-shadow: var(--shadow-soft);
@@ -388,7 +388,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
   .metric-card strong,
   .metric-banner strong,
   .quick-head strong {
-    font-size: 1.08rem;
+    font-size: var(--text-base);
     letter-spacing: -0.04em;
   }
 
@@ -425,7 +425,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
     align-items: center;
     min-height: 2.5rem;
     padding: 0.7rem 0.95rem;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--surface-elevated-strong);
     border: 1px solid var(--line);
     color: var(--text);
@@ -459,7 +459,7 @@ const { quickFilters, trustSignals, t = (value: string) => value } = Astro.props
     }
 
     .hero-copy h1 {
-      font-size: clamp(2.4rem, 10vw, 4rem);
+      font-size: var(--text-5xl);
       max-width: 10ch;
     }
 

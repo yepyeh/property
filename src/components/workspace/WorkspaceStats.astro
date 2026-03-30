@@ -25,18 +25,18 @@ const { items } = Astro.props;
 <style is:inline>
   .stats-grid {
     display: grid;
-    gap: 1rem;
-    margin-top: 1rem;
+    gap: var(--space-m);
+    margin-top: var(--space-m);
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .stat-card {
-    padding: 1.5rem;
+    padding: var(--space-l);
     background: linear-gradient(180deg, var(--surface-overlay-strong), var(--surface-panel-muted));
     box-shadow: var(--shadow-panel);
   }
   .stat-label {
-    margin: 0 0 0.45rem;
-    font-size: 0.78rem;
+    margin: 0 0 var(--space-2xs);
+    font-size: var(--text-xs);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -44,8 +44,8 @@ const { items } = Astro.props;
   }
   .stat-card strong {
     display: block;
-    margin-bottom: 0.35rem;
-    font-size: 2.25rem;
+    margin-bottom: var(--space-2xs);
+    font-size: var(--text-4xl);
     line-height: 1;
     letter-spacing: -0.06em;
   }

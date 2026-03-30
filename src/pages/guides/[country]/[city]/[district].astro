@@ -106,20 +106,20 @@ const districtListings = listings.filter((listing) => listing.country === match.
   <style is:inline>
     .guide-hero,
     .guide-card,
-    .listing-panel { padding: 1.4rem; }
+    .listing-panel { padding: var(--space-l); }
     .guide-hero {
       display: grid;
       grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
-      gap: 1rem;
+      gap: var(--space-m);
       align-items: start;
       background: linear-gradient(180deg, var(--surface-overlay-strong), var(--surface-panel-muted));
     }
     .hero-copy,
     .hero-panel,
     .guide-card,
-    .panel-head { display: grid; gap: 0.8rem; }
+    .panel-head { display: grid; gap: var(--space-s); }
     .hero-copy h1,
-    .panel-head h2 { margin: 0; font-size: clamp(2rem, 5vw, 3.4rem); line-height: 0.95; letter-spacing: -0.08em; }
+    .panel-head h2 { margin: 0; font-size: var(--text-5xl); line-height: 0.95; letter-spacing: -0.08em; }
     .hero-copy p,
     .hero-panel li,
     .guide-card p,
@@ -129,14 +129,14 @@ const districtListings = listings.filter((listing) => listing.country === match.
     .hero-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; }
     .button-primary,
     .button-secondary {
-      display: inline-flex; align-items: center; justify-content: center; min-height: 2.85rem; padding: 0.85rem 1.05rem; border-radius: 999px; font-weight: 700; text-decoration: none;
+      display: inline-flex; align-items: center; justify-content: center; min-height: 2.85rem; padding: 0.85rem 1.05rem; border-radius: var(--radius-full); font-weight: 700; text-decoration: none;
     }
     .button-primary { background: linear-gradient(135deg, var(--brand), color-mix(in srgb, var(--brand) 82%, var(--surface-soft))); color: var(--surface-canvas); }
     .button-secondary { background: var(--surface-elevated-strong); border: 1px solid var(--line); color: var(--text); }
     .hero-panel,
-    .listing-card { padding: 1rem; border-radius: 20px; background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted)); border: 1px solid var(--line); }
+    .listing-card { padding: var(--space-m); border-radius: calc(var(--radius-lg) * 1.25); background: linear-gradient(180deg, var(--surface-elevated-strong), var(--surface-panel-muted)); border: 1px solid var(--line); }
     .guide-grid,
-    .listing-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .listing-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-m); }
     .premium-card.locked { background: linear-gradient(180deg, color-mix(in srgb, var(--accent-strong) 10%, transparent), var(--surface-elevated-strong)); }
     .guide-card ul,
     .hero-panel ul { margin: 0; padding-left: 1rem; display: grid; gap: 0.35rem; }

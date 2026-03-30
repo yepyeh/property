@@ -378,55 +378,14 @@ const enquiryStatusCounts = {
   </section>
 
   <style is:inline>
-    .collection-strip {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.55rem;
-      margin-bottom: 1rem;
-    }
-
-    .collection-chip,
-    .collection-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      min-height: 1.9rem;
-      padding: 0.3rem 0.75rem;
-      border-radius: 999px;
-      background: color-mix(in srgb, var(--accent-1) 74%, var(--surface-elevated-strong));
-      color: var(--muted-strong);
-      font-size: 0.78rem;
-      font-weight: 700;
-    }
-
     .collection-chip strong {
       color: var(--text);
-    }
-
-    .split-grid {
-      display: grid;
-      gap: 1rem;
-      margin-top: 1rem;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .list-item {
-      padding: 1rem;
-      border-radius: calc(var(--radius-panel) + 0.1rem);
-      background: linear-gradient(180deg, color-mix(in srgb, var(--surface-input-strong) 94%, transparent), color-mix(in srgb, var(--surface-panel-muted) 90%, transparent));
-      border: 1px solid var(--line);
-      box-shadow: inset 0 1px 0 color-mix(in srgb, var(--surface-overlay-strong) 86%, transparent);
-    }
-
-    .saved-list-grid {
-      display: grid;
-      gap: 1rem;
     }
 
     .saved-property-card {
       display: grid;
       grid-template-columns: minmax(11rem, 13rem) minmax(0, 1fr);
-      gap: 1rem;
+      gap: var(--space-m);
       align-items: stretch;
     }
 
@@ -450,7 +409,7 @@ const enquiryStatusCounts = {
 
     .saved-content {
       display: grid;
-      gap: 0.8rem;
+      gap: var(--space-s);
       align-content: start;
     }
 
@@ -462,113 +421,28 @@ const enquiryStatusCounts = {
       line-height: 1.65;
     }
 
-    .compare-preview {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.8rem;
-    }
-
     .journey-grid {
-      display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 0.8rem;
-    }
-
-    .journey-step {
-      padding: 1rem;
-      border-radius: var(--radius-panel);
-      background: linear-gradient(180deg, color-mix(in srgb, var(--surface-input-strong) 94%, transparent), color-mix(in srgb, var(--surface-panel-muted) 90%, transparent));
-      border: 1px solid var(--line);
-      box-shadow: inset 0 1px 0 color-mix(in srgb, var(--surface-overlay-strong) 86%, transparent);
     }
 
     .journey-step p {
-      margin: 0.45rem 0 0;
+      margin: var(--space-2xs) 0 0;
       color: var(--muted);
       line-height: 1.65;
-    }
-
-    .top-gap {
-      margin-top: 1rem;
     }
 
     .saved-state-form {
       display: grid;
       grid-template-columns: 0.9fr 0.9fr 1fr 1.2fr auto;
-      gap: 0.55rem;
+      gap: var(--space-xs);
       align-items: center;
-    }
-
-    .shortlist-chip {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: fit-content;
-      min-height: 1.8rem;
-      padding: 0.2rem 0.65rem;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: capitalize;
-      background: color-mix(in srgb, var(--accent-1) 74%, var(--surface-elevated-strong));
-      color: var(--muted-strong);
-    }
-
-    .state-contacted {
-      background: var(--info-bg);
-      color: var(--info-text);
-    }
-
-    .state-finalist {
-      background: var(--success-bg);
-      color: var(--success-text);
-    }
-
-    .state-follow_up {
-      background: var(--warning-bg);
-      color: var(--warning-text);
-    }
-
-    .compare-chip {
-      display: grid;
-      gap: 0.35rem;
-      padding: 1rem;
-      border-radius: var(--radius-panel);
-      background: linear-gradient(180deg, color-mix(in srgb, var(--surface-input-strong) 94%, transparent), color-mix(in srgb, var(--surface-panel-muted) 90%, transparent));
-      border: 1px solid var(--line);
-      box-shadow: inset 0 1px 0 color-mix(in srgb, var(--surface-overlay-strong) 86%, transparent);
     }
 
     .compare-chip span {
       color: var(--muted);
     }
 
-    .status-preview {
-      margin-bottom: 1rem;
-    }
-
-    .freshness-row {
-      display: inline-flex;
-      align-items: center;
-      width: fit-content;
-      padding: 0.45rem 0.7rem;
-      border-radius: 999px;
-      background: color-mix(in srgb, var(--accent-1) 74%, var(--surface-elevated-strong));
-      color: var(--muted-strong);
-      font-size: 0.82rem;
-      font-weight: 700;
-    }
-
-    .freshness-hot {
-      background: var(--success-bg);
-      color: var(--success-text);
-    }
-
     @media (max-width: 960px) {
-      .split-grid {
-        grid-template-columns: 1fr;
-      }
-
       .compare-preview,
       .saved-property-card,
       .saved-state-form,

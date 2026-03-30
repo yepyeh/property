@@ -495,37 +495,12 @@ function getCoverPosition(listing: { cover_focus_x?: number | null; cover_focus_
   </section>
 
   <style is:inline>
-    .split-grid {
-      display: grid;
-      gap: 1rem;
-      margin-top: 1rem;
-      grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
-    }
-
     .split-grid-top {
       align-items: start;
     }
 
-    .right-stack {
-      display: grid;
-      gap: 1rem;
-    }
-
-    .compare-preview {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-    }
-
-    .compare-chip {
-      display: grid;
-      gap: 0.35rem;
-      padding: 0.95rem 1rem;
-      border-radius: var(--radius-panel);
-      background: linear-gradient(180deg, color-mix(in srgb, var(--surface-input-strong) 94%, transparent), color-mix(in srgb, var(--surface-panel-muted) 90%, transparent));
-      border: 1px solid var(--line);
-      box-shadow: inset 0 1px 0 color-mix(in srgb, var(--surface-overlay-strong) 86%, transparent);
+    .split-grid {
+      grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
     }
 
     .compare-chip span {
@@ -535,22 +510,12 @@ function getCoverPosition(listing: { cover_focus_x?: number | null; cover_focus_
     .verification-form {
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 0.65rem;
-      margin-top: 1rem;
+      gap: var(--space-xs);
+      margin-top: var(--space-m);
     }
 
     .verification-form input {
       width: 100%;
-      padding: 0.8rem 0.9rem;
-      border-radius: var(--radius-input);
-      border: 1px solid var(--line);
-      font: inherit;
-      background: color-mix(in srgb, var(--surface-input-strong) 92%, transparent);
-      color: var(--text);
-    }
-
-    .status-preview {
-      margin-bottom: 1rem;
     }
 
     .action-row-wrap,
@@ -559,7 +524,7 @@ function getCoverPosition(listing: { cover_focus_x?: number | null; cover_focus_
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 1rem;
+      gap: var(--space-m);
       flex-wrap: wrap;
     }
 
@@ -570,69 +535,23 @@ function getCoverPosition(listing: { cover_focus_x?: number | null; cover_focus_
     .performance-strip {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.75rem;
-      margin: 0.9rem 0 1rem;
-    }
-
-    .performance-chip {
-      display: grid;
-      gap: 0.2rem;
-      padding: 0.85rem 0.9rem;
-      border-radius: var(--radius-panel);
-      background: color-mix(in srgb, var(--accent-1) 74%, var(--surface-elevated-strong));
-      border: 1px solid var(--line);
+      gap: var(--space-s);
+      margin: var(--space-s) 0 var(--space-m);
     }
 
     .performance-chip strong {
-      font-size: 1.1rem;
+      font-size: var(--text-lg);
       letter-spacing: -0.03em;
     }
 
     .performance-chip span {
       color: var(--muted);
-      font-size: 0.82rem;
-    }
-
-    .badge-text,
-    .status-chip {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 1.9rem;
-      padding: 0.2rem 0.65rem;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      background: var(--surface-soft);
-      color: var(--accent-strong);
-      text-transform: capitalize;
-    }
-
-    .freshness-row {
-      display: inline-flex;
-      align-items: center;
-      width: fit-content;
-      padding: 0.45rem 0.7rem;
-      border-radius: 999px;
-      background: color-mix(in srgb, var(--accent-1) 74%, var(--surface-elevated-strong));
-      color: var(--muted-strong);
-      font-size: 0.82rem;
-      font-weight: 700;
+      font-size: var(--text-xs);
     }
 
     .freshness-hot {
       background: var(--success-bg);
       color: var(--success-text);
-    }
-
-    .listing-item,
-    .list-item,
-    .alert-item {
-      border-radius: calc(var(--radius-panel) + 0.1rem);
-      padding: 1rem;
-      background: linear-gradient(180deg, color-mix(in srgb, var(--surface-input-strong) 94%, transparent), color-mix(in srgb, var(--surface-panel-muted) 90%, transparent));
-      border: 1px solid var(--line);
-      box-shadow: inset 0 1px 0 color-mix(in srgb, var(--surface-overlay-strong) 86%, transparent);
     }
 
     .alert-warning {
@@ -648,28 +567,28 @@ function getCoverPosition(listing: { cover_focus_x?: number | null; cover_focus_
     .meta-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.5rem 1rem;
+      gap: var(--space-xs) var(--space-m);
       color: var(--muted);
-      font-size: 0.95rem;
+      font-size: var(--text-sm);
     }
 
     .upload-form {
       display: grid;
-      gap: 0.75rem;
-      padding-top: 0.25rem;
+      gap: var(--space-s);
+      padding-top: var(--space-2xs);
     }
 
     .focal-form {
       display: grid;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
+      gap: var(--space-xs);
+      margin-top: var(--space-xs);
     }
 
     .focal-form label {
       display: grid;
-      gap: 0.2rem;
+      gap: calc(var(--space-2xs) * 0.8);
       color: var(--muted);
-      font-size: 0.86rem;
+      font-size: var(--text-xs);
     }
 
     .focal-form input[type="range"] {
@@ -678,7 +597,7 @@ function getCoverPosition(listing: { cover_focus_x?: number | null; cover_focus_
 
     .upload-form label {
       display: grid;
-      gap: 0.45rem;
+      gap: var(--space-2xs);
     }
 
     .upload-label {
@@ -687,7 +606,7 @@ function getCoverPosition(listing: { cover_focus_x?: number | null; cover_focus_
 
     .upload-copy {
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: var(--text-sm);
       line-height: 1.6;
     }
 
@@ -699,13 +618,13 @@ function getCoverPosition(listing: { cover_focus_x?: number | null; cover_focus_
     .listing-layout {
       display: grid;
       grid-template-columns: minmax(15rem, 18rem) minmax(0, 1fr);
-      gap: 1rem;
-      margin-top: 0.9rem;
+      gap: var(--space-m);
+      margin-top: var(--space-s);
     }
 
     .listing-media {
       display: grid;
-      gap: 0.7rem;
+      gap: var(--space-s);
     }
 
     .primary-media,
@@ -725,12 +644,12 @@ function getCoverPosition(listing: { cover_focus_x?: number | null; cover_focus_
     .media-rail {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.6rem;
+      gap: var(--space-xs);
     }
 
     .thumb-stack {
       display: grid;
-      gap: 0.35rem;
+      gap: var(--space-2xs);
     }
 
     .thumb-media,
@@ -741,7 +660,7 @@ function getCoverPosition(listing: { cover_focus_x?: number | null; cover_focus_
     .thumb-tools,
     .primary-tools {
       display: flex;
-      gap: 0.35rem;
+      gap: var(--space-2xs);
       flex-wrap: wrap;
     }
 
@@ -749,10 +668,10 @@ function getCoverPosition(listing: { cover_focus_x?: number | null; cover_focus_
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 1.9rem;
-      padding: 0.2rem 0.55rem;
+      min-height: calc(var(--space-l) * 0.95);
+      padding: calc(var(--space-2xs) * 0.8) var(--space-xs);
       border: 1px solid var(--line);
-      border-radius: 999px;
+      border-radius: var(--radius-full);
       background: color-mix(in srgb, var(--surface-input) 88%, transparent);
       color: var(--text);
       font: inherit;
@@ -776,15 +695,15 @@ function getCoverPosition(listing: { cover_focus_x?: number | null; cover_focus_
 
     .media-empty {
       min-height: 17.5rem;
-      padding: 1rem;
-      border-radius: calc(var(--radius-panel) + 0.1rem);
+      padding: var(--space-m);
+      border-radius: var(--radius-lg);
       border: 1px dashed var(--line-strong);
     }
 
     .media-empty strong {
       color: var(--text);
       display: block;
-      margin-bottom: 0.35rem;
+      margin-bottom: var(--space-2xs);
     }
 
     .media-empty p {
@@ -794,55 +713,36 @@ function getCoverPosition(listing: { cover_focus_x?: number | null; cover_focus_
 
     .listing-main {
       display: grid;
-      gap: 0.9rem;
+      gap: var(--space-s);
     }
 
     .quality-strip {
       display: flex;
-      gap: 0.7rem;
+      gap: var(--space-s);
       flex-wrap: wrap;
       align-items: center;
       color: var(--muted);
-      font-size: 0.88rem;
-    }
-
-    .quality-strip span,
-    .quality-link {
-      display: inline-flex;
-      align-items: center;
-      min-height: 2rem;
-      padding: 0.2rem 0.7rem;
-      border-radius: 999px;
-      background: color-mix(in srgb, var(--accent-1) 74%, var(--surface-elevated-strong));
-      color: var(--muted-strong);
-      text-decoration: none;
-      font-weight: 700;
+      font-size: var(--text-sm);
     }
 
     .helper-copy {
-      font-size: 0.95rem;
+      font-size: var(--text-sm);
     }
 
     .enquiry-status-form {
       display: grid;
       grid-template-columns: minmax(8rem, 10rem) minmax(0, 1fr) auto;
-      gap: 0.6rem;
-      margin-top: 0.8rem;
+      gap: var(--space-xs);
+      margin-top: var(--space-s);
     }
 
     .enquiry-status-form select,
     .enquiry-status-form input {
       width: 100%;
-      padding: 0.8rem 0.9rem;
-      border-radius: var(--radius-input);
-      border: 1px solid var(--line);
-      font: inherit;
-      background: color-mix(in srgb, var(--surface-input-strong) 92%, transparent);
-      color: var(--text);
     }
 
     .inline-note {
-      margin-top: 0.55rem;
+      margin-top: var(--space-xs);
       color: var(--muted);
       line-height: 1.6;
     }

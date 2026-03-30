@@ -314,48 +314,48 @@ const conversionRate = analytics.totalListings > 0
   </section>
 
   <style is:inline>
-    .page-head, .panel, .stat { padding: 1.4rem; }
-    .payment-panel { margin-top: 1rem; }
-    .summary-panel { margin-top: 1rem; }
+    .page-head, .panel, .stat { padding: var(--space-l); }
+    .payment-panel { margin-top: var(--space-m); }
+    .summary-panel { margin-top: var(--space-m); }
     .page-head {
       display: flex;
       justify-content: space-between;
-      gap: 1rem;
+      gap: var(--space-m);
       align-items: flex-start;
-      margin-bottom: 1rem;
+      margin-bottom: var(--space-m);
     }
     .actions,
     .billing-controls {
       display: flex;
-      gap: 0.75rem;
+      gap: var(--space-s);
       flex-wrap: wrap;
       align-items: center;
     }
     .analytics-grid,
     .summary-grid {
       display: grid;
-      gap: 1rem;
+      gap: var(--space-m);
     }
     .analytics-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      margin-bottom: 1rem;
+      margin-bottom: var(--space-m);
     }
     .summary-grid {
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      margin-top: 1rem;
+      margin-top: var(--space-m);
     }
     .stat strong,
     .summary-grid strong {
       display: block;
-      font-size: 1.7rem;
+      font-size: var(--text-3xl);
     }
     .stat span,
     .summary-grid span {
       color: var(--muted);
     }
     .flash {
-      padding: 1rem 1.2rem;
-      margin-bottom: 1rem;
+      padding: var(--space-m);
+      margin-bottom: var(--space-m);
       color: var(--accent-strong);
       font-weight: 700;
     }
@@ -370,17 +370,17 @@ const conversionRate = analytics.totalListings > 0
       justify-content: center;
       text-decoration: none;
       font-weight: 700;
-      border-radius: 999px;
+      border-radius: var(--radius-full);
       cursor: pointer;
     }
     .ghost {
-      padding: 0.95rem 1.2rem;
+      padding: var(--space-s) var(--space-m);
       border: 1px solid var(--line);
       background: var(--surface-panel-muted);
       color: var(--text);
     }
     .primary, .dark {
-      padding: 0.85rem 1rem;
+      padding: var(--space-s) var(--space-m);
       border: none;
       color: var(--surface-canvas);
     }
@@ -391,21 +391,21 @@ const conversionRate = analytics.totalListings > 0
       background: var(--bg-deep);
     }
     .small {
-      padding: 0.75rem 0.95rem;
-      font-size: 0.92rem;
+      padding: var(--space-s) var(--space-m);
+      font-size: var(--text-sm);
     }
     .listing-grid {
       list-style: none;
       padding: 0;
-      margin: 1rem 0 0;
+      margin: var(--space-m) 0 0;
       display: grid;
-      gap: 1rem;
+      gap: var(--space-m);
     }
     .listing-grid li {
       display: grid;
-      gap: 0.35rem;
-      padding: 1rem;
-      border-radius: 18px;
+      gap: var(--space-2xs);
+      padding: var(--space-m);
+      border-radius: calc(var(--radius-lg) * 1.125);
       background: var(--surface-panel-subtle);
     }
     .listing-grid span,
@@ -416,21 +416,21 @@ const conversionRate = analytics.totalListings > 0
     .inline-form {
       display: flex;
       align-items: end;
-      gap: 0.6rem;
+      gap: var(--space-xs);
       flex-wrap: wrap;
     }
     .trend-table {
       display: grid;
-      gap: 0.55rem;
-      margin-top: 1rem;
+      gap: var(--space-xs);
+      margin-top: var(--space-m);
     }
     .trend-row {
       display: grid;
       grid-template-columns: 1.2fr repeat(4, minmax(0, 1fr));
-      gap: 0.75rem;
+      gap: var(--space-s);
       align-items: center;
-      padding: 0.9rem 1rem;
-      border-radius: 16px;
+      padding: var(--space-s) var(--space-m);
+      border-radius: var(--radius-lg);
       background: var(--surface-panel-subtle);
     }
     .trend-head {
@@ -440,13 +440,13 @@ const conversionRate = analytics.totalListings > 0
     }
     label {
       display: grid;
-      gap: 0.3rem;
-      font-size: 0.9rem;
+      gap: var(--space-2xs);
+      font-size: var(--text-sm);
       font-weight: 600;
     }
     input {
-      padding: 0.75rem 0.85rem;
-      border-radius: 14px;
+      padding: var(--space-s) var(--space-m);
+      border-radius: calc(var(--radius-lg) * 0.875);
       border: 1px solid var(--line);
       background: var(--surface-overlay);
       font: inherit;

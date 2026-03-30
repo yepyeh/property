@@ -38,12 +38,12 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
   return (
     <article className="glass-card group overflow-hidden border border-soft transition-all duration-300 ease-luxury hover:-translate-y-1 hover:border-accent/30">
       <a href={`/listings/${listing.slug}/`} className="block">
-        <div className="relative aspect-[4/3] overflow-hidden border-b border-soft">
+        <div className="ratio-photo relative overflow-hidden border-b border-soft">
           {heroImage ? (
             <img
               src={heroImage}
               alt={listing.title}
-              className="h-full w-full object-cover transition-transform duration-[400ms] ease-luxury group-hover:scale-[1.03]"
+              className="h-full w-full object-cover transition-transform duration-500 ease-luxury group-hover:scale-105"
               style={{ objectPosition: coverPosition }}
             />
           ) : (
@@ -52,11 +52,11 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
 
           <div className="absolute inset-x-0 top-0 flex items-start justify-between p-4">
             <div className="glass-effect rounded-full px-3 py-1.5">
-              <span className="text-sm font-semibold tracking-[-0.03em]">{listing.priceLabel}</span>
+              <span className="title-snug text-sm font-semibold">{listing.priceLabel}</span>
             </div>
 
             <div className={`glass-effect rounded-full px-3 py-1.5 ${listing.owner.verified ? "shadow-accent-soft" : ""}`}>
-              <span className="text-xs font-medium uppercase tracking-[0.18em]">
+              <span className="subtle-label">
                 {listing.owner.verified ? "Verified owner" : "Owner listed"}
               </span>
             </div>
@@ -67,7 +67,7 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
       <div className="space-y-5 p-5 md:p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 space-y-1">
-            <h3 className="truncate text-xl font-semibold tracking-[-0.04em]">
+            <h3 className="title-tight truncate text-xl font-semibold">
               <a href={`/listings/${listing.slug}/`} className="transition-colors duration-300 ease-luxury hover:text-accent">
                 {listing.title}
               </a>
@@ -92,14 +92,14 @@ export default function ConfidenceCard({ listing }: ConfidenceCardProps) {
                   strokeDashoffset={dashOffset}
                 />
               </svg>
-              <div className="absolute inset-0 flex items-center justify-center text-[11px] font-semibold">
+              <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold">
                 {safeScore}%
               </div>
             </div>
 
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="subtle-label text-xs font-medium uppercase tracking-[0.18em]">
+                <span className="subtle-label">
                   Confidence
                 </span>
                 <TooltipInfo />
@@ -163,7 +163,7 @@ function ConfidenceMetric({
         <Icon className="h-4 w-4 text-accent" strokeWidth={1.5} />
       </div>
       <div className="secondary-text text-xs font-medium">{label}</div>
-      <div className="text-sm font-semibold tracking-[-0.02em]">{score}%</div>
+      <div className="title-soft text-sm font-semibold">{score}%</div>
     </div>
   );
 }
@@ -177,7 +177,7 @@ function SpecCell({
 }) {
   return (
     <div className="surface-soft rounded-xl border border-soft px-3 py-3">
-      <div className="subtle-label mb-1 text-[11px] font-medium uppercase tracking-[0.18em]">
+      <div className="subtle-label mb-1">
         {label}
       </div>
       <div className="flex items-center justify-between gap-2 text-sm font-medium">{value}</div>

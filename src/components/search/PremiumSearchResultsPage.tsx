@@ -91,7 +91,7 @@ export default function PremiumSearchResultsPage({
       <section className="glass-card overflow-visible">
         <div className="border-b border-soft px-l py-xl">
           <div className="mb-l max-w-3xl space-y-s">
-            <span className="inline-flex rounded-full border border-white/10 px-s py-xs text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+            <span className="subtle-label inline-flex rounded-full border border-base px-s py-xs">
               Search results
             </span>
             <h1 className="max-w-4xl text-4xl font-semibold tracking-tight text-white md:text-6xl">
@@ -107,7 +107,7 @@ export default function PremiumSearchResultsPage({
             <span className="subtle-label">
               Refine the shortlist
             </span>
-            <h2 className="text-2xl font-semibold tracking-[-0.04em] text-white">
+            <h2 className="title-tight text-2xl font-semibold text-white">
               Filter with intent, not clutter.
             </h2>
           </div>
@@ -195,7 +195,7 @@ export default function PremiumSearchResultsPage({
             <span className="subtle-label mb-3 inline-flex rounded-full border border-base px-3 py-1">
               0 listings
             </span>
-            <h3 className="text-2xl font-semibold tracking-[-0.04em] text-white md:text-3xl">
+            <h3 className="title-tight text-2xl font-semibold text-white md:text-3xl">
               There are no listings for this filter set yet.
             </h3>
             <p className="secondary-text mt-4 text-sm leading-7 md:text-base">
@@ -225,8 +225,8 @@ export default function PremiumSearchResultsPage({
         <section className="space-y-6">
           <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="subtle-label text-xs font-medium uppercase tracking-[0.18em]">Confidence-led results</p>
-              <h3 className="text-2xl font-semibold tracking-[-0.04em] text-white">
+              <p className="subtle-label">Confidence-led results</p>
+              <h3 className="title-tight text-2xl font-semibold text-white">
                 Listings with stronger trust signals first.
               </h3>
             </div>
@@ -589,7 +589,7 @@ function ActionCard({
           <Icon className="h-5 w-5" strokeWidth={1.5} />
         </div>
         <div className="space-y-2">
-          <h4 className="text-xl font-semibold tracking-[-0.04em] text-white">{title}</h4>
+          <h4 className="title-tight text-xl font-semibold text-white">{title}</h4>
           <p className="secondary-text text-sm leading-7">{description}</p>
         </div>
       </div>
