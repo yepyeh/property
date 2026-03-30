@@ -8,6 +8,7 @@ import {
 } from "../data/listings";
 import { buildInitialListingPresentation } from "./listing-defaults";
 import { normalizeExpiredListingPlans } from "./listing-lifecycle";
+import { getFallbackListingImageUrls } from "./media";
 import type {
   AuctionEventRecord,
   AuctionBidderRegistrationRecord,
@@ -150,6 +151,13 @@ function parseSavedSearchFilters(value: string): ListingFilters {
 
 function mapRowToListing(row: ListingRow): Listing {
   const imageKeys = row.image_keys ? JSON.parse(row.image_keys) : [];
+  const imageUrls = imageKeys.length
+    ? imageKeys.map((key: string) => `/media/${key}`)
+    : getFallbackListingImageUrls({
+        slug: row.slug,
+        type: row.property_type,
+        saleMode: row.sale_mode,
+      });
 
   const listing: Listing = {
     slug: row.slug,
@@ -201,7 +209,7 @@ function mapRowToListing(row: ListingRow): Listing {
           }
         : undefined,
     imageKeys,
-    imageUrls: imageKeys.map((key: string) => `/media/${key}`),
+    imageUrls,
     commerce: {
       planType: row.plan_type as NonNullable<Listing["commerce"]>["planType"],
       trialEndsAt: row.trial_ends_at,

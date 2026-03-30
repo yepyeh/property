@@ -3,7 +3,7 @@ import { getImageBucket, makeImageKey } from "../../lib/media";
 import { getDB } from "../../lib/runtime";
 import { ValidationError, readText } from "../../lib/validation";
 
-const ALLOWED_IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp", "image/avif"]);
+const ALLOWED_IMAGE_TYPES = new Set(["image/webp"]);
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -43,14 +43,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     for (const file of files) {
       if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
-        return new Response("Unsupported image type", { status: 400 });
+        return new Response("Images must be converted to WebP before upload", { status: 400 });
       }
 
       if (file.size > MAX_IMAGE_BYTES) {
         return new Response("Image file is too large", { status: 400 });
       }
 
-      const key = makeImageKey(listingSlug, file.name || "listing-image");
+      const key = makeImageKey(listingSlug, file.name || "listing-image", "webp");
       const bytes = await file.arrayBuffer();
 
       await bucket.put(key, bytes, {

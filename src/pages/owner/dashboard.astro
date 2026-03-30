@@ -385,7 +385,7 @@ function getImageUrls(value: unknown) {
                 <input type="hidden" name="listingSlug" value={listing.slug} />
                 <label>
                   <span class="upload-label">Add photos</span>
-                  <span class="upload-copy">Upload up to 8 images at once. Use one exterior, one living space, one kitchen, one bedroom, and one location/context shot.</span>
+                  <span class="upload-copy">Upload up to 8 images at once. Use one exterior, one living space, one kitchen, one bedroom, and one location/context shot. Images are converted to optimized WebP before they leave your browser.</span>
                   <input type="file" name="image" accept="image/png,image/jpeg,image/webp,image/avif" multiple required />
                 </label>
                 <button type="submit" class="button-secondary">Upload gallery</button>
@@ -835,4 +835,110 @@ function getImageUrls(value: unknown) {
       }
     }
   </style>
+
+  <script is:inline>
+    async function decodeUploadImage(file) {
+      if ("createImageBitmap" in window) {
+        return await createImageBitmap(file);
+      }
+
+      return await new Promise((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          resolve(img);
+        };
+        img.onerror = (error) => {
+          URL.revokeObjectURL(url);
+          reject(error);
+        };
+        img.src = url;
+      });
+    }
+
+    async function convertToWebp(file) {
+      if (file.type === "image/webp") return file;
+
+      const source = await decodeUploadImage(file);
+      const width = source.width || source.naturalWidth;
+      const height = source.height || source.naturalHeight;
+      const maxDimension = 1800;
+      const scale = Math.min(1, maxDimension / Math.max(width, height));
+
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(width * scale));
+      canvas.height = Math.max(1, Math.round(height * scale));
+
+      const context = canvas.getContext("2d");
+      if (!context) throw new Error("Canvas 2D context unavailable");
+
+      context.drawImage(source, 0, 0, canvas.width, canvas.height);
+
+      const blob = await new Promise((resolve) => {
+        canvas.toBlob(resolve, "image/webp", 0.82);
+      });
+
+      if (!blob) throw new Error("WebP conversion failed");
+
+      const fileName = file.name.replace(/\.[^.]+$/, "") + ".webp";
+      return new File([blob], fileName, { type: "image/webp", lastModified: Date.now() });
+    }
+
+    document.querySelectorAll(".upload-form").forEach((form) => {
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const input = form.querySelector('input[type="file"][name="image"]');
+        const button = form.querySelector('button[type="submit"]');
+        if (!(input instanceof HTMLInputElement) || !input.files?.length) return;
+
+        const originalLabel = button?.textContent || "Upload gallery";
+
+        try {
+          if (button) {
+            button.disabled = true;
+            button.textContent = "Optimizing photos...";
+          }
+
+          const files = Array.from(input.files).slice(0, 8);
+          const convertedFiles = await Promise.all(files.map((file) => convertToWebp(file)));
+          const formData = new FormData();
+
+          for (const [key, value] of new FormData(form).entries()) {
+            if (key !== "image") formData.append(key, value);
+          }
+
+          for (const file of convertedFiles) {
+            formData.append("image", file, file.name);
+          }
+
+          if (button) {
+            button.textContent = "Uploading...";
+          }
+
+          const response = await fetch(form.action, {
+            method: "POST",
+            body: formData,
+            credentials: "same-origin",
+          });
+
+          const redirectTo = response.redirected ? response.url : response.headers.get("Location");
+          if (redirectTo) {
+            window.location.href = redirectTo;
+            return;
+          }
+
+          const message = await response.text();
+          throw new Error(message || "Upload failed");
+        } catch (error) {
+          alert(error instanceof Error ? error.message : "Upload failed");
+          if (button) {
+            button.disabled = false;
+            button.textContent = originalLabel;
+          }
+        }
+      });
+    });
+  </script>
 </Layout>
