@@ -98,7 +98,7 @@ function getCons(listing: NonNullable<(typeof compareEntries)[number]["listing"]
           return (
           <article class="compare-property">
             {listing.imageUrls?.[0] ? (
-              <div class="compare-media" style={`background-image:url(${listing.imageUrls[0]})`}></div>
+              <div class="compare-media" style={`background-image:url(${listing.imageUrls[0]});background-position:${listing.coverFocus ? `${listing.coverFocus.x}% ${listing.coverFocus.y}%` : "center"}`}></div>
             ) : (
               <div class="compare-media compare-fallback">No gallery</div>
             )}

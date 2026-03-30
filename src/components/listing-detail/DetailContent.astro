@@ -18,6 +18,7 @@ const { listing, mapHref, mapEmbedHref, insights, hasPremiumInsights = false, au
 const neighborhood = listing.neighborhood;
 const location = listing.location;
 const isAuction = listing.saleMode === "auction";
+const coverPosition = listing.coverFocus ? `${listing.coverFocus.x}% ${listing.coverFocus.y}%` : "center";
 ---
 
 <article class="content-panel card">
@@ -225,7 +226,7 @@ const isAuction = listing.saleMode === "auction";
     <div class="panel-section">
       <span class="section-kicker">{t("Photo gallery")}</span>
       <div class="gallery-editorial">
-        <div class="gallery-primary" style={`background-image:url(${listing.imageUrls[0]})`}></div>
+        <div class="gallery-primary" style={`background-image:url(${listing.imageUrls[0]});background-position:${coverPosition}`}></div>
         <div class="gallery-rail">
           {listing.imageUrls.slice(1).map((imageUrl) => (
             <img src={imageUrl} alt={listing.title} loading="lazy" />

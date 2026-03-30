@@ -154,7 +154,7 @@ const enquiryStatusCounts = {
           {savedListings.map((savedListing) => (
             <li class="list-item saved-property-card">
               {savedListing.listing?.imageUrls?.[0] ? (
-                <a class="saved-media" href={`/listings/${savedListing.listing_slug}/`} style={`background-image:url(${savedListing.listing.imageUrls[0]})`}></a>
+                <a class="saved-media" href={`/listings/${savedListing.listing_slug}/`} style={`background-image:url(${savedListing.listing.imageUrls[0]});background-position:${savedListing.listing.coverFocus ? `${savedListing.listing.coverFocus.x}% ${savedListing.listing.coverFocus.y}%` : "center"}`}></a>
               ) : (
                 <a class="saved-media saved-media-fallback" href={`/listings/${savedListing.listing_slug}/`}>No photo yet</a>
               )}

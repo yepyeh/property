@@ -9,6 +9,7 @@ export interface Props {
 
 const { listing, showCompareLink = false, t = (value: string) => value } = Astro.props;
 const heroImage = listing.imageUrls?.[0];
+const coverPosition = listing.coverFocus ? `${listing.coverFocus.x}% ${listing.coverFocus.y}%` : "center";
 const intentLabel = listing.intent === "rent" ? t("To rent") : t("For sale");
 const neighborhood = listing.neighborhood;
 const imageCount = listing.imageUrls?.length || 0;
@@ -19,7 +20,7 @@ const auctionTimingLabel = isAuction ? getAuctionTimingLabel(listing.auction) : 
 
 <article class={`listing-card card ${listing.tone}`}>
   <a class="photo-wrap" href={`/listings/${listing.slug}/`}>
-    <div class="photo" style={heroImage ? `background-image: linear-gradient(180deg, rgba(17, 17, 17, 0.08), rgba(17, 17, 17, 0.34)), url(${heroImage})` : undefined}>
+    <div class="photo" style={heroImage ? `background-image: linear-gradient(180deg, rgba(17, 17, 17, 0.08), rgba(17, 17, 17, 0.34)), url(${heroImage});background-position:${coverPosition}` : undefined}>
       <div class="photo-top">
         <div class="chip-row">
           <span class="intent-chip">{intentLabel}</span>

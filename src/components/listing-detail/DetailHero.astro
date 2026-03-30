@@ -13,6 +13,7 @@ export interface Props {
 
 const { listing, intentLabel, ownerTrustLabel, isBuyer, isSaved, savedListing, t = (value: string) => value } = Astro.props;
 const heroImage = listing.imageUrls?.[0];
+const coverPosition = listing.coverFocus ? `${listing.coverFocus.x}% ${listing.coverFocus.y}%` : "center";
 const galleryImages = listing.imageUrls || [];
 const isAuction = listing.saleMode === "auction";
 const auctionTimingLabel = isAuction ? getAuctionTimingLabel(listing.auction) : null;
@@ -20,7 +21,7 @@ const auctionTimingLabel = isAuction ? getAuctionTimingLabel(listing.auction) : 
 
 <section class="detail-hero card">
   <div class="hero-media">
-    <div class={`hero-image ${listing.tone}`} style={heroImage ? `background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.42)), url(${heroImage})` : undefined}>
+    <div class={`hero-image ${listing.tone}`} style={heroImage ? `background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.42)), url(${heroImage});background-position:${coverPosition}` : undefined}>
       <div class="hero-badges">
         <span class="badge-primary">{intentLabel}</span>
         <span class="badge-secondary">{listing.status}</span>

@@ -64,6 +64,8 @@ export interface ListingRow {
   lat: number | null;
   lng: number | null;
   location_precision_label: string | null;
+  cover_focus_x: number | null;
+  cover_focus_y: number | null;
   created_at: string;
 }
 

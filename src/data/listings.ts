@@ -54,6 +54,10 @@ export interface Listing {
   neighborhood?: ListingNeighborhood;
   imageKeys?: string[];
   imageUrls?: string[];
+  coverFocus?: {
+    x: number;
+    y: number;
+  };
   commerce?: {
     planType: "free_trial" | "paid" | "promoted";
     trialEndsAt?: string | null;

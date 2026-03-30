@@ -72,6 +72,12 @@ function getImageUrls(value: unknown) {
     return [] as string[];
   }
 }
+
+function getCoverPosition(listing: { cover_focus_x?: number | null; cover_focus_y?: number | null }) {
+  const x = typeof listing.cover_focus_x === "number" ? listing.cover_focus_x : 50;
+  const y = typeof listing.cover_focus_y === "number" ? listing.cover_focus_y : 50;
+  return `${x}% ${y}%`;
+}
 ---
 
 <Layout title="Owner Dashboard | Property App 2026" description="Review submitted listings and enquiries from the marketplace backend.">
@@ -103,7 +109,7 @@ function getImageUrls(value: unknown) {
 
   {uploaded && <FlashBanner message={`${uploadCount || "1"} image${uploadCount === "1" ? "" : "s"} uploaded for ${uploaded}. Gallery coverage updated immediately.`} />}
   {updated && action === "gallery-updated" && (
-    <FlashBanner message={`${mediaAction === "deleted" ? "Removed one image from" : "Updated gallery order for"} ${updated}. Listing media state is live now.`} />
+    <FlashBanner message={`${mediaAction === "deleted" ? "Removed one image from" : mediaAction === "focal" ? "Updated the cover crop for" : "Updated gallery order for"} ${updated}. Listing media state is live now.`} />
   )}
   {updated && action === "enquiry-responded" && (
     <FlashBanner
@@ -289,7 +295,7 @@ function getImageUrls(value: unknown) {
                 <div class="listing-media">
                   {imageUrls.length > 0 ? (
                     <>
-                      <div class="primary-media" style={`background-image:url(${imageUrls[0]})`}></div>
+                      <div class="primary-media" style={`background-image:url(${imageUrls[0]});background-position:${getCoverPosition(listing)}`}></div>
                       <div class="media-rail">
                         {imageUrls.slice(1, 4).map((imageUrl, railIndex) => (
                           <div class="thumb-stack">
@@ -324,6 +330,18 @@ function getImageUrls(value: unknown) {
                           <button type="submit" class="thumb-action thumb-danger">Delete cover</button>
                         </form>
                       </div>
+                      <form class="focal-form" method="POST" action="/api/upload-image/focal-point">
+                        <input type="hidden" name="listingSlug" value={listing.slug} />
+                        <label>
+                          <span>Cover focus X</span>
+                          <input type="range" name="focusX" min="0" max="100" value={listing.cover_focus_x ?? 50} />
+                        </label>
+                        <label>
+                          <span>Cover focus Y</span>
+                          <input type="range" name="focusY" min="0" max="100" value={listing.cover_focus_y ?? 50} />
+                        </label>
+                        <button type="submit" class="button-tertiary">Update cover crop</button>
+                      </form>
                     </>
                   ) : (
                     <div class="media-empty">
@@ -638,6 +656,23 @@ function getImageUrls(value: unknown) {
       display: grid;
       gap: 0.75rem;
       padding-top: 0.25rem;
+    }
+
+    .focal-form {
+      display: grid;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .focal-form label {
+      display: grid;
+      gap: 0.2rem;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .focal-form input[type="range"] {
+      width: 100%;
     }
 
     .upload-form label {

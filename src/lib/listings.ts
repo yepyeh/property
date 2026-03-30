@@ -210,6 +210,10 @@ function mapRowToListing(row: ListingRow): Listing {
         : undefined,
     imageKeys,
     imageUrls,
+    coverFocus:
+      typeof row.cover_focus_x === "number" && typeof row.cover_focus_y === "number"
+        ? { x: row.cover_focus_x, y: row.cover_focus_y }
+        : undefined,
     commerce: {
       planType: row.plan_type as NonNullable<Listing["commerce"]>["planType"],
       trialEndsAt: row.trial_ends_at,

@@ -79,7 +79,8 @@ export async function getOwnerDashboardData(ownerUserId: number, db?: D1Like) {
   const listingsResult = await db
     .prepare(
       `SELECT slug, title, city, district, intent, status, created_at, enquiries,
-              image_keys, plan_type, trial_ends_at, paid_until, promoted_until, views_24h, saves
+              image_keys, plan_type, trial_ends_at, paid_until, promoted_until, views_24h, saves,
+              cover_focus_x, cover_focus_y
        FROM listings
        WHERE owner_user_id = ?
        ORDER BY created_at DESC`
@@ -322,7 +323,8 @@ export async function getOwnerListingDetail(ownerUserId: number, listingSlug: st
     .prepare(
       `SELECT slug, title, country, city, district, ward, intent, status, created_at, enquiries,
               image_keys, plan_type, trial_ends_at, paid_until, promoted_until, views_24h, saves,
-              sale_mode, auction_starts_at, auction_ends_at, auction_starting_price_label, auction_reserve_price_label
+              sale_mode, auction_starts_at, auction_ends_at, auction_starting_price_label, auction_reserve_price_label,
+              cover_focus_x, cover_focus_y
        FROM listings
        WHERE owner_user_id = ?
          AND slug = ?
@@ -347,6 +349,8 @@ export async function getOwnerListingDetail(ownerUserId: number, listingSlug: st
       promoted_until?: string | null;
       views_24h?: number;
       saves?: number;
+      cover_focus_x?: number | null;
+      cover_focus_y?: number | null;
       sale_mode?: string | null;
       auction_starts_at?: string | null;
       auction_ends_at?: string | null;
