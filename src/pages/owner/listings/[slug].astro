@@ -295,15 +295,15 @@ const imageUrls = getImageUrls(listing.image_keys);
     }
     .performance-chip {
       display: grid;
-      gap: 0.2rem;
-      padding: 0.95rem;
-      border-radius: 18px;
-      background: var(--surface-panel-subtle);
-      border: 1px solid var(--line);
+      gap: 0.28rem;
+      padding: 0.95rem 0;
+      border-radius: 0;
+      background: transparent;
     }
     .performance-chip strong {
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       letter-spacing: -0.03em;
+      color: var(--text);
     }
     .performance-chip span,
     .panel-copy,
@@ -320,16 +320,16 @@ const imageUrls = getImageUrls(listing.image_keys);
     .insight-box,
     .operator-note {
       display: grid;
-      gap: 0.25rem;
-      padding: 0.95rem 1rem;
+      gap: 0.3rem;
+      padding: 1rem 1.05rem;
       border-radius: 18px;
-      background: var(--surface-panel-subtle);
-      border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--surface-panel-subtle) 72%, transparent);
     }
     .insight-box strong,
     .operator-note strong {
-      font-size: 0.92rem;
+      font-size: 0.96rem;
       letter-spacing: -0.02em;
+      color: var(--text);
     }
     .insight-box span,
     .operator-note p {
@@ -354,8 +354,8 @@ const imageUrls = getImageUrls(listing.image_keys);
     .auction-event-form textarea {
       width: 100%;
       border-radius: 14px;
-      border: 1px solid var(--line);
-      background: var(--surface-input-strong);
+      border: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+      background: color-mix(in srgb, var(--surface-input-strong) 82%, transparent);
       color: var(--text);
       padding: 0.85rem 0.95rem;
       font: inherit;
@@ -390,10 +390,43 @@ const imageUrls = getImageUrls(listing.image_keys);
       background-color: var(--accent-1);
     }
     .list-item {
-      padding: 1rem;
-      border-radius: 20px;
-      background: var(--surface-panel-muted);
-      border: 1px solid var(--line);
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      border: 0;
+      display: grid;
+      gap: 0.5rem;
+    }
+    .compact-list {
+      gap: 1.5rem;
+    }
+    .compact-list .list-item strong {
+      font-size: 1.02rem;
+      line-height: 1.35;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      font-weight: 650;
+    }
+    .compact-list .list-item p {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin: 0;
+      max-width: 62ch;
+    }
+    .compact-list .meta-row {
+      gap: 0.75rem;
+      font-size: 0.72rem;
+      line-height: 1.4;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+    .compact-list .inline-note {
+      font-size: 0.88rem;
+      color: var(--muted-strong);
+    }
+    .compact-list .list-item + .list-item {
+      margin-top: 0.1rem;
     }
     @media (max-width: 920px) {
       .split-grid,
